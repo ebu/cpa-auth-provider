@@ -13,9 +13,5 @@ describe('GET /', function(){
 		expect(this.res.statusCode).to.equal(200);
 	});
 
-	it('should respond with html content', function(){
-		expect(this.res.text).to.match(/Welcome/);
-	});
-	
 	
 });
