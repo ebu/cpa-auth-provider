@@ -4,8 +4,8 @@ var app = require('../../lib/app');
 var db = require('../../models');
 
 
-describe('PUT /user', function(){
-  beforeEach(function(done){
+describe('PUT /user', function() {
+  beforeEach(function(done) {
     var self = this;
     request(app).put('/user', "NAME").end(function(err, res) {
       self.res = res;
@@ -26,7 +26,6 @@ describe('PUT /user', function(){
         } else if (!user) {
           console.log('No user with the username ' + name + ' has been found.');
         } else {
-
           expect(user.username).to.equals(name);
           console.log('Hello ' + user.username + '!');
           console.log('All attributes of user:', user.values);

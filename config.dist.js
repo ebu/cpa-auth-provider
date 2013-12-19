@@ -1,3 +1,4 @@
+"use strict";
 
 exports.passport = {
 //Details : http://passportjs.org/guide/facebook/
