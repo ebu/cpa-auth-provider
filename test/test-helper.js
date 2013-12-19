@@ -5,4 +5,8 @@ global.sinon = require("sinon");
 sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 
-global.request = require("supertest");
+
+var app = require('../lib/app');
+
+supertest = require("supertest");
+global.request = supertest(app);

@@ -1,28 +1,32 @@
 "use strict";
 
-var app = require('../../lib/app');
 
 // Test for the dynamic registration end point
 
 
 describe('POST /register', function() {
 
-  context("While defining the Content-Type: ", function() {
-    it('responds with ok', function() {
-      request(app).post('/register').type("application/json").send("{}").end(function(err, res) {
-        expect(res.statusCode).to.equal(200);
+  var correctRequest = {
+    client_name: 'Test client',
+    software_id: 'CPA AP Test',
+    software_version: '0.0.1'
+  };
+
+  context("While sending the Content-Type: ", function() {
+    it('responds with OK and a client_id', function() {
+      request.post('/register').type("application/json").send(JSON.stringify(correctRequest)).end(function(err, res) {
+        expect(res.statusCode).to.equal(201);
+        expect(res.body.client_id).to.be.above(0);
       });
     });
   });
 
   context("Without defining the content type", function() {
     it('returns a 400 Bad request error', function() {
-      request(app).post('/register').send("{}").end(function(err, res) {
+      request.post('/register').send(correctRequest).end(function(err, res) {
         expect(res.statusCode).to.equal(400);
       });
     });
   });
-
-
 
 });
