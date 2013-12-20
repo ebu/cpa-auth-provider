@@ -2,7 +2,8 @@
 
 var db = require('../models');
 var generate = require('../lib/generate');
-var async = require('async');
+var verify = require('../lib/verify');
+var config = require('../config');
 
 module.exports = function (app, options) {
 
@@ -20,21 +21,43 @@ module.exports = function (app, options) {
 
       // TODO: Check mandatory fields.
 
+      var client = {
+        id: null,
+        secret: clientSecret,
+        name: req.body.name,
+        software_id: req.body.software_id,
+        software_version: req.body.software_version,
+        ip: clientIp
+      };
+
       db.Client
-        .create({
-          id: null,
-          secret: clientSecret,
-          name: req.body.name,
-          software_id: req.body.software_id,
-          software_version: req.body.software_version,
-          ip: clientIp
-        })
-        .complete(function(err, result) {
+        .create(client).complete(function(err, client) {
           if (err) {
             res.json(400, {});
           } else {
-            var client = result.dataValues;
-            res.json(201, { client_id: client.id, client_secret: client.secret });
+
+            var token = {
+              token: generate.accessToken(),
+              scope: db.AccessToken.scopeValues[0]
+            };
+
+            var access_token = db.AccessToken.create(token).complete(function(err, accessToken) {
+              if (err) {
+                res.json(400, {});
+              } else {
+                accessToken.setClient(client);
+
+                var response = {
+                  client_id: client.dataValues.id,
+                  client_secret: client.dataValues.secret,
+                  registration_access_token: accessToken.dataValues.token,
+                  registration_client_uri: config.uris.registration_client_uri
+                };
+
+                res.json(201, response);
+              }
+            });
+
           }
         });
 
@@ -47,10 +70,41 @@ module.exports = function (app, options) {
 // Client Configuration Endpoint
 // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-4
 
+  var configurationEndpoint = function(req, res, clientId) {
+    if (req.headers.authorization) {
 
 
-  app.post('/register/:clientId', function(req, res) {
+      verify.accessToken(req.headers.authorization, clientId, function(err, accessToken, client) {
+        if (err || !accessToken || !client) {
+          // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
+          res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="No access token"');
+          res.send(401);
+        } else {
 
+          var response = {
+            client_id: client.dataValues.id,
+            client_secret: client.dataValues.secret,
+            registration_access_token: accessToken.dataValues.token,
+            registration_client_uri: config.uris.registration_client_uri
+          };
+
+          res.json(response);
+        }
+
+      });
+
+
+
+    } else {
+      // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
+      res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="No access token"');
+      res.send(401);
+    }
+  };
+
+  app.get('/register/:client_id', function(req, res) {
+    var clientId = req.params.client_id;
+    configurationEndpoint(req, res, clientId);
   });
 
 }
