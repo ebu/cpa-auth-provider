@@ -73,12 +73,12 @@ module.exports = function (app, options) {
   var configurationEndpoint = function(req, res, clientId) {
     if (req.headers.authorization) {
 
-
       verify.accessToken(req.headers.authorization, clientId, function(err, accessToken, client) {
         if (err || !accessToken || !client) {
           // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
-          res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="No access token"');
+          res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="Unknown or expired token"');
           res.send(401);
+
         } else {
 
           var response = {
@@ -87,17 +87,14 @@ module.exports = function (app, options) {
             registration_access_token: accessToken.dataValues.token,
             registration_client_uri: config.uris.registration_client_uri
           };
-
           res.json(response);
         }
 
       });
 
-
-
     } else {
-      // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
-      res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="No access token"');
+      // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1 : request lacks any auth information
+      res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '"');
       res.send(401);
     }
   };
@@ -106,5 +103,6 @@ module.exports = function (app, options) {
     var clientId = req.params.client_id;
     configurationEndpoint(req, res, clientId);
   });
+
 
 }

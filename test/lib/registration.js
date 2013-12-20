@@ -7,7 +7,7 @@
 
 var validAccessToken = "";
 var validClientId = "";
-var invalidClientId = "111";
+var invalidClientId = "@&-1";
 var invalidAccessToken = "12345";
 
 describe('POST /register', function() {
@@ -47,6 +47,7 @@ describe('POST /register', function() {
 
 
   context("When registering a client", function() {
+    // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
     it('replies 201 with a complete Client Information Response', function(done) {
       request.post('/register').send(correctRegistrationRequest).end(function(err, res) {
@@ -128,6 +129,7 @@ describe('GET /register', function() {
         } else {
 
           expect(res.statusCode).to.equal(401);
+          expect(res.headers['www-authenticate'].indexOf("error=")).to.equals(-1);
 
           done();
         }
@@ -146,7 +148,7 @@ describe('GET /register', function() {
         } else {
 
           expect(res.statusCode).to.equal(401);
-
+          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equals(-1);
           done();
         }
 
