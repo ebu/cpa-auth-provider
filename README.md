@@ -17,6 +17,10 @@ Ensure your system has [Node.js](http://nodejs.org/) and NPM installed.
 
     $ npm test
 
-## Start the server
+## Start the Server
 
-    $ npm start
+    $ bin/server
+
+Specify `--help` to see available command-line options:
+
+    $ bin/server --help
