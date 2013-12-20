@@ -1,9 +1,11 @@
 "use strict";
 
+
+
 module.exports = function(sequelize, DataTypes) {
 
   var Client = sequelize.define('Client', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     secret: DataTypes.STRING,
     //redirect_uris: DataTypes.STRING,
     name: DataTypes.STRING,
@@ -22,12 +24,15 @@ module.exports = function(sequelize, DataTypes) {
     software_version: DataTypes.STRING,
     ip: DataTypes.STRING
 
-
   }, {
     updatedAt: 'last_update',
-    createdAt: 'date_of_creation'
-
+    createdAt: 'date_of_creation',
+    associate: function(models) {
+      Client.hasMany(models.AccessToken);
+    }
   });
+
+
 
   return Client;
 }
