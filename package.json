@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js",
+    "start": "bin/server",
     "test": "mocha --bail --reporter spec --require test/test-helper test/lib"
   },
   "dependencies": {
