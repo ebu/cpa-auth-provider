@@ -110,9 +110,11 @@ module.exports = function (app, options) {
     configurationEndpoint(req, res, clientId);
   });
 
-  //Client_id is given as a GET Parameter
   app.put('/register', function(req, res) {
     res.send(501);
   });
 
+  app.delete('/register', function(req, res) {
+    res.send(501);
+  });
 }
