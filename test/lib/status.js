@@ -1,12 +1,10 @@
 "use strict";
 
-var app = require('../../lib/app');
-
 describe('GET /', function() {
   var self = this;
 
   beforeEach(function(done) {
-    request(app).get('/').end(function(err, res) {
+    request.get('/').end(function(err, res) {
       self.err = err;
       self.res = res;
       done();
@@ -26,7 +24,7 @@ describe('GET /status', function() {
   var self = this;
 
   before(function(done) {
-    request(app)
+    request
       .get('/status')
       .end(function(err, res) {
         self.err = err;
