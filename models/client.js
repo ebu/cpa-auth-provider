@@ -29,10 +29,10 @@ module.exports = function(sequelize, DataTypes) {
     createdAt: 'date_of_creation',
     associate: function(models) {
       Client.hasMany(models.AccessToken);
+      Client.hasMany(models.PairingProcess);
     }
   });
 
-
-
   return Client;
-}
+
+};
