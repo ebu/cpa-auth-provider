@@ -41,7 +41,7 @@ module.exports = function (app, options) {
               scope: db.AccessToken.scopeValues[0]
             };
 
-            var access_token = db.AccessToken.create(token).complete(function(err, accessToken) {
+            db.AccessToken.create(token).complete(function(err, accessToken) {
               if (err) {
                 res.json(400, {});
               } else {
@@ -89,7 +89,6 @@ module.exports = function (app, options) {
           };
           res.json(response);
         }
-
       });
 
     } else {
@@ -99,8 +98,15 @@ module.exports = function (app, options) {
     }
   };
 
+  //Client_id is given in the path
   app.get('/register/:client_id', function(req, res) {
     var clientId = req.params.client_id;
+    configurationEndpoint(req, res, clientId);
+  });
+
+  //Client_id is given as a GET Parameter
+  app.get('/register', function(req, res) {
+    var clientId = req.query.client_id;
     configurationEndpoint(req, res, clientId);
   });
 

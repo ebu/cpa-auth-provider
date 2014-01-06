@@ -68,7 +68,7 @@ describe('POST /register', function() {
   });
 });
 
-describe('GET /register', function() {
+describe('GET /register/client_id', function() {
   // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
   context("When reading information about a client without access_token and with an invalid client_id", function() {
@@ -173,6 +173,139 @@ describe('GET /register', function() {
           done();
         }
 
+      });
+    });
+  });
+
+});
+
+
+describe('GET /register?client_id=#clientId', function() {
+  // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
+
+  context("When reading information about a client without access_token and with an invalid client_id", function() {
+    it('should reply 401', function(done) {
+      request.get('/register?client_id=' + invalidClientId).end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(401);
+
+          done();
+        }
+      });
+    });
+  });
+
+
+  context("When reading information about a client with an invalid access_token and with an invalid client_id", function() {
+    it('replies 401', function(done) {
+      request.get('/register?client_id=' + invalidClientId).set('Authorization', 'Bearer ' + invalidAccessToken).end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(401);
+
+          done();
+        }
+      });
+    });
+  });
+
+
+  context("When reading information about a client with a valid access_token and with an invalid client_id", function() {
+
+    it('replies 401', function(done) {
+      request.get('/register?client_id=' + invalidClientId).set('Authorization', 'Bearer ' + validAccessToken).end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(401);
+
+          done();
+        }
+      });
+    });
+  });
+
+
+  context("When reading information about a client without access_token and with a valid client_id", function() {
+
+    it('replies 401', function(done) {
+      request.get('/register?client_id=' + validClientId).end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(401);
+          expect(res.headers['www-authenticate'].indexOf("error=")).to.equals(-1);
+
+          done();
+        }
+
+      });
+    });
+  });
+
+
+  context("When reading information about a client with a invalid access_token and with a valid client_id", function() {
+
+    it('replies 401', function(done) {
+      request.get('/register?client_id=' + validClientId).set('Authorization', 'Bearer ' + invalidAccessToken).end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(401);
+          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equals(-1);
+          done();
+        }
+
+      });
+    });
+  });
+
+
+  context("When reading information about a client with a valid access_token and with a valid client_id", function() {
+
+    it('replies 200 and the Client Informations', function(done) {
+      request.get('/register?client_id=' + validClientId).set('Authorization', 'Bearer ' + validAccessToken).end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(200);
+          expect(res.body).to.have.property('client_id');
+          expect(res.body).to.have.property('registration_access_token');
+          expect(res.body).to.have.property('registration_client_uri');
+
+          done();
+        }
+
+      });
+    });
+  });
+
+});
+
+
+describe('GET /register', function() {
+  // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
+
+  context("When reading information about a client without client_id", function() {
+    it('should reply 401', function(done) {
+      request.get('/register').end(function(err, res) {
+        if (err) {
+          done(err);
+        } else {
+
+          expect(res.statusCode).to.equal(401);
+
+          done();
+        }
       });
     });
   });
