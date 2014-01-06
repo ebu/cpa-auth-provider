@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+"use strict";
+
+var app = require('../lib/app');
+var http = require('http');
+var optimist = require('optimist');
+var version  = require('../package.json').version;
+
+var DEFAULT_PORT = 3000;
+
+// Parse command line arguments
+
+var argv = optimist
+  .usage("CPA Authentication Provider\n\nUsage:\n  $0 [options]")
+  .help("help", "Display this help message")
+  .alias("help", "h")
+  .version(version, "version", "Display version number")
+  .alias(version, "V")
+  .options({
+    port: {
+      alias: "p",
+      description: "<number> HTTP server port (default: " + DEFAULT_PORT + ")",
+      requiresArg: true
+    }
+  })
+  .strict()
+  .showHelpOnFail(false, "Specify --help for available options")
+  .check(function(argv) {
+    if (argv._.length > 0) {
+      throw "Unexpected arguments: " + argv._.join(", ");
+    }
+  })
+  .argv;
+
+app.set('port', argv.port || process.env.PORT || DEFAULT_PORT);
+
+// Start the server
+
+var server = http.createServer(app);
+
+server.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + app.get('port'));
+});
