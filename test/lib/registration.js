@@ -10,6 +10,7 @@ var validClientId = "";
 var invalidClientId = "@&-1";
 var invalidAccessToken = "12345";
 
+
 describe('POST /register', function() {
 
   var correctRegistrationRequest = {
@@ -19,7 +20,6 @@ describe('POST /register', function() {
   };
 
   var self = this;
-
 
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
@@ -64,11 +64,10 @@ describe('POST /register', function() {
               done();
             }
           });
-
       });
 
 
-      it('should return status 201', function(){
+      it('should return status 201', function() {
         expect(self.res.statusCode).to.equal(201);
       });
 
@@ -84,286 +83,250 @@ describe('POST /register', function() {
   });
 });
 
-describe('GET /register/client_id', function() {
-  // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
+describe('GET /register with client_id (in path or as GET parameter)', function() {
 
-  context("When reading information about a client without access_token and with an invalid client_id", function() {
-    it('should reply 401', function(done) {
-      request.get('/register/' + invalidClientId).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
+  //Variable used to pass values between sequential tests.
+  var self = this;
+  self.test = {};
 
-          expect(res.statusCode).to.equal(401);
+  //Set of function to define asynchronously variable used in before and beforeEach functions
+  var setInvalidAccessToken = function() { self.test.access_token = invalidAccessToken; };
+  var setValidAccessToken = function() { self.test.access_token = validAccessToken; };
+  var setInvalidClientId = function() { self.test.client_id = invalidClientId; };
+  var setValidClientId = function() { self.test.client_id = validClientId; };
 
-          done();
-        }
+  //Test set for requests
+  var testRequestWithoutAccessToken = function() {
+
+    context('with an invalid client_id', function() {
+      before(setInvalidClientId);
+
+      it('should return status 401', function() {
+        expect(self.res.statusCode).to.equal(401);
       });
+
+    });
+
+    context('with a valid client_id', function() {//ok
+      before(setValidClientId);
+
+      it('should return status 401', function() {
+        expect(self.res.statusCode).to.equal(401);
+      });
+
+      it('should not contain an error message in the header', function() {
+        expect(self.res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
+      });
+
+    });
+  };
+
+  var testRequestWithAccessToken = function() {
+
+    context('with an invalid access_token', function() {
+
+      before(setInvalidAccessToken);
+
+      context('with an invalid client_id', function() {
+        before(setInvalidClientId);
+
+        it('should return status 401', function() {
+          expect(self.res.statusCode).to.equal(401);
+        });
+      });
+
+      context('with a valid client_id', function() {
+        before(setValidClientId);
+
+        it('should return status 401', function() {
+          expect(self.res.statusCode).to.equal(401);
+        });
+
+        it('should contain an error message in the header', function() {
+          expect(self.res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
+        });
+      });
+    });
+
+    context('with a valid access_token', function() {
+      before(setValidAccessToken);
+
+      context('with an invalid client_id', function() {
+        before(setInvalidClientId);
+
+        it('should return status 401', function() {
+          expect(self.res.statusCode).to.equal(401);
+        });
+
+      });
+
+      context('with a valid client_id', function() {
+        before(setValidClientId);
+
+        it('should return status 200', function() {
+          expect(self.res.statusCode).to.equal(200);
+        });
+
+        it('should respond with the client information', function() {
+          expect(self.res.body).to.have.property('client_id');
+          expect(self.res.body.client_id).to.equal(self.test.client_id);
+          expect(self.res.body).to.have.property('registration_access_token');
+          expect(self.res.body).to.have.property('registration_client_uri');
+        });
+
+      });
+    });
+  };
+
+  describe('GET /register/:client_id', function() {
+    // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
+
+
+    context('When reading information about a client', function() {
+      context('without access_token', function() {
+
+        beforeEach(function(done) {
+          request
+            .get('/register/' + self.test.client_id)
+            .end(function(err, res) {
+              self.err = err;
+              self.res = res;
+              if (err) {
+                done(err);
+              } else {
+                done();
+              }
+            });
+        });
+
+        testRequestWithoutAccessToken();
+      });
+
+      context('with access_token', function() {
+        beforeEach(function(done) {
+          request
+            .get('/register/' + self.test.client_id)
+            .set('Authorization', 'Bearer ' + self.test.access_token)
+            .end(function(err, res) {
+              self.err = err;
+              self.res = res;
+              if (err) {
+                done(err);
+              } else {
+                done();
+              }
+            });
+        });
+
+        testRequestWithAccessToken();
+      });
+
     });
   });
 
 
-  context("When reading information about a client with an invalid access_token and with an invalid client_id", function() {
-    it('replies 401', function(done) {
-      request.get('/register/' + invalidClientId).set('Authorization', 'Bearer ' + invalidAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
 
-          expect(res.statusCode).to.equal(401);
-
-          done();
-        }
-      });
-    });
-  });
+  describe('GET /register?client_id=:client_id', function() {
+    // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
 
-  context("When reading information about a client with a valid access_token and with an invalid client_id", function() {
+    context('When reading information about a client', function() {
+      context('without access_token', function() {
 
-    it('replies 401', function(done) {
-      request.get('/register/' + invalidClientId).set('Authorization', 'Bearer ' + validAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
+        beforeEach(function(done) {
+          request
+            .get('/register?client_id=' + self.test.client_id)
+            .end(function(err, res) {
+              self.err = err;
+              self.res = res;
+              if (err) {
+                done(err);
+              } else {
+                done();
+              }
+            });
+        });
 
-          expect(res.statusCode).to.equal(401);
-
-          done();
-        }
-      });
-    });
-  });
-
-
-  context("When reading information about a client without access_token and with a valid client_id", function() {
-
-    it('replies 401', function(done) {
-      request.get('/register/' + validClientId).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
-
-          done();
-        }
+        testRequestWithoutAccessToken();
 
       });
-    });
-  });
 
+      context('with access_token', function() {
+        beforeEach(function(done) {
+          request
+            .get('/register?client_id=' + self.test.client_id)
+            .set('Authorization', 'Bearer ' + self.test.access_token)
+            .end(function(err, res) {
+              self.err = err;
+              self.res = res;
+              if (err) {
+                done(err);
+              } else {
+                done();
+              }
+            });
+        });
 
-  context("When reading information about a client with a invalid access_token and with a valid client_id", function() {
-
-    it('replies 401', function(done) {
-      request.get('/register/' + validClientId).set('Authorization', 'Bearer ' + invalidAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
-          done();
-        }
-
+        testRequestWithAccessToken();
       });
+
     });
   });
-
-
-  context("When reading information about a client with a valid access_token and with a valid client_id", function() {
-
-    it('replies 200 and the Client Informations', function(done) {
-      request.get('/register/' + validClientId).set('Authorization', 'Bearer ' + validAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(200);
-          expect(res.body).to.have.property('client_id');
-          expect(res.body).to.have.property('registration_access_token');
-          expect(res.body).to.have.property('registration_client_uri');
-
-          done();
-        }
-
-      });
-    });
-  });
-
 });
 
-
-describe('GET /register?client_id=#clientId', function() {
-  // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
-
-  context("When reading information about a client without access_token and with an invalid client_id", function() {
-    it('should reply 401', function(done) {
-      request.get('/register?client_id=' + invalidClientId).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-
-          done();
-        }
-      });
-    });
-  });
-
-
-  context("When reading information about a client with an invalid access_token and with an invalid client_id", function() {
-    it('replies 401', function(done) {
-      request.get('/register?client_id=' + invalidClientId).set('Authorization', 'Bearer ' + invalidAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-
-          done();
-        }
-      });
-    });
-  });
-
-
-  context("When reading information about a client with a valid access_token and with an invalid client_id", function() {
-
-    it('replies 401', function(done) {
-      request.get('/register?client_id=' + invalidClientId).set('Authorization', 'Bearer ' + validAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-
-          done();
-        }
-      });
-    });
-  });
-
-
-  context("When reading information about a client without access_token and with a valid client_id", function() {
-
-    it('replies 401', function(done) {
-      request.get('/register?client_id=' + validClientId).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
-
-          done();
-        }
-
-      });
-    });
-  });
-
-
-  context("When reading information about a client with a invalid access_token and with a valid client_id", function() {
-
-    it('replies 401', function(done) {
-      request.get('/register?client_id=' + validClientId).set('Authorization', 'Bearer ' + invalidAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
-          done();
-        }
-
-      });
-    });
-  });
-
-
-  context("When reading information about a client with a valid access_token and with a valid client_id", function() {
-
-    it('replies 200 and the Client Informations', function(done) {
-      request.get('/register?client_id=' + validClientId).set('Authorization', 'Bearer ' + validAccessToken).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(200);
-          expect(res.body).to.have.property('client_id');
-          expect(res.body).to.have.property('registration_access_token');
-          expect(res.body).to.have.property('registration_client_uri');
-
-          done();
-        }
-
-      });
-    });
-  });
-
-});
-
-
-describe('GET /register', function() {
-  // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
-
-  context("When reading information about a client without client_id", function() {
-    it('should reply 401', function(done) {
-      request.get('/register').end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-
-          expect(res.statusCode).to.equal(401);
-
-          done();
-        }
-      });
-    });
-  });
-
-});
 
 
 describe('PUT /register', function() {
 
+  var self = this;
+
   context("When updating configuration information about a client", function() {
-    it('should reply 501 (Unimplemented)', function(done) {
-      request.put('/register').end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
 
-          expect(res.statusCode).to.equal(501);
+    before(function(done) {
+      request
+        .put('/register')
+        .end(function(err, res) {
+          self.err = err;
+          self.res = res;
+          if (err) {
+            done(err);
+          } else {
+            done();
+          }
+        });
+    });
 
-          done();
-        }
-      });
+    it('should reply 501 (Unimplemented)', function() {
+      expect(self.res.statusCode).to.equal(501);
     });
   });
 
 });
 
 
+
 describe('DELETE /register', function() {
 
-  context("When deleting configuration information about a client", function() {
-    it('should reply 501 (Unimplemented)', function(done) {
-      request.del('/register').end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
+  var self = this;
 
-          expect(res.statusCode).to.equal(501);
+  context('When deleting configuration information about a client', function() {
 
-          done();
-        }
-      });
+    before(function(done) {
+      request
+        .del('/register')
+        .end(function(err, res) {
+          self.err = err;
+          self.res = res;
+          if (err) {
+            done(err);
+          } else {
+            done();
+          }
+        });
+    });
+
+    it('should reply 501 (Unimplemented)', function() {
+      expect(self.res.statusCode).to.equal(501);
     });
   });
-
 });
