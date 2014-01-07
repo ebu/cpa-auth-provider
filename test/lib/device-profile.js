@@ -13,135 +13,161 @@ var correctRegistrationRequest = {
 };
 
 
-var getClientId = function(callback) {
-  request.post('/register').send(correctRegistrationRequest).end(function(err, res) {
-    if (err) {
-      callback(err, null);
-    } else {
-      callback(null, res.body.client_id);
-    }
-  });
+var buildRequestBody = function(clientId, responseType) {
+  var body = '';
+  if (clientId) {
+    body += 'client_id=' + encodeURIComponent(clientId) + '&';
+  }
+  if (responseType) {
+    body += 'response_type=' + encodeURIComponent(responseType) + '&';
+  }
+  return body;
 };
+
 
 var validClientId = '';
 var validDeviceCode = '';
 var validUserCode = '';
 var invalidClientId = '-|13';
 
-describe('POST /token', function() {
+describe.only('POST /token', function() {
 
-  context("When requesting an authorization for a client using an invalid client_id", function() {
-    it('should reply an error: 400', function(done) {
+  var self = this;
+  self.test = {};
+
+  var getClientId = function(done) {
+    request.post('/register').send(correctRegistrationRequest).end(function(err, res) {
+      if (err) {
+        done(err);
+      } else {
+        self.test.client_id = res.body.client_id;
+        done();
+      }
+    });
+  };
+
+  var setInvalidResponseType = function() { self.test.response_type = '123'; };
+  var setValidResponseType = function() { self.test.response_type = 'device_code'; };
+  var unsetResponseType = function() { self.test.response_type = null; };
+
+  var setInvalidClientId = function() { self.test.client_id = invalidClientId; };
+  var setValidClientId = getClientId;
+  var unsetClientId = function() { self.test.client_id = null; };
+
+  context('When requesting an authorization', function() {
+  // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
+
+    beforeEach(function(done) {
+      var body = buildRequestBody(self.test.client_id, self.test.response_type);
+      console.log('-->', body);
+      request
+        .post('/token')
+        .type('application/x-www-form-urlencoded')
+        .send(body)
+        .end(function(err, res) {
+          self.err = err;
+          self.res = res;
+          if (err) {
+            done(err);
+          } else {
+            done();
+          }
+        });
+    });
+
+    context('without response_type', function() {
       //SPEC: Not found in spec http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
 
-      var body = 'client_id=' + encodeURIComponent(invalidClientId) + '&response_type=' + encodeURIComponent('device_code');
+      before(unsetResponseType);
 
-      request.post('/token').type('application/x-www-form-urlencoded').send(body).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.statusCode).to.equal(400);
-          done();
-        }
+      context('without providing a client_id', function() {
+        before(unsetClientId);
+
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
+      });
+
+      context('using an invalid client_id', function() {
+        before(setInvalidClientId);
+
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
+      });
+
+      context('using a valid client_id', function() {
+        before(setValidClientId);
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
       });
     });
-  });
 
+    context('using an invalid response_type', function() {
+      before(setInvalidResponseType);
 
-  context("When requesting an authorization for a client without client_id", function() {
-    it('should reply an error: 400', function(done) {
-      //SPEC: Not found in spec http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
+      context('without providing a client_id', function() {
+        before(unsetClientId);
 
-      var body = '&response_type=' + encodeURIComponent('device_code');
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
+      });
 
-      request.post('/token').type('application/x-www-form-urlencoded').send(body).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.statusCode).to.equal(400);
-          done();
-        }
+      context('using an invalid client_id', function() {
+        before(setInvalidClientId);
+
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
+      });
+
+      context('using a valid client_id', function() {
+        before(setValidClientId);
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
       });
     });
-  });
 
+    context('using a valid response_type', function() {
+      before(setValidResponseType);
 
-  context("When requesting an authorization for a client without parameters", function() {
-    it('should reply an error: 400', function(done) {
-      //SPEC: Not found in spec http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
+      context('without providing a client_id', function() {
+        before(unsetClientId);
 
-      request.post('/token').type('application/x-www-form-urlencoded').send('').end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.statusCode).to.equal(400);
-          done();
-        }
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
       });
-    });
-  });
 
+      context('using an invalid client_id', function() {
+        before(setInvalidClientId);
 
-  context("When requesting an authorization for a client using a valid client_id but without response_type", function() {
-    //SPEC: Not found in spec http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
-
-    it('should reply an error: 400', function(done) {
-
-      getClientId(function(err, clientId) {
-        if (err) {
-          done(err);
-        } else {
-
-          validClientId = clientId;
-          var body = 'client_id=' + encodeURIComponent(clientId);
-
-          request.post('/token').type('application/x-www-form-urlencoded').send(body).end(function(err2, res) {
-            if (err2) {
-              done(err2);
-            } else {
-              expect(res.statusCode).to.equal(400);
-
-              done();
-            }
-
-          });
-        }
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
       });
-    });
-  });
 
-  context("When requesting an authorization for a client using a valid client_id", function() {
-    // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
+      context('using a valid client_id', function() {
+        before(setValidClientId);
 
-    it('replies 200 with a verification code and an end-user code. (application/json format)', function(done) {
+        it('should return a status 200', function() {
+          expect(self.res.statusCode).to.equal(200);
+        });
 
-      getClientId(function(err, clientId) {
-        if (err) {
-          done(err);
-        } else {
+        it('should respond with the correct information', function() {
+          expect(self.res.body).to.have.property('device_code');
+          expect(self.res.body).to.have.property('user_code');
+          expect(self.res.body).to.have.property('verification_uri');
+          //          expect(res.body).to.have.property('expires_in'); --> optional
+          //          expect(res.body).to.have.property('interval'); --> optional
 
-          validClientId = clientId;
-          var body = 'client_id=' + encodeURIComponent(clientId) + '&response_type=' + encodeURIComponent('device_code');
+          validDeviceCode = self.res.body.device_code;
+          validUserCode = self.res.body.user_code;
+        });
 
-          request.post('/token').type('application/x-www-form-urlencoded').send(body).end(function(err2, res) {
-            if (err2) {
-              done(err2);
-            } else {
-              expect(res.statusCode).to.equal(200);
-              expect(res.body).to.have.property('device_code');
-              expect(res.body).to.have.property('user_code');
-              expect(res.body).to.have.property('verification_uri');
-    //          expect(res.body).to.have.property('expires_in'); --> optional
-    //          expect(res.body).to.have.property('interval'); --> optional
-
-              validDeviceCode = res.body.device_code;
-              validUserCode = res.body.user_code;
-
-              done();
-            }
-
-          });
-        }
       });
     });
   });
