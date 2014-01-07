@@ -14,4 +14,5 @@ exports.db = {
   password: '',
   type: '',
   database: ''
+  filename: '' // database filename for sqlite
 };
