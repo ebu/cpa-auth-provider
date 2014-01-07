@@ -19,12 +19,12 @@ module.exports = function (app, options) {
 
       var clientSecret = generate.clientSecret(clientIp);
 
-      // TODO: Check mandatory fields.
+      //TODO: Check mandatory fields.
 
       var client = {
         id: null,
         secret: clientSecret,
-        name: req.body.name,
+        name: req.body.client_name,
         software_id: req.body.software_id,
         software_version: req.body.software_version,
         ip: clientIp
