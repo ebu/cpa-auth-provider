@@ -337,7 +337,7 @@ describe('DELETE /register', function() {
 
   context("When deleting configuration information about a client", function() {
     it('should reply 501 (Unimplemented)', function(done) {
-      request.put('/register').end(function(err, res) {
+      request.del('/register').end(function(err, res) {
         if (err) {
           done(err);
         } else {
