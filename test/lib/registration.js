@@ -129,7 +129,7 @@ describe('GET /register/client_id', function() {
         } else {
 
           expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf("error=")).to.equals(-1);
+          expect(res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
 
           done();
         }
@@ -148,7 +148,7 @@ describe('GET /register/client_id', function() {
         } else {
 
           expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equals(-1);
+          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
           done();
         }
 
@@ -241,7 +241,7 @@ describe('GET /register?client_id=#clientId', function() {
         } else {
 
           expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf("error=")).to.equals(-1);
+          expect(res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
 
           done();
         }
@@ -260,7 +260,7 @@ describe('GET /register?client_id=#clientId', function() {
         } else {
 
           expect(res.statusCode).to.equal(401);
-          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equals(-1);
+          expect(res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
           done();
         }
 
