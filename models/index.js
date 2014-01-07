@@ -9,8 +9,9 @@ var config    = require('../config');
 
 var sequelize = new Sequelize(config.db.database, config.db.user, config.db.password, {
   dialect: config.db.type,
-  host:   config.db.host,
-  port:    config.db.port
+  host:    config.db.host,
+  port:    config.db.port,
+  storage: config.db.storage // database filename for sqlite
 });
 
 fs.readdirSync(__dirname).filter(function(file) {
@@ -25,6 +26,5 @@ Object.keys(db).forEach(function(modelName) {
     db[modelName].options.associate(db);
   }
 });
-
 
 module.exports = lodash.extend({ sequelize: sequelize, Sequelize: Sequelize }, db);
