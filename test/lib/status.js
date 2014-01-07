@@ -7,7 +7,11 @@ describe('GET /', function() {
     request.get('/').end(function(err, res) {
       self.err = err;
       self.res = res;
-      done();
+      if (err) {
+        done(err);
+      } else {
+        done();
+      }
     });
   });
 
@@ -29,7 +33,11 @@ describe('GET /status', function() {
       .end(function(err, res) {
         self.err = err;
         self.res = res;
-        done();
+        if (err) {
+          done(err);
+        } else {
+          done();
+        }
       });
   });
 
