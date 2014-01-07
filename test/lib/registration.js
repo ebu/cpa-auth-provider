@@ -3,7 +3,7 @@
 
 // Test for the dynamic registration end point
 
-
+var lodash = require('lodash');
 
 var validAccessToken = "";
 var validClientId = "";
@@ -18,51 +18,67 @@ describe('POST /register', function() {
     software_version: '0.0.1'
   };
 
-  context("While sending the Content-Type: ", function() {
-    it('should respond with 201 and a client_id', function(done) {
-      request.post('/register').type("application/json").send(JSON.stringify(correctRegistrationRequest)).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.statusCode).to.equal(201);
-          done();
-        }
-      });
-    });
-  });
+  var self = this;
 
 
-  context("Without defining the content type", function() {
-    it('returns a 400 Bad request error', function(done) {
-      request.post('/register').send(JSON.stringify(correctRegistrationRequest)).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.statusCode).to.equal(400);
-          done();
-        }
-      });
-    });
-  });
-
-
-  context("When registering a client", function() {
+  context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
-    it('replies 201 with a complete Client Information Response', function(done) {
-      request.post('/register').send(correctRegistrationRequest).end(function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.statusCode).to.equal(201);
-          expect(res.body).to.have.property('client_id');
-          expect(res.body).to.have.property('registration_access_token');
-          expect(res.body).to.have.property('registration_client_uri');
-          validAccessToken = res.body.registration_access_token;
-          validClientId = res.body.client_id;
-          done();
-        }
+    context('while providing a wrong Content-Type', function() {
 
+      before(function(done) {
+        request.post('/register')
+          .send(JSON.stringify(correctRegistrationRequest))
+          .end(function(err, res) {
+            self.err = err;
+            self.res = res;
+            if (err) {
+              done(err);
+            } else {
+              done();
+            }
+          });
+      });
+
+      it('should return status 400', function() {
+        expect(self.res.statusCode).to.equal(400);
+      });
+
+      it('should respond with JSON', function() {
+        expect(self.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+      });
+    });
+
+
+    context('when providing a correct request', function() {
+
+      before(function(done) {
+        request.post('/register')
+          .send(correctRegistrationRequest)
+          .end(function(err, res) {
+            self.err = err;
+            self.res = res;
+            if (err) {
+              done(err);
+            } else {
+              done();
+            }
+          });
+
+      });
+
+
+      it('should return status 201', function(){
+        expect(self.res.statusCode).to.equal(201);
+      });
+
+      it('should respond with complete client information', function() {
+        expect(self.res.body).to.have.property('client_id');
+        expect(self.res.body).to.have.property('registration_access_token');
+        expect(self.res.body).to.have.property('registration_client_uri');
+
+        validAccessToken = self.res.body.registration_access_token;
+        validClientId = self.res.body.client_id;
       });
     });
   });
