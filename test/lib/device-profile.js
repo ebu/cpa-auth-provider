@@ -30,7 +30,7 @@ var validDeviceCode = '';
 var validUserCode = '';
 var invalidClientId = '-|13';
 
-describe.only('POST /token', function() {
+describe('POST /token', function() {
 
   var self = this;
   self.test = {};
@@ -59,7 +59,7 @@ describe.only('POST /token', function() {
 
     beforeEach(function(done) {
       var body = buildRequestBody(self.test.client_id, self.test.response_type);
-      console.log('-->', body);
+
       request
         .post('/token')
         .type('application/x-www-form-urlencoded')

@@ -25,8 +25,6 @@ module.exports = function(sequelize, DataTypes) {
     ip: DataTypes.STRING
 
   }, {
-    updatedAt: 'last_update',
-    createdAt: 'date_of_creation',
     associate: function(models) {
       Client.hasMany(models.AccessToken);
       Client.hasMany(models.PairingProcess);

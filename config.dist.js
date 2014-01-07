@@ -15,3 +15,10 @@ exports.db = {
   type: '',
   database: ''
 };
+
+
+exports.uris = {
+  registration_client_uri: ''
+};
+
+exports.realm = 'CPA';
