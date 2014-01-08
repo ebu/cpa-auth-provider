@@ -80,10 +80,11 @@ module.exports = function (app, options) {
           renderVerificationPage(req, res, messages.INVALID_USERCODE);
         } else {
           if (pairingCode.verified) {
-            res.send(400);
+            res.status(400);
+            res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
           } else {
             pairingCode.updateAttributes({verified: true}).success(function() {
-              res.render('verify-success.ejs', { messages: messages });
+              res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
             }).error(function() {
               res.send(500);
             });

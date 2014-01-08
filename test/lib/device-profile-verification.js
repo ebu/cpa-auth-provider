@@ -173,5 +173,27 @@ describe('POST /verify', function() {
       });
     });
 
+
+
+    context('using an already verified user_code', function() {
+      //using the previous user code
+      beforeEach(validateRequest);
+
+      it('should return a status 400', function() {
+        expect(self.res.statusCode).to.equal(400);
+      });
+
+      it('should return HTML', function() {
+        expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      });
+
+
+      describe('the response body', function() {
+        it('should contain the message OBSOLETE_USERCODE: ' + messages.OBSOLETE_USERCODE, function() {
+          expect(self.res.text).to.contain(messages.OBSOLETE_USERCODE);
+        });
+      });
+    });
+
   });
 });
