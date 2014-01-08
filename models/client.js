@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
     updatedAt: 'updated_at',
     createdAt: 'created_at',
     associate: function(models) {
-      Client.hasMany(models.AccessToken);
+      Client.hasMany(models.RegistrationAccessToken);
       Client.hasMany(models.PairingCode);
     }
   });
