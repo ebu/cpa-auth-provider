@@ -11,9 +11,6 @@ var correctRegistrationRequest = {
   software_version: '0.0.1'
 };
 
-var validClientId = '';
-var validDeviceCode = '';
-var validUserCode = '';
 var invalidClientId = '-|13';
 
 describe('POST /token', function() {
