@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     device_code: DataTypes.STRING,
     user_code: DataTypes.STRING,
-    verification_uri: DataTypes.STRING
+    verification_uri: DataTypes.STRING,
+    verified: DataTypes.BOOLEAN
   }, {
 
     associate: function(models) {
