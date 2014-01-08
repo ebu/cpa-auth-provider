@@ -25,9 +25,11 @@ module.exports = function(sequelize, DataTypes) {
     ip: DataTypes.STRING
 
   }, {
+    updatedAt: 'updated_at',
+    createdAt: 'created_at',
     associate: function(models) {
       Client.hasMany(models.AccessToken);
-      Client.hasMany(models.PairingProcess);
+      Client.hasMany(models.PairingCode);
     }
   });
 

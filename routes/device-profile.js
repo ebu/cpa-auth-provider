@@ -22,21 +22,22 @@ module.exports = function (app, options) {
       db.Client.find({ where: { id: clientId } }).success(function(client) {
         if (client) {
 
-          var newPairingProcess = {
+          var newPairingCode = {
             device_code:  generate.deviceCode(),
             user_code: generate.userCode(),
             verification_uri: config.uris.verification_uri
           };
 
-          db.PairingProcess.create(newPairingProcess).success(function(pairingProcess) {
+          db.PairingCode.create(newPairingCode).success(function(pairingCode) {
 
-            if (pairingProcess) {
-              pairingProcess.setClient(client);
+            if (pairingCode) {
+
+              pairingCode.setClient(client);
 
               res.json(200, {
-                device_code: pairingProcess.device_code,
-                user_code: pairingProcess.user_code,
-                verification_uri: pairingProcess.verification_uri
+                device_code: pairingCode.device_code,
+                user_code: pairingCode.user_code,
+                verification_uri: pairingCode.verification_uri
               });
 
             } else {
