@@ -117,4 +117,5 @@ module.exports = function (app, options) {
   app.delete('/register', function(req, res) {
     res.send(501);
   });
-}
+
+};
