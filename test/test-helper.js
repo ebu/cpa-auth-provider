@@ -3,6 +3,7 @@
 global.chai = require("chai");
 global.expect = chai.expect;
 global.sinon = require("sinon");
+global.cheerio = require('cheerio');
 
 var sinonChai = require("sinon-chai");
 chai.use(sinonChai);

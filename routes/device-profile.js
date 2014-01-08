@@ -60,6 +60,7 @@ module.exports = function (app, options) {
 
   var renderVerificationPage = function(req, res, error_message) {
     if (typeof error_message === 'string') {
+      res.status(400);
       res.render('verify.ejs', { 'values': req.body, 'error': error_message });
     } else {
       res.render('verify.ejs', { 'values': req.body, 'error': null });
@@ -79,10 +80,10 @@ module.exports = function (app, options) {
           renderVerificationPage(req, res, messages.INVALID_USERCODE);
         } else {
           if (pairingCode.verified) {
-            res.send(404);
+            res.send(400);
           } else {
             pairingCode.updateAttributes({verified: true}).success(function() {
-              res.render('verify-success.ejs');
+              res.render('verify-success.ejs', { messages: messages });
             }).error(function() {
               res.send(500);
             });
