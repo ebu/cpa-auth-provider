@@ -40,18 +40,18 @@ module.exports = function (app, options) {
               });
 
             } else {
-              res.json(500, {});
+              res.send(500);
             }
 
           });
 
         } else {
-          res.json(400, {});
+          res.send(400);
         }
       });
 
     } else {
-      res.json(400, {});
+      res.send(400);
     }
 
   });
