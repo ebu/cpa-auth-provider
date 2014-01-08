@@ -13,6 +13,13 @@ exports.db = {
   user: '',
   password: '',
   type: '',
-  database: ''
+  database: '',
   filename: '' // database filename for sqlite
 };
+
+
+exports.uris = {
+  registration_client_uri: ''
+};
+
+exports.realm = 'CPA';
