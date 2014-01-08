@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
     device_code: DataTypes.STRING,
     user_code: DataTypes.STRING,
     verification_uri: DataTypes.STRING,
-    verified: DataTypes.BOOLEAN
+    verified: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
 
     associate: function(models) {
