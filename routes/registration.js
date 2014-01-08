@@ -33,24 +33,24 @@ module.exports = function (app, options) {
       db.Client
         .create(client).complete(function(err, client) {
           if (err) {
-            res.json(400, {});
+            res.send(400);
           } else {
 
             var token = {
               token: generate.accessToken(),
-              scope: db.AccessToken.scopeValues[0]
+              scope: ''
             };
 
-            db.AccessToken.create(token).complete(function(err, accessToken) {
+            db.RegistrationAccessToken.create(token).complete(function(err, registrationAccessToken) {
               if (err) {
-                res.json(400, {});
+                res.send(400);
               } else {
-                accessToken.setClient(client);
+                registrationAccessToken.setClient(client);
 
                 var response = {
                   client_id: client.dataValues.id,
                   client_secret: client.dataValues.secret,
-                  registration_access_token: accessToken.dataValues.token,
+                  registration_access_token: registrationAccessToken.dataValues.token,
                   registration_client_uri: config.uris.registration_client_uri
                 };
 
@@ -62,7 +62,7 @@ module.exports = function (app, options) {
         });
 
     } else {
-      res.json(400, {});
+      res.send(400);
     }
 
   });
@@ -73,8 +73,8 @@ module.exports = function (app, options) {
   var configurationEndpoint = function(req, res, clientId) {
     if (req.headers.authorization) {
 
-      verify.accessToken(req.headers.authorization, clientId, function(err, accessToken, client) {
-        if (err || !accessToken || !client) {
+      verify.registrationAccessToken(req.headers.authorization, clientId, function(err, registrationAccessToken, client) {
+        if (err || !registrationAccessToken || !client) {
           // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
           res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="Unknown or expired token"');
           res.send(401);
@@ -84,7 +84,7 @@ module.exports = function (app, options) {
           var response = {
             client_id: client.dataValues.id,
             client_secret: client.dataValues.secret,
-            registration_access_token: accessToken.dataValues.token,
+            registration_access_token: registrationAccessToken.dataValues.token,
             registration_client_uri: config.uris.registration_client_uri
           };
           res.json(response);
