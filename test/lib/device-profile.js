@@ -1,29 +1,13 @@
 "use strict";
 
-
 // Tests for the End-point implementing the OAuth 2.0 Device Profile
 // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#page-3
-
-
 
 var correctRegistrationRequest = {
   client_name: 'Test client',
   software_id: 'CPA AP Test',
   software_version: '0.0.1'
 };
-
-
-var buildRequestBody = function(clientId, responseType) {
-  var body = '';
-  if (clientId) {
-    body += 'client_id=' + encodeURIComponent(clientId) + '&';
-  }
-  if (responseType) {
-    body += 'response_type=' + encodeURIComponent(responseType) + '&';
-  }
-  return body;
-};
-
 
 var validClientId = '';
 var validDeviceCode = '';
@@ -58,11 +42,14 @@ describe('POST /token', function() {
   // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
 
     beforeEach(function(done) {
-      var body = buildRequestBody(self.test.client_id, self.test.response_type);
+      var body = {
+        client_id:     self.test.client_id,
+        response_type: self.test.response_type
+      };
 
       request
         .post('/token')
-        .type('application/x-www-form-urlencoded')
+        .type('form') // sets Content-Type: application/x-www-form-urlencoded
         .send(body)
         .end(function(err, res) {
           self.err = err;
