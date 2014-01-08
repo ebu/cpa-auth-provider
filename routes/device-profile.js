@@ -72,25 +72,22 @@ module.exports = function (app, options) {
   app.post('/verify', function(req, res) {
     if (req.headers['content-type'] === 'application/x-www-form-urlencoded' && req.body.user_code) {
 
-      var posted_user_code = req.body.user_code;
+      var postedUserCode = req.body.user_code;
 
-      db.PairingProcess.find({ where: { 'user_code': posted_user_code }}).success(function(pairingProcess) {
-        if (pairingProcess) {
-
-          if (pairingProcess.verified) {
+      verify.userCode(postedUserCode, function(err, pairingCode) {
+        if (err || !pairingCode) {
+          renderVerificationPage(req, res, messages.INVALID_USERCODE);
+        } else {
+          if (pairingCode.verified) {
             res.send(404);
           } else {
-            pairingProcess.updateAttributes({verified: true}).success(function() {
+            pairingCode.updateAttributes({verified: true}).success(function() {
               res.render('verify-success.ejs');
             }).error(function() {
               res.send(500);
             });
           }
-        } else {
-          renderVerificationPage(req, res, messages.INVALID_USERCODE);
-        }
-      }).error(function(err) {
-        res.send(500);
+        };
       });
 
     } else {
