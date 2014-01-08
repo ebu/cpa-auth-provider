@@ -43,10 +43,6 @@ describe('POST /register', function() {
       it('should return status 400', function() {
         expect(self.res.statusCode).to.equal(400);
       });
-
-      it('should respond with JSON', function() {
-        expect(self.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-      });
     });
 
 

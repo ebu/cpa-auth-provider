@@ -33,7 +33,7 @@ module.exports = function (app, options) {
       db.Client
         .create(client).complete(function(err, client) {
           if (err) {
-            res.json(400, {});
+            res.send(400);
           } else {
 
             var token = {
@@ -43,7 +43,7 @@ module.exports = function (app, options) {
 
             db.AccessToken.create(token).complete(function(err, accessToken) {
               if (err) {
-                res.json(400, {});
+                res.send(400);
               } else {
                 accessToken.setClient(client);
 
@@ -62,7 +62,7 @@ module.exports = function (app, options) {
         });
 
     } else {
-      res.json(400, {});
+      res.send(400);
     }
 
   });
