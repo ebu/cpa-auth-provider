@@ -2,22 +2,24 @@
 
 module.exports = function(sequelize, DataTypes) {
 
-  var PairingProcess = sequelize.define('PairingProcess', {
+  var PairingCode = sequelize.define('PairingCode', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     device_code: DataTypes.STRING,
     user_code: DataTypes.STRING,
     verification_uri: DataTypes.STRING,
     verified: DataTypes.BOOLEAN
   }, {
-
+    updatedAt: 'updated_at',
+    createdAt: 'created_at',
     associate: function(models) {
-      PairingProcess.belongsTo(models.Client);
+      PairingCode.belongsTo(models.Client);
+      PairingCode.belongsTo(models.ServiceProvider);
     }
   });
 
 
-  PairingProcess.scopeValues = PairingProcess;
+  PairingCode.scopeValues = PairingCode;
 
-  return PairingProcess;
+  return PairingCode;
 
 };
