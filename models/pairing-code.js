@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     createdAt: 'created_at',
     associate: function(models) {
       PairingCode.belongsTo(models.Client);
+      PairingCode.belongsTo(models.ServiceProvider);
     }
   });
 

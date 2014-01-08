@@ -9,9 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       primaryKey: true
     },
-    scope: {
-      type:   DataTypes.STRING
-    }
+    scope: DataTypes.STRING
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at',
