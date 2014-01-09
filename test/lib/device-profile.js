@@ -1,15 +1,11 @@
 "use strict";
 
 var generate = require('../../lib/generate');
+var requestHelper = require('../request-helper');
 
 // Tests for the End-point implementing the OAuth 2.0 Device Profile
 // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#page-3
 
-var correctRegistrationRequest = {
-  client_name: 'Test client',
-  software_id: 'CPA AP Test',
-  software_version: '0.0.1'
-};
 
 var invalidClientId = '-|13';
 
@@ -28,24 +24,23 @@ describe('POST /token', function() {
     generate.userCode.restore();
   });
 
-  var getClientId = function(done) {
-    request.post('/register').send(correctRegistrationRequest).end(function(err, res) {
-      if (err) {
+
+  var unsetResponseType = function() { self.test.response_type = null; };
+  var setInvalidResponseType = function() { self.test.response_type = '123'; };
+  var setValidResponseType = function() { self.test.response_type = 'device_code'; };
+
+  var unsetClientId = function() { self.test.client_id = null; };
+  var setInvalidClientId = function() { self.test.client_id = invalidClientId; };
+  var setValidClientId = function(done) {
+    requestHelper.registerNewClientId(function(err, clientId) {
+      if(err || !clientId) {
         done(err);
       } else {
-        self.test.client_id = res.body.client_id;
+        self.test.client_id = clientId;
         done();
       }
     });
   };
-
-  var setInvalidResponseType = function() { self.test.response_type = '123'; };
-  var setValidResponseType = function() { self.test.response_type = 'device_code'; };
-  var unsetResponseType = function() { self.test.response_type = null; };
-
-  var setInvalidClientId = function() { self.test.client_id = invalidClientId; };
-  var setValidClientId = getClientId;
-  var unsetClientId = function() { self.test.client_id = null; };
 
   context('When requesting an authorization', function() {
   // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4

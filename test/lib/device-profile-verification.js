@@ -3,6 +3,8 @@
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
 
+var requestHelper = require('../request-helper');
+
 describe('GET /verify', function() {
 
   var self = this;
@@ -43,54 +45,20 @@ describe('POST /verify', function() {
   var self = this;
   self.test = {};
   self.test.user_code = '';
+  self.test.client_id = '';
 
-  var getClientId = function(done) {
-
-    var registrationRequest = {
-      client_name: 'Test client',
-      software_id: 'CPA AP Test',
-      software_version: '0.0.1'
-    };
-
-    request.post('/register').send(registrationRequest).end(function(err, res) {
-      if (err) {
+  var unsetUserCode = function() { self.test.user_code = null; };
+  var setInvalidUserCode = function() { self.test.user_code = '1234'; };
+  var setValidUserCode = function(done) {
+    requestHelper.requestNewUserCode(function(err, userCode) {
+      if(err || !userCode) {
         done(err);
       } else {
-        self.test.client_id = res.body.client_id;
+        self.test.user_code = userCode;
         done();
       }
     });
   };
-
-  var getUserCode = function(done) {
-    getClientId(function(err) {
-      if (err) {
-        done(err);
-      } else {
-        var body = {
-          client_id:     self.test.client_id,
-          response_type: 'device_code'
-        };
-
-        request
-          .post('/token')
-          .type('form')
-          .send(body)
-          .end(function(err2, res) {
-            if (err2) {
-              done(err2);
-            } else {
-              self.test.user_code = res.body.user_code;
-              done();
-            }
-          });
-      }
-    });
-  };
-
-  var setInvalidUserCode = function() { self.test.user_code = '1234'; };
-  var setValidUserCode = getUserCode;
-  var unsetUserCode = function() { self.test.user_code = null; };
 
 
   var validateRequest = function(done) {
@@ -111,7 +79,6 @@ describe('POST /verify', function() {
 
   context('When validating a user_code', function() {
 
-
     context('without providing a user_code', function() {
       before(unsetUserCode);
       beforeEach(validateRequest);
@@ -119,9 +86,7 @@ describe('POST /verify', function() {
       it('should return a status 404', function() {
         expect(self.res.statusCode).to.equal(400);
       });
-
     });
-
 
     context('using an invalid user_code', function() {
       before(setInvalidUserCode);
@@ -148,7 +113,6 @@ describe('POST /verify', function() {
       beforeEach(setValidUserCode);
       beforeEach(validateRequest);
 
-
       it('should return a status 200', function() {
         expect(self.res.statusCode).to.equal(200);
       });
@@ -157,14 +121,12 @@ describe('POST /verify', function() {
         expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
       });
 
-
       describe('the response body', function() {
         it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function() {
           expect(self.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
         });
       });
     });
-
 
 
     context('using an already verified user_code', function() {
@@ -179,13 +141,11 @@ describe('POST /verify', function() {
         expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
       });
 
-
       describe('the response body', function() {
         it('should contain the message OBSOLETE_USERCODE: ' + messages.OBSOLETE_USERCODE, function() {
           expect(self.res.text).to.contain(messages.OBSOLETE_USERCODE);
         });
       });
     });
-
   });
 });
