@@ -23,5 +23,6 @@ module.exports = function (app, options) {
 
   var authLocalRoutes = require('./local.js')(app, options);
   var authFacebookRoutes = require('./facebook.js')(app, options);
+  var authGithubRoutes = require('./github.js')(app, options);
 };
 
