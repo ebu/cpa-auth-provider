@@ -13,11 +13,7 @@ describe('GET /verify', function() {
       .end(function(err, res) {
         self.err = err;
         self.res = res;
-        if (err) {
-          done(err);
-        } else {
-          done();
-        }
+        done(err);
       });
   });
 
@@ -109,11 +105,7 @@ describe('POST /verify', function() {
       .end(function(err, res) {
         self.err = err;
         self.res = res;
-        if (err) {
-          done(err);
-        } else {
-          done();
-        }
+        done(err);
       });
   };
 
