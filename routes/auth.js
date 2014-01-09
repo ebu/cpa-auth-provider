@@ -21,31 +21,20 @@ passport.use(new FacebookStrategy({
     callbackURL: config.passport.FACEBOOK_CALLBACK_URL
   },
   function(accessToken, refreshToken, profile, done) {
-    console.log('user lookup');
-    console.log('user lookup done.');
-    console.log('accessToken', accessToken);
-    console.log('refreshToken', refreshToken);
-    console.log('profile', profile);
-
     db.User.findOrCreate({provider_uid: profile.id}).success(function(user){
-      console.log('user:', user);
       return done(null, user);
     }).error(function(err) {
       done(err, null);
     });
-
   }
 ));
 
 function ensureAuthenticated(req, res, next) {
-  console.log(req.isAuthenticated());
-  console.log(req.user);
   if (req.isAuthenticated()) {
     return next();
   }
   res.redirect('/');
 }
-
 
 module.exports = function (app, options) {
 
