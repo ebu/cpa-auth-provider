@@ -8,6 +8,7 @@ var config = require('../config');
 function registerClient(req, res) {
   var clientId = req.body.client_id;
 
+  // TODO: validate clientId
   if (!clientId) {
     res.send(400);
     return;
@@ -42,10 +43,36 @@ function registerClient(req, res) {
 }
 
 function requestAccessToken(req, res) {
-  res.send(400);
+  var clientId = req.body.client_id;
+
+  // TODO: validate clientId
+  if (!clientId) {
+    res.send(400);
+    return;
+  }
+
+  db.PairingCode
+    .find({ where: { ClientId: clientId } })
+    .success(function(pairingCode) {
+      if (pairingCode) {
+        if (pairingCode.verified) {
+          // TODO: create access token in database and delete pairingCode
+          // object
+          res.set('Cache-Control', 'no-store');
+          res.set('Pragma', 'no-cache');
+          res.json({});
+        }
+        else {
+          res.json(400, { error: 'authorization_pending' });
+        }
+      }
+      else {
+        res.send(400);
+      }
+    });
 }
 
-module.exports = function (app, options) {
+function routes(app, options) {
 
   // Client Registration Endpoint
 
@@ -55,13 +82,11 @@ module.exports = function (app, options) {
       return;
     }
 
-    var responseType = req.body.response_type;
-
-    if (responseType === 'device_code') {
+    if (req.body.response_type === 'device_code') {
       // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
       registerClient(req, res);
     }
-    else if (responseType === 'code') {
+    else if (req.body.grant_type === 'authorization_code') {
       // RFC6749 section 4.1.1
       requestAccessToken(req, res);
     }
@@ -70,3 +95,5 @@ module.exports = function (app, options) {
     }
   });
 };
+
+module.exports = routes;

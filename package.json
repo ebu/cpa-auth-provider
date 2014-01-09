@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "bin/server",
-    "test": "mocha --bail --reporter spec --require test/test-helper test/lib"
+    "test": "mocha --bail --timeout 10000 --reporter spec --require test/test-helper test/lib"
   },
   "dependencies": {
     "express": "3.4.6",
@@ -15,7 +15,8 @@
     "sequelize": "~2.0.0-beta.2",
     "mysql": "~2.0.0-rc2",
     "lodash": "~2.4.1",
-    "optimist": "git+https://github.com/chrisn/node-optimist.git"
+    "optimist": "git+https://github.com/chrisn/node-optimist.git",
+    "async": "~0.2.9"
   },
   "devDependencies": {
     "supertest": "~0.8.2",
