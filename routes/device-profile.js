@@ -89,7 +89,7 @@ module.exports = function (app, options) {
               res.send(500);
             });
           }
-        };
+        }
       });
 
     } else {
