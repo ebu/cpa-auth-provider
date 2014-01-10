@@ -76,7 +76,7 @@ function requestAccessToken(req, res) {
 
         db.ServiceAccessToken
           .create(accessToken)
-          .then(function(accessToken) {
+          .then(function() {
             return pairingCode.destroy();
           })
           .then(function() {
@@ -91,9 +91,7 @@ function requestAccessToken(req, res) {
             });
           },
           function(error) {
-            console.log(error);
             transaction.rollback().complete(function(err) {
-              console.log(err);
               res.send(500);
             });
           });
