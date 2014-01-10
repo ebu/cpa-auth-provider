@@ -68,10 +68,10 @@ function requestAccessToken(req, res) {
 
       db.sequelize.transaction(function(transaction) {
         var accessToken = {
-          token:           generate.accessToken(),
-          client:          pairingCode.getClient(),
-          serviceProvider: pairingCode.getServiceProvider(),
-          // user: pairingCode.getUser() ???
+          token:             generate.accessToken(),
+          ClientId:          pairingCode.ClientId,
+          ServiceProviderId: pairingCode.ServiceProviderId
+          // user: pairingCode.UserId ???
         };
 
         db.ServiceAccessToken
