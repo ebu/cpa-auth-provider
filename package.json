@@ -15,7 +15,8 @@
     "sequelize": "~2.0.0-beta.2",
     "mysql": "~2.0.0-rc2",
     "lodash": "~2.4.1",
-    "optimist": "git+https://github.com/chrisn/node-optimist.git"
+    "optimist": "git+https://github.com/chrisn/node-optimist.git",
+    "passport-github": "~0.1.5"
   },
   "devDependencies": {
     "supertest": "~0.8.2",
