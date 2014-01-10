@@ -4,6 +4,7 @@ var db = require('../models');
 var generate = require('../lib/generate');
 var verify = require('../lib/verify');
 var config = require('../config');
+var messages = require('../lib/messages');
 
 function registerClient(req, res) {
   var clientId = req.body.client_id;
@@ -122,6 +123,45 @@ function routes(app, options) {
       res.send(400);
     }
   });
-};
+
+  var renderVerificationPage = function(req, res, error_message) {
+    if (typeof error_message === 'string') {
+      res.status(400);
+      res.render('verify.ejs', { 'values': req.body, 'error': error_message });
+    } else {
+      res.render('verify.ejs', { 'values': req.body, 'error': null });
+    }
+
+  };
+
+  app.get('/verify', renderVerificationPage);
+
+  app.post('/verify', function(req, res) {
+    if (req.headers['content-type'] === 'application/x-www-form-urlencoded' && req.body.user_code) {
+
+      var postedUserCode = req.body.user_code;
+
+      verify.userCode(postedUserCode, function(err, pairingCode) {
+        if (err || !pairingCode) {
+          renderVerificationPage(req, res, messages.INVALID_USERCODE);
+        } else {
+          if (pairingCode.verified) {
+            res.status(400);
+            res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
+          } else {
+            pairingCode.updateAttributes({verified: true}).success(function() {
+              res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
+            }).error(function() {
+              res.send(500);
+            });
+          }
+        };
+      });
+
+    } else {
+      res.send(400);
+    }
+  });
+}
 
 module.exports = routes;
