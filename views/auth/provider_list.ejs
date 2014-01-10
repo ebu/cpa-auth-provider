@@ -1,17 +1,22 @@
 <% include ../layout/head %>
 
-<h1>Available provider</h1>
+<h1>Available providers</h1>
 <ul>
     <% if (identity_providers.facebook) { %>
-        <li><a href="/auth/facebook">Login with Facebook</a></li>
+        <li><a href="/auth/facebook" class="identity_provider facebook">Login with Facebook</a></li>
     <% } %>
 
     <% if (identity_providers.github) { %>
-        <li><a href="/auth/github">Login with Github</a></li>
+        <li><a href="/auth/github" class="identity_provider github">Login with Github</a></li>
+    <% } %>
+
+
+    <% if (identity_providers.yep) { %>
+    <li><a href="/auth/github" class="identity_provider yep">Login with Github</a></li>
     <% } %>
 
     <% if (identity_providers.ebu) { %>
-    <li><a href="/auth/ebu">Login with EBU</a></li>
+    <li><a href="/auth/ebu" class="identity_provider ebu">Login with EBU</a></li>
     <% } %>
 </ul>
 

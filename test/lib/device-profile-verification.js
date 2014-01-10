@@ -2,7 +2,6 @@
 
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
-
 var requestHelper = require('../request-helper');
 
 describe('GET /verify', function() {
