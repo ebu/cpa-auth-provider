@@ -1,7 +1,6 @@
 "use strict";
 
-
-var authHelper = require('../../lib/auth-helper.js');
+var authHelper = require('../../lib/auth-helper');
 
 
 describe.only('GET /auth', function() {
@@ -34,7 +33,6 @@ describe.only('GET /auth', function() {
     describe('the response body', function() {
 
       it('should display links for every enabled idp', function() {
-
         var enabled_idp_list = authHelper.getEnabledIdentityProviders();
 
         for (var idp_label in enabled_idp_list) {
@@ -53,4 +51,53 @@ describe.only('GET /auth', function() {
     });
 
   });
+
+});
+
+
+describe.only('GET /protected', function() {
+
+  var self = this;
+
+
+  var sendRequest = function(done) {
+    request
+      .get('/protected')
+      .end(function(err, res) {
+        self.err = err;
+        self.res = res;
+        done(err);
+      });
+  };
+
+  var sendAuthenticatedRequest = function(done) {
+    request
+      .get('/protected')
+      .set('Authorization', 'Bearer '+ TEST_AUTHORIZATION_TOKEN)
+      .end(function(err, res) {
+        self.err = err;
+        self.res = res;
+        done(err);
+      });
+  };
+
+  context('When the user is not authenticated', function() {
+
+    before(sendRequest);
+
+    it('should return a status 401', function() {
+      expect(self.res.statusCode).to.equal(401);
+    });
+  });
+
+  context('When the user is authenticated', function() {
+
+    before(sendAuthenticatedRequest);
+
+    it('should return a status 200', function() {
+      expect(self.res.statusCode).to.equal(200);
+    });
+
+  });
+
 });
