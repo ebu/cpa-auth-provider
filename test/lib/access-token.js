@@ -109,8 +109,6 @@ describe("POST /token", function() {
         before(resetDatabase);
 
         before(function(done) {
-          var self = this;
-
           createPairingCode({ clientId: 100, verified: false }, done);
         });
 
@@ -231,7 +229,7 @@ describe("POST /token", function() {
 });
 
 describe("generate.accessToken", function() {
-  it("should generate access tokens valid accoring to RFC6750 section 2.1", function() {
+  it("should generate access tokens valid according to RFC6750 section 2.1", function() {
     var accessToken = generate.accessToken();
 
     // b64token    = 1*( ALPHA / DIGIT /
