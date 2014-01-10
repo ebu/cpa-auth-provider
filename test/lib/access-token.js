@@ -1,8 +1,9 @@
 "use strict";
 
-var db = require('../../models');
+var db       = require('../../models');
+var generate = require('../../lib/generate');
+
 var _ = require('lodash');
-var async = require('async');
 
 function sendPostRequest(context, path, data, done) {
   request
@@ -30,19 +31,14 @@ function createRequestBody(clientId, grantType) {
 }
 
 function resetDatabase(done) {
-  // TODO: sequelize lacks a method to delete all records from a table.
-  // -- DELETE FROM pairingCodes;
-
-  db.PairingCode.findAll().success(function(pairingCodes) {
-    async.each(
-      pairingCodes,
-      function(obj, callback) {
-        obj.destroy().success(function() {
-          callback();
-        });
-      },
-      done
-    );
+  db.sequelize.query('DELETE FROM PairingCodes').then(function() {
+    return db.sequelize.query('DELETE FROM ServiceAccessTokens');
+  })
+  .then(function() {
+    done();
+  },
+  function(error) {
+    done(error);
   });
 }
 
@@ -63,6 +59,14 @@ function createPairingCode(attributes, done) {
 }
 
 describe("POST /token", function() {
+  before(function() {
+    sinon.stub(generate, 'accessToken').returns('token:aed201ffb3362de42700a293bdebf694');
+  });
+
+  after(function() {
+    generate.accessToken.restore();
+  });
+
   beforeEach(resetDatabase);
 
   context("Polling to obtain an access token", function() {
@@ -164,11 +168,18 @@ describe("POST /token", function() {
       });
 
       describe("the response body", function() {
-        it("should include a valid access token");
-        it("should include the token type");
+        it("should include a valid access token", function() {
+          expect(this.res.body).to.have.property('token');
+          expect(this.res.body.token).to.equal('token:aed201ffb3362de42700a293bdebf694');
+        });
+
+        it("should include the token type", function() {
+          expect(this.res.body).to.have.property('token_type');
+          expect(this.res.body.token_type).to.equal('bearer');
+        });
 
         // it("should include a valid refresh token"); // optional: refresh_token
-        // it("should include the lifetime of the access token"); // optional: expires_in
+        // it("should include the lifetime of the access token"); // recommended: expires_in
         // it("should include the scope of the access token"); // optional(?): scope
       });
     });

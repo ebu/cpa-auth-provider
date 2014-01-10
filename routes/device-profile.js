@@ -26,6 +26,7 @@ function registerClient(req, res) {
       db.PairingCode.create(newPairingCode).success(function(pairingCode) {
         if (pairingCode) {
           pairingCode.setClient(client);
+          // TODO: ensure pairingCode is saved after modification
 
           res.json(200, {
             device_code: pairingCode.device_code,
@@ -54,21 +55,48 @@ function requestAccessToken(req, res) {
   db.PairingCode
     .find({ where: { ClientId: clientId } })
     .success(function(pairingCode) {
-      if (pairingCode) {
-        if (pairingCode.verified) {
-          // TODO: create access token in database and delete pairingCode
-          // object
-          res.set('Cache-Control', 'no-store');
-          res.set('Pragma', 'no-cache');
-          res.json({});
-        }
-        else {
-          res.json(400, { error: 'authorization_pending' });
-        }
-      }
-      else {
+      if (!pairingCode) {
         res.send(400);
+        return;
       }
+
+      if (!pairingCode.verified) {
+        res.json(400, { error: 'authorization_pending' });
+        return;
+      }
+
+      db.sequelize.transaction(function(transaction) {
+        var accessToken = {
+          token:           generate.accessToken(),
+          client:          pairingCode.getClient(),
+          serviceProvider: pairingCode.getServiceProvider(),
+          // user: pairingCode.getUser() ???
+        };
+
+        db.ServiceAccessToken
+          .create(accessToken)
+          .then(function(accessToken) {
+            return pairingCode.destroy();
+          })
+          .then(function() {
+            return transaction.commit();
+          })
+          .then(function() {
+            res.set('Cache-Control', 'no-store');
+            res.set('Pragma', 'no-cache');
+            res.json({
+              token:      accessToken.token,
+              token_type: 'bearer'
+            });
+          },
+          function(error) {
+            console.log(error);
+            transaction.rollback().complete(function(err) {
+              console.log(err);
+              res.send(500);
+            });
+          });
+      });
     });
 }
 
