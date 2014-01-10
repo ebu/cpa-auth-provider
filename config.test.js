@@ -1,10 +1,9 @@
 "use strict";
 
 exports.passport = {
-//Details : http://passportjs.org/guide/facebook/
-  FACEBOOK_CLIENT_ID: 0,
-  FACEBOOK_CLIENT_SECRET: '',
-  FACEBOOK_CALLBACK_URL: ''
+  FACEBOOK_ENABLED: false,
+  GITHUB_ENABLED: false,
+  EBU_ENABLED: false
 };
 
 exports.db = {
