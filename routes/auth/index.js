@@ -21,9 +21,6 @@ module.exports = function (app, options) {
     res.render('./auth/provider_list.ejs');
   });
 
-  var authLocalRoutes = require('./local.js')(app, options);
-  var authFacebookRoutes = require('./facebook.js')(app, options);
-  var authGithubRoutes = require('./github.js')(app, options);
   if (config.FACEBOOK_ENABLED) {
     console.log('Facebook authentication enabled');
     var authFacebookRoutes = require('./facebook.js')(app, options);
@@ -32,5 +29,6 @@ module.exports = function (app, options) {
     console.log('Github authentication enabled');
     var authGithubRoutes = require('./github.js')(app, options);
   }
+
 };
 
