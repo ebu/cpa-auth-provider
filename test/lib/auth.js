@@ -3,7 +3,7 @@
 var authHelper = require('../../lib/auth-helper');
 
 
-describe.only('GET /auth', function() {
+describe('GET /auth', function() {
 
   var self = this;
 
@@ -55,7 +55,7 @@ describe.only('GET /auth', function() {
 });
 
 
-describe.only('GET /protected', function() {
+describe('GET /protected', function() {
 
   var self = this;
 
