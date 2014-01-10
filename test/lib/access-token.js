@@ -60,7 +60,7 @@ function createPairingCode(attributes, done) {
 
 describe("POST /token", function() {
   before(function() {
-    sinon.stub(generate, 'accessToken').returns('token:aed201ffb3362de42700a293bdebf694');
+    sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf694');
   });
 
   after(function() {
@@ -171,8 +171,9 @@ describe("POST /token", function() {
         describe("the response body", function() {
           it("should include a valid access token", function() {
             expect(this.res.body).to.have.property('token');
-            expect(this.res.body.token).to.equal('token:aed201ffb3362de42700a293bdebf694');
+            expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf694');
           });
+
 
           it("should include the token type", function() {
             expect(this.res.body).to.have.property('token_type');
@@ -207,7 +208,7 @@ describe("POST /token", function() {
 
           describe("the access token", function() {
             it("should have correct value", function() {
-              expect(this.accessTokens[0].token).to.equal('token:aed201ffb3362de42700a293bdebf694');
+              expect(this.accessTokens[0].token).to.equal('aed201ffb3362de42700a293bdebf694');
             });
 
             it("should be associated with the correct client device", function() {
@@ -226,5 +227,15 @@ describe("POST /token", function() {
       it("should return status 400");
       it("should return slow_down error");
     });
+  });
+});
+
+describe("generate.accessToken", function() {
+  it("should generate access tokens valid accoring to RFC6750 section 2.1", function() {
+    var accessToken = generate.accessToken();
+
+    // b64token    = 1*( ALPHA / DIGIT /
+    //       "-" / "." / "_" / "~" / "+" / "/" ) *"="
+    expect(accessToken).to.match(/^[A-Za-z0-9\-._~+/]+=*$/);
   });
 });
