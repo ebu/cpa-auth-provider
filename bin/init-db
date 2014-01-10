@@ -2,14 +2,46 @@
 
 "use strict";
 
-var db = require('../models');
+/**
+ * Script to initialize database schemas
+ */
 
-db.sequelize
-  .sync({ force: true })
-  .complete(function(err) {
-    if (!!err) {
-      console.log('An error occurred while create the table.');
-    } else {
-      console.log('Synchronization done.');
+var prompt = require("prompt");
+
+
+prompt.message = "This script will reset the database!\n".red;
+prompt.delimiter = '';
+
+prompt.start();
+
+prompt.get({
+  properties: {
+    config_id: {
+      description: "1. Local\r\n2. Test\r\n ---\r\n".white +  "Which database would you like to reset?".white
     }
-  });
+  }
+}, function (err, result) {
+
+  if(result.config_id == 1) {
+    console.log("Resetting local database".green);
+  } else if (result.config_id == 2) {
+    console.log("Resetting test database".green);
+    process.env.NODE_ENV = 'test';
+  } else {
+    console.log("Exiting...");
+    return;
+  }
+
+  var db = require('../models');
+
+  db.sequelize
+    .sync({ force: true })
+    .complete(function(err) {
+      if (!!err) {
+        console.log('An error occurred while create the table.');
+      } else {
+        console.log('Synchronization done.');
+      }
+    });
+
+});

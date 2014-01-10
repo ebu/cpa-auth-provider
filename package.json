@@ -16,7 +16,8 @@
     "mysql": "~2.0.0-rc2",
     "lodash": "~2.4.1",
     "optimist": "git+https://github.com/chrisn/node-optimist.git",
-    "passport-github": "~0.1.5"
+    "passport-github": "~0.1.5",
+    "prompt": "~0.2.12"
   },
   "devDependencies": {
     "supertest": "~0.8.2",

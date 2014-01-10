@@ -4,3 +4,7 @@ node_modules/*
 config.js
 
 npm-debug.log
+
+config.local.js
+
+data/test.sqlite
