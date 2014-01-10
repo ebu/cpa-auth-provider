@@ -1,20 +1,23 @@
 "use strict";
 
-exports.passport = {
+
+exports.identity_providers = {
   //Details : http://passportjs.org/guide/facebook/
-  FACEBOOK_ENABLED: false,
-  FACEBOOK_CLIENT_ID: '',
-  FACEBOOK_CLIENT_SECRET: '',
-  FACEBOOK_CALLBACK_URL: '',
-
-  GITHUB_ENABLED: false,
-  GITHUB_CLIENT_ID: '',
-  GITHUB_CLIENT_SECRET: '',
-  GITHUB_CALLBACK_URL: '',
-
-  EBU_ENABLED: false,
-  EBU_CAS_SERVER_URL: '',
-  EBU_SERVICE: ''
+  facebook: {
+    enabled: false,
+    client_id: '',
+    client_secret: '',
+    callback_url: ''
+  },
+  github: {
+    enabled: true,
+    client_id: '',
+    client_secret: '',
+    callback_url: ''
+  },
+  ebu: {
+    enabled: false
+  }
 };
 
 exports.db = {

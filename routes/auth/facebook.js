@@ -8,9 +8,9 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 
 passport.use(new FacebookStrategy({
-    clientID: config.passport.FACEBOOK_CLIENT_ID,
-    clientSecret: config.passport.FACEBOOK_CLIENT_SECRET,
-    callbackURL: config.passport.FACEBOOK_CALLBACK_URL
+    clientID: config.identity_providers.facebook.client_id,
+    clientSecret: config.identity_providers.facebook.client_secret,
+    callbackURL: config.identity_providers.facebook.callback_url
   },
   function(accessToken, refreshToken, profile, done) {
     db.User.findOrCreate({provider_uid: profile.id}).success(function(user){

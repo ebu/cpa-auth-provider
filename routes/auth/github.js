@@ -8,18 +8,9 @@ var GithubStrategy = require('passport-github').Strategy;
 
 
 passport.use(new GithubStrategy({
-    clientID: config.passport.FACEBOOK_CLIENT_ID,
-    clientSecret: config.passport.FACEBOOK_CLIENT_SECRET,
-    callbackURL: config.passport.FACEBOOK_CALLBACK_URL
-  },
-  function(accessToken, refreshToken, profile, done) {
-
-  }
-));
-passport.use(new GithubStrategy({
-    clientID: config.passport.GITHUB_CLIENT_ID,
-    clientSecret: config.passport.GITHUB_CLIENT_SECRET,
-    callbackURL: config.passport.GITHUB_CALLBACK_URL
+    clientID: config.identity_providers.github.client_id,
+    clientSecret: config.identity_providers.github.client_secret,
+    callbackURL: config.identity_providers.github.url_callback
   },
   function(accessToken, refreshToken, profile, done) {
     db.User.findOrCreate({provider_uid: profile.id}).success(function(user){

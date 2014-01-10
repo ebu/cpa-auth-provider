@@ -21,11 +21,11 @@ module.exports = function (app, options) {
     res.render('./auth/provider_list.ejs');
   });
 
-  if (config.FACEBOOK_ENABLED) {
+  if (config.identity_providers.facebook.enabled) {
     console.log('Facebook authentication enabled');
     var authFacebookRoutes = require('./facebook.js')(app, options);
   }
-  if (config.GITHUB_ENABLED) {
+  if (config.identity_providers.github.enabled) {
     console.log('Github authentication enabled');
     var authGithubRoutes = require('./github.js')(app, options);
   }

@@ -1,9 +1,16 @@
 "use strict";
 
-exports.passport = {
-  FACEBOOK_ENABLED: false,
-  GITHUB_ENABLED: false,
-  EBU_ENABLED: false
+
+exports.identity_providers = {
+  facebook: {
+    enabled: false
+  },
+  github: {
+    enabled: false
+  },
+  ebu: {
+    enabled: false
+  }
 };
 
 exports.db = {
