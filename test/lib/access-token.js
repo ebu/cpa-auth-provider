@@ -177,9 +177,9 @@ describe("POST /token", function() {
             expect(this.res.body.token_type).to.equal('bearer');
           });
 
-          // it("should include a valid refresh token"); // optional: refresh_token
-          // it("should include the lifetime of the access token"); // recommended: expires_in
-          // it("should include the scope of the access token"); // optional(?): scope
+          it("should include a valid refresh token"); // TODO: optional: refresh_token
+          it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+          it("should include the scope of the access token"); // TODO: optional(?): scope
         });
 
         describe("the database", function() {
