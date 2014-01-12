@@ -16,31 +16,28 @@ function registerClient(req, res) {
   }
 
   db.Client.find({ where: { id: clientId } }).success(function(client) {
-    if (client) {
-
-      var newPairingCode = {
-        device_code: generate.deviceCode(),
-        user_code: generate.userCode(),
-        verification_uri: config.uris.verification_uri
-      };
-
-      db.PairingCode.create(newPairingCode).success(function(pairingCode) {
-        if (pairingCode) {
-          pairingCode.setClient(client);
-          // TODO: ensure pairingCode is saved after modification
-
-          res.json(200, {
-            device_code: pairingCode.device_code,
-            user_code: pairingCode.user_code,
-            verification_uri: pairingCode.verification_uri
-          });
-        } else {
-          res.send(500);
-        }
-      });
-    } else {
+    if (!client) {
       res.send(400);
+      return;
     }
+
+    var pairingCode = {
+      ClientId: clientId,
+      device_code: generate.deviceCode(),
+      user_code: generate.userCode(),
+      verification_uri: config.uris.verification_uri
+    };
+
+    db.PairingCode.create(pairingCode).then(function() {
+      res.json(200, {
+        device_code: pairingCode.device_code,
+        user_code: pairingCode.user_code,
+        verification_uri: pairingCode.verification_uri
+      });
+    },
+    function(error) {
+      res.send(500);
+    });
   });
 }
 
@@ -69,9 +66,9 @@ function requestAccessToken(req, res) {
       db.sequelize.transaction(function(transaction) {
         var accessToken = {
           token:             generate.accessToken(),
+          UserId:            pairingCode.UserId,
           ClientId:          pairingCode.ClientId,
           ServiceProviderId: pairingCode.ServiceProviderId
-          // user: pairingCode.UserId ???
         };
 
         db.ServiceAccessToken
@@ -135,6 +132,11 @@ function routes(app, options) {
   app.get('/verify', renderVerificationPage);
 
   app.post('/verify', function(req, res) {
+    // if (!req.user || !req.user.id) {
+    //   res.send(401); // Unauthorized
+    //   return;
+    // }
+
     if (req.headers['content-type'] === 'application/x-www-form-urlencoded' && req.body.user_code) {
 
       var postedUserCode = req.body.user_code;
@@ -147,7 +149,12 @@ function routes(app, options) {
             res.status(400);
             res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
           } else {
-            pairingCode.updateAttributes({verified: true}).success(function() {
+            var attributes = {
+              UserId: 1234, // TODO: req.user.id
+              verified: true
+            };
+
+            pairingCode.updateAttributes(attributes).success(function() {
               res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
             }).error(function() {
               res.send(500);
