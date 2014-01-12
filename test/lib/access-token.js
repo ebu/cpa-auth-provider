@@ -5,7 +5,7 @@ var generate = require('../../lib/generate');
 
 var _ = require('lodash');
 
-function sendPostRequest(context, path, data, done) {
+var sendPostRequest = function(context, path, data, done) {
   request
     .post(path)
     .type('form') // sets Content-Type: application/x-www-form-urlencoded
@@ -16,7 +16,7 @@ function sendPostRequest(context, path, data, done) {
     });
 };
 
-function createRequestBody(clientId, grantType) {
+var createRequestBody = function(clientId, grantType) {
   var requestBody = {};
 
   if (!_.isUndefined(clientId)) {
@@ -30,7 +30,7 @@ function createRequestBody(clientId, grantType) {
   return requestBody;
 }
 
-function resetDatabase(done) {
+var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM PairingCodes').then(function() {
     return db.sequelize.query('DELETE FROM ServiceAccessTokens');
   })
@@ -42,7 +42,7 @@ function resetDatabase(done) {
   });
 }
 
-function createPairingCode(attributes, done) {
+var createPairingCode = function(attributes, done) {
   var data = {
     ClientId:         attributes.clientId,
     device_code:      '8ecf4b2a0df2df7fd69df128e0ac4fcc',
@@ -171,7 +171,6 @@ describe("POST /token", function() {
             expect(this.res.body).to.have.property('token');
             expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf694');
           });
-
 
           it("should include the token type", function() {
             expect(this.res.body).to.have.property('token_type');

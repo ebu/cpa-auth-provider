@@ -6,7 +6,7 @@ var verify = require('../lib/verify');
 var config = require('../config');
 var messages = require('../lib/messages');
 
-function registerClient(req, res) {
+var registerClient = function(req, res) {
   var clientId = req.body.client_id;
 
   // TODO: validate clientId
@@ -41,7 +41,7 @@ function registerClient(req, res) {
   });
 }
 
-function requestAccessToken(req, res) {
+var requestAccessToken = function(req, res) {
   var clientId = req.body.client_id;
 
   // TODO: validate clientId
@@ -96,7 +96,7 @@ function requestAccessToken(req, res) {
     });
 }
 
-function routes(app, options) {
+var routes = function(app, options) {
 
   // Client Registration Endpoint
 
