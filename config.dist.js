@@ -13,6 +13,11 @@ exports.db = {
   user: '',
   password: '',
   type: '',
-  database: ''
-  filename: '' // database filename for sqlite
+  database: '',
+
+  // Database filename for SQLite
+  filename: '',
+
+  // For debugging, log SQL statements to the console
+  debug: true
 };
