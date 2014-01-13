@@ -26,7 +26,7 @@ var resetDatabase = function(done) {
   function(error) {
     done(error);
   });
-}
+};
 
 var createPairingCode = function(attributes, done) {
   var data = {
@@ -42,7 +42,7 @@ var createPairingCode = function(attributes, done) {
     .success(function(pairingCode) {
       done();
     });
-}
+};
 
 var verifyError = function(res, error) {
   expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
@@ -283,15 +283,24 @@ describe("POST /token", function() {
             before(function(done) {
               var self = this;
 
-              db.ServiceAccessToken
-                .findAll()
-                .success(function(accessTokens) {
+              db.ServiceAccessToken.findAll()
+                .then(function(accessTokens) {
                   self.accessTokens = accessTokens;
-                  done();
+                  return db.PairingCode.findAll();
                 })
-                .error(function(error) {
-                  done(error);
+                .then(function(pairingCodes) {
+                  self.pairingCodes = pairingCodes;
+                  done();
+                },
+                function(error) {
+                  done(error)
                 });
+            });
+
+            it("should delete the pairing code", function() {
+              expect(this.pairingCodes).to.be.ok;
+              expect(this.pairingCodes).to.be.an('array');
+              expect(this.pairingCodes.length).to.equal(0);
             });
 
             it("should contain a new access token", function() {
