@@ -134,7 +134,7 @@ describe("POST /token", function() {
       before(function(done) {
         var requestBody = {
           client_id:  '101',
-          // grant_type: 'unknown',
+          // grant_type: 'authorization_code',
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
