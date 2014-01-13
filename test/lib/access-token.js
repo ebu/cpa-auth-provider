@@ -337,7 +337,35 @@ describe("POST /token", function() {
             expect(this.res.statusCode).to.equal(400);
           });
 
-          // TODO: return error object?
+          it("should return invalid_client error", function() {
+            verifyError(this.res, 'invalid_client');
+          });
+        });
+
+        context("with missing authorization code", function() {
+          before(resetDatabase);
+
+          before(function(done) {
+            createPairingCode({ clientId: 101, verified: true }, done);
+          });
+
+          before(function(done) {
+            var requestBody = {
+              client_id:  '101',
+              grant_type: 'authorization_code',
+              // code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
+            };
+
+            sendPostRequest(this, '/token', requestBody, done);
+          });
+
+          it("should return status 400", function() {
+            expect(this.res.statusCode).to.equal(400);
+          });
+
+          it("should return invalid_request error", function() {
+            verifyError(this.res, 'invalid_request');
+          });
         });
       });
     });

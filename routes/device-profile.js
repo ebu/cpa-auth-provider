@@ -57,7 +57,7 @@ var requestAccessToken = function(req, res) {
   var deviceCode = req.body.code;
 
   if (!deviceCode) {
-    res.send(400);
+    res.json(400, { error: 'invalid_request' });
     return;
   }
 
