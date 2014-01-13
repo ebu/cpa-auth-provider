@@ -126,8 +126,11 @@ describe('POST /verify', function() {
           expect(self.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
         });
       });
-    });
 
+      describe('the database', function() {
+        it('should associate the pairing code with the signed-in user');
+      });
+    });
 
     context('using an already verified user_code', function() {
       //using the previous user code
