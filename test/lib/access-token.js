@@ -5,11 +5,11 @@ var generate = require('../../lib/generate');
 
 var _ = require('lodash');
 
-var sendPostRequest = function(context, path, data, done) {
+var sendPostRequest = function(context, path, options, done) {
   request
     .post(path)
-    .type('form') // sets Content-Type: application/x-www-form-urlencoded
-    .send(data)
+    .type(options.type || 'form') // sets Content-Type: application/x-www-form-urlencoded
+    .send(options.data)
     .end(function(err, res) {
       context.res = res;
       done(err);
@@ -63,22 +63,13 @@ describe("POST /token", function() {
   context("Polling to obtain an access token", function() {
     context("with incorrect Content-Type", function() {
       before(function(done) {
-        var self = this;
-
         var requestBody = {
           client_id:  '101',
           grant_type: 'authorization_code',
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        request
-          .post('/token')
-          .type('json') // sets Content-Type: application/json
-          .send(requestBody)
-          .end(function(err, res) {
-            self.res = res;
-            done(err);
-          });
+        sendPostRequest(this, '/token', { type: 'json', data: requestBody }, done);
       });
 
       it("should return status 400", function() {
@@ -118,7 +109,7 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, '/token', requestBody, done);
+        sendPostRequest(this, '/token', { data: requestBody }, done);
       });
 
       it("should return status 400", function() {
@@ -158,7 +149,7 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, '/token', requestBody, done);
+        sendPostRequest(this, '/token', { data: requestBody }, done);
       });
 
       it("should return status 400", function() {
@@ -186,7 +177,7 @@ describe("POST /token", function() {
               code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
             };
 
-            sendPostRequest(this, '/token', requestBody, done);
+            sendPostRequest(this, '/token', { data: requestBody }, done);
           });
 
           it("should return status 400", function() {
@@ -212,7 +203,7 @@ describe("POST /token", function() {
               code:       'invalid'
             };
 
-            sendPostRequest(this, '/token', requestBody, done);
+            sendPostRequest(this, '/token', { data: requestBody }, done);
           });
 
           it("should return status 400", function() {
@@ -241,7 +232,7 @@ describe("POST /token", function() {
               code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
             };
 
-            sendPostRequest(this, '/token', requestBody, done);
+            sendPostRequest(this, '/token', { data: requestBody }, done);
           });
 
           it("should return status 200", function() {
@@ -339,7 +330,7 @@ describe("POST /token", function() {
               code:       'invalid'
             };
 
-            sendPostRequest(this, '/token', requestBody, done);
+            sendPostRequest(this, '/token', { data: requestBody }, done);
           });
 
           it("should return status 400", function() {
@@ -365,7 +356,7 @@ describe("POST /token", function() {
               // code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
             };
 
-            sendPostRequest(this, '/token', requestBody, done);
+            sendPostRequest(this, '/token', { data: requestBody }, done);
           });
 
           it("should return status 400", function() {
