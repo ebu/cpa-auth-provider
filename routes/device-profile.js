@@ -50,8 +50,19 @@ var requestAccessToken = function(req, res) {
     return;
   }
 
+  // TODO: RFC6749 section 4.1.3 describes the 'code' parameter as "The
+  // authorization code received from the authorization server." Assume this
+  // is the device_code from draft-recordon-oauth-v2-device-00 section 1.4
+
+  var deviceCode = req.body.code;
+
+  if (!deviceCode) {
+    res.send(400);
+    return;
+  }
+
   db.PairingCode
-    .find({ where: { ClientId: clientId } })
+    .find({ where: { ClientId: clientId, device_code: deviceCode } })
     .success(function(pairingCode) {
       if (!pairingCode) {
         res.send(400);
@@ -111,7 +122,7 @@ var routes = function(app, options) {
       registerClient(req, res);
     }
     else if (req.body.grant_type === 'authorization_code') {
-      // RFC6749 section 4.1.1
+      // RFC6749 section 4.1.3
       requestAccessToken(req, res);
     }
     else {
