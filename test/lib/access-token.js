@@ -44,6 +44,13 @@ var createPairingCode = function(attributes, done) {
     });
 }
 
+var verifyError = function(res, error) {
+  expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
+  expect(res.body).to.be.an('object');
+  expect(res.body).to.have.property('error');
+  expect(res.body.error).to.equal(error);
+};
+
 describe("POST /token", function() {
   before(function() {
     sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf694');
@@ -54,6 +61,35 @@ describe("POST /token", function() {
   });
 
   context("Polling to obtain an access token", function() {
+    context("with incorrect Content-Type", function() {
+      before(function(done) {
+        var self = this;
+
+        var requestBody = {
+          client_id:  '101',
+          grant_type: 'authorization_code',
+          code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
+        };
+
+        request
+          .post('/token')
+          .type('json') // sets Content-Type: application/json
+          .send(requestBody)
+          .end(function(err, res) {
+            self.res = res;
+            done(err);
+          });
+      });
+
+      it("should return status 400", function() {
+        expect(this.res.statusCode).to.equal(400);
+      });
+
+      it("should return an invalid_request error", function() {
+        verifyError(this.res, 'invalid_request');
+      });
+    });
+
     context("with missing client_id", function() {
       before(function(done) {
         var requestBody = {
@@ -67,6 +103,10 @@ describe("POST /token", function() {
 
       it("should return status 400", function() {
         expect(this.res.statusCode).to.equal(400);
+      });
+
+      it("should return an invalid_request error", function() {
+        verifyError(this.res, 'invalid_request');
       });
     });
 
@@ -84,6 +124,10 @@ describe("POST /token", function() {
       it("should return status 400", function() {
         expect(this.res.statusCode).to.equal(400);
       });
+
+      it("should return an invalid_client error", function() {
+        verifyError(this.res, 'invalid_client');
+      });
     });
 
     context("with missing grant_type", function() {
@@ -100,6 +144,10 @@ describe("POST /token", function() {
       it("should return status 400", function() {
         expect(this.res.statusCode).to.equal(400);
       });
+
+      it("should return an invalid_request error", function() {
+        verifyError(this.res, 'invalid_request');
+      });
     });
 
     context("with an invalid grant_type", function() {
@@ -115,6 +163,10 @@ describe("POST /token", function() {
 
       it("should return status 400", function() {
         expect(this.res.statusCode).to.equal(400);
+      });
+
+      it("should return an unsupported_grant_type error", function() {
+        verifyError(this.res, 'unsupported_grant_type');
       });
     });
 
@@ -141,14 +193,8 @@ describe("POST /token", function() {
             expect(this.res.statusCode).to.equal(400);
           });
 
-          it("should return a JSON object", function() {
-            expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-            expect(this.res.body).to.be.an('object');
-          });
-
-          it("should return authorization_pending error", function() {
-            expect(this.res.body).to.have.property('error');
-            expect(this.res.body.error).to.equal('authorization_pending');
+          it("should return an authorization_pending error", function() {
+            verifyError(this.res, 'authorization_pending');
           });
         });
 
@@ -171,6 +217,10 @@ describe("POST /token", function() {
 
           it("should return status 400", function() {
             expect(this.res.statusCode).to.equal(400);
+          });
+
+          it("should return an invalid_client error", function() {
+            verifyError(this.res, 'invalid_client');
           });
         });
       });

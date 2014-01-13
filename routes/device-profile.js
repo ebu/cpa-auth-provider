@@ -46,7 +46,7 @@ var requestAccessToken = function(req, res) {
 
   // TODO: validate clientId
   if (!clientId) {
-    res.send(400);
+    res.json(400, { error: 'invalid_request' });
     return;
   }
 
@@ -65,7 +65,7 @@ var requestAccessToken = function(req, res) {
     .find({ where: { ClientId: clientId, device_code: deviceCode } })
     .success(function(pairingCode) {
       if (!pairingCode) {
-        res.send(400);
+        res.json(400, { error: 'invalid_client' });
         return;
       }
 
@@ -113,20 +113,24 @@ var routes = function(app, options) {
 
   app.post('/token', function(req, res) {
     if (req.get('Content-Type') !== 'application/x-www-form-urlencoded') {
-      res.send(400);
+      res.json(400, { error: 'invalid_request' });
       return;
     }
 
+    // TODO: https://github.com/ebu/cpa-spec/issues/1
     if (req.body.response_type === 'device_code') {
       // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
       registerClient(req, res);
+    }
+    else if (!req.body.grant_type) {
+      res.json(400, { error: 'invalid_request' });
     }
     else if (req.body.grant_type === 'authorization_code') {
       // RFC6749 section 4.1.3
       requestAccessToken(req, res);
     }
     else {
-      res.send(400);
+      res.json(400, { error: 'unsupported_grant_type' });
     }
   });
 
