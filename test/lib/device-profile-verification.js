@@ -10,7 +10,7 @@ describe('GET /verify', function() {
 
 
   context('When requesting the form to validate a user code', function() {
-    context('and the user is authenticated', function() {
+    context('and the user is not authenticated', function() {
 
       before(function(done) {
         requestHelper.get(self, '/verify', false, done);
@@ -49,110 +49,106 @@ describe('GET /verify', function() {
 describe('POST /verify', function() {
 
   var self = this;
-  self.test = {};
-  self.test.user_code = '';
-  self.test.client_id = '';
-
-  var unsetUserCode = function() { self.test.user_code = null; };
-  var setInvalidUserCode = function() { self.test.user_code = '1234'; };
+  var invalidUserCode = '1234';
+  var validUserCode = null;
   var setValidUserCode = function(done) {
     requestHelper.requestNewUserCode(function(err, userCode) {
       if(err || !userCode) {
         done(err);
       } else {
-        self.test.user_code = userCode;
+        validUserCode = userCode;
         done();
       }
     });
   };
-
-
-  var validateRequest = function(done) {
-    var body = {
-      user_code: self.test.user_code
-    };
-
-    request
-      .post('/verify')
-      .type('form') // sets Content-Type: application/x-www-form-urlencoded
-      .send(body)
-      .end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        done(err);
-      });
-  };
+  before(setValidUserCode);
 
   context('When validating a user_code', function() {
+    context('and the user is not authenticated', function() {
+      before(function(done) {
+        requestHelper.postForm(self, '/verify', {user_code: null}, false, done);
+      });
 
-    context('without providing a user_code', function() {
-      before(unsetUserCode);
-      beforeEach(validateRequest);
-
-      it('should return a status 404', function() {
-        expect(self.res.statusCode).to.equal(400);
+      it('should return a status 401', function() {
+        expect(self.res.statusCode).to.equal(401);
       });
     });
 
-    context('using an invalid user_code', function() {
-      before(setInvalidUserCode);
-      beforeEach(validateRequest);
+    context('and the user is authenticated', function() {
+      context('without providing a user_code', function() {
+        before(function(done) {
+          requestHelper.postForm(self, '/verify', {user_code: null}, true, done);
+        });
 
-      it('should return a status 400', function() {
-        expect(self.res.statusCode).to.equal(400);
-      });
 
-      it('should return HTML', function() {
-        expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      });
-
-      describe('the response body', function() {
-        it('should contain the error message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function() {
-          expect(self.res.text).to.contain(messages.INVALID_USERCODE);
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
         });
       });
 
-    });
+      context('using an invalid user_code', function() {
+        before(function(done) {
+          requestHelper.postForm(self, '/verify', {user_code: invalidUserCode}, true, done);
+        });
 
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
 
-    context('using a valid user_code', function() {
-      beforeEach(setValidUserCode);
-      beforeEach(validateRequest);
+        it('should return HTML', function() {
+          expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
 
-      it('should return a status 200', function() {
-        expect(self.res.statusCode).to.equal(200);
-      });
-
-      it('should return HTML', function() {
-        expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      });
-
-      describe('the response body', function() {
-        it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function() {
-          expect(self.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
+        describe('the response body', function() {
+          it('should contain the error message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function() {
+            expect(self.res.text).to.contain(messages.INVALID_USERCODE);
+          });
         });
       });
 
-      describe('the database', function() {
-        it('should associate the pairing code with the signed-in user');
+      context('using a valid user_code', function() {
+        before(function(done) {
+          requestHelper.postForm(self, '/verify', {user_code: validUserCode}, true, done);
+        });
+
+        it('should return a status 200', function() {
+          expect(self.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function() {
+          expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function() {
+            expect(self.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
+          });
+        });
+
+        describe('the database', function() {
+          it('should associate the pairing code with the signed-in user');
+        });
       });
-    });
 
-    context('using an already verified user_code', function() {
-      //using the previous user code
-      beforeEach(validateRequest);
+      context('using an already verified user_code', function() {
+        //using the previous user code
+        before(function(done) {
+          requestHelper.postForm(self, '/verify', {user_code: validUserCode}, true, done);
+        });
 
-      it('should return a status 400', function() {
-        expect(self.res.statusCode).to.equal(400);
-      });
 
-      it('should return HTML', function() {
-        expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      });
+        it('should return a status 400', function() {
+          expect(self.res.statusCode).to.equal(400);
+        });
 
-      describe('the response body', function() {
-        it('should contain the message OBSOLETE_USERCODE: ' + messages.OBSOLETE_USERCODE, function() {
-          expect(self.res.text).to.contain(messages.OBSOLETE_USERCODE);
+        it('should return HTML', function() {
+          expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the message OBSOLETE_USERCODE: ' + messages.OBSOLETE_USERCODE, function() {
+            expect(self.res.text).to.contain(messages.OBSOLETE_USERCODE);
+          });
         });
       });
     });

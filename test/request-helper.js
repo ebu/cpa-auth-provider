@@ -55,7 +55,26 @@ requestHelper.get = function(context, url, isAuthenticated, done) {
   req.end(function(err, res) {
     context.err = err;
     context.res = res;
-    if (context.res.text) {
+    if (context.res && context.res.text) {
+      context.$ = cheerio.load(context.res.text);
+    }
+    done(err);
+  });
+};
+
+
+//Send a get request and store err, res and dom ($) in context
+requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
+  var req = request.post(url).type('form');
+
+  if (isAuthenticated) {
+    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
+  }
+
+  req.send(body).end(function(err, res) {
+    context.err = err;
+    context.res = res;
+    if (context.res && context.res.text) {
       context.$ = cheerio.load(context.res.text);
     }
     done(err);
