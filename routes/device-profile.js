@@ -5,8 +5,9 @@ var generate = require('../lib/generate');
 var verify = require('../lib/verify');
 var config = require('../config');
 var messages = require('../lib/messages');
+var authHelper = require('../lib/auth-helper');
 
-var registerClient = function(req, res) {
+var registerPairingCode = function(req, res) {
   var clientId = req.body.client_id;
 
   // TODO: validate clientId
@@ -39,7 +40,7 @@ var registerClient = function(req, res) {
       res.send(500);
     });
   });
-}
+};
 
 var requestAccessToken = function(req, res) {
   var clientId = req.body.client_id;
@@ -120,7 +121,7 @@ var routes = function(app, options) {
     // TODO: https://github.com/ebu/cpa-spec/issues/1
     if (req.body.response_type === 'device_code') {
       // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
-      registerClient(req, res);
+      registerPairingCode(req, res);
     }
     else if (!req.body.grant_type) {
       res.json(400, { error: 'invalid_request' });
@@ -144,13 +145,9 @@ var routes = function(app, options) {
 
   };
 
-  app.get('/verify', renderVerificationPage);
+  app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
 
-  app.post('/verify', function(req, res) {
-    // if (!req.user || !req.user.id) {
-    //   res.send(401); // Unauthorized
-    //   return;
-    // }
+  app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
 
     if (req.headers['content-type'] === 'application/x-www-form-urlencoded' && req.body.user_code) {
 

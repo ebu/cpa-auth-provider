@@ -8,33 +8,40 @@ describe('GET /verify', function() {
 
   var self = this;
 
-  beforeEach(function(done) {
-    request
-      .get('/verify')
-      .end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        done(err);
-      });
-  });
 
   context('When requesting the form to validate a user code', function() {
+    context('and the user is authenticated', function() {
 
-    it('should return a status 200', function() {
-      expect(self.res.statusCode).to.equal(200);
+      before(function(done) {
+        requestHelper.get(self, '/verify', false, done);
+      });
+
+      it('should reply a status 401', function() {
+        expect(self.res.statusCode).to.equal(401);
+      });
+
     });
 
-    it('should return HTML', function() {
-      expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-    });
+    context('and the user is authenticated', function() {
+      before(function(done) {
+        requestHelper.get(self, '/verify', true, done);
+      });
 
-    describe('the response body', function() {
-      it('should display an input with name', function() {
-        var $ = cheerio.load(self.res.text);
-        expect($('input[name="user_code"]').length).to.equal(1);
+      it('should return a status 200', function() {
+        expect(self.res.statusCode).to.equal(200);
+      });
+
+      it('should return HTML', function() {
+        expect(self.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      });
+
+      describe('the response body', function() {
+        it('should display an input with name', function() {
+          var $ = cheerio.load(self.res.text);
+          expect($('input[name="user_code"]').length).to.equal(1);
+        });
       });
     });
-
   });
 });
 
