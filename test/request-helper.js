@@ -44,4 +44,22 @@ requestHelper.requestNewUserCode = function(done) {
   });
 };
 
+//Send a get request and store err, res and dom ($) in context
+requestHelper.get = function(context, url, isAuthenticated, done) {
+  var req = request.get(url);
+
+  if (isAuthenticated) {
+    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
+  }
+
+  req.end(function(err, res) {
+    context.err = err;
+    context.res = res;
+    if (context.res.text) {
+      context.$ = cheerio.load(context.res.text);
+    }
+    done(err);
+  });
+};
+
 module.exports = requestHelper;

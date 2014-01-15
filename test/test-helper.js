@@ -22,7 +22,7 @@ global.TEST_AUTHORIZATION_TOKEN = "aASLMD123kms_@#MM$#KM";
 
 var isValidTestRequest = function(req) {
   return process.env.NODE_ENV === 'test'
-    && req.headers.authorization === 'Bearer ' + TEST_AUTHORIZATION_TOKEN;
+    && req.headers.authorization === 'Bearer ' + global.TEST_AUTHORIZATION_TOKEN;
 };
 
 // Replace authentication function to allow testing using a bearer token

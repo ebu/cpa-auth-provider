@@ -1,5 +1,6 @@
 "use strict";
 
+var requestHelper = require('../request-helper');
 var authHelper = require('../../lib/auth-helper');
 
 
@@ -8,20 +9,10 @@ describe('GET /auth', function() {
   var self = this;
 
   before(function(done) {
-    request
-      .get('/auth')
-      .end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        if (self.res.text) {
-          self.$ = cheerio.load(self.res.text);
-        }
-        done(err);
-      });
+    requestHelper.get(self, '/auth', false, done);
   });
 
   context('When requesting the list of identity provider', function() {
-
     it('should return a status 200', function() {
       expect(self.res.statusCode).to.equal(200);
     });
@@ -31,7 +22,6 @@ describe('GET /auth', function() {
     });
 
     describe('the response body', function() {
-
       it('should display links for every enabled idp', function() {
         var enabled_idp_list = authHelper.getEnabledIdentityProviders();
 
@@ -47,11 +37,8 @@ describe('GET /auth', function() {
       it('should display only enabled idp', function(){
         expect(self.$('a.identity_provider').length).to.equal(0);
       });
-
     });
-
   });
-
 });
 
 
@@ -59,31 +46,11 @@ describe('GET /protected', function() {
 
   var self = this;
 
-
-  var sendRequest = function(done) {
-    request
-      .get('/protected')
-      .end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        done(err);
-      });
-  };
-
-  var sendAuthenticatedRequest = function(done) {
-    request
-      .get('/protected')
-      .set('Authorization', 'Bearer '+ TEST_AUTHORIZATION_TOKEN)
-      .end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        done(err);
-      });
-  };
-
   context('When the user is not authenticated', function() {
 
-    before(sendRequest);
+    before(function(done) {
+      requestHelper.get(self, '/protected', false, done);
+    });
 
     it('should return a status 401', function() {
       expect(self.res.statusCode).to.equal(401);
@@ -92,12 +59,12 @@ describe('GET /protected', function() {
 
   context('When the user is authenticated', function() {
 
-    before(sendAuthenticatedRequest);
+    before(function(done) {
+      requestHelper.get(self, '/protected', true, done);
+    });
 
     it('should return a status 200', function() {
       expect(self.res.statusCode).to.equal(200);
     });
-
   });
-
 });
