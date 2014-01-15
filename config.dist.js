@@ -41,3 +41,5 @@ exports.uris = {
 };
 
 exports.realm = 'CPA';
+
+exports.enableCORS = true;
