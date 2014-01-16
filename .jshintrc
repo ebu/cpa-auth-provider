@@ -1,0 +1,19 @@
+{
+  "node": true,
+  "globals": {
+    /* mocha */
+    "describe": false,
+    "context": false,
+    "it": false,
+    "before": false,
+    "beforeEach": false,
+    "after": false,
+    "afterEach": false,
+    /* chai */
+    "expect": false,
+    /* sinon */
+    "sinon": false,
+    /* supertest */
+    "request": false
+  }
+}

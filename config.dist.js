@@ -1,6 +1,5 @@
 "use strict";
 
-
 exports.identity_providers = {
   //Details : http://passportjs.org/guide/facebook/
   facebook: {
@@ -27,9 +26,13 @@ exports.db = {
   password: '',
   type: '', // mysql | sqlite3 | ...
   database: '',
-  filename: '' // database filename for sqlite
-};
 
+  // Database filename for SQLite
+  filename: '',
+
+  // For debugging, log SQL statements to the console
+  debug: true
+};
 
 exports.uris = {
   registration_client_uri: 'http://vagrant.ebu.io:3000/register',
