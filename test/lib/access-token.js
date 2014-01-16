@@ -30,7 +30,7 @@ var resetDatabase = function(done) {
 
 var createPairingCode = function(attributes, done) {
   var data = {
-    ClientId:         attributes.clientId,
+    client_id:        attributes.clientId,
     device_code:      '8ecf4b2a0df2df7fd69df128e0ac4fcc',
     user_code:        '0a264',
     verification_uri: 'http://www.example.com/verify',
@@ -308,7 +308,7 @@ describe("POST /token", function() {
               });
 
               it("should be associated with the correct client device", function() {
-                expect(this.accessTokens[0].ClientId).to.equal(101);
+                expect(this.accessTokens[0].client_id).to.equal(101);
               });
 
               it("should be associated with the correct user");

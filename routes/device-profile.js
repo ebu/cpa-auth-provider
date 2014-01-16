@@ -23,7 +23,7 @@ var registerPairingCode = function(req, res) {
     }
 
     var pairingCode = {
-      ClientId: clientId,
+      client_id: clientId,
       device_code: generate.deviceCode(),
       user_code: generate.userCode(),
       verification_uri: config.uris.verification_uri
@@ -63,7 +63,7 @@ var requestAccessToken = function(req, res) {
   }
 
   db.PairingCode
-    .find({ where: { ClientId: clientId, device_code: deviceCode } })
+    .find({ where: { client_id: clientId, device_code: deviceCode } })
     .success(function(pairingCode) {
       if (!pairingCode) {
         res.json(400, { error: 'invalid_client' });
@@ -77,10 +77,10 @@ var requestAccessToken = function(req, res) {
 
       db.sequelize.transaction(function(transaction) {
         var accessToken = {
-          token:             generate.accessToken(),
-          UserId:            pairingCode.UserId,
-          ClientId:          pairingCode.ClientId,
-          ServiceProviderId: pairingCode.ServiceProviderId
+          token:               generate.accessToken(),
+          user_id:             pairingCode.user_id,
+          client_id:           pairingCode.client_id,
+          service_provider_id: pairingCode.service_provider_id
         };
 
         db.ServiceAccessToken
@@ -162,7 +162,7 @@ var routes = function(app, options) {
             res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
           } else {
             var attributes = {
-              UserId: 1234, // TODO: req.user.id
+              user_id: 1234, // TODO: req.user.id
               verified: true
             };
 
