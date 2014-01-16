@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 module.exports = function(sequelize, DataTypes) {
 
   var Client = sequelize.define('Client', {
@@ -25,8 +23,8 @@ module.exports = function(sequelize, DataTypes) {
     ip: DataTypes.STRING
 
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at',
+    underscored: true,
+
     associate: function(models) {
       Client.hasMany(models.RegistrationAccessToken);
       Client.hasMany(models.PairingCode);
@@ -35,5 +33,4 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   return Client;
-
 };
