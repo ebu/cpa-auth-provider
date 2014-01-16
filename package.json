@@ -9,15 +9,14 @@
   "dependencies": {
     "express": "3.4.6",
     "jade": "~0.35.0",
-    "passport-facebook": "~1.0.2",
     "passport": "~0.1.17",
+    "passport-facebook": "~1.0.2",
+    "passport-github": "~0.1.5",
     "ejs": "~0.8.5",
     "sequelize": "~2.0.0-beta.2",
     "mysql": "~2.0.0-rc2",
     "lodash": "~2.4.1",
-    "optimist": "git+https://github.com/chrisn/node-optimist.git",
-    "passport-github": "~0.1.5",
-    "prompt": "~0.2.12"
+    "optimist": "git+https://github.com/chrisn/node-optimist.git"
   },
   "devDependencies": {
     "supertest": "~0.8.2",
