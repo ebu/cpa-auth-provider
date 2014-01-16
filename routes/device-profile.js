@@ -106,7 +106,7 @@ var requestAccessToken = function(req, res) {
           });
       });
     });
-}
+};
 
 var routes = function(app, options) {
 
@@ -179,6 +179,6 @@ var routes = function(app, options) {
       res.send(400);
     }
   });
-}
+};
 
 module.exports = routes;
