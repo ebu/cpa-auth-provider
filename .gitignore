@@ -1,4 +1,8 @@
 node_modules/*
 .nodemonignore
 
-config.js
+npm-debug.log
+
+config.local.js
+
+data/test.sqlite

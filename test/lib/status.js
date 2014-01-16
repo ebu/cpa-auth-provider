@@ -19,8 +19,8 @@ describe('GET /', function() {
     expect(self.err).to.equal(null);
   });
 
-  it('respond with something', function() {
-    expect(self.res.statusCode).to.equal(200);
+  it('respond with a redirection', function() {
+    expect(self.res.statusCode).to.equal(302);
   });
 });
 
