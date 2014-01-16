@@ -11,7 +11,8 @@ var sequelize = new Sequelize(config.db.database, config.db.user, config.db.pass
   dialect: config.db.type,
   host:    config.db.host,
   port:    config.db.port,
-  storage: config.db.filename // database filename for sqlite
+  storage: config.db.filename,
+  logging: config.db.debug ? console.log : false
 });
 
 fs.readdirSync(__dirname).filter(function(file) {

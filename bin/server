@@ -40,5 +40,5 @@ app.set('port', argv.port || process.env.PORT || DEFAULT_PORT);
 var server = http.createServer(app);
 
 server.listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + app.get('port'));
+  app.get('logger').info('Express server listening on port ' + app.get('port'));
 });

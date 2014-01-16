@@ -8,7 +8,11 @@ var db = require('../models');
 
 module.exports = function (app, options) {
   app.get('/', function(req, res) {
-    res.render('index.ejs');
+    if(req.isAuthenticated()){
+      res.redirect('/verify');
+    } else {
+      res.redirect('/auth');
+    }
   });
 };
 
