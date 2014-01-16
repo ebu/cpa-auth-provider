@@ -246,7 +246,7 @@ describe("POST /token", function() {
 
           it("should return a Pragma: no-cache header", function() {
             expect(this.res.headers).to.have.property('pragma');
-            expect(this.res.headers['pragma']).to.equal('no-cache');
+            expect(this.res.headers.pragma).to.equal('no-cache');
           });
 
           it("should return a JSON object", function() {
@@ -284,17 +284,19 @@ describe("POST /token", function() {
                   done();
                 },
                 function(error) {
-                  done(error)
+                  done(error);
                 });
             });
 
             it("should delete the pairing code", function() {
+              // jshint expr: true
               expect(this.pairingCodes).to.be.ok;
               expect(this.pairingCodes).to.be.an('array');
               expect(this.pairingCodes.length).to.equal(0);
             });
 
             it("should contain a new access token", function() {
+              // jshint expr: true
               expect(this.accessTokens).to.be.ok;
               expect(this.accessTokens).to.be.an('array');
               expect(this.accessTokens.length).to.equal(1);
