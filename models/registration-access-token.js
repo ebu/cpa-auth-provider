@@ -2,8 +2,6 @@
 
 module.exports = function(sequelize, DataTypes) {
 
-
-
   var RegistrationAccessToken = sequelize.define('RegistrationAccessToken', {
     token: {
       type: DataTypes.STRING,
@@ -11,13 +9,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     scope: DataTypes.STRING
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at',
+    underscored: true,
+
     associate: function(models) {
       RegistrationAccessToken.belongsTo(models.Client);
     }
   });
 
   return RegistrationAccessToken;
-
 };

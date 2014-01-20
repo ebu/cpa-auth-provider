@@ -2,13 +2,11 @@
 
 module.exports = function(sequelize, DataTypes) {
 
-
-
   var ServiceAccessToken = sequelize.define('ServiceAccessToken', {
     token: { type: DataTypes.STRING, primaryKey: true }
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at',
+    underscored: true,
+
     associate: function(models) {
       ServiceAccessToken.belongsTo(models.Client);
       ServiceAccessToken.belongsTo(models.ServiceProvider);
@@ -17,5 +15,4 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   return ServiceAccessToken;
-
 };

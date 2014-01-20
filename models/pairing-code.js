@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
     verification_uri: DataTypes.STRING,
     verified: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at',
+    underscored: true,
+
     associate: function(models) {
       PairingCode.belongsTo(models.Client);
       PairingCode.belongsTo(models.User);
@@ -18,9 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-
   PairingCode.scopeValues = PairingCode;
 
   return PairingCode;
-
 };

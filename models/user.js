@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 module.exports = function(sequelize, DataTypes) {
 
   var User = sequelize.define('User', {
@@ -9,8 +7,8 @@ module.exports = function(sequelize, DataTypes) {
     provider_uid: DataTypes.STRING,
     enable_sso: DataTypes.BOOLEAN
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at',
+    underscored: true,
+
     associate: function(models) {
       User.hasMany(models.ServiceAccessToken);
       User.belongsTo(models.IdentityProvider);
@@ -18,5 +16,4 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   return User;
-
 };
