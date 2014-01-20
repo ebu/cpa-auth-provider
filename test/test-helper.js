@@ -35,7 +35,7 @@ authHelper.ensureAuthenticated = function(req, res, next) {
     if (isValidTestRequest(req)) {
       db.User.findAll()
         .success(function(users) {
-          req.user = (users.length >= 0) ? users[0] : null;
+          req.user = (users.length > 0) ? users[0] : null;
           next();
         });
     }
