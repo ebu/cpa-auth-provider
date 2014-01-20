@@ -24,6 +24,7 @@ var registerPairingCode = function(req, res) {
 
     var pairingCode = {
       client_id: clientId,
+      service_provider_id: null, // TODO: assign correct service provider here
       device_code: generate.deviceCode(),
       user_code: generate.userCode(),
       verification_uri: config.uris.verification_uri
@@ -142,13 +143,11 @@ var routes = function(app, options) {
     } else {
       res.render('verify.ejs', { 'values': req.body, 'error': null });
     }
-
   };
 
   app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
 
   app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
-
     if (req.headers['content-type'] === 'application/x-www-form-urlencoded' && req.body.user_code) {
 
       var postedUserCode = req.body.user_code;
@@ -162,7 +161,7 @@ var routes = function(app, options) {
             res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
           } else {
             var attributes = {
-              user_id: 1234, // TODO: req.user.id
+              user_id:  req.user.id,
               verified: true
             };
 
