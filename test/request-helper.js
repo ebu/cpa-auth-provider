@@ -45,11 +45,22 @@ requestHelper.requestNewUserCode = function(done) {
 };
 
 //Send a get request and store err, res and dom ($) in context
-requestHelper.get = function(context, url, isAuthenticated, done) {
+requestHelper.get = function(context, url, isAuthorized, done) {
   var req = request.get(url);
 
-  if (isAuthenticated) {
-    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
+  if (isAuthorized) {
+    requestHelper.getWithOptions(context, url, {'authorization': global.TEST_AUTHORIZATION_TOKEN}, done);
+  } else {
+    requestHelper.getWithOptions(context, url, {}, done);
+  }
+};
+
+//Send a get request and store err, res and dom ($) in context
+requestHelper.getWithOptions = function(context, url, options, done) {
+  var req = request.get(url);
+
+  if (options.authorization) {
+    req.set('Authorization', 'Bearer '+ options.authorization);
   }
 
   req.end(function(err, res) {
@@ -63,9 +74,26 @@ requestHelper.get = function(context, url, isAuthenticated, done) {
 };
 
 
-//Send a get request and store err, res and dom ($) in context
 requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
   var req = request.post(url).type('form');
+
+  if (isAuthenticated) {
+    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
+  }
+
+  req.send(body).end(function(err, res) {
+    context.err = err;
+    context.res = res;
+    if (context.res && context.res.text) {
+      context.$ = cheerio.load(context.res.text);
+    }
+    done(err);
+  });
+};
+
+
+requestHelper.postJSON = function(context, url, body, isAuthenticated, done) {
+  var req = request.post(url).type('json');
 
   if (isAuthenticated) {
     req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);

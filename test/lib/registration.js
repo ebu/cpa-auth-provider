@@ -4,6 +4,7 @@
 // Test for the dynamic registration end point
 
 var lodash = require('lodash');
+var requestHelper = require('../request-helper');
 
 var validAccessToken = "";
 var validClientId = "";
@@ -21,27 +22,13 @@ describe('POST /register', function() {
 
   var self = this;
 
-  var sendPostRequest = function(params, done){
-    request.post('/register')
-      .send(params.body)
-      .end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        if (err) {
-          done(err);
-        } else {
-          done();
-        }
-      });
-  };
-
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
     context('while providing a wrong Content-Type', function() {
 
       before(function(done) {
-        sendPostRequest({'body': JSON.stringify(correctRegistrationRequest)}, done);
+        requestHelper.postForm(self, '/register', JSON.stringify(correctRegistrationRequest), false, done);
       });
 
       it('should return status 400', function() {
@@ -53,7 +40,7 @@ describe('POST /register', function() {
     context('when providing a correct request', function() {
 
       before(function(done) {
-        sendPostRequest({'body': correctRegistrationRequest}, done);
+        requestHelper.postJSON(self, '/register', correctRegistrationRequest, false, done);
       });
 
 
@@ -79,22 +66,13 @@ describe('GET /register with client_id (in path or as GET parameter)', function(
   var self = this;
 
   var sendReadRequest = function(params, done) {
-
-      var req = (params.type !== 'GET')? request.get('/register/' + params.client_id) : request.get('/register?client_id=' + params.client_id);
+      var req_url = (params.type !== 'GET')? '/register/' + params.client_id : '/register?client_id=' + params.client_id;
 
       if(params.authorization) {
-        req.set('Authorization', 'Bearer ' + params.authorization);
+        requestHelper.getWithOptions(self, req_url, {'authorization': params.authorization}, done);
+      } else {
+        requestHelper.get(self, req_url, false, done);
       }
-
-      req.end(function(err, res) {
-        self.err = err;
-        self.res = res;
-        if (err) {
-          done(err);
-        } else {
-          done();
-        }
-      });
   };
 
 
