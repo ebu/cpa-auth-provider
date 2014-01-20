@@ -47,4 +47,3 @@ authHelper.ensureAuthenticated = function(req, res, next) {
 var app = require('../lib/app');
 var supertest = require("supertest");
 global.request = supertest(app);
-

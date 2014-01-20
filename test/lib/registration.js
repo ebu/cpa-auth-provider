@@ -4,6 +4,7 @@
 // Test for the dynamic registration end point
 
 var lodash = require('lodash');
+var requestHelper = require('../request-helper');
 
 var validAccessToken = "";
 var validClientId = "";
@@ -27,17 +28,7 @@ describe('POST /register', function() {
     context('while providing a wrong Content-Type', function() {
 
       before(function(done) {
-        request.post('/register')
-          .send(JSON.stringify(correctRegistrationRequest))
-          .end(function(err, res) {
-            self.err = err;
-            self.res = res;
-            if (err) {
-              done(err);
-            } else {
-              done();
-            }
-          });
+        requestHelper.postForm(self, '/register', JSON.stringify(correctRegistrationRequest), false, done);
       });
 
       it('should return status 400', function() {
@@ -49,17 +40,7 @@ describe('POST /register', function() {
     context('when providing a correct request', function() {
 
       before(function(done) {
-        request.post('/register')
-          .send(correctRegistrationRequest)
-          .end(function(err, res) {
-            self.err = err;
-            self.res = res;
-            if (err) {
-              done(err);
-            } else {
-              done();
-            }
-          });
+        requestHelper.postJSON(self, '/register', correctRegistrationRequest, false, done);
       });
 
 
@@ -83,193 +64,127 @@ describe('GET /register with client_id (in path or as GET parameter)', function(
 
   //Variable used to pass values between sequential tests.
   var self = this;
-  self.test = {};
 
-  //Set of function to define asynchronously variable used in before and beforeEach functions
-  var setInvalidAccessToken = function() { self.test.access_token = invalidAccessToken; };
-  var setValidAccessToken = function() { self.test.access_token = validAccessToken; };
-  var setInvalidClientId = function() { self.test.client_id = invalidClientId; };
-  var setValidClientId = function() { self.test.client_id = validClientId; };
+  var sendReadRequest = function(params, done) {
+      var req_url = (params.type !== 'GET')? '/register/' + params.client_id : '/register?client_id=' + params.client_id;
 
-  //Test set for requests
-  var testRequestWithoutAccessToken = function() {
+      if(params.authorization) {
+        requestHelper.getWithOptions(self, req_url, {'authorization': params.authorization}, done);
+      } else {
+        requestHelper.get(self, req_url, false, done);
+      }
+  };
 
-    context('with an invalid client_id', function() {
-      before(setInvalidClientId);
 
-      it('should return status 401', function() {
-        expect(self.res.statusCode).to.equal(401);
+  var runRegistrationReadTest = function(label, sendRequest) {
+
+    describe('GET ' + label, function() {
+      // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
+
+
+      context('When reading information about a client', function() {
+        context('without access_token', function() {
+          context('with an invalid client_id', function() {
+            before(function(done){
+              sendRequest({'authorization': null, 'client_id': invalidClientId}, done);
+            });
+
+            it('should return status 401', function() {
+              expect(self.res.statusCode).to.equal(401);
+            });
+
+          });
+
+          context('with a valid client_id', function() {
+            before(function(done){
+              sendRequest({'authorization': null, 'client_id': validClientId}, done);
+            });
+
+            it('should return status 401', function() {
+              expect(self.res.statusCode).to.equal(401);
+            });
+
+            it('should not contain an error message in the header', function() {
+              expect(self.res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
+            });
+
+          });
+
+        });
       });
 
-    });
 
-    context('with a valid client_id', function() {//ok
-      before(setValidClientId);
+      context('with an invalid access_token', function() {
+        context('with an invalid client_id', function() {
+          before(function(done){
+            sendRequest({'authorization': invalidAccessToken, 'client_id': invalidClientId}, done);
+          });
 
-      it('should return status 401', function() {
-        expect(self.res.statusCode).to.equal(401);
+
+          it('should return status 401', function() {
+            expect(self.res.statusCode).to.equal(401);
+          });
+        });
+
+        context('with a valid client_id', function() {
+          before(function(done){
+            sendRequest({'authorization': invalidAccessToken, 'client_id': validClientId}, done);
+          });
+
+          it('should return status 401', function() {
+            expect(self.res.statusCode).to.equal(401);
+          });
+
+          it('should contain an error message in the header', function() {
+            expect(self.res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
+          });
+        });
       });
 
-      it('should not contain an error message in the header', function() {
-        expect(self.res.headers['www-authenticate'].indexOf("error=")).to.equal(-1);
+      context('with a valid access_token', function() {
+
+        context('with an invalid client_id', function() {
+          before(function(done){
+            sendRequest({'authorization': validAccessToken, 'client_id': invalidClientId}, done);
+          });
+
+          it('should return status 401', function() {
+            expect(self.res.statusCode).to.equal(401);
+          });
+
+        });
+
+        context('with a valid client_id', function() {
+          before(function(done){
+            sendRequest({'authorization': validAccessToken, 'client_id': validClientId}, done);
+          });
+
+          it('should return status 200', function() {
+            expect(self.res.statusCode).to.equal(200);
+          });
+
+          it('should respond with the client information', function() {
+            expect(self.res.body).to.have.property('client_id');
+            expect(self.res.body.client_id).to.equal(validClientId);
+            expect(self.res.body).to.have.property('registration_access_token');
+            expect(self.res.body).to.have.property('registration_client_uri');
+          });
+
+        });
       });
 
     });
   };
 
-  var testRequestWithAccessToken = function() {
-
-    context('with an invalid access_token', function() {
-
-      before(setInvalidAccessToken);
-
-      context('with an invalid client_id', function() {
-        before(setInvalidClientId);
-
-        it('should return status 401', function() {
-          expect(self.res.statusCode).to.equal(401);
-        });
-      });
-
-      context('with a valid client_id', function() {
-        before(setValidClientId);
-
-        it('should return status 401', function() {
-          expect(self.res.statusCode).to.equal(401);
-        });
-
-        it('should contain an error message in the header', function() {
-          expect(self.res.headers['www-authenticate'].indexOf('error="invalid_token"')).to.not.equal(-1);
-        });
-      });
+  //URI parameters
+  runRegistrationReadTest('/register/:client_id', sendReadRequest);
+  //GET parameters
+  runRegistrationReadTest('/register?client_id=:client_id', function(params, done) {
+      sendReadRequest(lodash.extend(params, {type:'GET'}), done);
     });
 
-    context('with a valid access_token', function() {
-      before(setValidAccessToken);
 
-      context('with an invalid client_id', function() {
-        before(setInvalidClientId);
-
-        it('should return status 401', function() {
-          expect(self.res.statusCode).to.equal(401);
-        });
-
-      });
-
-      context('with a valid client_id', function() {
-        before(setValidClientId);
-
-        it('should return status 200', function() {
-          expect(self.res.statusCode).to.equal(200);
-        });
-
-        it('should respond with the client information', function() {
-          expect(self.res.body).to.have.property('client_id');
-          expect(self.res.body.client_id).to.equal(self.test.client_id);
-          expect(self.res.body).to.have.property('registration_access_token');
-          expect(self.res.body).to.have.property('registration_client_uri');
-        });
-
-      });
-    });
-  };
-
-  describe('GET /register/:client_id', function() {
-    // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
-
-
-    context('When reading information about a client', function() {
-      context('without access_token', function() {
-
-        beforeEach(function(done) {
-          request
-            .get('/register/' + self.test.client_id)
-            .end(function(err, res) {
-              self.err = err;
-              self.res = res;
-              if (err) {
-                done(err);
-              } else {
-                done();
-              }
-            });
-        });
-
-        testRequestWithoutAccessToken();
-      });
-
-      context('with access_token', function() {
-        beforeEach(function(done) {
-          request
-            .get('/register/' + self.test.client_id)
-            .set('Authorization', 'Bearer ' + self.test.access_token)
-            .end(function(err, res) {
-              self.err = err;
-              self.res = res;
-              if (err) {
-                done(err);
-              } else {
-                done();
-              }
-            });
-        });
-
-        testRequestWithAccessToken();
-      });
-
-    });
-  });
-
-
-
-  describe('GET /register?client_id=:client_id', function() {
-    // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
-
-
-    context('When reading information about a client', function() {
-      context('without access_token', function() {
-
-        beforeEach(function(done) {
-          request
-            .get('/register?client_id=' + self.test.client_id)
-            .end(function(err, res) {
-              self.err = err;
-              self.res = res;
-              if (err) {
-                done(err);
-              } else {
-                done();
-              }
-            });
-        });
-
-        testRequestWithoutAccessToken();
-
-      });
-
-      context('with access_token', function() {
-        beforeEach(function(done) {
-          request
-            .get('/register?client_id=' + self.test.client_id)
-            .set('Authorization', 'Bearer ' + self.test.access_token)
-            .end(function(err, res) {
-              self.err = err;
-              self.res = res;
-              if (err) {
-                done(err);
-              } else {
-                done();
-              }
-            });
-        });
-
-        testRequestWithAccessToken();
-      });
-
-    });
-  });
 });
-
 
 
 describe('PUT /register', function() {
