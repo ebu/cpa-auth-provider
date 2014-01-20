@@ -28,7 +28,7 @@ var isValidTestRequest = function(req) {
 var _ensureAuthenticated = authHelper.ensureAuthenticated;
 authHelper.ensureAuthenticated = function(req, res, next) {
     if(isValidTestRequest(req)) {
-        next();
+      next();
     } else {
       _ensureAuthenticated(req, res, next);
     }
