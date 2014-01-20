@@ -8,6 +8,8 @@ global.cheerio = require('cheerio');
 var sinonChai = require("sinon-chai");
 global.chai.use(sinonChai);
 
+var db = require('../models');
+
 process.env.NODE_ENV = 'test';
 
 /**
@@ -25,11 +27,19 @@ var isValidTestRequest = function(req) {
 };
 
 // Replace authentication function to allow testing using a bearer token
+// TODO: Can we use a sinon.stub to do this?
+
 var _ensureAuthenticated = authHelper.ensureAuthenticated;
+
 authHelper.ensureAuthenticated = function(req, res, next) {
-    if(isValidTestRequest(req)) {
-        next();
-    } else {
+    if (isValidTestRequest(req)) {
+      db.User.findAll()
+        .success(function(users) {
+          req.user = (users.length >= 0) ? users[0] : null;
+          next();
+        });
+    }
+    else {
       _ensureAuthenticated(req, res, next);
     }
 };
