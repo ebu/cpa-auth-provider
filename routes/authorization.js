@@ -16,8 +16,20 @@ module.exports = function(app, options) {
       return;
     }
 
+    var serviceProviderId = req.body.service_provider_id;
+
+    if (!accessToken) {
+      res.json(400, { error: 'invalid_request' });
+      return;
+    }
+
+    var query = {
+      token: accessToken,
+      service_provider_id: serviceProviderId
+    };
+
     db.ServiceAccessToken
-      .find({ where: { token: accessToken } })
+      .find({ where: query })
       .then(function(accessToken) {
         if (accessToken) {
           res.send(200);

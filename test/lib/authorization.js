@@ -21,9 +21,9 @@ var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM ServiceAccessTokens').then(function() {
     return db.ServiceAccessToken.create({
       token: 'aed201ffb3362de42700a293bdebf694',
-      ServiceProviderId: 1,
-      ClientId: 1,
-      UserId: 1
+      service_provider_id: 1,
+      client_id: 1,
+      user_id: 1
     });
   })
   .then(function() {
@@ -48,7 +48,10 @@ describe("Access token verification", function() {
     before(function(done) {
       var request = {
         path: '/authorized',
-        data: { token: 'aed201ffb3362de42700a293bdebf694' }
+        data: {
+          token: 'aed201ffb3362de42700a293bdebf694',
+          service_provider_id: 1
+        }
       };
 
       sendPostRequest(this, request, done);
@@ -63,7 +66,10 @@ describe("Access token verification", function() {
     before(function(done) {
       var request = {
         path: '/authorized',
-        data: { token: 'unknown' }
+        data: {
+          token: 'unknown',
+          service_provider_id: 1
+        }
       };
 
       sendPostRequest(this, request, done);
@@ -84,7 +90,14 @@ describe("Access token verification", function() {
 
   context("with missing access token", function() {
     before(function(done) {
-      sendPostRequest(this, { path: '/authorized' }, done);
+      var request = {
+        path: '/authorized',
+        data: {
+          service_provider_id: 1
+        }
+      };
+
+      sendPostRequest(this, request, done);
     });
 
     it("should return status 400", function() {
@@ -93,6 +106,28 @@ describe("Access token verification", function() {
 
     it("should return an 'invalid_request' error", function() {
       verifyError(this.res, 'invalid_request');
+    });
+  });
+
+  context("with invalid service provider id", function() {
+    before(function(done) {
+      var request = {
+        path: '/authorized',
+        data: {
+          token: 'aed201ffb3362de42700a293bdebf694',
+          service_provider_id: 2
+        }
+      };
+
+      sendPostRequest(this, request, done);
+    });
+
+    it("should return status 401", function() {
+      expect(this.res.statusCode).to.equal(401);
+    });
+
+    it("should return an 'unauthorized' error", function() {
+      verifyError(this.res, 'unauthorized');
     });
   });
 });
