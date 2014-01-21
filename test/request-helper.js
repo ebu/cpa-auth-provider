@@ -1,7 +1,8 @@
 "use strict";
 
-var requestHelper = {};
+var cheerio = require('cheerio');
 
+var requestHelper = {};
 
 requestHelper.registerNewClientId = function(done) {
   var body = {

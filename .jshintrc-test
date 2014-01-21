@@ -11,8 +11,6 @@
     "afterEach": false,
     /* chai */
     "expect": false,
-    /* cheerio */
-    "cheerio": false,
     /* sinon */
     "sinon": false,
     /* supertest */
