@@ -12,12 +12,18 @@ describe('GET /', function() {
     sendRequest(this, '/', done);
   });
 
-  it("should have no error", function() {
-    expect(this.err).to.equal(null);
+  context('with a signed in user', function() {
+    it('should redirect to /auth', function() {
+      expect(this.res.statusCode).to.equal(302);
+      // TODO: verify redirect
+    });
   });
 
-  it('respond with a redirection', function() {
-    expect(this.res.statusCode).to.equal(302);
+  context('with no signed in user', function() {
+    it('should redirect to /verify', function() {
+      expect(this.res.statusCode).to.equal(302);
+      // TODO: verify redirect
+    });
   });
 });
 
