@@ -1,6 +1,5 @@
 "use strict";
 
-
 // Test for the dynamic registration end point
 
 var lodash = require('lodash');
@@ -11,7 +10,6 @@ var validClientId = "";
 var invalidClientId = "@&-1";
 var invalidAccessToken = "12345";
 
-
 describe('POST /register', function() {
 
   var correctRegistrationRequest = {
@@ -20,41 +18,35 @@ describe('POST /register', function() {
     software_version: '0.0.1'
   };
 
-  var self = this;
-
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
     context('while providing a wrong Content-Type', function() {
-
       before(function(done) {
-        requestHelper.postForm(self, '/register', JSON.stringify(correctRegistrationRequest), false, done);
+        requestHelper.postForm(this, '/register', JSON.stringify(correctRegistrationRequest), false, done);
       });
 
       it('should return status 400', function() {
-        expect(self.res.statusCode).to.equal(400);
+        expect(this.res.statusCode).to.equal(400);
       });
     });
 
-
     context('when providing a correct request', function() {
-
       before(function(done) {
-        requestHelper.postJSON(self, '/register', correctRegistrationRequest, false, done);
+        requestHelper.postJSON(this, '/register', correctRegistrationRequest, false, done);
       });
 
-
       it('should return status 201', function() {
-        expect(self.res.statusCode).to.equal(201);
+        expect(this.res.statusCode).to.equal(201);
       });
 
       it('should respond with complete client information', function() {
-        expect(self.res.body).to.have.property('client_id');
-        expect(self.res.body).to.have.property('registration_access_token');
-        expect(self.res.body).to.have.property('registration_client_uri');
+        expect(this.res.body).to.have.property('client_id');
+        expect(this.res.body).to.have.property('registration_access_token');
+        expect(this.res.body).to.have.property('registration_client_uri');
 
-        validAccessToken = self.res.body.registration_access_token;
-        validClientId = self.res.body.client_id;
+        validAccessToken = this.res.body.registration_access_token;
+        validClientId = this.res.body.client_id;
       });
     });
   });
@@ -62,7 +54,7 @@ describe('POST /register', function() {
 
 describe('GET /register with client_id (in path or as GET parameter)', function() {
 
-  //Variable used to pass values between sequential tests.
+  // Variable used to pass values between sequential tests.
   var self = this;
 
   var sendReadRequest = function(params, done) {
@@ -75,12 +67,10 @@ describe('GET /register with client_id (in path or as GET parameter)', function(
       }
   };
 
-
   var runRegistrationReadTest = function(label, sendRequest) {
 
     describe('GET ' + label, function() {
       // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
-
 
       context('When reading information about a client', function() {
         context('without access_token', function() {
@@ -182,62 +172,42 @@ describe('GET /register with client_id (in path or as GET parameter)', function(
   runRegistrationReadTest('/register?client_id=:client_id', function(params, done) {
       sendReadRequest(lodash.extend(params, {type:'GET'}), done);
     });
-
-
 });
 
+var sendPutRequest = function(context, path, done) {
+  request.put('/register').end(function(err, res) {
+    context.res = res;
+    done(err);
+  });
+};
 
 describe('PUT /register', function() {
-
-  var self = this;
-
   context("When updating configuration information about a client", function() {
-
     before(function(done) {
-      request
-        .put('/register')
-        .end(function(err, res) {
-          self.err = err;
-          self.res = res;
-          if (err) {
-            done(err);
-          } else {
-            done();
-          }
-        });
+      sendPutRequest(this, '/register', done);
     });
 
     it('should reply 501 (Unimplemented)', function() {
-      expect(self.res.statusCode).to.equal(501);
+      expect(this.res.statusCode).to.equal(501);
     });
   });
-
 });
 
-
+var sendDeleteRequest = function(context, path, done) {
+  request.del('/register').end(function(err, res) {
+    context.res = res;
+    done(err);
+  });
+};
 
 describe('DELETE /register', function() {
-
-  var self = this;
-
   context('When deleting configuration information about a client', function() {
-
     before(function(done) {
-      request
-        .del('/register')
-        .end(function(err, res) {
-          self.err = err;
-          self.res = res;
-          if (err) {
-            done(err);
-          } else {
-            done();
-          }
-        });
+      sendDeleteRequest(this, '/register', done);
     });
 
     it('should reply 501 (Unimplemented)', function() {
-      expect(self.res.statusCode).to.equal(501);
+      expect(this.res.statusCode).to.equal(501);
     });
   });
 });
