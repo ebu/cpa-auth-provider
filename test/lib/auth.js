@@ -15,6 +15,7 @@ describe('GET /auth', function() {
 
     it('should return HTML', function() {
       expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(this.res.text).to.match(/^<!DOCTYPE html>/);
     });
 
     describe('the response body', function() {
