@@ -174,17 +174,10 @@ describe('GET /register with client_id (in path or as GET parameter)', function(
     });
 });
 
-var sendPutRequest = function(context, path, done) {
-  request.put('/register').end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
-
 describe('PUT /register', function() {
   context("When updating configuration information about a client", function() {
     before(function(done) {
-      sendPutRequest(this, '/register', done);
+      requestHelper.sendPutRequest(this, '/register', done);
     });
 
     it('should reply 501 (Unimplemented)', function() {
@@ -193,17 +186,10 @@ describe('PUT /register', function() {
   });
 });
 
-var sendDeleteRequest = function(context, path, done) {
-  request.del('/register').end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
-
 describe('DELETE /register', function() {
   context('When deleting configuration information about a client', function() {
     before(function(done) {
-      sendDeleteRequest(this, '/register', done);
+      requestHelper.sendDeleteRequest(this, '/register', done);
     });
 
     it('should reply 501 (Unimplemented)', function() {
