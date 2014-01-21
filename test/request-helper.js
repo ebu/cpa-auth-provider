@@ -122,4 +122,11 @@ requestHelper.sendDeleteRequest = function(context, path, done) {
   });
 };
 
+requestHelper.sendRequest = function(context, path, done) {
+  request.get(path).end(function(err, res) {
+    context.res = res;
+    done(err);
+  });
+};
+
 module.exports = requestHelper;
