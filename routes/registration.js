@@ -7,9 +7,8 @@ var config = require('../config');
 
 module.exports = function (app, options) {
 
-
-// Client Registration Endpoint
-// http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
+  // Client Registration Endpoint
+  // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
 
   app.post('/register', function(req, res) {
 
@@ -35,7 +34,6 @@ module.exports = function (app, options) {
           if (err) {
             res.send(400);
           } else {
-
             var token = {
               token: generate.accessToken(),
               scope: ''
@@ -47,17 +45,14 @@ module.exports = function (app, options) {
               } else {
                 registrationAccessToken.setClient(client);
 
-                var response = {
-                  client_id: client.dataValues.id,
+                res.json(201, {
+                  client_id: client.dataValues.id.toString(),
                   client_secret: client.dataValues.secret,
                   registration_access_token: registrationAccessToken.dataValues.token,
                   registration_client_uri: config.uris.registration_client_uri
-                };
-
-                res.json(201, response);
+                });
               }
             });
-
           }
         });
 
@@ -78,16 +73,14 @@ module.exports = function (app, options) {
           // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
           res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="Unknown or expired token"');
           res.send(401);
-
-        } else {
-
-          var response = {
-            client_id: client.dataValues.id,
+        }
+        else {
+          res.json({
+            client_id: client.dataValues.id.toString(),
             client_secret: client.dataValues.secret,
             registration_access_token: registrationAccessToken.dataValues.token,
             registration_client_uri: config.uris.registration_client_uri
-          };
-          res.json(response);
+          });
         }
       });
 

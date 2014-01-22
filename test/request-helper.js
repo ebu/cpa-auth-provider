@@ -1,7 +1,8 @@
 "use strict";
 
-var requestHelper = {};
+var cheerio = require('cheerio');
 
+var requestHelper = {};
 
 requestHelper.registerNewClientId = function(done) {
   var body = {
@@ -73,7 +74,6 @@ requestHelper.getWithOptions = function(context, url, options, done) {
   });
 };
 
-
 requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
   var req = request.post(url).type('form');
 
@@ -91,7 +91,6 @@ requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
   });
 };
 
-
 requestHelper.postJSON = function(context, url, body, isAuthenticated, done) {
   var req = request.post(url).type('json');
 
@@ -105,6 +104,27 @@ requestHelper.postJSON = function(context, url, body, isAuthenticated, done) {
     if (context.res && context.res.text) {
       context.$ = cheerio.load(context.res.text);
     }
+    done(err);
+  });
+};
+
+requestHelper.sendPutRequest = function(context, path, done) {
+  request.put(path).end(function(err, res) {
+    context.res = res;
+    done(err);
+  });
+};
+
+requestHelper.sendDeleteRequest = function(context, path, done) {
+  request.del(path).end(function(err, res) {
+    context.res = res;
+    done(err);
+  });
+};
+
+requestHelper.sendRequest = function(context, path, done) {
+  request.get(path).end(function(err, res) {
+    context.res = res;
     done(err);
   });
 };

@@ -1,5 +1,7 @@
 "use strict";
 
+var cheerio = require('cheerio');
+
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
 var db       = require('../../models');
