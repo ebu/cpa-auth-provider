@@ -6,6 +6,7 @@ var verify = require('../lib/verify');
 var config = require('../config');
 
 module.exports = function (app, options) {
+  var logger = app.get('logger');
 
   // Client Registration Endpoint
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
@@ -30,6 +31,7 @@ module.exports = function (app, options) {
       db.Client
         .create(client).complete(function(err, client) {
           if (err) {
+            logger.error("Failed to create client:", err);
             res.send(400);
           } else {
             var token = {
@@ -108,5 +110,4 @@ module.exports = function (app, options) {
   app.delete('/register', function(req, res) {
     res.send(501);
   });
-
 };
