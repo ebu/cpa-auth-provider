@@ -40,6 +40,7 @@ module.exports = function (app, options) {
 
             db.RegistrationAccessToken.create(token).complete(function(err, registrationAccessToken) {
               if (err) {
+                logger.error("Failed to create registration access token:", err);
                 res.send(400);
               } else {
                 registrationAccessToken.setClient(client);
