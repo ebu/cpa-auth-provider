@@ -18,7 +18,7 @@ module.exports = function(app, options) {
 
     var serviceProviderId = req.body.service_provider_id;
 
-    if (!accessToken) {
+    if (!serviceProviderId) {
       res.json(400, { error: 'invalid_request' });
       return;
     }

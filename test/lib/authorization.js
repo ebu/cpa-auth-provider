@@ -130,4 +130,25 @@ describe("Access token verification", function() {
       verifyError(this.res, 'unauthorized');
     });
   });
+
+  context("with missing service provider id", function() {
+    before(function(done) {
+      var request = {
+        path: '/authorized',
+        data: {
+          token: 'aed201ffb3362de42700a293bdebf694'
+        }
+      };
+
+      sendPostRequest(this, request, done);
+    });
+
+    it("should return status 400", function() {
+      expect(this.res.statusCode).to.equal(400);
+    });
+
+    it("should return an 'invalid_request' error", function() {
+      verifyError(this.res, 'invalid_request');
+    });
+  });
 });
