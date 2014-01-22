@@ -20,7 +20,6 @@ module.exports = function (app, options) {
       var clientSecret = generate.clientSecret(clientIp);
 
       var client = {
-        id: null,
         secret: clientSecret,
         name: req.body.client_name,
         software_id: req.body.software_id,
