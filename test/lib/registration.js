@@ -95,6 +95,60 @@ describe('POST /register', function() {
           expect(this.res.body.registration_client_uri).to.equal('http://example.com/registration_client_uri');
         });
       });
+
+      describe("the database", function() {
+        before(function(done) {
+          var self = this;
+
+          db.RegistrationAccessToken.findAll().then(function(tokens) {
+            self.tokens = tokens;
+          })
+          .then(function() {
+            return db.Client.findAll();
+          })
+          .then(function(clients) {
+            self.clients = clients;
+            done();
+          },
+          function(error) {
+            done(error);
+          });
+        });
+
+        // jshint expr: true
+        it("should contain a client", function() {
+          expect(this.clients).to.be.ok;
+          expect(this.clients.length).to.equal(1);
+        });
+
+        describe("the client", function() {
+          before(function() { this.client = this.clients[0]; });
+
+          it("should have the correct attributes", function() {
+            expect(this.client.name).to.equal('Test client');
+            expect(this.client.software_id).to.equal('CPA AP Test');
+            expect(this.client.software_version).to.equal('0.0.1');
+          });
+        });
+
+        // jshint expr: true
+        it("should contain a registration access token", function() {
+          expect(this.tokens).to.be.ok;
+          expect(this.tokens.length).to.equal(1);
+        });
+
+        describe("the registration access token", function() {
+          before(function() { this.token = this.tokens[0]; });
+
+          it("should be associated with the correct client", function() {
+            expect(this.token.client_id).to.equal(this.clients[0].id);
+          });
+
+          it("should have valid value", function() {
+            expect(this.token.token).to.match(/^[0-9a-f]{32}$/);
+          });
+        });
+      });
     });
   });
 });
