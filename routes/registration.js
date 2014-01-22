@@ -18,8 +18,6 @@ module.exports = function (app, options) {
 
       var clientSecret = generate.clientSecret(clientIp);
 
-      //TODO: Check mandatory fields.
-
       var client = {
         id: null,
         secret: clientSecret,
