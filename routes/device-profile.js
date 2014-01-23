@@ -9,9 +9,15 @@ var authHelper = require('../lib/auth-helper');
 
 var registerPairingCode = function(req, res) {
   var clientId = req.body.client_id;
+  var serviceProviderName = req.body.service_provider;
 
   // TODO: validate clientId
   if (!clientId) {
+    res.send(400);
+    return;
+  }
+
+  if (!serviceProviderName) {
     res.send(400);
     return;
   }
@@ -22,24 +28,36 @@ var registerPairingCode = function(req, res) {
       return;
     }
 
-    var pairingCode = {
-      client_id: clientId,
-      service_provider_id: null, // TODO: assign correct service provider here
-      device_code: generate.deviceCode(),
-      user_code: generate.userCode(),
-      verification_uri: config.uris.verification_uri
-    };
+    db.ServiceProvider.find({ where: { name: serviceProviderName }})
+      .success(function(serviceProvider) {
+        console.log(serviceProvider);
+        if (!serviceProvider) {
+          res.send(400);
+          return;
+        }
 
-    db.PairingCode.create(pairingCode).then(function() {
-      res.json(200, {
-        device_code: pairingCode.device_code,
-        user_code: pairingCode.user_code,
-        verification_uri: pairingCode.verification_uri
+        var pairingCode = {
+          client_id: clientId,
+          service_provider_id: serviceProvider.id,
+          device_code: generate.deviceCode(),
+          user_code: generate.userCode(),
+          verification_uri: config.uris.verification_uri
+        };
+
+        db.PairingCode.create(pairingCode).then(function() {
+          res.json(200, {
+            device_code: pairingCode.device_code,
+            user_code: pairingCode.user_code,
+            verification_uri: pairingCode.verification_uri
+          });
+        },
+        function(error) {
+         res.send(500);
+        });
       });
-    },
-    function(error) {
-      res.send(500);
-    });
+  },
+  function(error) {
+    res.send(500);
   });
 };
 

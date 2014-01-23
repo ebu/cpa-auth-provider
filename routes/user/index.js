@@ -10,7 +10,7 @@ module.exports = function (app, options) {
     authHelper.ensureAuthenticated,
     function(req, res) {
       db.ServiceAccessToken
-        .findAll()
+        .findAll({include: [db.ServiceProvider]})
         .complete(function(err, tokens){
         if(err) {
           res.send(500);
