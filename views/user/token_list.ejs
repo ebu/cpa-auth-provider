@@ -1,0 +1,20 @@
+<% include ../layout/head %>
+
+<h1>Tokens</h1>
+<table border="1" cellPadding="5">
+  <tr>
+    <th>Token</th>
+    <th>Service Provider</th>
+    <th>UserId</th>
+  </tr>
+  <% for(var i=0; i<tokens.length; i++) {%>
+  <tr>
+    <td><%= tokens[i].token %></td>
+    <td><%= tokens[i].service_provider_id %></td>
+    <td><%= tokens[i].user_id || 'stand_alone' %></td>
+  </tr>
+
+  <% } %>
+</table>
+
+<% include ../layout/foot %>
