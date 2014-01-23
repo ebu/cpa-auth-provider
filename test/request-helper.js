@@ -74,10 +74,14 @@ requestHelper.getWithOptions = function(context, url, options, done) {
   });
 };
 
-requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
-  var req = request.post(url).type('form');
+requestHelper.post = function(context, url, body, options, done) {
+  var req = request.post(url);
 
-  if (isAuthenticated) {
+  if(options.type) {
+    req.type(options.type);
+  }
+
+  if (options.isAuthenticated) {
     req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
   }
 
@@ -91,21 +95,12 @@ requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
   });
 };
 
+requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
+  this.post(context, url, body, {type:'form', isAuthenticated:isAuthenticated}, done);
+};
+
 requestHelper.postJSON = function(context, url, body, isAuthenticated, done) {
-  var req = request.post(url).type('json');
-
-  if (isAuthenticated) {
-    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
-  }
-
-  req.send(body).end(function(err, res) {
-    context.err = err;
-    context.res = res;
-    if (context.res && context.res.text) {
-      context.$ = cheerio.load(context.res.text);
-    }
-    done(err);
-  });
+  this.post(context, url, body, {type:'json', isAuthenticated:isAuthenticated}, done);
 };
 
 requestHelper.sendPutRequest = function(context, path, done) {
@@ -128,5 +123,4 @@ requestHelper.sendRequest = function(context, path, done) {
     done(err);
   });
 };
-
 module.exports = requestHelper;

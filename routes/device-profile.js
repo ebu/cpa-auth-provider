@@ -43,25 +43,49 @@ var registerPairingCode = function(req, res) {
   });
 };
 
-var requestAccessToken = function(req, res) {
-  var clientId = req.body.client_id;
+var requestStandAloneAccessToken = function(res, clientId, clientSecret, serviceProvider, scope) {
+  db.ServiceProvider.find({ where: {name: serviceProvider}})
+    .then(function(serviceProvider) {
+      if (!serviceProvider) {
+        // SPEC : define correct error message
+        res.json(400, { error: 'invalid_request' });
+        return;
+      }
+      db.sequelize.transaction(function(transaction) {
+        var accessToken = {
+          token:               generate.accessToken(),
+          user_id:             null,
+          client_id:           clientId,
+          service_provider_id: serviceProvider.id
+        };
 
-  // TODO: validate clientId
-  if (!clientId) {
-    res.json(400, { error: 'invalid_request' });
-    return;
-  }
+        // TODO: Handle duplicated tokens
+        db.ServiceAccessToken
+          .create(accessToken)
+          .then(function() {
+            return transaction.commit();
+          })
+          .then(function() {
+            res.set('Cache-Control', 'no-store');
+            res.set('Pragma', 'no-cache');
+            res.json({
+              token:      accessToken.token,
+              token_type: 'bearer'
+            });
+          },
+          function(error) {
+            transaction.rollback().complete(function(err) {
+              console.log(error);
+              res.send(500);
+            });
+          });
+      });
+    }, function(err){
+      res.send(500);
+    });
+};
 
-  // TODO: RFC6749 section 4.1.3 describes the 'code' parameter as "The
-  // authorization code received from the authorization server." Assume this
-  // is the device_code from draft-recordon-oauth-v2-device-00 section 1.4
-
-  var deviceCode = req.body.code;
-
-  if (!deviceCode) {
-    res.json(400, { error: 'invalid_request' });
-    return;
-  }
+var validateDeviceCode = function(res, clientId, deviceCode) {
 
   db.PairingCode
     .find({ where: { client_id: clientId, device_code: deviceCode } })
@@ -107,6 +131,52 @@ var requestAccessToken = function(req, res) {
           });
       });
     });
+};
+
+var requestAccessToken = function(req, res) {
+  var clientId = req.body.client_id;
+  var clientSecret = req.body.client_secret;
+  var serviceProvider = req.body.service_provider;
+  var scope = req.body.scope;
+
+
+  // TODO: validate clientId
+  if (!clientId) {
+    res.json(400, { error: 'invalid_request' });
+    return;
+  }
+
+
+  //Stand-alone mode
+  if(clientSecret) {
+    verify.clientSecret(clientId, clientSecret, function(err, client) {
+      if(err || !client) {
+        res.json(400, {error: 'invalid_client'});
+        return;
+      }
+
+      if(!serviceProvider) {
+        res.json(400, { error: 'invalid_request' });
+        return;
+      }
+
+      requestStandAloneAccessToken(res, clientId, clientSecret, serviceProvider, scope);
+    });
+  } else {
+
+    // TODO: RFC6749 section 4.1.3 describes the 'code' parameter as "The
+    // authorization code received from the authorization server." Assume this
+    // is the device_code from draft-recordon-oauth-v2-device-00 section 1.4
+
+    var deviceCode = req.body.code;
+
+    if (!deviceCode) {
+      res.json(400, { error: 'invalid_request' });
+      return;
+    }
+
+    validateDeviceCode(res, clientId, deviceCode);
+  }
 };
 
 var routes = function(app, options) {
