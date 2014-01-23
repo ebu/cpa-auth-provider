@@ -31,6 +31,15 @@ db.sequelize
       console.log('An error occurred while create the table.');
     } else {
       console.log('Synchronization done.');
+
+      if(process.env.NODE_ENV === 'development') {
+        db.ServiceProvider
+          .bulkCreate([{id: 1, name: 'BBC1'}, {id: 2, name: 'BBC2'}])
+          .success(function(result) {
+            console.log('Database populated');
+          });
+      }
+
     }
   });
 
