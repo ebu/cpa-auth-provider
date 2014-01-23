@@ -30,7 +30,7 @@ var registerPairingCode = function(req, res) {
 
     db.ServiceProvider.find({ where: { name: serviceProviderName }})
       .success(function(serviceProvider) {
-        console.log(serviceProvider);
+
         if (!serviceProvider) {
           res.send(400);
           return;
@@ -156,7 +156,6 @@ var requestAccessToken = function(req, res) {
   var clientSecret = req.body.client_secret;
   var serviceProvider = req.body.service_provider;
   var scope = req.body.scope;
-
 
   // TODO: validate clientId
   if (!clientId) {
