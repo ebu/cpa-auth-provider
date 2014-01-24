@@ -36,15 +36,14 @@ module.exports = function(app) {
           } else {
             var token = {
               token: generate.accessToken(),
-              scope: ''
+              scope: '',
+              client_id: client.id
             };
 
             db.RegistrationAccessToken.create(token).complete(function(err, registrationAccessToken) {
               if (err) {
                 res.send(400);
               } else {
-                registrationAccessToken.setClient(client);
-
                 res.json(201, {
                   client_id: client.dataValues.id.toString(),
                   client_secret: client.dataValues.secret,
