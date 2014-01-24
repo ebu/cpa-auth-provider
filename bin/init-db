@@ -5,7 +5,7 @@
 /**
  * Script to initialize database schemas
  *
- * Usage: $ NODE_ENV=[DEVELOPMENT|TEST] bin/init-db
+ * Usage: $ NODE_ENV=[development|test] bin/init-db
  */
 
 switch(process.env.NODE_ENV) {
@@ -18,8 +18,9 @@ switch(process.env.NODE_ENV) {
     break;
 
   default:
-    console.error('Unknown environment\r\nUsage: NODE_ENV=[DEVELOPMENT|TEST] bin/init-db\r\nExiting...');
+    console.error('Unknown environment\r\nUsage: NODE_ENV=[development|test] bin/init-db\r\nExiting...');
     process.exit(1);
+    break;
 }
 
 var db = require('../models');
