@@ -5,7 +5,7 @@ var generate = require('../lib/generate');
 var verify = require('../lib/verify');
 var config = require('../config');
 
-module.exports = function (app, options) {
+module.exports = function(app) {
 
   // Client Registration Endpoint
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3

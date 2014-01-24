@@ -4,8 +4,7 @@ var db = require('../../models');
 var config = require('../../config.js');
 var authHelper = require('../../lib/auth-helper');
 
-module.exports = function (app, options) {
-
+module.exports = function(app) {
   app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');

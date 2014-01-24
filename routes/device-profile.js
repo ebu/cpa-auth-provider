@@ -109,7 +109,7 @@ var requestAccessToken = function(req, res) {
     });
 };
 
-var routes = function(app, options) {
+var routes = function(app) {
 
   // Client Registration Endpoint
 
