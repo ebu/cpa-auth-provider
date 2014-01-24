@@ -19,19 +19,19 @@ describe('GET /auth', function() {
     });
 
     describe('the response body', function() {
-      it('should display links for every enabled idp', function() {
-        var enabled_idp_list = authHelper.getEnabledIdentityProviders();
+      it('should display links for every enabled identity provider', function() {
+        var enabledIdentityProviders = authHelper.getEnabledIdentityProviders();
 
-        for (var idp_label in enabled_idp_list) {
-          var link = this.$('a.identity_provider.' + idp_label);
+        for (var label in enabledIdentityProviders) {
+          var link = this.$('a.identity_provider.' + label);
           expect(link.length).to.not.equal(0);
 
-          // Clean class in order to identify disabled idp
-          link.removeClass('identity_provider').addClass(idp_label);
+          // Clean class in order to identify disabled identity provider
+          link.removeClass('identity_provider').addClass(label);
         }
       });
 
-      it('should display only enabled idp', function(){
+      it('should display only enabled identity providers', function() {
         expect(this.$('a.identity_provider').length).to.equal(0);
       });
     });
@@ -51,7 +51,6 @@ describe('GET /protected', function() {
   });
 
   context('When the user is authenticated', function() {
-
     before(function(done) {
       requestHelper.get(this, '/protected', true, done);
     });
