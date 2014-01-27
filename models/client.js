@@ -1,11 +1,26 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-
   var Client = sequelize.define('Client', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    secret: DataTypes.STRING,
-    name: DataTypes.STRING,
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    secret: {
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    name: {
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
 
     //redirect_uris: DataTypes.STRING,
     //logo_uri
@@ -18,10 +33,27 @@ module.exports = function(sequelize, DataTypes) {
     //response_types
     //jwks_uri
 
-    software_id: DataTypes.STRING,
-    software_version: DataTypes.STRING,
-    ip: DataTypes.STRING
-
+    software_id: {
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    software_version: {
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    ip: {
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        isIP: true
+      }
+    }
   }, {
     underscored: true,
 
