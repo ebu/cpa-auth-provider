@@ -1,10 +1,10 @@
 "use strict";
 
 var db = require('../../models');
-var config = require('../../config.js');
+var config = require('../../config');
 var authHelper = require('../../lib/auth-helper');
 
-module.exports = function(app, options) {
+module.exports = function(app) {
   var logger = app.get('logger');
 
   app.get('/logout', function(req, res) {
@@ -22,16 +22,16 @@ module.exports = function(app, options) {
 
   if (config.identity_providers.facebook.enabled) {
     logger.info('Facebook authentication enabled');
-    require('./facebook')(app, options);
+    require('./facebook')(app);
   }
 
   if (config.identity_providers.github.enabled) {
     logger.info('Github authentication enabled');
-    require('./github')(app, options);
+    require('./github')(app);
   }
 
   if (config.identity_providers.local.enabled) {
     logger.info('Local authentication enabled');
-    require('./local')(app, options);
+    require('./local')(app);
   }
 };

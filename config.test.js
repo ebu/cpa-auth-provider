@@ -23,7 +23,10 @@ exports.db = {
   // type: 'mysql',
   // database: 'cpa_test',
   type: 'sqlite',
-  filename: 'data/test.sqlite'
+  filename: 'data/test.sqlite',
+
+  // For debugging, log SQL statements to the console
+  debug: false
 };
 
 exports.uris = {
