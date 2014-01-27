@@ -1,6 +1,5 @@
 "use strict";
 
-
 exports.identity_providers = {
   facebook: {
     enabled: false
@@ -10,6 +9,9 @@ exports.identity_providers = {
   },
   ebu: {
     enabled: false
+  },
+  local: {
+    enabled: true
   }
 };
 

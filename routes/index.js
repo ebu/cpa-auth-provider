@@ -10,9 +10,9 @@ module.exports = function(app) {
   app.get('/', function(req, res) {
     if (req.isAuthenticated()) {
       res.redirect('/verify');
-    } else {
+    }
+    else {
       res.redirect('/auth');
     }
   });
 };
-

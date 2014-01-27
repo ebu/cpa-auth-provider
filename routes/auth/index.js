@@ -5,29 +5,33 @@ var config = require('../../config');
 var authHelper = require('../../lib/auth-helper');
 
 module.exports = function(app) {
-  app.get('/logout', function(req, res){
+  var logger = app.get('logger');
+
+  app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
   });
 
-  app.get('/protected',
-    authHelper.ensureAuthenticated,
-    function(req, res) {
-      res.send('protected');
-    });
+  app.get('/protected', authHelper.ensureAuthenticated, function(req, res) {
+    res.send('protected');
+  });
 
-  app.get('/auth', function(req, res){
+  app.get('/auth', function(req, res) {
     res.render('./auth/provider_list.ejs');
   });
 
   if (config.identity_providers.facebook.enabled) {
-    console.log('Facebook authentication enabled');
-    var authFacebookRoutes = require('./facebook.js')(app, options);
+    logger.info('Facebook authentication enabled');
+    require('./facebook')(app);
   }
+
   if (config.identity_providers.github.enabled) {
-    console.log('Github authentication enabled');
-    var authGithubRoutes = require('./github.js')(app, options);
+    logger.info('Github authentication enabled');
+    require('./github')(app);
   }
 
+  if (config.identity_providers.local.enabled) {
+    logger.info('Local authentication enabled');
+    require('./local')(app);
+  }
 };
-

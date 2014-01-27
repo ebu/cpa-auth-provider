@@ -23,9 +23,11 @@ var initDatabase = function(done) {
   db.Client
     .create({
       id:               3,
-      client_name:      'Test client',
+      secret:           'secret',
+      name:             'Test client',
       software_id:      'CPA AP Test',
-      software_version: '0.0.1'
+      software_version: '0.0.1',
+      ip:               '127.0.0.1'
     })
     .then(function() {
       return db.RegistrationAccessToken.create({
@@ -38,17 +40,11 @@ var initDatabase = function(done) {
       done();
     },
     function(err) {
-      done(err);
+      done(new Error(JSON.stringify(err)));
     });
 };
 
 describe('POST /register', function() {
-  var correctRegistrationRequest = {
-    client_name: 'Test client',
-    software_id: 'CPA AP Test',
-    software_version: '0.0.1'
-  };
-
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
@@ -56,7 +52,13 @@ describe('POST /register', function() {
       before(clearDatabase);
 
       before(function(done) {
-        requestHelper.postForm(this, '/register', JSON.stringify(correctRegistrationRequest), false, done);
+        var data = {
+          client_name: 'Test client',
+          software_id: 'CPA AP Test',
+          software_version: '0.0.1'
+        };
+
+        requestHelper.postForm(this, '/register', JSON.stringify(data), false, done);
       });
 
       it('should return status 400', function() {
@@ -68,7 +70,13 @@ describe('POST /register', function() {
       before(clearDatabase);
 
       before(function(done) {
-        requestHelper.postJSON(this, '/register', correctRegistrationRequest, false, done);
+        var data = {
+          client_name: 'Test client',
+          software_id: 'CPA AP Test',
+          software_version: '0.0.1'
+        };
+
+        requestHelper.postJSON(this, '/register', data, false, done);
       });
 
       it('should return status 201', function() {
@@ -147,6 +155,52 @@ describe('POST /register', function() {
           it("should have valid value", function() {
             expect(this.token.token).to.match(/^[0-9a-f]{32}$/);
           });
+        });
+      });
+    });
+
+    var fields = ['client_name', 'software_id', 'software_version'];
+
+    fields.forEach(function(field) {
+      context('with missing ' + field + ' field', function() {
+        before(clearDatabase);
+
+        before(function(done) {
+          var data = {
+            client_name: 'Test client',
+            software_id: 'CPA AP Test',
+            software_version: '0.0.1'
+          };
+
+          delete data[field];
+
+          requestHelper.postJSON(this, '/register', data, false, done);
+        });
+
+        it('should return status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+      });
+    });
+
+    fields.forEach(function(field) {
+      context('with blank ' + field + ' field', function() {
+        before(clearDatabase);
+
+        before(function(done) {
+          var data = {
+            client_name: 'Test client',
+            software_id: 'CPA AP Test',
+            software_version: '0.0.1'
+          };
+
+          data[field] = '';
+
+          requestHelper.postJSON(this, '/register', data, false, done);
+        });
+
+        it('should return status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
         });
       });
     });

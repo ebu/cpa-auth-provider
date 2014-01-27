@@ -21,9 +21,11 @@ var initDatabase = function(done) {
   db.Client
     .create({
       id:               3,
-      client_name:      'Test client',
+      secret:           'secret',
+      name:             'Test client',
       software_id:      'CPA AP Test',
-      software_version: '0.0.1'
+      software_version: '0.0.1',
+      ip:               '127.0.0.1'
     })
     .then(function() {
       done();
