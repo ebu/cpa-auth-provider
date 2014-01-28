@@ -20,14 +20,18 @@ var resetDatabase = function(done) {
 };
 
 var createClientInformation = function(done) {
-  var data ={
-    id:      102,
-    secret:  '8ecf4b2a0df2df7fd69df128e0ac4fcc'
+  var data = {
+    id:     102,
+    secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
+    name:   'Test Client',
+    software_id: 'cpa-client-test',
+    software_version: '1.0',
+    ip:     '127.0.0.1'
   };
   db.Client
     .create(data)
     .complete(function(err, client) {
-      done();
+      done(err);
     });
 };
 
