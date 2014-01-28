@@ -32,7 +32,10 @@ module.exports = function(app, options) {
       .find({ where: query })
       .then(function(accessToken) {
         if (accessToken) {
-          res.send(200);
+          res.json({
+            client_id: accessToken.client_id,
+            user_id:   accessToken.user_id
+          });
         }
         else {
           res.send(401, { error: 'unauthorized' });
