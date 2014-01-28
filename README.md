@@ -3,6 +3,8 @@
 This project contains a reference implementation of the Cross-Platform
 Authentication Authentication Provider.
 
+More information on the EBU Cross-Platform Authentication project : http://tech.ebu.ch/cpa
+
 ## License
 
 The code is under BSD (3-Clause) License. (see LICENSE.txt)
@@ -28,3 +30,10 @@ Ensure your system has [Node.js](http://nodejs.org/) and NPM installed.
 Specify `--help` to see available command-line options:
 
     $ bin/server --help
+
+
+## Related Projects
+
+CPA Service Provider: https://github.com/ebu/cpa-service-provider
+
+CPA Client: https://github.com/ebu/cpa-client
