@@ -69,35 +69,28 @@ var requestStandAloneAccessToken = function(res, clientId, clientSecret, service
         res.json(400, { error: 'invalid_request' });
         return;
       }
-      db.sequelize.transaction(function(transaction) {
-        var accessToken = {
-          token:               generate.accessToken(),
-          user_id:             null,
-          client_id:           clientId,
-          service_provider_id: serviceProvider.id
-        };
 
-        // TODO: Handle duplicated tokens
-        db.ServiceAccessToken
-          .create(accessToken)
-          .then(function() {
-            return transaction.commit();
-          })
-          .then(function() {
-            res.set('Cache-Control', 'no-store');
-            res.set('Pragma', 'no-cache');
-            res.json({
-              token:      accessToken.token,
-              token_type: 'bearer'
-            });
-          },
-          function(error) {
-            transaction.rollback().complete(function(err) {
-              console.log(error);
-              res.send(500);
-            });
+      var accessToken = {
+        token:               generate.accessToken(),
+        user_id:             null,
+        client_id:           clientId,
+        service_provider_id: serviceProvider.id
+      };
+
+      // TODO: Handle duplicated tokens
+      db.ServiceAccessToken
+        .create(accessToken)
+        .success(function(dbAccessToken) {
+          res.set('Cache-Control', 'no-store');
+          res.set('Pragma', 'no-cache');
+          res.json({
+            token:      dbAccessToken.token,
+            token_type: 'bearer'
           });
-      });
+        }).error(function(error){
+          res.send(500);
+        });
+
     }, function(err){
       res.send(500);
     });

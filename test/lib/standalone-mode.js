@@ -7,8 +7,7 @@ var db = require('../../models');
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM ServiceProviders').then(function() {
       return db.sequelize.query('DELETE FROM Clients');
-  })
-    .then(function() {
+  }).then(function() {
       return db.sequelize.query('DELETE FROM ServiceAccessTokens');
     })
     .then(function() {
