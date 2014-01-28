@@ -17,10 +17,12 @@ Ensure your system has [Node.js](http://nodejs.org/) and NPM installed.
 
 ## Run the Tests
 
-    $ npm test
+    $ NODE_ENV=test bin/init-db
+    $ make test
 
 ## Start the Server
 
+    $ NODE_ENV=development bin/init-db
     $ bin/server
 
 Specify `--help` to see available command-line options:
