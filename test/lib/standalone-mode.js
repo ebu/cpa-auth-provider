@@ -66,7 +66,6 @@ describe('POST /token for device stand-alone mode', function() {
   before(resetDatabase);
   before(createServiceProvider);
   before(createClientInformation);
-  after(resetDatabase);
 
   var self = this;
 
