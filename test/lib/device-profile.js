@@ -3,6 +3,7 @@
 var db       = require('../../models');
 var generate = require('../../lib/generate');
 
+var assertions = require('../assertions');
 var requestHelper = require('../request-helper');
 
 // Tests for the End-point implementing the OAuth 2.0 Device Profile
@@ -90,8 +91,8 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: null, response_type: null }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -100,8 +101,8 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: '-|13', response_type: null }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -110,21 +111,20 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: 3, response_type: null }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
     });
 
     context('using an invalid response_type', function() {
-
       context('without providing a client_id', function() {
         before(function(done) {
           sendRequest(this, { client_id: null, response_type: '123' }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -133,8 +133,8 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: '-|13', response_type: '123' }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -143,8 +143,8 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: 3, response_type: '123' }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
     });
@@ -155,8 +155,8 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: null, response_type: 'device_code' }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -165,8 +165,8 @@ describe('POST /token', function() {
           sendRequest(this, { client_id: '-|13', response_type: 'device_code' }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return invalid_client error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_client');
         });
       });
 

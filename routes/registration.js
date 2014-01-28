@@ -31,7 +31,10 @@ module.exports = function(app) {
         .create(client).complete(function(err, client) {
           if (err) {
             logger.error("Failed to create client:", err);
-            res.send(400);
+
+            // TODO: distinguish between invalid input parameters and other
+            // failure conditions
+            res.json(400, { error: 'invalid_request' });
           } else {
             var token = {
               token: generate.accessToken(),
@@ -42,7 +45,7 @@ module.exports = function(app) {
             db.RegistrationAccessToken.create(token).complete(function(err, registrationAccessToken) {
               if (err) {
                 logger.error("Failed to create registration access token:", err);
-                res.send(400);
+                res.json(400, { error: 'invalid_request' });
               } else {
                 res.json(201, {
                   client_id: client.dataValues.id.toString(),
@@ -56,9 +59,8 @@ module.exports = function(app) {
         });
 
     } else {
-      res.send(400);
+      res.json(400, { error: 'invalid_request' });
     }
-
   });
 
 // Client Configuration Endpoint
@@ -71,7 +73,7 @@ module.exports = function(app) {
         if (err || !registrationAccessToken || !client) {
           // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
           res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="Unknown or expired token"');
-          res.send(401);
+          res.json(401, { error: 'unauthorized' });
         }
         else {
           res.json({
@@ -86,7 +88,7 @@ module.exports = function(app) {
     } else {
       // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1 : request lacks any auth information
       res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '"');
-      res.send(401);
+      res.json(401, { error: 'unauthorized' });
     }
   };
 
