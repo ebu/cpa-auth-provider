@@ -4,7 +4,7 @@ var db = require('../models');
 
 module.exports = function(app, options) {
   app.post('/authorized', function(req, res) {
-    if (req.get('Content-Type') !== 'application/x-www-form-urlencoded') {
+    if (req.get('Content-Type').indexOf('application/x-www-form-urlencoded') !== 0) {
       res.json(400, { error: 'invalid_request' });
       return;
     }

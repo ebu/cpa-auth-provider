@@ -34,6 +34,19 @@ var resetDatabase = function(done) {
   });
 };
 
+var createServiceProvider = function(done) {
+  var data = {
+    id:     1,
+    name:   'BBC1'
+  };
+
+  db.ServiceProvider
+    .create(data)
+    .complete(function(err, serviceProvider) {
+      done();
+    });
+};
+
 var verifyError = function(res, error) {
   expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
   expect(res.body).to.be.an('object');
@@ -43,6 +56,7 @@ var verifyError = function(res, error) {
 
 describe("Access token verification", function() {
   before(resetDatabase);
+  before(createServiceProvider);
 
   context("given a valid access token", function() {
     before(function(done) {

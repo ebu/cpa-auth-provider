@@ -17,7 +17,7 @@ var clearDatabase = function(done) {
   });
 };
 
-var initDatabase = function(done) {
+var createClient = function(done) {
   db.Client
     .create({
       id:               3,
@@ -35,10 +35,24 @@ var initDatabase = function(done) {
     });
 };
 
+var createServiceProvider = function(done) {
+  var data = {
+    id:     1,
+    name:   'BBC1'
+  };
+
+  db.ServiceProvider
+    .create(data)
+    .complete(function(err, serviceProvider) {
+      done();
+    });
+};
+
 var sendRequest = function(context, options, done) {
   var body = {
     client_id:     options.client_id,
-    response_type: options.response_type
+    response_type: options.response_type,
+    service_provider: options.service_provider
   };
 
   request.post('/token')
@@ -62,7 +76,8 @@ describe('POST /token', function() {
   });
 
   before(clearDatabase);
-  before(initDatabase);
+  before(createClient);
+  before(createServiceProvider);
 
   // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
   context('When requesting an authorization', function() {
@@ -157,7 +172,7 @@ describe('POST /token', function() {
 
       context('using a valid client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: 3, response_type: 'device_code' }, done);
+          sendRequest(this, { client_id: 3, service_provider: 'BBC1', response_type: 'device_code' }, done);
         });
 
         it('should return a status 200', function() {
