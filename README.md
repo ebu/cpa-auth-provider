@@ -14,6 +14,7 @@ Ensure your system has [Node.js](http://nodejs.org/) and NPM installed.
     $ git clone https://github.com/ebu/cpa-auth-provider.git
     $ cd cpa-auth-provider
     $ npm install
+    $ NODE_ENV=development bin/init-db
 
 ## Run the Tests
 
@@ -22,7 +23,6 @@ Ensure your system has [Node.js](http://nodejs.org/) and NPM installed.
 
 ## Start the Server
 
-    $ NODE_ENV=development bin/init-db
     $ bin/server
 
 Specify `--help` to see available command-line options:
