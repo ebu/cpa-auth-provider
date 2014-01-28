@@ -1,7 +1,7 @@
 "use strict";
 
 var db = require('../../models');
-var config = require('../../config.js');
+var config = require('../../config');
 
 var passport = require('passport');
 var GithubStrategy = require('passport-github').Strategy;

@@ -5,7 +5,7 @@ var generate = require('../lib/generate');
 var verify = require('../lib/verify');
 var config = require('../config');
 
-module.exports = function (app, options) {
+module.exports = function(app) {
   var logger = app.get('logger');
 
   // Client Registration Endpoint
@@ -35,7 +35,8 @@ module.exports = function (app, options) {
           } else {
             var token = {
               token: generate.accessToken(),
-              scope: ''
+              scope: '',
+              client_id: client.id
             };
 
             db.RegistrationAccessToken.create(token).complete(function(err, registrationAccessToken) {
@@ -43,8 +44,6 @@ module.exports = function (app, options) {
                 logger.error("Failed to create registration access token:", err);
                 res.send(400);
               } else {
-                registrationAccessToken.setClient(client);
-
                 res.json(201, {
                   client_id: client.dataValues.id.toString(),
                   client_secret: client.dataValues.secret,
