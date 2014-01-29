@@ -13,26 +13,29 @@ var registerPairingCode = function(req, res) {
 
   // TODO: validate clientId
   if (!clientId) {
-    res.send(400);
+    res.json(400, { error: 'invalid_request' });
+    return;
+  }
+  else if (!clientId.match(/^\d+$/)) {
+    res.json(400, { error: 'invalid_client' });
     return;
   }
 
   if (!serviceProviderName) {
-    res.send(400);
+    res.json(400, { error: 'invalid_request' });
     return;
   }
 
   db.Client.find({ where: { id: clientId } }).success(function(client) {
     if (!client) {
-      res.send(400);
+      res.json(400, { error: 'invalid_client' });
       return;
     }
 
     db.ServiceProvider.find({ where: { name: serviceProviderName }})
       .success(function(serviceProvider) {
-
         if (!serviceProvider) {
-          res.send(400);
+          res.json(400, { error: 'invalid_request' });
           return;
         }
 
@@ -52,7 +55,7 @@ var registerPairingCode = function(req, res) {
           });
         },
         function(error) {
-         res.send(500);
+          res.send(500);
         });
       });
   },
@@ -255,7 +258,7 @@ var routes = function(app) {
       });
 
     } else {
-      res.send(400);
+      res.json(400, { error: 'invalid_request' });
     }
   });
 };

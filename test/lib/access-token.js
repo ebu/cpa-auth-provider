@@ -3,6 +3,8 @@
 var db       = require('../../models');
 var generate = require('../../lib/generate');
 
+var assertions = require('../assertions');
+
 var _ = require('lodash');
 
 var sendPostRequest = function(context, options, done) {
@@ -44,12 +46,7 @@ var createPairingCode = function(attributes, done) {
     });
 };
 
-var verifyError = function(res, error) {
-  expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
-  expect(res.body).to.be.an('object');
-  expect(res.body).to.have.property('error');
-  expect(res.body.error).to.equal(error);
-};
+
 
 describe("POST /token", function() {
   before(function() {
@@ -72,12 +69,8 @@ describe("POST /token", function() {
         sendPostRequest(this, { path: '/token', type: 'json', data: requestBody }, done);
       });
 
-      it("should return status 400", function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
@@ -92,12 +85,8 @@ describe("POST /token", function() {
         sendPostRequest(this, { path: '/token', data: requestBody }, done);
       });
 
-      it("should return status 400", function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
@@ -112,12 +101,8 @@ describe("POST /token", function() {
         sendPostRequest(this, { path: '/token', data: requestBody }, done);
       });
 
-      it("should return status 400", function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-
       it("should return an invalid_client error", function() {
-        verifyError(this.res, 'invalid_client');
+        assertions.verifyError(this.res, 400, 'invalid_client');
       });
     });
 
@@ -132,12 +117,8 @@ describe("POST /token", function() {
         sendPostRequest(this, { path: '/token', data: requestBody }, done);
       });
 
-      it("should return status 400", function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
@@ -152,12 +133,8 @@ describe("POST /token", function() {
         sendPostRequest(this, { path: '/token', data: requestBody }, done);
       });
 
-      it("should return status 400", function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-
       it("should return an unsupported_grant_type error", function() {
-        verifyError(this.res, 'unsupported_grant_type');
+        assertions.verifyError(this.res, 400, 'unsupported_grant_type');
       });
     });
 
@@ -180,12 +157,8 @@ describe("POST /token", function() {
             sendPostRequest(this, { path: '/token', data: requestBody }, done);
           });
 
-          it("should return status 400", function() {
-            expect(this.res.statusCode).to.equal(400);
-          });
-
           it("should return an authorization_pending error", function() {
-            verifyError(this.res, 'authorization_pending');
+            assertions.verifyError(this.res, 400, 'authorization_pending');
           });
         });
 
@@ -206,12 +179,8 @@ describe("POST /token", function() {
             sendPostRequest(this, { path: '/token', data: requestBody }, done);
           });
 
-          it("should return status 400", function() {
-            expect(this.res.statusCode).to.equal(400);
-          });
-
           it("should return an invalid_client error", function() {
-            verifyError(this.res, 'invalid_client');
+            assertions.verifyError(this.res, 400, 'invalid_client');
           });
         });
       });
@@ -335,12 +304,8 @@ describe("POST /token", function() {
             sendPostRequest(this, { path: '/token', data: requestBody }, done);
           });
 
-          it("should return status 400", function() {
-            expect(this.res.statusCode).to.equal(400);
-          });
-
           it("should return invalid_client error", function() {
-            verifyError(this.res, 'invalid_client');
+            assertions.verifyError(this.res, 400, 'invalid_client');
           });
         });
 
@@ -361,12 +326,8 @@ describe("POST /token", function() {
             sendPostRequest(this, { path: '/token', data: requestBody }, done);
           });
 
-          it("should return status 400", function() {
-            expect(this.res.statusCode).to.equal(400);
-          });
-
           it("should return invalid_request error", function() {
-            verifyError(this.res, 'invalid_request');
+            assertions.verifyError(this.res, 400, 'invalid_request');
           });
         });
       });
