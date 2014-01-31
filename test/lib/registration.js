@@ -5,6 +5,8 @@
 var _ = require('lodash');
 
 var db = require('../../models');
+
+var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
 var clearDatabase = function(done) {
@@ -260,8 +262,8 @@ testCases.forEach(function(testCase) {
             testCase.sendRequest(this, { authorization: null, client_id: 'unknown' }, done);
           });
 
-          it('should return status 401', function() {
-            expect(this.res.statusCode).to.equal(401);
+          it("should return 'unauthorized' error", function() {
+            assertions.verifyError(this.res, 401, 'unauthorized');
           });
         });
 
@@ -270,8 +272,8 @@ testCases.forEach(function(testCase) {
             testCase.sendRequest(this, { authorization: null, client_id: 3 }, done);
           });
 
-          it('should return status 401', function() {
-            expect(this.res.statusCode).to.equal(401);
+          it("should return 'unauthorized' error", function() {
+            assertions.verifyError(this.res, 401, 'unauthorized');
           });
 
           it('should not contain an error message in the header', function() {
@@ -287,8 +289,8 @@ testCases.forEach(function(testCase) {
           testCase.sendRequest(this, { authorization: 'invalid', client_id: 'unknown' }, done);
         });
 
-        it('should return status 401', function() {
-          expect(this.res.statusCode).to.equal(401);
+        it("should return 'unauthorized' error", function() {
+          assertions.verifyError(this.res, 401, 'unauthorized');
         });
       });
 
