@@ -22,8 +22,8 @@ var resetDatabase = function(done) {
     return db.ServiceAccessToken.create({
       token: 'aed201ffb3362de42700a293bdebf694',
       service_provider_id: 1,
-      client_id: 1,
-      user_id: 1
+      client_id: 2,
+      user_id: 3
     });
   })
   .then(function() {
@@ -73,6 +73,23 @@ describe("Access token verification", function() {
 
     it("should return status 200", function() {
       expect(this.res.statusCode).to.equal(200);
+    });
+
+    it("should return a JSON object", function() {
+      expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+      expect(this.res.body).to.be.an('object');
+    });
+
+    describe("the returned data", function() {
+      it("should include the user id", function() {
+        expect(this.res.body).to.have.property('user_id');
+        expect(this.res.body.user_id).to.equal(3);
+      });
+
+      it("should include the client id", function() {
+        expect(this.res.body).to.have.property('client_id');
+        expect(this.res.body.client_id).to.equal(2);
+      });
     });
   });
 
