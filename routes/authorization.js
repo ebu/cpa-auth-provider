@@ -23,26 +23,44 @@ module.exports = function(app, options) {
       return;
     }
 
-    var query = {
-      token: accessToken,
-      service_provider_id: serviceProviderId
-    };
+    // TODO: do this in a single query?
 
-    db.ServiceAccessToken
-      .find({ where: query })
-      .then(function(accessToken) {
-        if (accessToken) {
-          res.json({
-            client_id: accessToken.client_id,
-            user_id:   accessToken.user_id
-          });
+    db.ServiceProvider
+      .find({ where: { name: serviceProviderId } })
+      .complete(function(err, serviceProvider) {
+        if (err) {
+          res.send(500);
+          return;
         }
-        else {
+
+        if (!serviceProvider) {
           res.send(401, { error: 'unauthorized' });
+          return;
         }
-      },
-      function(error) {
-        res.send(500);
+
+        var query = {
+          token: accessToken,
+          service_provider_id: serviceProvider.id
+        };
+
+        db.ServiceAccessToken
+          .find({ where: query })
+          .complete(function(err, accessToken) {
+            if (err) {
+              res.send(500);
+              return;
+            }
+
+            if (!accessToken) {
+              res.send(401, { error: 'unauthorized' });
+              return;
+            }
+
+            res.json({
+              client_id: accessToken.client_id,
+              user_id:   accessToken.user_id
+            });
+          });
       });
   });
 };
