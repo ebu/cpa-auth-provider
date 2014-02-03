@@ -2,6 +2,7 @@
 
 var db = require('../models');
 var generate = require('../lib/generate');
+var request = require('../lib/request');
 var verify = require('../lib/verify');
 var config = require('../config');
 var messages = require('../lib/messages');
@@ -193,11 +194,13 @@ var requestAccessToken = function(req, res) {
 };
 
 var routes = function(app) {
+  var logger = app.get('logger');
 
   // Client Registration Endpoint
 
   app.post('/token', function(req, res) {
-    if (req.get('Content-Type') !== 'application/x-www-form-urlencoded') {
+    if (!request.isContentType(req, 'application/x-www-form-urlencoded')) {
+      logger.error("Invalid content type:", req.get('Content-Type'));
       res.json(400, { error: 'invalid_request' });
       return;
     }
@@ -208,6 +211,7 @@ var routes = function(app) {
       registerPairingCode(req, res);
     }
     else if (!req.body.grant_type) {
+      logger.error("Missing grant_type parameter");
       res.json(400, { error: 'invalid_request' });
     }
     else if (req.body.grant_type === 'authorization_code') {
@@ -215,6 +219,7 @@ var routes = function(app) {
       requestAccessToken(req, res);
     }
     else {
+      logger.error("Unsupported grant_type");
       res.json(400, { error: 'unsupported_grant_type' });
     }
   });

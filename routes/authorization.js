@@ -2,9 +2,11 @@
 
 var db = require('../models');
 
+var request = require('../lib/request');
+
 module.exports = function(app, options) {
   app.post('/authorized', function(req, res) {
-    if (req.get('Content-Type').indexOf('application/x-www-form-urlencoded') !== 0) {
+    if (!request.isContentType(req, 'application/x-www-form-urlencoded')) {
       res.json(400, { error: 'invalid_request' });
       return;
     }
