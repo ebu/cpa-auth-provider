@@ -7,7 +7,7 @@ More information on the [EBU Cross-Platform Authentication project](http://tech.
 
 ## Prerequisites
 
-Ensure your system has [Node.js](http://nodejs.org/) and NPM installed.
+Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
 
 ## Getting Started
 
