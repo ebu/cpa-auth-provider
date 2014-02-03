@@ -64,7 +64,7 @@ describe("Access token verification", function() {
         path: '/authorized',
         data: {
           token: 'aed201ffb3362de42700a293bdebf694',
-          service_provider_id: 1
+          service_provider_id: 'BBC1'
         }
       };
 
@@ -99,7 +99,7 @@ describe("Access token verification", function() {
         path: '/authorized',
         data: {
           token: 'unknown',
-          service_provider_id: 1
+          service_provider_id: 'unknown'
         }
       };
 
@@ -124,7 +124,7 @@ describe("Access token verification", function() {
       var request = {
         path: '/authorized',
         data: {
-          service_provider_id: 1
+          service_provider_id: 'BBC1'
         }
       };
 
@@ -146,7 +146,7 @@ describe("Access token verification", function() {
         path: '/authorized',
         data: {
           token: 'aed201ffb3362de42700a293bdebf694',
-          service_provider_id: 2
+          service_provider_id: 'unknown'
         }
       };
 
