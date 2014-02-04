@@ -2,7 +2,7 @@
 
 var db = require('../models');
 var generate = require('../lib/generate');
-var request = require('../lib/request');
+var requestHelper = require('../lib/request-helper');
 var verify = require('../lib/verify');
 var config = require('../config');
 var messages = require('../lib/messages');
@@ -199,7 +199,7 @@ var routes = function(app) {
   // Client Registration Endpoint
 
   app.post('/token', function(req, res) {
-    if (!request.isContentType(req, 'application/x-www-form-urlencoded')) {
+    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
       logger.error("Invalid content type:", req.get('Content-Type'));
       res.json(400, { error: 'invalid_request' });
       return;

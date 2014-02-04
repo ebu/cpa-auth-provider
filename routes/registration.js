@@ -2,7 +2,7 @@
 
 var db = require('../models');
 var generate = require('../lib/generate');
-var request = require('../lib/request');
+var requestHelper = require('../lib/request-helper');
 var verify = require('../lib/verify');
 var config = require('../config');
 
@@ -13,7 +13,7 @@ module.exports = function(app) {
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
 
   app.post('/register', function(req, res) {
-    if (request.isContentType(req, 'application/json')) {
+    if (requestHelper.isContentType(req, 'application/json')) {
       var clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
       var clientSecret = generate.clientSecret(clientIp);
