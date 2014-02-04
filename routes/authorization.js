@@ -2,9 +2,11 @@
 
 var db = require('../models');
 
+var requestHelper = require('../lib/request-helper');
+
 module.exports = function(app, options) {
   app.post('/authorized', function(req, res) {
-    if (req.get('Content-Type').indexOf('application/x-www-form-urlencoded') !== 0) {
+    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
       res.json(400, { error: 'invalid_request' });
       return;
     }

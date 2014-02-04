@@ -2,6 +2,7 @@
 
 var db = require('../models');
 var generate = require('../lib/generate');
+var requestHelper = require('../lib/request-helper');
 var verify = require('../lib/verify');
 var config = require('../config');
 
@@ -12,9 +13,7 @@ module.exports = function(app) {
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
 
   app.post('/register', function(req, res) {
-
-    if (req.get('Content-Type') === "application/json") {
-
+    if (requestHelper.isContentType(req, 'application/json')) {
       var clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
       var clientSecret = generate.clientSecret(clientIp);
@@ -57,8 +56,9 @@ module.exports = function(app) {
             });
           }
         });
-
-    } else {
+    }
+    else {
+      logger.error("Invalid content type:", req.get('Content-Type'));
       res.json(400, { error: 'invalid_request' });
     }
   });
