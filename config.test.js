@@ -16,14 +16,8 @@ exports.identity_providers = {
 };
 
 exports.db = {
-  host: '',
-  port: 3306,
-  user: '',
-  password: '',
-  // type: 'mysql',
-  // database: 'cpa_test',
   type: 'sqlite',
-  filename: 'data/test.sqlite',
+  // filename: 'data/test.sqlite',
 
   // For debugging, log SQL statements to the console
   debug: false
