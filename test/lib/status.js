@@ -16,6 +16,6 @@ describe('GET /status', function() {
   });
 
   it('should respond with status message', function() {
-    expect(this.res.text).to.equal("Authentication Provider up and running");
+    expect(this.res.text).to.equal("Authentication Provider up and running\n");
   });
 });
