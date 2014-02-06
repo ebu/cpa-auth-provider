@@ -29,6 +29,16 @@ Specify `--help` to see available command-line options:
 
     $ bin/server --help
 
+## Development
+
+This project includes a `Makefile` that is used to run various tasks during
+development. This includes JSHint, for code verification, Istanbul for test
+coverage, and JSDoc for documentation.
+
+As general-purpose tools, these should be installed globally:
+
+    $ sudo npm install -g jshint istanbul jsdoc
+
 ## Related Projects
 
 * [CPA Service Provider](https://github.com/ebu/cpa-service-provider)
