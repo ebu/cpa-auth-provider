@@ -67,34 +67,32 @@ describe('POST /token for device stand-alone mode', function() {
   before(createServiceProvider);
   before(createClientInformation);
 
-  var self = this;
-
   context('When requesting an access token', function() {
     context("with incorrect Content-Type", function() {
       before(function(done) {
-        requestHelper.postJSON(self, '/token', {}, false, done);
+        requestHelper.postJSON(this, '/token', {}, false, done);
       });
 
       it("should return status 400", function() {
-        expect(self.res.statusCode).to.equal(400);
+        expect(this.res.statusCode).to.equal(400);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(self.res, 'invalid_request');
+        verifyError(this.res, 'invalid_request');
       });
     });
 
     context('without client information', function(){
       before(function(done) {
-        requestHelper.postForm(self, '/token', {}, false, done);
+        requestHelper.postForm(this, '/token', {}, false, done);
       });
 
       it('should reply with a status code 400', function() {
-        expect(self.res.statusCode).to.equal(400);
+        expect(this.res.statusCode).to.equal(400);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(self.res, 'invalid_request');
+        verifyError(this.res, 'invalid_request');
       });
     });
 
@@ -106,15 +104,15 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC1',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(self, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', body, false, done);
       });
 
       it('should reply with a status code 400', function(){
-        expect(self.res.statusCode).to.equal(400);
+        expect(this.res.statusCode).to.equal(400);
       });
 
       it('should return an invalid_client error', function() {
-        verifyError(self.res, 'invalid_client');
+        verifyError(this.res, 'invalid_client');
       });
     });
 
@@ -125,15 +123,15 @@ describe('POST /token for device stand-alone mode', function() {
           client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(self, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', body, false, done);
       });
 
       it('should reply with a status code 400', function(){
-        expect(self.res.statusCode).to.equal(400);
+        expect(this.res.statusCode).to.equal(400);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(self.res, 'invalid_request');
+        verifyError(this.res, 'invalid_request');
       });
     });
 
@@ -145,15 +143,15 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC-wrong',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(self, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', body, false, done);
       });
 
       it('should reply with a status code 400', function(){
-        expect(self.res.statusCode).to.equal(400);
+        expect(this.res.statusCode).to.equal(400);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(self.res, 'invalid_request');
+        verifyError(this.res, 'invalid_request');
       });
     });
 
@@ -166,27 +164,27 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC1',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(self, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', body, false, done);
       });
 
       it('should reply with a status code 200', function() {
-        expect(self.res.statusCode).to.equal(200);
+        expect(this.res.statusCode).to.equal(200);
       });
 
       it('should be return a JSON object', function() {
-        expect(self.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-        expect(self.res.body).to.be.an('object');
+        expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+        expect(this.res.body).to.be.an('object');
       });
 
       describe("the response body", function() {
         it("should include a valid access token", function() {
-          expect(self.res.body).to.have.property('token');
-          expect(self.res.body.token).to.equal('aed201ffb3362de42700a293bdebf6123');
+          expect(this.res.body).to.have.property('token');
+          expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf6123');
         });
 
         it("should include the token type", function() {
-          expect(self.res.body).to.have.property('token_type');
-          expect(self.res.body.token_type).to.equal('bearer');
+          expect(this.res.body).to.have.property('token_type');
+          expect(this.res.body.token_type).to.equal('bearer');
         });
 
         it("should include a valid refresh token"); // TODO: optional: refresh_token
