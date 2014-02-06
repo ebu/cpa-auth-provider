@@ -13,7 +13,7 @@ passport.use(new GithubStrategy({
     callbackURL: config.identity_providers.github.url_callback
   },
   function(accessToken, refreshToken, profile, done) {
-    db.User.findOrCreate({provider_uid: profile.id}).success(function(user){
+    db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName}).success(function(user){
       return done(null, user);
     }).error(function(err) {
         done(err, null);
