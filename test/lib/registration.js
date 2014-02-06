@@ -60,7 +60,7 @@ describe('POST /register', function() {
           software_version: '0.0.1'
         };
 
-        requestHelper.postForm(this, '/register', JSON.stringify(data), false, done);
+        requestHelper.postForm(this, '/register', { data: JSON.stringify(data) }, done);
       });
 
       it('should return status 400', function() {
@@ -78,7 +78,7 @@ describe('POST /register', function() {
           software_version: '0.0.1'
         };
 
-        requestHelper.postJSON(this, '/register', data, false, done);
+        requestHelper.postJSON(this, '/register', { data: data }, done);
       });
 
       it('should return status 201', function() {
@@ -176,7 +176,7 @@ describe('POST /register', function() {
 
           delete data[field];
 
-          requestHelper.postJSON(this, '/register', data, false, done);
+          requestHelper.postJSON(this, '/register', { data: data }, done);
         });
 
         it('should return status 400', function() {
@@ -198,7 +198,7 @@ describe('POST /register', function() {
 
           data[field] = '';
 
-          requestHelper.postJSON(this, '/register', data, false, done);
+          requestHelper.postJSON(this, '/register', { data: data }, done);
         });
 
         it('should return status 400', function() {

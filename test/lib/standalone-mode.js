@@ -70,7 +70,7 @@ describe('POST /token for device stand-alone mode', function() {
   context('When requesting an access token', function() {
     context("with incorrect Content-Type", function() {
       before(function(done) {
-        requestHelper.postJSON(this, '/token', {}, false, done);
+        requestHelper.postJSON(this, '/token', { data: {} }, done);
       });
 
       it("should return status 400", function() {
@@ -84,7 +84,7 @@ describe('POST /token for device stand-alone mode', function() {
 
     context('without client information', function(){
       before(function(done) {
-        requestHelper.postForm(this, '/token', {}, false, done);
+        requestHelper.postForm(this, '/token', {}, done);
       });
 
       it('should reply with a status code 400', function() {
@@ -104,7 +104,7 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC1',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', { data: body }, done);
       });
 
       it('should reply with a status code 400', function(){
@@ -123,7 +123,7 @@ describe('POST /token for device stand-alone mode', function() {
           client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', { data: body }, done);
       });
 
       it('should reply with a status code 400', function(){
@@ -143,7 +143,7 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC-wrong',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', { data: body }, done);
       });
 
       it('should reply with a status code 400', function(){
@@ -164,7 +164,7 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC1',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', body, false, done);
+        requestHelper.postForm(this, '/token', { data: body }, done);
       });
 
       it('should reply with a status code 200', function() {

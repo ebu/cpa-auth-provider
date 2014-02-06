@@ -5,14 +5,18 @@ var cheerio = require('cheerio');
 var requestHelper = {};
 
 //Send a get request and store err, res and dom ($) in context
-requestHelper.get = function(context, url, isAuthorized, done) {
-  var req = request.get(url);
+requestHelper.get = function(context, url, options, done) {
+  // var req = request.get(url);
+  options = options || {};
 
-  if (isAuthorized) {
-    requestHelper.getWithOptions(context, url, {'authorization': global.TEST_AUTHORIZATION_TOKEN}, done);
-  } else {
-    requestHelper.getWithOptions(context, url, {}, done);
-  }
+  requestHelper.getWithOptions(context, url, options, done);
+
+  // if (options.cookie) {
+  //   requestHelper.getWithOptions(context, url, { cookie: options.cookie }, done);
+  // }
+  // else {
+  //   requestHelper.getWithOptions(context, url, {}, done);
+  // }
 };
 
 //Send a get request and store err, res and dom ($) in context
@@ -21,6 +25,10 @@ requestHelper.getWithOptions = function(context, url, options, done) {
 
   if (options.authorization) {
     req.set('Authorization', 'Bearer '+ options.authorization);
+  }
+
+  if (options.cookie) {
+    req.set('cookie', options.cookie);
   }
 
   req.end(function(err, res) {
@@ -36,12 +44,12 @@ requestHelper.getWithOptions = function(context, url, options, done) {
 requestHelper.post = function(context, url, body, options, done) {
   var req = request.post(url);
 
-  if(options.type) {
+  if (options.type) {
     req.type(options.type);
   }
 
-  if (options.isAuthenticated) {
-    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
+  if (options.cookie) {
+    req.set('cookie', options.cookie);
   }
 
   req.send(body).end(function(err, res) {
@@ -54,12 +62,14 @@ requestHelper.post = function(context, url, body, options, done) {
   });
 };
 
-requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
-  this.post(context, url, body, {type:'form', isAuthenticated:isAuthenticated}, done);
+requestHelper.postForm = function(context, url, options, done) {
+  options.type = 'form';
+  this.post(context, url, options.data, options, done);
 };
 
-requestHelper.postJSON = function(context, url, body, isAuthenticated, done) {
-  this.post(context, url, body, {type:'json', isAuthenticated:isAuthenticated}, done);
+requestHelper.postJSON = function(context, url, options, done) {
+  options.type = 'json';
+  this.post(context, url, options.data, options, done);
 };
 
 requestHelper.sendPutRequest = function(context, path, done) {
