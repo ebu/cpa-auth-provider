@@ -58,10 +58,33 @@ module.exports = function(app, options) {
               return;
             }
 
-            res.json({
-              client_id: accessToken.client_id,
-              user_id:   accessToken.user_id
-            });
+            var query = {
+              id: accessToken.user_id
+            };
+
+            db.User
+              .find({ where: query })
+              .complete(function(err, user) {
+                if (err) {
+                  res.send(500);
+                  return;
+                }
+
+                if (!user) {
+                  res.send(500);
+                  return;
+                }
+
+                var rsp = {
+                  client_id: accessToken.client_id,
+                  user_id:   user.id
+                };
+
+                if (user.display_name) rsp.display_name = user.display_name;
+                if (user.photo) rsp.photo = user.photo;
+
+                res.json(rsp);
+              });
           });
       });
   });

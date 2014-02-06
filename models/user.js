@@ -6,7 +6,9 @@ module.exports = function(sequelize, DataTypes) {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     provider_uid: DataTypes.STRING,
     password: DataTypes.STRING,
-    enable_sso: DataTypes.BOOLEAN
+    enable_sso: DataTypes.BOOLEAN,
+    display_name: DataTypes.STRING,
+    photo: DataTypes.STRING
   }, {
     underscored: true,
 
