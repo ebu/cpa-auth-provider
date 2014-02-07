@@ -70,18 +70,19 @@ module.exports = function(app, options) {
                   return;
                 }
 
-                if (!user) {
-                  res.send(500);
-                  return;
-                }
-
                 var rsp = {
-                  client_id: accessToken.client_id,
-                  user_id:   user.id
+                  client_id: accessToken.client_id
                 };
 
-                if (user.display_name) rsp.display_name = user.display_name;
-                if (user.photo) rsp.photo = user.photo;
+                if (user) {
+                  rsp.user_id = user.id;
+                  if (user.display_name) {
+                    rsp.display_name = user.display_name;
+                  }
+                  if (user.photo) {
+                    rsp.photo = user.photo;
+                  }
+                }
 
                 res.json(rsp);
               });
