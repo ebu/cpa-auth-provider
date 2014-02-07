@@ -210,7 +210,6 @@ describe('POST /token for device stand-alone mode', function() {
           });
       });
 
-
       it("should contain a new access token", function() {
         // jshint expr: true
         expect(this.accessTokens).to.be.ok;
