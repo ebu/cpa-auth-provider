@@ -1,6 +1,7 @@
-MOCHA  = node_modules/.bin/mocha
-JSHINT = jshint
-JSDOC  = jsdoc
+MOCHA    = node_modules/.bin/_mocha
+JSHINT   = jshint
+JSDOC    = jsdoc
+COVERAGE = istanbul
 
 ifdef VERBOSE
   REPORTER = spec
@@ -23,9 +24,12 @@ lint-src:
 lint-test:
 	@$(JSHINT) --config .jshintrc-test test/*.js test/lib/*.js
 
+coverage:
+	@$(COVERAGE) cover $(MOCHA) -- --reporter $(REPORTER) --require test/test-helper test/lib
+
 doc:
 	@$(JSDOC) --private --destination ./docs/ lib
 
 docs: doc
 
-.PHONY: test lint lint-src lint-test doc docs
+.PHONY: test lint lint-src lint-test coverage doc docs
