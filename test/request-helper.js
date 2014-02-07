@@ -4,22 +4,20 @@ var cheerio = require('cheerio');
 
 var requestHelper = {};
 
-//Send a get request and store err, res and dom ($) in context
+/**
+ * Send a get request and store err, res and dom ($) in context
+ */
+
 requestHelper.get = function(context, url, options, done) {
-  // var req = request.get(url);
   options = options || {};
 
   requestHelper.getWithOptions(context, url, options, done);
-
-  // if (options.cookie) {
-  //   requestHelper.getWithOptions(context, url, { cookie: options.cookie }, done);
-  // }
-  // else {
-  //   requestHelper.getWithOptions(context, url, {}, done);
-  // }
 };
 
-//Send a get request and store err, res and dom ($) in context
+/**
+ * Send a get request and store err, res and dom ($) in context
+ */
+
 requestHelper.getWithOptions = function(context, url, options, done) {
   var req = request.get(url);
 
