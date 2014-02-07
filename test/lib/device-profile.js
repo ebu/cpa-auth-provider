@@ -224,6 +224,22 @@ describe('POST /token', function() {
         });
       });
 
+      context('with an unknown service_provider', function() {
+        before(function(done) {
+          var data = {
+            client_id:        3,
+            service_provider: 'unknown',
+            response_type:    'device_code'
+          };
+
+          sendRequest(this, data, done);
+        });
+
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
+        });
+      });
+
       context('using a valid client_id', function() {
         before(function(done) {
           var data = {
