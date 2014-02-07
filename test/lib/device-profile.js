@@ -118,7 +118,13 @@ describe('POST /token', function() {
     context('using an invalid response_type', function() {
       context('without providing a client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: null, response_type: '123' }, done);
+          var data = {
+            client_id:        null,
+            service_provider: 'BBC1',
+            response_type:    '123'
+          };
+
+          sendRequest(this, data, done);
         });
 
         it("should return invalid_request error", function() {
@@ -128,7 +134,13 @@ describe('POST /token', function() {
 
       context('using an invalid client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: '-|13', response_type: '123' }, done);
+          var data = {
+            client_id:        '-|13',
+            service_provider: 'BBC1',
+            response_type:    '123'
+          };
+
+          sendRequest(this, data, done);
         });
 
         it("should return invalid_request error", function() {
@@ -138,7 +150,13 @@ describe('POST /token', function() {
 
       context('using a valid client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: 3, response_type: '123' }, done);
+          var data = {
+            client_id:        3,
+            service_provider: 'BBC1',
+            response_type:    '123'
+          };
+
+          sendRequest(this, data, done);
         });
 
         it("should return invalid_request error", function() {
@@ -150,7 +168,13 @@ describe('POST /token', function() {
     context('using a valid response_type', function() {
       context('without providing a client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: null, response_type: 'device_code' }, done);
+          var data = {
+            client_id:        null,
+            service_provider: 'BBC1',
+            response_type:    'device_code'
+          };
+
+          sendRequest(this, data, done);
         });
 
         it("should return invalid_request error", function() {
@@ -160,7 +184,13 @@ describe('POST /token', function() {
 
       context('using an invalid client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: '-|13', response_type: 'device_code' }, done);
+          var data = {
+            client_id:        '-|13',
+            service_provider: 'BBC1',
+            response_type:    'device_code'
+          };
+
+          sendRequest(this, data, done);
         });
 
         it("should return invalid_client error", function() {
@@ -168,9 +198,41 @@ describe('POST /token', function() {
         });
       });
 
+      context('using an unknown client_id', function() {
+        before(function(done) {
+          var data = {
+            client_id:        4,
+            service_provider: 'BBC1',
+            response_type: 'device_code'
+          };
+
+          sendRequest(this, data, done);
+        });
+
+        it("should return invalid_client error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_client');
+        });
+      });
+
+      context('with a missing service_provider', function() {
+        before(function(done) {
+          sendRequest(this, { client_id: 3, response_type: 'device_code' }, done);
+        });
+
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
+        });
+      });
+
       context('using a valid client_id', function() {
         before(function(done) {
-          sendRequest(this, { client_id: 3, service_provider: 'BBC1', response_type: 'device_code' }, done);
+          var data = {
+            client_id:        3,
+            service_provider: 'BBC1',
+            response_type:    'device_code'
+          };
+
+          sendRequest(this, data, done);
         });
 
         it('should return a status 200', function() {
