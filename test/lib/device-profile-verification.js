@@ -94,7 +94,7 @@ describe('GET /verify', function() {
   context('When requesting the form to validate a user code', function() {
     context('and the user is not authenticated', function() {
       before(function(done) {
-        requestHelper.get(this, '/verify', null, done);
+        requestHelper.sendRequest(this, '/verify', null, done);
       });
 
       it('should reply a status 401', function() {
@@ -117,7 +117,7 @@ describe('GET /verify', function() {
       });
 
       before(function(done) {
-        requestHelper.get(this, '/verify', { cookie: this.cookie }, done);
+        requestHelper.sendRequest(this, '/verify', { cookie: this.cookie }, done);
       });
 
       it('should return a status 200', function() {
@@ -144,7 +144,11 @@ describe('POST /verify', function() {
       before(resetDatabase);
 
       before(function(done) {
-        requestHelper.postForm(this, '/verify', { data: { user_code: '1234' } }, done);
+        requestHelper.sendRequest(this, '/verify', {
+          method: 'post',
+          type:   'form',
+          data:   { user_code: '1234' }
+        }, done);
       });
 
       it('should return a status 401', function() {
@@ -170,7 +174,12 @@ describe('POST /verify', function() {
         before(resetDatabase);
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { cookie: this.cookie, data: { user_code: null } }, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: null }
+          }, done);
         });
 
         it('should return a status 400', function() {
@@ -182,7 +191,12 @@ describe('POST /verify', function() {
         before(resetDatabase);
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { cookie: this.cookie, data: { user_code: '5678' } }, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '5678' }
+          }, done);
         });
 
         it('should return a status 400', function() {
@@ -204,7 +218,12 @@ describe('POST /verify', function() {
         before(resetDatabase);
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { cookie: this.cookie, data: { user_code: '1234' } }, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '1234' }
+          }, done);
         });
 
         it('should return a status 200', function() {
@@ -274,7 +293,12 @@ describe('POST /verify', function() {
         });
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { cookie: this.cookie, data: { user_code: '1234' } }, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '1234' }
+          }, done);
         });
 
         it('should return a status 400', function() {

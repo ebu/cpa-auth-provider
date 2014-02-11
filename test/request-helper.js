@@ -2,92 +2,44 @@
 
 var cheerio = require('cheerio');
 
-var requestHelper = {};
+module.exports = {
+  sendRequest: function(context, path, opts, done) {
+    opts = opts || {};
 
-/**
- * Send a get request and store err, res and dom ($) in context
- */
+    var method = opts.method || 'get';
 
-requestHelper.get = function(context, url, options, done) {
-  options = options || {};
-
-  requestHelper.getWithOptions(context, url, options, done);
-};
-
-/**
- * Send a get request and store err, res and dom ($) in context
- */
-
-requestHelper.getWithOptions = function(context, url, options, done) {
-  var req = request.get(url);
-
-  if (options.authorization) {
-    req.set('Authorization', 'Bearer '+ options.authorization);
-  }
-
-  if (options.cookie) {
-    req.set('cookie', options.cookie);
-  }
-
-  req.end(function(err, res) {
-    context.err = err;
-    context.res = res;
-    if (context.res && context.res.text) {
-      context.$ = cheerio.load(context.res.text);
+    if (method === 'delete') {
+      method = 'del';
     }
-    done(err);
-  });
-};
 
-requestHelper.post = function(context, url, body, options, done) {
-  var req = request.post(url);
+    var req = request[method](path);
 
-  if (options.type) {
-    req.type(options.type);
-  }
-
-  if (options.cookie) {
-    req.set('cookie', options.cookie);
-  }
-
-  req.send(body).end(function(err, res) {
-    context.err = err;
-    context.res = res;
-    if (context.res && context.res.text) {
-      context.$ = cheerio.load(context.res.text);
+    if (opts.cookie) {
+      req.set('cookie', opts.cookie);
     }
-    done(err);
-  });
-};
 
-requestHelper.postForm = function(context, url, options, done) {
-  options.type = 'form';
-  this.post(context, url, options.data, options, done);
-};
+    if (opts.accessToken) {
+      var tokenType = opts.tokenType || 'Bearer';
 
-requestHelper.postJSON = function(context, url, options, done) {
-  options.type = 'json';
-  this.post(context, url, options.data, options, done);
-};
+      req.set('Authorization', tokenType + ' ' + opts.accessToken);
+    }
 
-requestHelper.sendPutRequest = function(context, path, done) {
-  request.put(path).end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
+    if (opts.data) {
+      // If 'form', sets Content-Type: application/x-www-form-urlencoded.
+      var type = opts.type || 'json';
+      req.type(type);
 
-requestHelper.sendDeleteRequest = function(context, path, done) {
-  request.del(path).end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
+      req.send(opts.data);
+    }
 
-requestHelper.sendRequest = function(context, path, done) {
-  request.get(path).end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
+    req.end(function(err, res) {
+      context.res = res;
+
+      if (opts.parseDOM) {
+        context.$ = cheerio.load(context.res.text);
+      }
+
+      done(err);
+    });
+  }
 };
-module.exports = requestHelper;

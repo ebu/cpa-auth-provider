@@ -1,8 +1,9 @@
 "use strict";
 
-var requestHelper = require('../request-helper');
+var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
-var db = require('../../models');
+
+var requestHelper = require('../request-helper');
 
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM Users').then(function() {
@@ -21,7 +22,7 @@ var resetDatabase = function(done) {
 
 describe('GET /auth', function() {
   before(function(done) {
-    requestHelper.get(this, '/auth', null, done);
+    requestHelper.sendRequest(this, '/auth', { parseDOM: true }, done);
   });
 
   context('When requesting the list of identity provider', function() {
@@ -59,7 +60,7 @@ describe('GET /protected', function() {
 
   context('When the user is not authenticated', function() {
     before(function(done) {
-      requestHelper.get(this, '/protected', null, done);
+      requestHelper.sendRequest(this, '/protected', null, done);
     });
 
     it('should return a status 401', function() {
@@ -82,7 +83,7 @@ describe('GET /protected', function() {
     });
 
     before(function(done) {
-      requestHelper.get(this, '/protected', { cookie: this.cookie }, done);
+      requestHelper.sendRequest(this, '/protected', { cookie: this.cookie }, done);
     });
 
     it('should return a status 200', function() {

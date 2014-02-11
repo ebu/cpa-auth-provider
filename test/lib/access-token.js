@@ -3,20 +3,10 @@
 var db       = require('../../models');
 var generate = require('../../lib/generate');
 
-var assertions = require('../assertions');
+var assertions    = require('../assertions');
+var requestHelper = require('../request-helper');
 
 var _ = require('lodash');
-
-var sendPostRequest = function(context, options, done) {
-  request
-    .post(options.path)
-    .type(options.type || 'form') // sets Content-Type: application/x-www-form-urlencoded
-    .send(options.data)
-    .end(function(err, res) {
-      context.res = res;
-      done(err);
-    });
-};
 
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM PairingCodes').then(function() {
@@ -46,8 +36,6 @@ var createPairingCode = function(attributes, done) {
     });
 };
 
-
-
 describe("POST /token", function() {
   before(function() {
     sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf694');
@@ -66,7 +54,11 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, { path: '/token', type: 'json', data: requestBody }, done);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
@@ -82,7 +74,11 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, { path: '/token', data: requestBody }, done);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   requestBody
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
@@ -98,7 +94,11 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, { path: '/token', data: requestBody }, done);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   requestBody
+        }, done);
       });
 
       it("should return an invalid_client error", function() {
@@ -114,7 +114,11 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, { path: '/token', data: requestBody }, done);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   requestBody
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
@@ -130,7 +134,11 @@ describe("POST /token", function() {
           code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
         };
 
-        sendPostRequest(this, { path: '/token', data: requestBody }, done);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   requestBody
+        }, done);
       });
 
       it("should return an unsupported_grant_type error", function() {
@@ -154,7 +162,11 @@ describe("POST /token", function() {
               code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
             };
 
-            sendPostRequest(this, { path: '/token', data: requestBody }, done);
+            requestHelper.sendRequest(this, '/token', {
+              method: 'post',
+              type:   'form',
+              data:   requestBody
+            }, done);
           });
 
           it("should return an authorization_pending error", function() {
@@ -176,7 +188,11 @@ describe("POST /token", function() {
               code:       'invalid'
             };
 
-            sendPostRequest(this, { path: '/token', data: requestBody }, done);
+            requestHelper.sendRequest(this, '/token', {
+              method: 'post',
+              type:   'form',
+              data:   requestBody
+            }, done);
           });
 
           it("should return an invalid_client error", function() {
@@ -201,7 +217,11 @@ describe("POST /token", function() {
               code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
             };
 
-            sendPostRequest(this, { path: '/token', data: requestBody }, done);
+            requestHelper.sendRequest(this, '/token', {
+              method: 'post',
+              type:   'form',
+              data:   requestBody
+            }, done);
           });
 
           it("should return status 200", function() {
@@ -301,7 +321,11 @@ describe("POST /token", function() {
               code:       'invalid'
             };
 
-            sendPostRequest(this, { path: '/token', data: requestBody }, done);
+            requestHelper.sendRequest(this, '/token', {
+              method: 'post',
+              type:   'form',
+              data:   requestBody
+            }, done);
           });
 
           it("should return invalid_client error", function() {
@@ -323,7 +347,11 @@ describe("POST /token", function() {
               // code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
             };
 
-            sendPostRequest(this, { path: '/token', data: requestBody }, done);
+            requestHelper.sendRequest(this, '/token', {
+              method: 'post',
+              type:   'form',
+              data:   requestBody
+            }, done);
           });
 
           it("should return invalid_request error", function() {

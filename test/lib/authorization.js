@@ -3,19 +3,8 @@
 var db       = require('../../models');
 var generate = require('../../lib/generate');
 
-var sendPostRequest = function(context, options, done) {
-  var req = request.post(options.path)
-    .type(options.type || 'form'); // sets Content-Type: application/x-www-form-urlencoded
-
-  if (options.data) {
-    req.send(options.data);
-  }
-
-  req.end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
+var assertions    = require('../assertions');
+var requestHelper = require('../request-helper');
 
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM ServiceAccessTokens').then(function() {
@@ -47,28 +36,22 @@ var createServiceProvider = function(done) {
     });
 };
 
-var verifyError = function(res, error) {
-  expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
-  expect(res.body).to.be.an('object');
-  expect(res.body).to.have.property('error');
-  expect(res.body.error).to.equal(error);
-};
-
 describe("Access token verification", function() {
   before(resetDatabase);
   before(createServiceProvider);
 
   context("given a valid access token", function() {
     before(function(done) {
-      var request = {
-        path: '/authorized',
-        data: {
-          token: 'aed201ffb3362de42700a293bdebf694',
-          service_provider_id: 'BBC1'
-        }
+      var data = {
+        token: 'aed201ffb3362de42700a293bdebf694',
+        service_provider_id: 'BBC1'
       };
 
-      sendPostRequest(this, request, done);
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'form',
+        data:   data
+      }, done);
     });
 
     it("should return status 200", function() {
@@ -95,23 +78,20 @@ describe("Access token verification", function() {
 
   context("given an invalid access token", function() {
     before(function(done) {
-      var request = {
-        path: '/authorized',
-        data: {
-          token: 'unknown',
-          service_provider_id: 'unknown'
-        }
+      var data = {
+        token: 'unknown',
+        service_provider_id: 'unknown'
       };
 
-      sendPostRequest(this, request, done);
-    });
-
-    it("should return status 401", function() {
-      expect(this.res.statusCode).to.equal(401);
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'form',
+        data:   data
+      }, done);
     });
 
     it("should return an 'unauthorized' error", function() {
-      verifyError(this.res, 'unauthorized');
+      assertions.verifyError(this.res, 401, 'unauthorized');
     });
   });
 
@@ -121,65 +101,56 @@ describe("Access token verification", function() {
 
   context("with missing access token", function() {
     before(function(done) {
-      var request = {
-        path: '/authorized',
-        data: {
-          service_provider_id: 'BBC1'
-        }
+      var data = {
+        service_provider_id: 'BBC1'
       };
 
-      sendPostRequest(this, request, done);
-    });
-
-    it("should return status 400", function() {
-      expect(this.res.statusCode).to.equal(400);
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'form',
+        data:   data
+      }, done);
     });
 
     it("should return an 'invalid_request' error", function() {
-      verifyError(this.res, 'invalid_request');
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 
   context("with invalid service provider id", function() {
     before(function(done) {
-      var request = {
-        path: '/authorized',
-        data: {
-          token: 'aed201ffb3362de42700a293bdebf694',
-          service_provider_id: 'unknown'
-        }
+      var data = {
+        token: 'aed201ffb3362de42700a293bdebf694',
+        service_provider_id: 'unknown'
       };
 
-      sendPostRequest(this, request, done);
-    });
-
-    it("should return status 401", function() {
-      expect(this.res.statusCode).to.equal(401);
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'form',
+        data:   data
+      }, done);
     });
 
     it("should return an 'unauthorized' error", function() {
-      verifyError(this.res, 'unauthorized');
+      assertions.verifyError(this.res, 401, 'unauthorized');
     });
   });
 
   context("with missing service provider id", function() {
     before(function(done) {
-      var request = {
-        path: '/authorized',
-        data: {
-          token: 'aed201ffb3362de42700a293bdebf694'
-        }
+      var data = {
+        token: 'aed201ffb3362de42700a293bdebf694'
       };
 
-      sendPostRequest(this, request, done);
-    });
-
-    it("should return status 400", function() {
-      expect(this.res.statusCode).to.equal(400);
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'form',
+        data:   data
+      }, done);
     });
 
     it("should return an 'invalid_request' error", function() {
-      verifyError(this.res, 'invalid_request');
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 });

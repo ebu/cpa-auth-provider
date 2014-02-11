@@ -1,21 +1,24 @@
 "use strict";
 
+var db       = require('../../models');
 var generate = require('../../lib/generate');
+
+var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
-var db = require('../../models');
 
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM ServiceProviders').then(function() {
-      return db.sequelize.query('DELETE FROM Clients');
-  }).then(function() {
-      return db.sequelize.query('DELETE FROM ServiceAccessTokens');
-    })
-    .then(function() {
-      done();
-    },
-    function(error) {
-      done(error);
-    });
+    return db.sequelize.query('DELETE FROM Clients');
+  })
+  .then(function() {
+    return db.sequelize.query('DELETE FROM ServiceAccessTokens');
+  })
+  .then(function() {
+    done();
+  },
+  function(error) {
+    done(error);
+  });
 };
 
 var createClientInformation = function(done) {
@@ -27,6 +30,7 @@ var createClientInformation = function(done) {
     software_version: '1.0',
     ip:     '127.0.0.1'
   };
+
   db.Client
     .create(data)
     .complete(function(err, client) {
@@ -47,13 +51,6 @@ var createServiceProvider = function(done) {
     });
 };
 
-var verifyError = function(res, error) {
-  expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
-  expect(res.body).to.be.an('object');
-  expect(res.body).to.have.property('error');
-  expect(res.body.error).to.equal(error);
-};
-
 describe('POST /token for device stand-alone mode', function() {
   before(function() {
     sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf6123');
@@ -70,29 +67,28 @@ describe('POST /token for device stand-alone mode', function() {
   context('When requesting an access token', function() {
     context("with incorrect Content-Type", function() {
       before(function(done) {
-        requestHelper.postJSON(this, '/token', { data: {} }, done);
-      });
-
-      it("should return status 400", function() {
-        expect(this.res.statusCode).to.equal(400);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          data:   {}
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
     context('without client information', function(){
       before(function(done) {
-        requestHelper.postForm(this, '/token', {}, done);
-      });
-
-      it('should reply with a status code 400', function() {
-        expect(this.res.statusCode).to.equal(400);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   {}
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
@@ -104,15 +100,16 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC1',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', { data: body }, done);
-      });
 
-      it('should reply with a status code 400', function(){
-        expect(this.res.statusCode).to.equal(400);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   body
+        }, done);
       });
 
       it('should return an invalid_client error', function() {
-        verifyError(this.res, 'invalid_client');
+        assertions.verifyError(this.res, 400, 'invalid_client');
       });
     });
 
@@ -123,19 +120,20 @@ describe('POST /token for device stand-alone mode', function() {
           client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', { data: body }, done);
-      });
 
-      it('should reply with a status code 400', function(){
-        expect(this.res.statusCode).to.equal(400);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   body
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
-    context('with invalid information service_provider', function(){
+    context('with invalid information service_provider', function() {
       before(function(done) {
         var body = {
           client_id: 102,
@@ -143,20 +141,20 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC-wrong',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', { data: body }, done);
-      });
 
-      it('should reply with a status code 400', function(){
-        expect(this.res.statusCode).to.equal(400);
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   body
+        }, done);
       });
 
       it("should return an invalid_request error", function() {
-        verifyError(this.res, 'invalid_request');
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
-
-    context('with valid information service_provider', function(){
+    context('with valid information service_provider', function() {
       before(function(done) {
         var body = {
           client_id: 102,
@@ -164,7 +162,12 @@ describe('POST /token for device stand-alone mode', function() {
           service_provider: 'BBC1',
           grant_type: 'authorization_code'
         };
-        requestHelper.postForm(this, '/token', { data: body }, done);
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'form',
+          data:   body
+        }, done);
       });
 
       it('should reply with a status code 200', function() {
