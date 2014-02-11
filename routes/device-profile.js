@@ -236,8 +236,7 @@ var routes = function(app) {
   app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
 
   app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
-    if (req.headers['content-type'] === 'application/x-www-form-urlencoded' && req.body.user_code) {
-
+    if (requestHelper.isContentType(req, 'application/x-www-form-urlencoded') && req.body.user_code) {
       var postedUserCode = req.body.user_code;
 
       verify.userCode(postedUserCode, function(err, pairingCode) {
@@ -261,8 +260,8 @@ var routes = function(app) {
           }
         }
       });
-
-    } else {
+    }
+    else {
       res.json(400, { error: 'invalid_request' });
     }
   });
