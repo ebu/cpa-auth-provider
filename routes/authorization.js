@@ -77,7 +77,7 @@ module.exports = function(app, options) {
 
                 if (user) {
                   responseData.display_name = user.display_name;
-                  responseData.photo = user.photo;
+                  responseData.photo_url = user.photo_url;
                 }
 
                 res.json(responseData);

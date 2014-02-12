@@ -14,8 +14,8 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
-    var photo = (profile.photos.length > 0) ? profile.photos[0].value : null;
-    db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName, photo: photo }).success(function(user){
+    var photo_url = (profile.photos.length > 0) ? profile.photos[0].value : null;
+    db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName, photo_url: photo_url }).success(function(user){
       return done(null, user);
     }).error(function(err) {
       done(err, null);

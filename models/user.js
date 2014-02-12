@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     password: DataTypes.STRING,
     enable_sso: DataTypes.BOOLEAN,
     display_name: DataTypes.STRING,
-    photo: DataTypes.STRING
+    photo_url: DataTypes.STRING
   }, {
     underscored: true,
 
