@@ -70,21 +70,17 @@ module.exports = function(app, options) {
                   return;
                 }
 
-                var rsp = {
-                  client_id: accessToken.client_id
+                var responseData = {
+                  client_id: accessToken.client_id,
+                  user_id: accessToken.user_id
                 };
 
                 if (user) {
-                  rsp.user_id = user.id;
-                  if (user.display_name) {
-                    rsp.display_name = user.display_name;
-                  }
-                  if (user.photo) {
-                    rsp.photo = user.photo;
-                  }
+                  responseData.display_name = user.display_name;
+                  responseData.photo = user.photo;
                 }
 
-                res.json(rsp);
+                res.json(responseData);
               });
           });
       });
