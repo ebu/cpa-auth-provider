@@ -1,15 +1,15 @@
 "use strict";
 
-var db = require('../models');
-var generate = require('../lib/generate');
+var config        = require('../config');
+var db            = require('../models');
+var authHelper    = require('../lib/auth-helper');
+var generate      = require('../lib/generate');
+var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
-var verify = require('../lib/verify');
-var config = require('../config');
-var messages = require('../lib/messages');
-var authHelper = require('../lib/auth-helper');
+var verify        = require('../lib/verify');
 
 var registerPairingCode = function(req, res) {
-  var clientId = req.body.client_id;
+  var clientId            = req.body.client_id;
   var serviceProviderName = req.body.service_provider;
 
   // TODO: validate clientId
@@ -41,17 +41,17 @@ var registerPairingCode = function(req, res) {
         }
 
         var pairingCode = {
-          client_id: clientId,
+          client_id:           clientId,
           service_provider_id: serviceProvider.id,
-          device_code: generate.deviceCode(),
-          user_code: generate.userCode(),
-          verification_uri: config.uris.verification_uri
+          device_code:         generate.deviceCode(),
+          user_code:           generate.userCode(),
+          verification_uri:    config.uris.verification_uri
         };
 
         db.PairingCode.create(pairingCode).then(function() {
           res.json(200, {
-            device_code: pairingCode.device_code,
-            user_code: pairingCode.user_code,
+            device_code:      pairingCode.device_code,
+            user_code:        pairingCode.user_code,
             verification_uri: pairingCode.verification_uri
           });
         },
@@ -101,7 +101,6 @@ var requestStandAloneAccessToken = function(res, clientId, clientSecret, service
 };
 
 var validateDeviceCode = function(res, clientId, deviceCode) {
-
   db.PairingCode
     .find({ where: { client_id: clientId, device_code: deviceCode } })
     .success(function(pairingCode) {
@@ -149,10 +148,10 @@ var validateDeviceCode = function(res, clientId, deviceCode) {
 };
 
 var requestAccessToken = function(req, res) {
-  var clientId = req.body.client_id;
-  var clientSecret = req.body.client_secret;
+  var clientId        = req.body.client_id;
+  var clientSecret    = req.body.client_secret;
   var serviceProvider = req.body.service_provider;
-  var scope = req.body.scope;
+  var scope           = req.body.scope;
 
   // TODO: validate clientId
   if (!clientId) {
