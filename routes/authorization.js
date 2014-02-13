@@ -46,7 +46,7 @@ module.exports = function(app, options) {
         };
 
         db.ServiceAccessToken
-          .find({ where: query })
+          .find({ where: query, include: [db.User]})
           .complete(function(err, accessToken) {
             if (err) {
               res.send(500);
@@ -58,10 +58,18 @@ module.exports = function(app, options) {
               return;
             }
 
-            res.json({
+            var responseData = {
               client_id: accessToken.client_id,
-              user_id:   accessToken.user_id
-            });
+              user_id: accessToken.user_id
+            };
+
+            if (accessToken.user) {
+              responseData.display_name = accessToken.user.display_name;
+              responseData.photo_url = accessToken.user.photo_url;
+            }
+
+            res.json(responseData);
+            
           });
       });
   });

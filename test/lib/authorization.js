@@ -47,6 +47,20 @@ var createServiceProvider = function(done) {
     });
 };
 
+var createUser = function(done) {
+  var data = {
+    id:           3,
+    display_name: 'Joe Bloggs',
+    photo_url:    'http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png'
+  };
+
+  db.User
+    .create(data)
+    .complete(function(err, user) {
+      done();
+    });
+};
+
 var verifyError = function(res, error) {
   expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
   expect(res.body).to.be.an('object');
@@ -57,6 +71,7 @@ var verifyError = function(res, error) {
 describe("Access token verification", function() {
   before(resetDatabase);
   before(createServiceProvider);
+  before(createUser);
 
   context("given a valid access token", function() {
     before(function(done) {
@@ -89,6 +104,16 @@ describe("Access token verification", function() {
       it("should include the client id", function() {
         expect(this.res.body).to.have.property('client_id');
         expect(this.res.body.client_id).to.equal(2);
+      });
+
+      it("should include the display name", function() {
+        expect(this.res.body).to.have.property('display_name');
+        expect(this.res.body.display_name).to.equal('Joe Bloggs');
+      });
+
+      it("should include the photo url", function() {
+        expect(this.res.body).to.have.property('photo_url');
+        expect(this.res.body.photo_url).to.equal('http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png');
       });
     });
   });

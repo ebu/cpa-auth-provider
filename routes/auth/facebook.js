@@ -10,10 +10,12 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 passport.use(new FacebookStrategy({
     clientID: config.identity_providers.facebook.client_id,
     clientSecret: config.identity_providers.facebook.client_secret,
-    callbackURL: config.identity_providers.facebook.callback_url
+    callbackURL: config.identity_providers.facebook.callback_url,
+    profileFields: ['id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
-    db.User.findOrCreate({provider_uid: profile.id}).success(function(user){
+    var photo_url = (profile.photos.length > 0) ? profile.photos[0].value : null;
+    db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName, photo_url: photo_url }).success(function(user){
       return done(null, user);
     }).error(function(err) {
       done(err, null);
