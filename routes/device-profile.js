@@ -160,24 +160,23 @@ var requestAccessToken = function(req, res) {
     return;
   }
 
-
-  //Stand-alone mode
-  if(clientSecret) {
+  // Stand-alone mode
+  if (clientSecret) {
     verify.clientSecret(clientId, clientSecret, function(err, client) {
-      if(err || !client) {
-        res.json(400, {error: 'invalid_client'});
+      if (err || !client) {
+        res.json(400, { error: 'invalid_client' });
         return;
       }
 
-      if(!serviceProvider) {
+      if (!serviceProvider) {
         res.json(400, { error: 'invalid_request' });
         return;
       }
 
       requestStandAloneAccessToken(res, clientId, clientSecret, serviceProvider, scope);
     });
-  } else {
-
+  }
+  else {
     // TODO: RFC6749 section 4.1.3 describes the 'code' parameter as "The
     // authorization code received from the authorization server." Assume this
     // is the device_code from draft-recordon-oauth-v2-device-00 section 1.4
@@ -224,11 +223,12 @@ var routes = function(app) {
     }
   });
 
-  var renderVerificationPage = function(req, res, error_message) {
-    if (typeof error_message === 'string') {
+  var renderVerificationPage = function(req, res, errorMessage) {
+    if (typeof errorMessage === 'string') {
       res.status(400);
-      res.render('verify.ejs', { 'values': req.body, 'error': error_message });
-    } else {
+      res.render('verify.ejs', { 'values': req.body, 'error': errorMessage });
+    }
+    else {
       res.render('verify.ejs', { 'values': req.body, 'error': null });
     }
   };
