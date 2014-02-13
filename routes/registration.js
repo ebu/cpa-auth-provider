@@ -1,10 +1,10 @@
 "use strict";
 
-var db = require('../models');
-var generate = require('../lib/generate');
+var config        = require('../config');
+var db            = require('../models');
+var generate      = require('../lib/generate');
 var requestHelper = require('../lib/request-helper');
-var verify = require('../lib/verify');
-var config = require('../config');
+var verify        = require('../lib/verify');
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -19,54 +19,62 @@ module.exports = function(app) {
       return;
     }
 
-    var clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    var dbClient = null;
+    var dbRegistrationAccessToken = null;
 
-    var clientSecret = generate.clientSecret(clientIp);
+    db.sequelize.transaction(function(transaction) {
+      var clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-    //TODO: Check mandatory fields.
+      var clientSecret = generate.clientSecret(clientIp);
 
-    var client = {
-      id: null,
-      secret: clientSecret,
-      name: req.body.client_name,
-      software_id: req.body.software_id,
-      software_version: req.body.software_version,
-      ip: clientIp
-    };
+      // TODO: Check mandatory fields.
+      var clientData = {
+        id:               null,
+        secret:           clientSecret,
+        name:             req.body.client_name,
+        software_id:      req.body.software_id,
+        software_version: req.body.software_version,
+        ip:               clientIp
+      };
 
-    db.Client
-      .create(client).complete(function(err, client) {
-        if (err) {
-          logger.error("Failed to create client:", err);
+      db.Client.create(clientData).then(function(client) {
+        dbClient = client;
 
-          // TODO: distinguish between invalid input parameters and other
-          // failure conditions
-          res.json(400, { error: 'invalid_request' });
-          return;
-        }
-
-        var token = {
-          token: generate.accessToken(),
-          scope: '' // TODO: set scope as defined by service provider?
+        var tokenData = {
+          token:     generate.accessToken(),
+          scope:     '', // TODO: set scope as defined by service provider?
+          client_id: dbClient.id
         };
 
-        db.RegistrationAccessToken.create(token).complete(function(err, registrationAccessToken) {
+        return db.RegistrationAccessToken.create(tokenData);
+      })
+      .then(function(registrationAccessToken) {
+        dbRegistrationAccessToken = registrationAccessToken;
+        return transaction.commit();
+      })
+      .then(function() {
+        res.json(201, {
+          client_id:                 dbClient.id.toString(),
+          client_secret:             dbClient.secret,
+          registration_access_token: dbRegistrationAccessToken.token,
+          registration_client_uri:   config.uris.registration_client_uri
+        });
+      },
+      function(error) {
+        logger.error("Failed to create client:", error);
+
+        transaction.rollback().complete(function(err) {
           if (err) {
-            logger.error("Failed to create registration access token:", err);
-            res.json(400, { error: 'invalid_request' });
-            return;
+            res.send(500);
           }
-
-          registrationAccessToken.setClient(client);
-
-          res.json(201, {
-            client_id: client.dataValues.id.toString(),
-            client_secret: client.dataValues.secret,
-            registration_access_token: registrationAccessToken.dataValues.token,
-            registration_client_uri: config.uris.registration_client_uri
-          });
+          else {
+            // TODO: distinguish between invalid input parameters and other
+            // failure conditions
+            res.json(400, { error: 'invalid_request' });
+          }
         });
       });
+    });
   });
 
   // Client Configuration Endpoint
@@ -89,21 +97,21 @@ module.exports = function(app) {
       }
 
       res.json({
-        client_id: client.dataValues.id.toString(),
-        client_secret: client.dataValues.secret,
+        client_id:                 client.dataValues.id.toString(),
+        client_secret:             client.dataValues.secret,
         registration_access_token: registrationAccessToken.dataValues.token,
-        registration_client_uri: config.uris.registration_client_uri
+        registration_client_uri:   config.uris.registration_client_uri
       });
     });
   };
 
-  //Client_id is given in the path
+  // client_id is given in the path
   app.get('/register/:client_id', function(req, res) {
     var clientId = req.params.client_id;
     configurationEndpoint(req, res, clientId);
   });
 
-  //Client_id is given as a GET Parameter
+  // client_id is given as a GET Parameter
   app.get('/register', function(req, res) {
     var clientId = req.query.client_id;
     configurationEndpoint(req, res, clientId);
