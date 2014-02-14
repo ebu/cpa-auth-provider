@@ -49,6 +49,9 @@ var registerPairingCode = function(req, res) {
         };
 
         db.PairingCode.create(pairingCode).then(function() {
+          res.set('Cache-Control', 'no-store');
+          res.set('Pragma', 'no-cache');
+
           res.json(200, {
             device_code: pairingCode.device_code,
             user_code: pairingCode.user_code,

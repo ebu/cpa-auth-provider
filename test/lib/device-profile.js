@@ -177,6 +177,19 @@ describe('POST /token', function() {
           expect(this.res.statusCode).to.equal(200);
         });
 
+        // See example request in
+        // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
+
+        it("should return a Cache-Control: no-store header", function() {
+          expect(this.res.headers).to.have.property('cache-control');
+          expect(this.res.headers['cache-control']).to.equal('no-store');
+        });
+
+        it("should return a Pragma: no-cache header", function() {
+          expect(this.res.headers).to.have.property('pragma');
+          expect(this.res.headers.pragma).to.equal('no-cache');
+        });
+
         it('should return JSON', function() {
           expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
         });
