@@ -56,13 +56,11 @@ var sendRequest = function(context, options, done) {
     service_provider: options.service_provider
   };
 
-  request.post('/token')
-    .type('form') // sets Content-Type: application/x-www-form-urlencoded
-    .send(body)
-    .end(function(err, res) {
-      context.res = res;
-      done(err);
-    });
+  requestHelper.sendRequest(context, '/token', {
+    method: 'post',
+    type:   'form',
+    data:   body
+  }, done);
 };
 
 describe('POST /token', function() {

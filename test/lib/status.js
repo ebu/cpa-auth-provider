@@ -4,7 +4,7 @@ var requestHelper = require('../request-helper');
 
 describe('GET /status', function() {
   before(function(done) {
-    requestHelper.sendRequest(this, '/status', done);
+    requestHelper.sendRequest(this, '/status', null, done);
   });
 
   it('should return status 200', function() {

@@ -44,6 +44,12 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
+      return db.User.create({
+        provider_uid: 'testuser',
+        password: 'testpassword'
+      });
+    })
+    .then(function() {
       return db.ServiceProvider.create({
         id:   5,
         name: 'Example Service Provider'
@@ -88,7 +94,7 @@ describe('GET /verify', function() {
   context('When requesting the form to validate a user code', function() {
     context('and the user is not authenticated', function() {
       before(function(done) {
-        requestHelper.get(this, '/verify', false, done);
+        requestHelper.sendRequest(this, '/verify', null, done);
       });
 
       it('should reply a status 401', function() {
@@ -98,7 +104,20 @@ describe('GET /verify', function() {
 
     context('and the user is authenticated', function() {
       before(function(done) {
-        requestHelper.get(this, '/verify', true, done);
+        var self = this;
+
+        request
+          .post('/login')
+          .type('form')
+          .send({ username: 'testuser', password: 'testpassword' })
+          .end(function(err, res) {
+            self.cookie = res.headers['set-cookie'];
+            done(err);
+          });
+      });
+
+      before(function(done) {
+        requestHelper.sendRequest(this, '/verify', { cookie: this.cookie }, done);
       });
 
       it('should return a status 200', function() {
@@ -125,7 +144,11 @@ describe('POST /verify', function() {
       before(resetDatabase);
 
       before(function(done) {
-        requestHelper.postForm(this, '/verify', { user_code: '1234' }, false, done);
+        requestHelper.sendRequest(this, '/verify', {
+          method: 'post',
+          type:   'form',
+          data:   { user_code: '1234' }
+        }, done);
       });
 
       it('should return a status 401', function() {
@@ -134,11 +157,29 @@ describe('POST /verify', function() {
     });
 
     context('and the user is authenticated', function() {
+      before(function(done) {
+        var self = this;
+
+        request
+          .post('/login')
+          .type('form')
+          .send({ username: 'testuser', password: 'testpassword' })
+          .end(function(err, res) {
+            self.cookie = res.headers['set-cookie'];
+            done(err);
+          });
+      });
+
       context('without providing a user_code', function() {
         before(resetDatabase);
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { user_code: null }, true, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: null }
+          }, done);
         });
 
         it('should return a status 400', function() {
@@ -150,7 +191,12 @@ describe('POST /verify', function() {
         before(resetDatabase);
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { user_code: '5678' }, true, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '5678' }
+          }, done);
         });
 
         it('should return a status 400', function() {
@@ -172,7 +218,12 @@ describe('POST /verify', function() {
         before(resetDatabase);
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { user_code: '1234' }, true, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '1234' }
+          }, done);
         });
 
         it('should return a status 200', function() {
@@ -242,7 +293,12 @@ describe('POST /verify', function() {
         });
 
         before(function(done) {
-          requestHelper.postForm(this, '/verify', { user_code: '1234' }, true, done);
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '1234' }
+          }, done);
         });
 
         it('should return a status 400', function() {

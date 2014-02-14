@@ -60,7 +60,11 @@ describe('POST /register', function() {
           software_version: '0.0.1'
         };
 
-        requestHelper.postForm(this, '/register', JSON.stringify(data), false, done);
+        requestHelper.sendRequest(this, '/register', {
+          method: 'post',
+          type:   'form',
+          data:   JSON.stringify(data)
+        }, done);
       });
 
       it('should return status 400', function() {
@@ -78,7 +82,10 @@ describe('POST /register', function() {
           software_version: '0.0.1'
         };
 
-        requestHelper.postJSON(this, '/register', data, false, done);
+        requestHelper.sendRequest(this, '/register', {
+          method: 'post',
+          data:   data
+        }, done);
       });
 
       it('should return status 201', function() {
@@ -176,7 +183,10 @@ describe('POST /register', function() {
 
           delete data[field];
 
-          requestHelper.postJSON(this, '/register', data, false, done);
+          requestHelper.sendRequest(this, '/register', {
+            method: 'post',
+            data:   data
+          }, done);
         });
 
         it('should return status 400', function() {
@@ -198,7 +208,10 @@ describe('POST /register', function() {
 
           data[field] = '';
 
-          requestHelper.postJSON(this, '/register', data, false, done);
+          requestHelper.sendRequest(this, '/register', {
+            method: 'post',
+            data:   data
+          }, done);
         });
 
         it('should return status 400', function() {
@@ -222,15 +235,10 @@ var sendReadRequest = function(context, params, done) {
   }
 
   if (params.authorization) {
-    requestHelper.getWithOptions(
-      context,
-      url,
-      { authorization: params.authorization },
-      done
-    );
+    requestHelper.sendRequest(context, url, { accessToken: params.authorization }, done);
   }
   else {
-    requestHelper.get(context, url, false, done);
+    requestHelper.sendRequest(context, url, null, done);
   }
 };
 
@@ -358,7 +366,7 @@ testCases.forEach(function(testCase) {
 describe('PUT /register', function() {
   context("When updating configuration information about a client", function() {
     before(function(done) {
-      requestHelper.sendPutRequest(this, '/register', done);
+      requestHelper.sendRequest(this, '/register', { method: 'put' }, done);
     });
 
     it('should reply 501 (Unimplemented)', function() {
@@ -370,7 +378,7 @@ describe('PUT /register', function() {
 describe('DELETE /register', function() {
   context('When deleting configuration information about a client', function() {
     before(function(done) {
-      requestHelper.sendDeleteRequest(this, '/register', done);
+      requestHelper.sendRequest(this, '/register', { method: 'delete' }, done);
     });
 
     it('should reply 501 (Unimplemented)', function() {
