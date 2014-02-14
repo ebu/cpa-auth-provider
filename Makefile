@@ -28,7 +28,7 @@ coverage:
 	@$(COVERAGE) cover $(MOCHA) -- --reporter $(REPORTER) --require test/test-helper test/lib
 
 doc:
-	@$(JSDOC) --private --destination ./docs/ lib
+	@$(JSDOC) --private --destination ./docs/ lib models routes
 
 docs: doc
 

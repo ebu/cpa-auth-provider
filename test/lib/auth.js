@@ -1,11 +1,28 @@
 "use strict";
 
-var requestHelper = require('../request-helper');
+var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
+
+var requestHelper = require('../request-helper');
+
+var resetDatabase = function(done) {
+  db.sequelize.query('DELETE FROM Users').then(function() {
+    return db.User.create({
+      provider_uid: 'testuser',
+      password: 'testpassword'
+    });
+  })
+  .then(function() {
+    done();
+  },
+  function(error) {
+    done(error);
+  });
+};
 
 describe('GET /auth', function() {
   before(function(done) {
-    requestHelper.get(this, '/auth', false, done);
+    requestHelper.sendRequest(this, '/auth', { parseDOM: true }, done);
   });
 
   context('When requesting the list of identity provider', function() {
@@ -39,10 +56,11 @@ describe('GET /auth', function() {
 });
 
 describe('GET /protected', function() {
-  context('When the user is not authenticated', function() {
+  before(resetDatabase);
 
+  context('When the user is not authenticated', function() {
     before(function(done) {
-      requestHelper.get(this, '/protected', false, done);
+      requestHelper.sendRequest(this, '/protected', null, done);
     });
 
     it('should return a status 401', function() {
@@ -52,7 +70,20 @@ describe('GET /protected', function() {
 
   context('When the user is authenticated', function() {
     before(function(done) {
-      requestHelper.get(this, '/protected', true, done);
+      var self = this;
+
+      request
+        .post('/login')
+        .type('form')
+        .send({ username: 'testuser', password: 'testpassword' })
+        .end(function(err, res) {
+          self.cookie = res.headers['set-cookie'];
+          done(err);
+        });
+    });
+
+    before(function(done) {
+      requestHelper.sendRequest(this, '/protected', { cookie: this.cookie }, done);
     });
 
     it('should return a status 200', function() {

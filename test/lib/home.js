@@ -37,15 +37,7 @@ describe('GET /', function() {
     });
 
     before(function(done) {
-      var self = this;
-
-      request
-        .get('/')
-        .set('cookie', this.cookie)
-        .end(function(err, res) {
-          self.res = res;
-          done(err);
-        });
+      requestHelper.sendRequest(this, '/', { cookie: this.cookie }, done);
     });
 
     it('should redirect to /verify', function() {
@@ -57,7 +49,7 @@ describe('GET /', function() {
 
   context('with no signed in user', function() {
     before(function(done) {
-      requestHelper.get(this, '/', false, done);
+      requestHelper.sendRequest(this, '/', null, done);
     });
 
     it('should redirect to /auth', function() {

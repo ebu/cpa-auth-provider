@@ -2,84 +2,44 @@
 
 var cheerio = require('cheerio');
 
-var requestHelper = {};
+module.exports = {
+  sendRequest: function(context, path, opts, done) {
+    opts = opts || {};
 
-//Send a get request and store err, res and dom ($) in context
-requestHelper.get = function(context, url, isAuthorized, done) {
-  var req = request.get(url);
+    var method = opts.method || 'get';
 
-  if (isAuthorized) {
-    requestHelper.getWithOptions(context, url, {'authorization': global.TEST_AUTHORIZATION_TOKEN}, done);
-  } else {
-    requestHelper.getWithOptions(context, url, {}, done);
-  }
-};
-
-//Send a get request and store err, res and dom ($) in context
-requestHelper.getWithOptions = function(context, url, options, done) {
-  var req = request.get(url);
-
-  if (options.authorization) {
-    req.set('Authorization', 'Bearer '+ options.authorization);
-  }
-
-  req.end(function(err, res) {
-    context.err = err;
-    context.res = res;
-    if (context.res && context.res.text) {
-      context.$ = cheerio.load(context.res.text);
+    if (method === 'delete') {
+      method = 'del';
     }
-    done(err);
-  });
-};
 
-requestHelper.post = function(context, url, body, options, done) {
-  var req = request.post(url);
+    var req = request[method](path);
 
-  if(options.type) {
-    req.type(options.type);
-  }
-
-  if (options.isAuthenticated) {
-    req.set('Authorization', 'Bearer '+ global.TEST_AUTHORIZATION_TOKEN);
-  }
-
-  req.send(body).end(function(err, res) {
-    context.err = err;
-    context.res = res;
-    if (context.res && context.res.text) {
-      context.$ = cheerio.load(context.res.text);
+    if (opts.cookie) {
+      req.set('cookie', opts.cookie);
     }
-    done(err);
-  });
-};
 
-requestHelper.postForm = function(context, url, body, isAuthenticated, done) {
-  this.post(context, url, body, {type:'form', isAuthenticated:isAuthenticated}, done);
-};
+    if (opts.accessToken) {
+      var tokenType = opts.tokenType || 'Bearer';
 
-requestHelper.postJSON = function(context, url, body, isAuthenticated, done) {
-  this.post(context, url, body, {type:'json', isAuthenticated:isAuthenticated}, done);
-};
+      req.set('Authorization', tokenType + ' ' + opts.accessToken);
+    }
 
-requestHelper.sendPutRequest = function(context, path, done) {
-  request.put(path).end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
+    if (opts.data) {
+      // If 'form', sets Content-Type: application/x-www-form-urlencoded.
+      var type = opts.type || 'json';
+      req.type(type);
 
-requestHelper.sendDeleteRequest = function(context, path, done) {
-  request.del(path).end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
-};
+      req.send(opts.data);
+    }
 
-requestHelper.sendRequest = function(context, path, done) {
-  request.get(path).end(function(err, res) {
-    context.res = res;
-    done(err);
-  });
+    req.end(function(err, res) {
+      context.res = res;
+
+      if (opts.parseDOM) {
+        context.$ = cheerio.load(context.res.text);
+      }
+
+      done(err);
+    });
+  }
 };
-module.exports = requestHelper;
