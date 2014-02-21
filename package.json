@@ -15,7 +15,7 @@
     "passport-github": "~0.1.5",
     "passport-local": "~0.1.6",
     "ejs": "~0.8.5",
-    "sequelize": "~2.0.0-beta.2",
+    "sequelize": "2.0.0-dev4",
     "mysql": "~2.0.0-rc2",
     "lodash": "~2.4.1",
     "optimist": "git+https://github.com/chrisn/node-optimist.git",
