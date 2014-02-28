@@ -40,6 +40,25 @@ describe("Access token verification", function() {
   before(resetDatabase);
   before(createServiceProvider);
 
+  context("with incorrect content type", function() {
+    before(function(done) {
+      var data = {
+        token: 'aed201ffb3362de42700a293bdebf694',
+        service_provider_id: 'BBC1'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'json',
+        data:   data
+      }, done);
+    });
+
+    it("should return an 'invalid_request' error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
+    });
+  });
+
   context("given a valid access token", function() {
     before(function(done) {
       var data = {
@@ -80,7 +99,7 @@ describe("Access token verification", function() {
     before(function(done) {
       var data = {
         token: 'unknown',
-        service_provider_id: 'unknown'
+        service_provider_id: 'BBC1'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
