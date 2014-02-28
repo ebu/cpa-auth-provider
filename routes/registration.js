@@ -6,8 +6,16 @@ var generate      = require('../lib/generate');
 var requestHelper = require('../lib/request-helper');
 var verify        = require('../lib/verify');
 
+var async = require('async');
+
 module.exports = function(app) {
   var logger = app.get('logger');
+
+  // Returns the client's IP address from the given HTTP request.
+
+  var getClientIpAddress = function(req) {
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  };
 
   // Client Registration Endpoint
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
@@ -19,60 +27,66 @@ module.exports = function(app) {
       return;
     }
 
-    var dbClient = null;
-    var dbRegistrationAccessToken = null;
-
     db.sequelize.transaction(function(transaction) {
-      var clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      async.waterfall([
+        function(callback) {
+          var clientIp     = getClientIpAddress(req);
+          var clientSecret = generate.clientSecret(clientIp);
 
-      var clientSecret = generate.clientSecret(clientIp);
+          // TODO: Check mandatory fields.
+          db.Client.create({
+            id:               null,
+            secret:           clientSecret,
+            name:             req.body.client_name,
+            software_id:      req.body.software_id,
+            software_version: req.body.software_version,
+            ip:               clientIp
+          })
+          .complete(function(err, client) {
+            var state = { client: client };
+            callback(err, state);
+          });
+        },
+        function(state, callback) {
+          db.RegistrationAccessToken.create({
+            token:     generate.accessToken(),
+            scope:     '', // TODO: set scope as defined by service provider?
+            client_id: state.client.id
+          })
+          .complete(function(err, token) {
+            state.registrationAccessToken = token;
+            callback(err, state);
+          });
+        },
+        function(state, callback) {
+          transaction.commit().complete(function(err) {
+            callback(err, state);
+          });
+        },
+        function(state, callback) {
+          res.json(201, {
+            client_id:                 state.client.id.toString(),
+            client_secret:             state.client.secret,
+            registration_access_token: state.registrationAccessToken.token,
+            registration_client_uri:   config.uris.registration_client_uri
+          });
 
-      // TODO: Check mandatory fields.
-      var clientData = {
-        id:               null,
-        secret:           clientSecret,
-        name:             req.body.client_name,
-        software_id:      req.body.software_id,
-        software_version: req.body.software_version,
-        ip:               clientIp
-      };
-
-      db.Client.create(clientData).then(function(client) {
-        dbClient = client;
-
-        var tokenData = {
-          token:     generate.accessToken(),
-          scope:     '', // TODO: set scope as defined by service provider?
-          client_id: dbClient.id
-        };
-
-        return db.RegistrationAccessToken.create(tokenData);
-      })
-      .then(function(registrationAccessToken) {
-        dbRegistrationAccessToken = registrationAccessToken;
-        return transaction.commit();
-      })
-      .then(function() {
-        res.json(201, {
-          client_id:                 dbClient.id.toString(),
-          client_secret:             dbClient.secret,
-          registration_access_token: dbRegistrationAccessToken.token,
-          registration_client_uri:   config.uris.registration_client_uri
-        });
-      },
+          callback();
+        },
+      ],
       function(error) {
-        logger.error("Failed to create client:", error);
-
-        transaction.rollback().complete(function(err) {
-          if (err) {
-            res.send(500);
-          }
-          else {
-            // TODO: distinguish between invalid input parameters and other
-            // failure conditions
-            res.json(400, { error: 'invalid_request' });
-          }
-        });
+        if (error) {
+          transaction.rollback().complete(function(err) {
+            if (err) {
+              res.send(500);
+            }
+            else {
+              // TODO: distinguish between invalid input parameters and other
+              // failure conditions
+              res.json(400, { error: 'invalid_request' });
+            }
+          });
+        }
       });
     });
   });
