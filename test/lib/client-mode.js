@@ -51,7 +51,7 @@ var createServiceProvider = function(done) {
     });
 };
 
-describe('POST /token for device stand-alone mode', function() {
+describe('POST /token (client mode)', function() {
   before(function() {
     sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf6123');
   });
