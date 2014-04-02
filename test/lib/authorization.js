@@ -57,7 +57,7 @@ var verifyError = function(res, error) {
   expect(res.body.error).to.equal(error);
 };
 
-describe("Access token verification", function() {
+describe("POST /authorized", function() {
   before(resetDatabase);
   before(createServiceProvider);
   before(createUser);

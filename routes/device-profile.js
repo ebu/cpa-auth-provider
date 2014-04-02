@@ -68,7 +68,7 @@ var registerPairingCode = function(req, res) {
   });
 };
 
-var requestStandAloneAccessToken = function(res, clientId, clientSecret, serviceProvider, scope) {
+var requestClientModeAccessToken = function(res, clientId, clientSecret, serviceProvider, scope) {
   db.ServiceProvider.find({ where: {name: serviceProvider}})
     .then(function(serviceProvider) {
       if (!serviceProvider) {
@@ -175,7 +175,7 @@ var requestAccessToken = function(req, res) {
         return;
       }
 
-      requestStandAloneAccessToken(res, clientId, clientSecret, serviceProvider, scope);
+      requestClientModeAccessToken(res, clientId, clientSecret, serviceProvider, scope);
     });
   }
   else {
