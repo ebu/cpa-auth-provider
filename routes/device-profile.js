@@ -139,8 +139,7 @@ var routes = function(app) {
   // Client Registration Endpoint
 
   app.post('/token', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
-      logger.error("Invalid content type:", req.get('Content-Type'));
+    if (!requestHelper.isContentType(req, 'application/json')) {
       res.json(400, { error: 'invalid_request' });
       return;
     }

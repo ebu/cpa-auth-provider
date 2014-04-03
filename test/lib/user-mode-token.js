@@ -56,7 +56,7 @@ describe("POST /token", function() {
 
         requestHelper.sendRequest(this, '/token', {
           method: 'post',
-          type:   'json',
+          type:   'form', // should be 'json'
           data:   requestBody
         }, done);
       });
@@ -76,7 +76,7 @@ describe("POST /token", function() {
 
         requestHelper.sendRequest(this, '/token', {
           method: 'post',
-          type:   'form',
+          type:   'json',
           data:   requestBody
         }, done);
       });
@@ -96,7 +96,7 @@ describe("POST /token", function() {
 
         requestHelper.sendRequest(this, '/token', {
           method: 'post',
-          type:   'form',
+          type:   'json',
           data:   requestBody
         }, done);
       });
@@ -116,7 +116,7 @@ describe("POST /token", function() {
 
         requestHelper.sendRequest(this, '/token', {
           method: 'post',
-          type:   'form',
+          type:   'json',
           data:   requestBody
         }, done);
       });
@@ -136,7 +136,7 @@ describe("POST /token", function() {
 
         requestHelper.sendRequest(this, '/token', {
           method: 'post',
-          type:   'form',
+          type:   'json',
           data:   requestBody
         }, done);
       });
@@ -164,7 +164,7 @@ describe("POST /token", function() {
 
             requestHelper.sendRequest(this, '/token', {
               method: 'post',
-              type:   'form',
+              type:   'json',
               data:   requestBody
             }, done);
           });
@@ -190,7 +190,7 @@ describe("POST /token", function() {
 
             requestHelper.sendRequest(this, '/token', {
               method: 'post',
-              type:   'form',
+              type:   'json',
               data:   requestBody
             }, done);
           });
@@ -219,7 +219,7 @@ describe("POST /token", function() {
 
             requestHelper.sendRequest(this, '/token', {
               method: 'post',
-              type:   'form',
+              type:   'json',
               data:   requestBody
             }, done);
           });
@@ -323,7 +323,7 @@ describe("POST /token", function() {
 
             requestHelper.sendRequest(this, '/token', {
               method: 'post',
-              type:   'form',
+              type:   'json',
               data:   requestBody
             }, done);
           });
@@ -349,7 +349,7 @@ describe("POST /token", function() {
 
             requestHelper.sendRequest(this, '/token', {
               method: 'post',
-              type:   'form',
+              type:   'json',
               data:   requestBody
             }, done);
           });
