@@ -16,7 +16,7 @@ var clearDatabase = function(done) {
     return db.sequelize.query('DELETE FROM Users');
   })
   .then(function() {
-    return db.sequelize.query('DELETE FROM ServiceProviders');
+    return db.sequelize.query('DELETE FROM Scopes');
   })
   .then(function() {
     done();
@@ -30,7 +30,7 @@ var initDatabase = function(opts, done) {
   db.Client
     .create({
       id:               3,
-      secret:           'secret',
+      secret:           'a0fe0231-0220-4d45-8431-1fd374998d78',
       name:             'Test client',
       software_id:      'CPA AP Test',
       software_version: '0.0.1',
@@ -50,20 +50,20 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
-      return db.ServiceProvider.create({
+      return db.Scope.create({
         id:   5,
-        name: 'Example Service Provider'
+        name: 'example-service.bbc.co.uk'
       });
     })
     .then(function() {
       return db.PairingCode.create({
-        client_id:           3,
-        service_provider_id: 5,
-        device_code:         'abcd1234',
-        user_code:           '1234',
-        verification_uri:    'http://example.com',
-        verified:            opts.verified,
-        user_id:             opts.user_id
+        client_id:        3,
+        scope_id:         5,
+        device_code:      'abcd1234',
+        user_code:        '1234',
+        verification_uri: 'http://example.com',
+        verified:         opts.verified,
+        user_id:          opts.user_id
       });
     })
     .then(function() {
@@ -280,8 +280,8 @@ describe('POST /verify', function() {
               expect(this.pairingCode.user_id).to.equal(4);
             });
 
-            it('should be associated with the service provider', function() {
-              expect(this.pairingCode.service_provider_id).to.equal(5);
+            it('should be associated with the correct scope', function() {
+              expect(this.pairingCode.scope_id).to.equal(5);
             });
           });
         });
