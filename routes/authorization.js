@@ -18,31 +18,31 @@ module.exports = function(app, options) {
       return;
     }
 
-    var serviceProviderId = req.body.service_provider_id;
+    var scopeName = req.body.scope;
 
-    if (!serviceProviderId) {
+    if (!scopeName) {
       res.json(400, { error: 'invalid_request' });
       return;
     }
 
     // TODO: do this in a single query?
 
-    db.ServiceProvider
-      .find({ where: { name: serviceProviderId } })
-      .complete(function(err, serviceProvider) {
+    db.Scope
+      .find({ where: { name: scopeName } })
+      .complete(function(err, scope) {
         if (err) {
           res.send(500);
           return;
         }
 
-        if (!serviceProvider) {
+        if (!scope) {
           res.send(401, { error: 'unauthorized' });
           return;
         }
 
         var query = {
-          token: accessToken,
-          service_provider_id: serviceProvider.id
+          token:    accessToken,
+          scope_id: scope.id
         };
 
         db.ServiceAccessToken
@@ -60,16 +60,15 @@ module.exports = function(app, options) {
 
             var responseData = {
               client_id: accessToken.client_id,
-              user_id: accessToken.user_id
+              user_id:   accessToken.user_id
             };
 
             if (accessToken.user) {
               responseData.display_name = accessToken.user.display_name;
-              responseData.photo_url = accessToken.user.photo_url;
+              responseData.photo_url    = accessToken.user.photo_url;
             }
 
             res.json(responseData);
-            
           });
       });
   });

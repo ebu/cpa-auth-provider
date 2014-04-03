@@ -10,7 +10,7 @@ var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM ServiceAccessTokens').then(function() {
     return db.ServiceAccessToken.create({
       token: 'aed201ffb3362de42700a293bdebf694',
-      service_provider_id: 1,
+      scope_id: 1,
       client_id: 2,
       user_id: 3
     });
@@ -23,15 +23,15 @@ var resetDatabase = function(done) {
   });
 };
 
-var createServiceProvider = function(done) {
+var createScope = function(done) {
   var data = {
-    id:     1,
-    name:   'BBC1'
+    id:   1,
+    name: 'example-service.bbc.co.uk'
   };
 
-  db.ServiceProvider
+  db.Scope
     .create(data)
-    .complete(function(err, serviceProvider) {
+    .complete(function(err, createScope) {
       done();
     });
 };
@@ -59,14 +59,14 @@ var verifyError = function(res, error) {
 
 describe("POST /authorized", function() {
   before(resetDatabase);
-  before(createServiceProvider);
+  before(createScope);
   before(createUser);
 
   context("with incorrect content type", function() {
     before(function(done) {
       var data = {
         token: 'aed201ffb3362de42700a293bdebf694',
-        service_provider_id: 'BBC1'
+        scope: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -85,7 +85,7 @@ describe("POST /authorized", function() {
     before(function(done) {
       var data = {
         token: 'aed201ffb3362de42700a293bdebf694',
-        service_provider_id: 'BBC1'
+        scope: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -131,7 +131,7 @@ describe("POST /authorized", function() {
     before(function(done) {
       var data = {
         token: 'unknown',
-        service_provider_id: 'BBC1'
+        scope: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -153,7 +153,7 @@ describe("POST /authorized", function() {
   context("with missing access token", function() {
     before(function(done) {
       var data = {
-        service_provider_id: 'BBC1'
+        scope: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -168,11 +168,11 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with invalid service provider id", function() {
+  context("with invalid scope", function() {
     before(function(done) {
       var data = {
         token: 'aed201ffb3362de42700a293bdebf694',
-        service_provider_id: 'unknown'
+        scope: 'unknown'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -187,7 +187,7 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with missing service provider id", function() {
+  context("with missing scope", function() {
     before(function(done) {
       var data = {
         token: 'aed201ffb3362de42700a293bdebf694'

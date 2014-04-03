@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       ServiceAccessToken.belongsTo(models.Client);
-      ServiceAccessToken.belongsTo(models.ServiceProvider);
+      ServiceAccessToken.belongsTo(models.Scope);
       ServiceAccessToken.belongsTo(models.User);
     }
   });

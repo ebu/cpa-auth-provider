@@ -8,80 +8,20 @@ var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
 var verify        = require('../lib/verify');
 
-var registerPairingCode = function(req, res) {
-  var clientId            = req.body.client_id;
-  var serviceProviderName = req.body.service_provider;
-
-  // TODO: validate clientId
-  if (!clientId) {
-    res.json(400, { error: 'invalid_request' });
-    return;
-  }
-  else if (!clientId.match(/^\d+$/)) {
-    res.json(400, { error: 'invalid_client' });
-    return;
-  }
-
-  if (!serviceProviderName) {
-    res.json(400, { error: 'invalid_request' });
-    return;
-  }
-
-  db.Client.find({ where: { id: clientId } }).success(function(client) {
-    if (!client) {
-      res.json(400, { error: 'invalid_client' });
-      return;
-    }
-
-    db.ServiceProvider.find({ where: { name: serviceProviderName }})
-      .success(function(serviceProvider) {
-        if (!serviceProvider) {
-          res.json(400, { error: 'invalid_request' });
-          return;
-        }
-
-        var pairingCode = {
-          client_id:           clientId,
-          service_provider_id: serviceProvider.id,
-          device_code:         generate.deviceCode(),
-          user_code:           generate.userCode(),
-          verification_uri:    config.uris.verification_uri
-        };
-
-        db.PairingCode.create(pairingCode).then(function() {
-          res.set('Cache-Control', 'no-store');
-          res.set('Pragma', 'no-cache');
-
-          res.json(200, {
-            device_code:      pairingCode.device_code,
-            user_code:        pairingCode.user_code,
-            verification_uri: pairingCode.verification_uri
-          });
-        },
-        function(error) {
-          res.send(500);
-        });
-      });
-  },
-  function(error) {
-    res.send(500);
-  });
-};
-
-var requestClientModeAccessToken = function(res, clientId, clientSecret, serviceProvider, scope) {
-  db.ServiceProvider.find({ where: {name: serviceProvider}})
-    .then(function(serviceProvider) {
-      if (!serviceProvider) {
+var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) {
+  db.Scope.find({ where: { name: scope }})
+    .then(function(scope) {
+      if (!scope) {
         // SPEC : define correct error message
         res.json(400, { error: 'invalid_request' });
         return;
       }
 
       var accessToken = {
-        token:               generate.accessToken(),
-        user_id:             null,
-        client_id:           clientId,
-        service_provider_id: serviceProvider.id
+        token:     generate.accessToken(),
+        user_id:   null,
+        client_id: clientId,
+        scope_id:  scope.id
       };
 
       // TODO: Handle duplicated tokens
@@ -119,10 +59,10 @@ var validateDeviceCode = function(res, clientId, deviceCode) {
 
       db.sequelize.transaction(function(transaction) {
         var accessToken = {
-          token:               generate.accessToken(),
-          user_id:             pairingCode.user_id,
-          client_id:           pairingCode.client_id,
-          service_provider_id: pairingCode.service_provider_id
+          token:     generate.accessToken(),
+          user_id:   pairingCode.user_id,
+          client_id: pairingCode.client_id,
+          scope_id:  pairingCode.scope_id
         };
 
         db.ServiceAccessToken
@@ -151,10 +91,9 @@ var validateDeviceCode = function(res, clientId, deviceCode) {
 };
 
 var requestAccessToken = function(req, res) {
-  var clientId        = req.body.client_id;
-  var clientSecret    = req.body.client_secret;
-  var serviceProvider = req.body.service_provider;
-  var scope           = req.body.scope;
+  var clientId     = req.body.client_id;
+  var clientSecret = req.body.client_secret;
+  var scope        = req.body.scope;
 
   // TODO: validate clientId
   if (!clientId) {
@@ -170,12 +109,12 @@ var requestAccessToken = function(req, res) {
         return;
       }
 
-      if (!serviceProvider) {
+      if (!scope) {
         res.json(400, { error: 'invalid_request' });
         return;
       }
 
-      requestClientModeAccessToken(res, clientId, clientSecret, serviceProvider, scope);
+      requestClientModeAccessToken(res, clientId, clientSecret, scope);
     });
   }
   else {
@@ -207,11 +146,12 @@ var routes = function(app) {
     }
 
     // TODO: https://github.com/ebu/cpa-spec/issues/1
-    if (req.body.response_type === 'device_code') {
+    /*if (req.body.response_type === 'device_code') {
       // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
       registerPairingCode(req, res);
     }
-    else if (!req.body.grant_type) {
+    else */
+    if (!req.body.grant_type) {
       logger.error("Missing grant_type parameter");
       res.json(400, { error: 'invalid_request' });
     }

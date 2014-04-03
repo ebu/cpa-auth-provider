@@ -7,7 +7,7 @@ var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
 var resetDatabase = function(done) {
-  db.sequelize.query('DELETE FROM ServiceProviders').then(function() {
+  db.sequelize.query('DELETE FROM Scopes').then(function() {
     return db.sequelize.query('DELETE FROM Clients');
   })
   .then(function() {
@@ -23,12 +23,12 @@ var resetDatabase = function(done) {
 
 var createClientInformation = function(done) {
   var data = {
-    id:     102,
-    secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
-    name:   'Test Client',
-    software_id: 'cpa-client-test',
+    id:               102,
+    secret:           '8ecf4b2a0df2df7fd69df128e0ac4fcc',
+    name:             'Test Client',
+    software_id:      'cpa-client-test',
     software_version: '1.0',
-    ip:     '127.0.0.1'
+    ip:               '127.0.0.1'
   };
 
   db.Client
@@ -38,15 +38,15 @@ var createClientInformation = function(done) {
     });
 };
 
-var createServiceProvider = function(done) {
+var createScope = function(done) {
   var data = {
-    id:     108,
-    name:   'BBC1'
+    id:   108,
+    name: 'example-service.bbc.co.uk'
   };
 
-  db.ServiceProvider
+  db.Scope
     .create(data)
-    .complete(function(err, serviceProvider) {
+    .complete(function(err, scope) {
       done();
     });
 };
@@ -62,7 +62,7 @@ describe('POST /token', function() {
     });
 
     before(resetDatabase);
-    before(createServiceProvider);
+    before(createScope);
     before(createClientInformation);
 
     context('When requesting an access token', function() {
@@ -79,7 +79,7 @@ describe('POST /token', function() {
         });
       });
 
-      context('without client information', function(){
+      context('with missing client information', function(){
         before(function(done) {
           requestHelper.sendRequest(this, '/token', {
             method: 'post',
@@ -96,10 +96,10 @@ describe('POST /token', function() {
       context('with a valid client_id and an invalid client_secret', function() {
         before(function(done) {
           var body = {
-            client_id: 102,
+            client_id:     102,
             client_secret: 'secret',
-            service_provider: 'BBC1',
-            grant_type: 'authorization_code'
+            scope:         'example-service.bbc.co.uk',
+            grant_type:    'authorization_code'
           };
 
           requestHelper.sendRequest(this, '/token', {
@@ -114,12 +114,13 @@ describe('POST /token', function() {
         });
       });
 
-      context('without service_provider', function(){
+      context('with missing scope', function(){
         before(function(done) {
           var body = {
-            client_id: 102,
+            client_id:     102,
             client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
-            grant_type: 'authorization_code'
+            // scope:         'example-service.bbc.co.uk',
+            grant_type:    'authorization_code'
           };
 
           requestHelper.sendRequest(this, '/token', {
@@ -134,13 +135,13 @@ describe('POST /token', function() {
         });
       });
 
-      context('with invalid information service_provider', function() {
+      context('with invalid scope', function() {
         before(function(done) {
-          var body = {
-            client_id: 102,
+          var body = { 
+            client_id:     102,
             client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
-            service_provider: 'BBC-wrong',
-            grant_type: 'authorization_code'
+            scope:         'unknown',
+            grant_type:    'authorization_code'
           };
 
           requestHelper.sendRequest(this, '/token', {
@@ -155,13 +156,13 @@ describe('POST /token', function() {
         });
       });
 
-      context('with valid information service_provider', function() {
+      context('with valid scope', function() {
         before(function(done) {
           var body = {
-            client_id: 102,
+            client_id:     102,
             client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
-            service_provider: 'BBC1',
-            grant_type: 'authorization_code'
+            scope:         'example-service.bbc.co.uk',
+            grant_type:    'authorization_code'
           };
 
           requestHelper.sendRequest(this, '/token', {
@@ -231,8 +232,8 @@ describe('POST /token', function() {
             expect(this.accessTokens[0].user_id).to.equal(null);
           });
 
-          it("should be associated with the correct service provider", function() {
-            expect(this.accessTokens[0].service_provider_id).to.equal(108);
+          it("should be associated with the correct scope", function() {
+            expect(this.accessTokens[0].scope_id).to.equal(108);
           });
         });
       });

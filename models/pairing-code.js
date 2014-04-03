@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes) {
     associate: function(models) {
       PairingCode.belongsTo(models.Client);
       PairingCode.belongsTo(models.User);
-      PairingCode.belongsTo(models.ServiceProvider);
+      PairingCode.belongsTo(models.Scope);
     }
   });
 
