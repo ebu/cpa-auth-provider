@@ -6,7 +6,7 @@ var requestHelper = require('../lib/request-helper');
 
 module.exports = function(app, options) {
   app.post('/authorized', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
+    if (!requestHelper.isContentType(req, 'application/json')) {
       res.json(400, { error: 'invalid_request' });
       return;
     }

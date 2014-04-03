@@ -71,7 +71,7 @@ describe("POST /authorized", function() {
 
       requestHelper.sendRequest(this, '/authorized', {
         method: 'post',
-        type:   'json',
+        type:   'form', // should be 'json'
         data:   data
       }, done);
     });
@@ -81,7 +81,7 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("given a valid access token", function() {
+  context("with a valid access token", function() {
     before(function(done) {
       var data = {
         token: 'aed201ffb3362de42700a293bdebf694',
@@ -90,7 +90,7 @@ describe("POST /authorized", function() {
 
       requestHelper.sendRequest(this, '/authorized', {
         method: 'post',
-        type:   'form',
+        type:   'json',
         data:   data
       }, done);
     });
@@ -127,7 +127,7 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("given an invalid access token", function() {
+  context("with an invalid access token", function() {
     before(function(done) {
       var data = {
         token: 'unknown',
@@ -136,7 +136,7 @@ describe("POST /authorized", function() {
 
       requestHelper.sendRequest(this, '/authorized', {
         method: 'post',
-        type:   'form',
+        type:   'json',
         data:   data
       }, done);
     });
@@ -146,7 +146,7 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("given an expired access token", function() {
+  context("with an expired access token", function() {
     it("should return status 401");
   });
 
@@ -158,7 +158,7 @@ describe("POST /authorized", function() {
 
       requestHelper.sendRequest(this, '/authorized', {
         method: 'post',
-        type:   'form',
+        type:   'json',
         data:   data
       }, done);
     });
@@ -177,7 +177,7 @@ describe("POST /authorized", function() {
 
       requestHelper.sendRequest(this, '/authorized', {
         method: 'post',
-        type:   'form',
+        type:   'json',
         data:   data
       }, done);
     });
@@ -195,7 +195,7 @@ describe("POST /authorized", function() {
 
       requestHelper.sendRequest(this, '/authorized', {
         method: 'post',
-        type:   'form',
+        type:   'json',
         data:   data
       }, done);
     });
