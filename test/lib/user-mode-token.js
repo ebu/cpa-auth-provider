@@ -338,7 +338,7 @@ describe("POST /token", function() {
       });
     });
 
-    context("with invalid client_id", function() {
+    context("with incorrect client_id", function() {
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -382,12 +382,12 @@ describe("POST /token", function() {
       });
     });
 
-    context("with invalid client_secret", function() {
+    context("with incorrect client_secret", function() {
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
           client_id:     '100',
-          client_secret: 'invalid',
+          client_secret: 'unknown',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
           scope:         'example-service.bbc.co.uk'
         };
@@ -407,13 +407,13 @@ describe("POST /token", function() {
     // Note: don't test for missing device_code - this would be
     // a client-mode access token request.
 
-    context("with invalid device_code", function() {
+    context("with incorrect device_code", function() {
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          device_code:   'invalid',
+          device_code:   'unknown',
           scope:         'example-service.bbc.co.uk'
         };
 
@@ -446,19 +446,19 @@ describe("POST /token", function() {
         }, done);
       });
 
-      it("should return an invalid_client error", function() {
-        assertions.verifyError(this.res, 400, 'invalid_client');
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
-    context("with invalid scope", function() {
+    context("with incorrect scope", function() {
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
-          scope:         'invalid'
+          scope:         'unknown'
         };
 
         requestHelper.sendRequest(this, '/token', {

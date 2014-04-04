@@ -9,11 +9,19 @@ var requestHelper = require('../lib/request-helper');
 var verify        = require('../lib/verify');
 
 var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) {
-  db.Scope.find({ where: { name: scope }})
+  db.Client.find({ where: { id: clientId, secret: clientSecret } })
+    .then(function(client) {
+      if (!client) {
+        res.json(400, { error: 'invalid_client' });
+        return;
+      }
+
+      return db.Scope.find({ where: { name: scope }});
+    })
     .then(function(scope) {
       if (!scope) {
         // SPEC : define correct error message
-        res.json(400, { error: 'invalid_request' });
+        res.json(400, { error: 'invalid_client' });
         return;
       }
 
@@ -112,40 +120,6 @@ var validateDeviceCode = function(res, clientId, clientSecret, deviceCode, scope
     });
 };
 
-var requestAccessToken = function(req, res) {
-  var clientId     = req.body.client_id;
-  var clientSecret = req.body.client_secret;
-  var deviceCode   = req.body.device_code;
-  var scope        = req.body.scope;
-
-  // TODO: validate clientId
-  if (!clientId || !clientSecret) {
-    res.json(400, { error: 'invalid_request' });
-    return;
-  }
-
-  if (deviceCode) {
-    // User mode
-    validateDeviceCode(res, clientId, clientSecret, deviceCode, scope);
-  }
-  else {
-    // Client mode
-    verify.clientSecret(clientId, clientSecret, function(err, client) {
-      if (err || !client) {
-        res.json(400, { error: 'invalid_client' });
-        return;
-      }
-
-      if (!scope) {
-        res.json(400, { error: 'invalid_request' });
-        return;
-      }
-
-      requestClientModeAccessToken(res, clientId, clientSecret, scope);
-    });
-  }
-};
-
 var routes = function(app) {
   var logger = app.get('logger');
 
@@ -160,19 +134,35 @@ var routes = function(app) {
     var grantType    = req.body.grant_type;
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
+    var deviceCode   = req.body.device_code;
     var scope        = req.body.scope;
 
     if (!grantType) {
       logger.error("Missing grant_type parameter");
       res.json(400, { error: 'invalid_request' });
-    }
-    else if (grantType !== 'authorization_code') {
-      logger.error("Unsupported grant_type");
-      res.json(400, { error: 'unsupported_grant_type' });
+      return;
     }
 
-    // RFC6749 section 4.1.3
-    requestAccessToken(req, res);
+    if (grantType !== 'authorization_code') {
+      logger.error("Unsupported grant_type");
+      res.json(400, { error: 'unsupported_grant_type' });
+      return;
+    }
+
+    // TODO: validate clientId
+    if (!clientId || !clientSecret || !scope) {
+      res.json(400, { error: 'invalid_request' });
+      return;
+    }
+
+    if (deviceCode) {
+      // User mode
+      validateDeviceCode(res, clientId, clientSecret, deviceCode, scope);
+    }
+    else {
+      // Client mode
+      requestClientModeAccessToken(res, clientId, clientSecret, scope);
+    }
   });
 
   var renderVerificationPage = function(req, res, errorMessage) {
