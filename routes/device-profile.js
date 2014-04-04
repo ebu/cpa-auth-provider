@@ -8,12 +8,17 @@ var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
 var verify        = require('../lib/verify');
 
-var sendAccessToken = function(res, token) {
+var sendAccessToken = function(res, token, scope, user) {
+  var name = (user !== null) ? user.provider_uid : "This radio";
+
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
   res.json({
-    token:      token,
-    token_type: 'bearer'
+    token:             token,
+    token_type:        'bearer',
+    scope:             scope.name,
+    description:       name + " at " + scope.display_name,
+    short_description: scope.display_name
   });
 };
 
@@ -48,7 +53,7 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
       db.ServiceAccessToken
         .create(accessToken)
         .success(function(dbAccessToken) {
-          sendAccessToken(res, dbAccessToken.token);
+          sendAccessToken(res, dbAccessToken.token, scope, null);
         })
         .error(function(error){
           res.send(500);
@@ -69,7 +74,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
 
       return db.PairingCode.find({
         where:   { client_id: client.id, device_code: deviceCode },
-        include: [ db.Scope ]
+        include: [ db.Scope, db.User ]
       });
     })
     .then(function(pairingCode) {
@@ -105,7 +110,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
             return transaction.commit();
           })
           .then(function() {
-            sendAccessToken(res, accessToken.token);
+            sendAccessToken(res, accessToken.token, pairingCode.scope, pairingCode.user);
           },
           function(error) {
             transaction.rollback().complete(function(err) {
