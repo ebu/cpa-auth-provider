@@ -34,8 +34,8 @@ db.sequelize
       console.log('Synchronization done.');
 
       if(process.env.NODE_ENV === 'development') {
-        db.ServiceProvider
-          .bulkCreate([{id: 1, name: 'BBC1'}, {id: 2, name: 'BBC2'}])
+        db.Scope
+          .bulkCreate([{id: 1, name: 'bbc1-cpa.local.ebu.io'}, {id: 2, name: 'bbc2-cpa.local.ebu.io'}])
           .success(function(result) {
             console.log('Database populated');
           });
