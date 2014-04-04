@@ -58,7 +58,6 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     associate: function(models) {
-      Client.hasMany(models.RegistrationAccessToken);
       Client.hasMany(models.PairingCode);
       Client.hasMany(models.ServiceAccessToken);
     }
