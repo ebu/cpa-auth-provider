@@ -8,31 +8,96 @@ var requestHelper = require('../request-helper');
 
 var _ = require('lodash');
 
-var resetDatabase = function(done) {
-  db.sequelize.query('DELETE FROM PairingCodes').then(function() {
-    return db.sequelize.query('DELETE FROM ServiceAccessTokens');
-  })
-  .then(function() {
-    done();
-  },
-  function(error) {
-    done(error);
-  });
+var clearDatabase = function(done) {
+  db.sequelize.query('DELETE FROM PairingCodes')
+    .then(function() {
+      return db.sequelize.query('DELETE FROM ServiceAccessTokens');
+    })
+    .then(function() {
+      return db.sequelize.query('DELETE FROM Clients');
+    })
+    .then(function() {
+      return db.sequelize.query('DELETE FROM Users');
+    })
+    .then(function() {
+      return db.sequelize.query('DELETE FROM Scopes');
+    })
+    .then(function() {
+      done();
+    },
+    function(error) {
+      done(error);
+    });
 };
 
-var createPairingCode = function(attributes, done) {
-  var data = {
-    client_id:        attributes.clientId,
-    device_code:      '8ecf4b2a0df2df7fd69df128e0ac4fcc',
-    user_code:        '0a264',
-    verification_uri: 'http://www.example.com/verify',
-    verified:         attributes.verified
-  };
+/**
+ * For testing, create two clients, each with its own pairing code. One
+ * pairing code is pending user verification, and the other has already
+ * been verified.
+ */
 
-  db.PairingCode
-    .create(data)
-    .success(function(pairingCode) {
+var initDatabase = function(done) {
+  db.Client
+    .create({
+      id:               100,
+      secret:           'e2412cd1-f010-4514-acab-c8af59e5501a',
+      name:             'Test client',
+      software_id:      'CPA AP Test',
+      software_version: '0.0.1',
+      ip:               '127.0.0.1'
+    })
+    .then(function() {
+      return db.Client.create({
+        id:               101,
+        secret:           '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+        name:             'Test client',
+        software_id:      'CPA AP Test',
+        software_version: '0.0.1',
+        ip:               '127.0.0.1'
+      });
+    })
+    .then(function() {
+      return db.Scope.create({
+        id:   5,
+        name: 'example-service.bbc.co.uk'
+      });
+    })
+    .then(function() {
+      return db.User.create({
+        id:           3,
+        provider_uid: 'testuser',
+        password:     'testpassword'
+      });
+    })
+    .then(function() {
+      return db.PairingCode.create({
+        id:               50,
+        client_id:        100,
+        scope_id:         5,
+        device_code:      '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+        user_code:        '1234',
+        verification_uri: 'http://example.com',
+        verified:         false, // authorization_pending
+        user_id:          3
+      });
+    })
+    .then(function() {
+      return db.PairingCode.create({
+        id:               51,
+        client_id:        101,
+        scope_id:         5,
+        device_code:      'c691343f-0ac0-467d-8659-5041cfc3dc4a',
+        user_code:        '5678',
+        verification_uri: 'http://example.com',
+        verified:         true,
+        user_id:          3
+      });
+    })
+    .then(function() {
       done();
+    },
+    function(error) {
+      done(new Error(JSON.stringify(error)));
     });
 };
 
@@ -45,13 +110,154 @@ describe("POST /token", function() {
     generate.accessToken.restore();
   });
 
-  context("Polling to obtain an access token", function() {
-    context("with incorrect Content-Type", function() {
+  before(clearDatabase);
+  before(initDatabase);
+
+  context("when the client polls to obtain an access token (user mode)", function() {
+    context("and the device code is pending user verification", function() {
+      context("and the client provides valid parameters", function() {
+        before(function(done) {
+          var requestBody = {
+            grant_type:    'authorization_code',
+            client_id:     '100',
+            client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+            device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+            scope:         'example-service.bbc.co.uk'
+          };
+
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return status 202", function() {
+          expect(this.res.statusCode).to.equal(202);
+        });
+      });
+
+      context("and the client polls too quickly", function() {
+        it("should return status 400");
+        it("should return slow_down error");
+      });
+    });
+
+    context("and the user has input the correct user code", function() {
+      context("and the client provides valid parameters", function() {
+        before(function(done) {
+          var requestBody = {
+            grant_type:    'authorization_code',
+            client_id:     '101', // client with verified pairing code
+            client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+            device_code:   'c691343f-0ac0-467d-8659-5041cfc3dc4a',
+            scope:         'example-service.bbc.co.uk'
+          };
+
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return status 200", function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it("should return a Cache-Control: no-store header", function() {
+          expect(this.res.headers).to.have.property('cache-control');
+          expect(this.res.headers['cache-control']).to.equal('no-store');
+        });
+
+        it("should return a Pragma: no-cache header", function() {
+          expect(this.res.headers).to.have.property('pragma');
+          expect(this.res.headers.pragma).to.equal('no-cache');
+        });
+
+        it("should return a JSON object", function() {
+          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+          expect(this.res.body).to.be.an('object');
+        });
+
+        describe("the response body", function() {
+          it("should include a valid access token", function() {
+            expect(this.res.body).to.have.property('token');
+            expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf694');
+          });
+
+          it("should include the token type", function() {
+            expect(this.res.body).to.have.property('token_type');
+            expect(this.res.body.token_type).to.equal('bearer');
+          });
+
+          it("should include a valid refresh token"); // TODO: optional: refresh_token
+          it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+          it("should include the scope of the access token"); // TODO: optional(?): scope
+        });
+
+        describe("the database", function() {
+          before(function(done) {
+            var self = this;
+
+            db.ServiceAccessToken.findAll()
+              .then(function(accessTokens) {
+                self.accessTokens = accessTokens;
+                return db.PairingCode.findAll();
+              })
+              .then(function(pairingCodes) {
+                self.pairingCodes = pairingCodes;
+                done();
+              },
+              function(error) {
+                done(error);
+              });
+          });
+
+          it("should delete the pairing code", function() {
+            // jshint expr: true
+            expect(this.pairingCodes).to.be.ok;
+            expect(this.pairingCodes).to.be.an('array');
+            expect(this.pairingCodes.length).to.equal(1);
+            expect(this.pairingCodes[0].id).to.equal(50);
+          });
+
+          it("should contain a new access token", function() {
+            // jshint expr: true
+            expect(this.accessTokens).to.be.ok;
+            expect(this.accessTokens).to.be.an('array');
+            expect(this.accessTokens.length).to.equal(1);
+          });
+
+          describe("the access token", function() {
+            it("should have correct value", function() {
+              expect(this.accessTokens[0].token).to.equal('aed201ffb3362de42700a293bdebf694');
+            });
+
+            it("should be associated with the correct client", function() {
+              expect(this.accessTokens[0].client_id).to.equal(101);
+            });
+
+            it("should be associated with the correct user", function() {
+              expect(this.accessTokens[0].user_id).to.equal(3);
+            });
+
+            it("should be associated with the correct scope", function() {
+              expect(this.accessTokens[0].scope_id).to.equal(5);
+            });
+          });
+        });
+      });
+    });
+
+    context("with incorrect content type", function() {
       before(function(done) {
         var requestBody = {
-          client_id:  '101',
-          grant_type: 'authorization_code',
-          code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
+          grant_type:    'authorization_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -66,52 +272,14 @@ describe("POST /token", function() {
       });
     });
 
-    context("with missing client_id", function() {
-      before(function(done) {
-        var requestBody = {
-          // client_id:  '101',
-          grant_type: 'authorization_code',
-          code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
-        };
-
-        requestHelper.sendRequest(this, '/token', {
-          method: 'post',
-          type:   'json',
-          data:   requestBody
-        }, done);
-      });
-
-      it("should return an invalid_request error", function() {
-        assertions.verifyError(this.res, 400, 'invalid_request');
-      });
-    });
-
-    context("with an invalid client_id", function() {
-      before(function(done) {
-        var requestBody = {
-          client_id:  'unknown',
-          grant_type: 'authorization_code',
-          code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
-        };
-
-        requestHelper.sendRequest(this, '/token', {
-          method: 'post',
-          type:   'json',
-          data:   requestBody
-        }, done);
-      });
-
-      it("should return an invalid_client error", function() {
-        assertions.verifyError(this.res, 400, 'invalid_client');
-      });
-    });
-
     context("with missing grant_type", function() {
       before(function(done) {
         var requestBody = {
-          client_id:  '101',
-          // grant_type: 'authorization_code',
-          code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
+          // grant_type:    'authorization_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -126,12 +294,14 @@ describe("POST /token", function() {
       });
     });
 
-    context("with an invalid grant_type", function() {
+    context("with invalid grant_type", function() {
       before(function(done) {
         var requestBody = {
-          client_id:  '101',
-          grant_type: 'unknown',
-          code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
+          grant_type:    'invalid',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -146,224 +316,161 @@ describe("POST /token", function() {
       });
     });
 
-    context("with a valid client_id", function() {
-      context("when the authorization request is pending", function() {
-        context("when the authorization code is valid", function() {
-          before(resetDatabase);
+    context("with missing client_id", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          // client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
+        };
 
-          before(function(done) {
-            createPairingCode({ clientId: 100, verified: false }, done);
-          });
-
-          before(function(done) {
-            var requestBody = {
-              client_id:  '100',
-              grant_type: 'authorization_code',
-              code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
-            };
-
-            requestHelper.sendRequest(this, '/token', {
-              method: 'post',
-              type:   'json',
-              data:   requestBody
-            }, done);
-          });
-
-          it("should return an authorization_pending error", function() {
-            assertions.verifyError(this.res, 400, 'authorization_pending');
-          });
-        });
-
-        context("when the authorization code is invalid", function() {
-          before(resetDatabase);
-
-          before(function(done) {
-            createPairingCode({ clientId: 100, verified: false }, done);
-          });
-
-          before(function(done) {
-            var requestBody = {
-              client_id:  '100',
-              grant_type: 'authorization_code',
-              code:       'invalid'
-            };
-
-            requestHelper.sendRequest(this, '/token', {
-              method: 'post',
-              type:   'json',
-              data:   requestBody
-            }, done);
-          });
-
-          it("should return an invalid_client error", function() {
-            assertions.verifyError(this.res, 400, 'invalid_client');
-          });
-        });
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
       });
 
-      // RFC 6749, section 5.1
-      context("when the authorization request is successful", function() {
-        context("when the authorization code is valid", function() {
-          before(resetDatabase);
-
-          before(function(done) {
-            createPairingCode({ clientId: 101, verified: true }, done);
-          });
-
-          before(function(done) {
-            var requestBody = {
-              client_id:  '101',
-              grant_type: 'authorization_code',
-              code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
-            };
-
-            requestHelper.sendRequest(this, '/token', {
-              method: 'post',
-              type:   'json',
-              data:   requestBody
-            }, done);
-          });
-
-          it("should return status 200", function() {
-            expect(this.res.statusCode).to.equal(200);
-          });
-
-          it("should return a Cache-Control: no-store header", function() {
-            expect(this.res.headers).to.have.property('cache-control');
-            expect(this.res.headers['cache-control']).to.equal('no-store');
-          });
-
-          it("should return a Pragma: no-cache header", function() {
-            expect(this.res.headers).to.have.property('pragma');
-            expect(this.res.headers.pragma).to.equal('no-cache');
-          });
-
-          it("should return a JSON object", function() {
-            expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-            expect(this.res.body).to.be.an('object');
-          });
-
-          describe("the response body", function() {
-            it("should include a valid access token", function() {
-              expect(this.res.body).to.have.property('token');
-              expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf694');
-            });
-
-            it("should include the token type", function() {
-              expect(this.res.body).to.have.property('token_type');
-              expect(this.res.body.token_type).to.equal('bearer');
-            });
-
-            it("should include a valid refresh token"); // TODO: optional: refresh_token
-            it("should include the lifetime of the access token"); // TODO: recommended: expires_in
-            it("should include the scope of the access token"); // TODO: optional(?): scope
-          });
-
-          describe("the database", function() {
-            before(function(done) {
-              var self = this;
-
-              db.ServiceAccessToken.findAll()
-                .then(function(accessTokens) {
-                  self.accessTokens = accessTokens;
-                  return db.PairingCode.findAll();
-                })
-                .then(function(pairingCodes) {
-                  self.pairingCodes = pairingCodes;
-                  done();
-                },
-                function(error) {
-                  done(error);
-                });
-            });
-
-            it("should delete the pairing code", function() {
-              // jshint expr: true
-              expect(this.pairingCodes).to.be.ok;
-              expect(this.pairingCodes).to.be.an('array');
-              expect(this.pairingCodes.length).to.equal(0);
-            });
-
-            it("should contain a new access token", function() {
-              // jshint expr: true
-              expect(this.accessTokens).to.be.ok;
-              expect(this.accessTokens).to.be.an('array');
-              expect(this.accessTokens.length).to.equal(1);
-            });
-
-            describe("the access token", function() {
-              it("should have correct value", function() {
-                expect(this.accessTokens[0].token).to.equal('aed201ffb3362de42700a293bdebf694');
-              });
-
-              it("should be associated with the correct client device", function() {
-                expect(this.accessTokens[0].client_id).to.equal(101);
-              });
-
-              it("should be associated with the correct user");
-
-              it("should be associated with the correct service provider");
-            });
-          });
-        });
-
-        context("when the authorization code is invalid", function() {
-          before(resetDatabase);
-
-          before(function(done) {
-            createPairingCode({ clientId: 101, verified: true }, done);
-          });
-
-          before(function(done) {
-            var requestBody = {
-              client_id:  '101',
-              grant_type: 'authorization_code',
-              code:       'invalid'
-            };
-
-            requestHelper.sendRequest(this, '/token', {
-              method: 'post',
-              type:   'json',
-              data:   requestBody
-            }, done);
-          });
-
-          it("should return invalid_client error", function() {
-            assertions.verifyError(this.res, 400, 'invalid_client');
-          });
-        });
-
-        context("with missing authorization code", function() {
-          before(resetDatabase);
-
-          before(function(done) {
-            createPairingCode({ clientId: 101, verified: true }, done);
-          });
-
-          before(function(done) {
-            var requestBody = {
-              client_id:  '101',
-              grant_type: 'authorization_code',
-              // code:       '8ecf4b2a0df2df7fd69df128e0ac4fcc'
-            };
-
-            requestHelper.sendRequest(this, '/token', {
-              method: 'post',
-              type:   'json',
-              data:   requestBody
-            }, done);
-          });
-
-          it("should return invalid_request error", function() {
-            assertions.verifyError(this.res, 400, 'invalid_request');
-          });
-        });
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
-    context("when the client polls too quickly", function() {
-      it("should return status 400");
-      it("should return slow_down error");
+    context("with invalid client_id", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     'unknown',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
+      });
+    });
+
+    context("with missing client_secret", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     '100',
+          // client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
+
+    context("with invalid client_secret", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     '100',
+          client_secret: 'invalid',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'example-service.bbc.co.uk'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
+      });
+    });
+
+    // Note: don't test for missing device_code - this would be
+    // a client-mode access token request.
+
+    context("with invalid device_code", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   'invalid',
+          scope:         'example-service.bbc.co.uk'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
+      });
+    });
+
+    context("with missing scope", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          // scope:         'example-service.bbc.co.uk'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
+      });
+    });
+
+    context("with invalid scope", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          scope:         'invalid'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
+      });
     });
   });
 });

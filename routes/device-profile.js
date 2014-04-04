@@ -17,6 +17,9 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
         return;
       }
 
+      // TODO: must validate clientId and clientSecret before creating access
+      // token
+
       var accessToken = {
         token:     generate.accessToken(),
         user_id:   null,
@@ -34,7 +37,8 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
             token:      dbAccessToken.token,
             token_type: 'bearer'
           });
-        }).error(function(error){
+        })
+        .error(function(error){
           res.send(500);
         });
 
@@ -43,17 +47,32 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
     });
 };
 
-var validateDeviceCode = function(res, clientId, deviceCode) {
-  db.PairingCode
-    .find({ where: { client_id: clientId, device_code: deviceCode } })
-    .success(function(pairingCode) {
+var validateDeviceCode = function(res, clientId, clientSecret, deviceCode, scope) {
+  db.Client.find({ where: { id: clientId, secret: clientSecret } })
+    .then(function(client) {
+      if (!client) {
+        res.json(400, { error: 'invalid_client' });
+        return;
+      }
+
+      return db.PairingCode.find({
+        where:   { client_id: client.id, device_code: deviceCode },
+        include: [ db.Scope ]
+      });
+    })
+    .then(function(pairingCode) {
       if (!pairingCode) {
         res.json(400, { error: 'invalid_client' });
         return;
       }
 
+      if (!pairingCode.scope || pairingCode.scope.name !== scope) {
+        res.json(400, { error: 'invalid_client' });
+        return;
+      }
+
       if (!pairingCode.verified) {
-        res.json(400, { error: 'authorization_pending' });
+        res.send(202);
         return;
       }
 
@@ -87,22 +106,30 @@ var validateDeviceCode = function(res, clientId, deviceCode) {
             });
           });
       });
+    },
+    function(error) {
+      res.send(500);
     });
 };
 
 var requestAccessToken = function(req, res) {
   var clientId     = req.body.client_id;
   var clientSecret = req.body.client_secret;
+  var deviceCode   = req.body.device_code;
   var scope        = req.body.scope;
 
   // TODO: validate clientId
-  if (!clientId) {
+  if (!clientId || !clientSecret) {
     res.json(400, { error: 'invalid_request' });
     return;
   }
 
-  // Stand-alone mode
-  if (clientSecret) {
+  if (deviceCode) {
+    // User mode
+    validateDeviceCode(res, clientId, clientSecret, deviceCode, scope);
+  }
+  else {
+    // Client mode
     verify.clientSecret(clientId, clientSecret, function(err, client) {
       if (err || !client) {
         res.json(400, { error: 'invalid_client' });
@@ -117,20 +144,6 @@ var requestAccessToken = function(req, res) {
       requestClientModeAccessToken(res, clientId, clientSecret, scope);
     });
   }
-  else {
-    // TODO: RFC6749 section 4.1.3 describes the 'code' parameter as "The
-    // authorization code received from the authorization server." Assume this
-    // is the device_code from draft-recordon-oauth-v2-device-00 section 1.4
-
-    var deviceCode = req.body.code;
-
-    if (!deviceCode) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
-    validateDeviceCode(res, clientId, deviceCode);
-  }
 };
 
 var routes = function(app) {
@@ -144,24 +157,22 @@ var routes = function(app) {
       return;
     }
 
-    // TODO: https://github.com/ebu/cpa-spec/issues/1
-    /*if (req.body.response_type === 'device_code') {
-      // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
-      registerPairingCode(req, res);
-    }
-    else */
-    if (!req.body.grant_type) {
+    var grantType    = req.body.grant_type;
+    var clientId     = req.body.client_id;
+    var clientSecret = req.body.client_secret;
+    var scope        = req.body.scope;
+
+    if (!grantType) {
       logger.error("Missing grant_type parameter");
       res.json(400, { error: 'invalid_request' });
     }
-    else if (req.body.grant_type === 'authorization_code') {
-      // RFC6749 section 4.1.3
-      requestAccessToken(req, res);
-    }
-    else {
+    else if (grantType !== 'authorization_code') {
       logger.error("Unsupported grant_type");
       res.json(400, { error: 'unsupported_grant_type' });
     }
+
+    // RFC6749 section 4.1.3
+    requestAccessToken(req, res);
   });
 
   var renderVerificationPage = function(req, res, errorMessage) {
