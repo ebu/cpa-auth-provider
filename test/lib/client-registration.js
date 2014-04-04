@@ -178,6 +178,13 @@ describe('POST /register', function() {
         it('should return status 400', function() {
           expect(this.res.statusCode).to.equal(400);
         });
+
+        describe("the response body", function() {
+          it("should include the error", function() {
+            expect(this.res.body).to.have.property('error');
+            expect(this.res.body.error).to.equal('invalid_request');
+          });
+        });
       });
     });
   });
