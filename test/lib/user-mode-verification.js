@@ -69,8 +69,8 @@ var initDatabase = function(opts, done) {
     .then(function() {
       done();
     },
-    function(err) {
-      done(err);
+    function(error) {
+      done(new Error(JSON.stringify(error)));
     });
 };
 
