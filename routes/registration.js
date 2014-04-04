@@ -48,17 +48,6 @@ module.exports = function(app) {
           });
         },
         function(state, callback) {
-          db.RegistrationAccessToken.create({
-            token:     generate.accessToken(),
-            scope:     '', // TODO: set scope as defined by service provider?
-            client_id: state.client.id
-          })
-          .complete(function(err, token) {
-            state.registrationAccessToken = token;
-            callback(err, state);
-          });
-        },
-        function(state, callback) {
           transaction.commit().complete(function(err) {
             callback(err, state);
           });
@@ -66,13 +55,11 @@ module.exports = function(app) {
         function(state, callback) {
           res.json(201, {
             client_id:                 state.client.id.toString(),
-            client_secret:             state.client.secret,
-            registration_access_token: state.registrationAccessToken.token,
-            registration_client_uri:   config.uris.registration_client_uri
+            client_secret:             state.client.secret
           });
 
           callback();
-        },
+        }
       ],
       function(error) {
         if (error) {
@@ -91,44 +78,15 @@ module.exports = function(app) {
     });
   });
 
-  // Client Configuration Endpoint
-  // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-4
-
-  var configurationEndpoint = function(req, res, clientId) {
-    if (!req.headers.authorization) {
-      // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1 : request lacks any auth information
-      res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '"');
-      res.json(401, { error: 'unauthorized' });
-      return;
-    }
-
-    verify.registrationAccessToken(req.headers.authorization, clientId, function(err, registrationAccessToken, client) {
-      if (err || !registrationAccessToken || !client) {
-        // RFC6750: http://tools.ietf.org/html/rfc6750#section-3.1
-        res.setHeader('WWW-Authenticate', 'Bearer realm="' + config.realm + '",\nerror="invalid_token",\nerror_description="Unknown or expired token"');
-        res.json(401, { error: 'unauthorized' });
-        return;
-      }
-
-      res.json({
-        client_id:                 client.dataValues.id.toString(),
-        client_secret:             client.dataValues.secret,
-        registration_access_token: registrationAccessToken.dataValues.token,
-        registration_client_uri:   config.uris.registration_client_uri
-      });
-    });
-  };
-
   // client_id is given in the path
   app.get('/register/:client_id', function(req, res) {
     var clientId = req.params.client_id;
-    configurationEndpoint(req, res, clientId);
+    res.send(501);
   });
 
   // client_id is given as a GET Parameter
   app.get('/register', function(req, res) {
-    var clientId = req.query.client_id;
-    configurationEndpoint(req, res, clientId);
+    res.send(501);
   });
 
   app.put('/register', function(req, res) {
