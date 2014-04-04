@@ -17,11 +17,11 @@ var resetDatabase = function(done) {
     done();
   },
   function(error) {
-    done(error);
+    done(new Error(JSON.stringify(error)));
   });
 };
 
-var createClientInformation = function(done) {
+var createClient = function(done) {
   var data = {
     id:               102,
     secret:           '8ecf4b2a0df2df7fd69df128e0ac4fcc',
@@ -63,7 +63,7 @@ describe('POST /token', function() {
 
     before(resetDatabase);
     before(createScope);
-    before(createClientInformation);
+    before(createClient);
 
     context('When requesting an access token', function() {
       context("with incorrect Content-Type", function() {
@@ -138,7 +138,7 @@ describe('POST /token', function() {
 
       context('with invalid scope', function() {
         before(function(done) {
-          var body = { 
+          var body = {
             client_id:     102,
             client_secret: '8ecf4b2a0df2df7fd69df128e0ac4fcc',
             scope:         'unknown',
