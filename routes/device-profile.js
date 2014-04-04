@@ -8,6 +8,15 @@ var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
 var verify        = require('../lib/verify');
 
+var sendAccessToken = function(res, token) {
+  res.set('Cache-Control', 'no-store');
+  res.set('Pragma', 'no-cache');
+  res.json({
+    token:      token,
+    token_type: 'bearer'
+  });
+};
+
 var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) {
   db.Client.find({ where: { id: clientId, secret: clientSecret } })
     .then(function(client) {
@@ -39,12 +48,7 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
       db.ServiceAccessToken
         .create(accessToken)
         .success(function(dbAccessToken) {
-          res.set('Cache-Control', 'no-store');
-          res.set('Pragma', 'no-cache');
-          res.json({
-            token:      dbAccessToken.token,
-            token_type: 'bearer'
-          });
+          sendAccessToken(res, dbAccessToken.token);
         })
         .error(function(error){
           res.send(500);
@@ -55,7 +59,7 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
     });
 };
 
-var validateDeviceCode = function(res, clientId, clientSecret, deviceCode, scope) {
+var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCode, scope) {
   db.Client.find({ where: { id: clientId, secret: clientSecret } })
     .then(function(client) {
       if (!client) {
@@ -101,12 +105,7 @@ var validateDeviceCode = function(res, clientId, clientSecret, deviceCode, scope
             return transaction.commit();
           })
           .then(function() {
-            res.set('Cache-Control', 'no-store');
-            res.set('Pragma', 'no-cache');
-            res.json({
-              token:      accessToken.token,
-              token_type: 'bearer'
-            });
+            sendAccessToken(res, accessToken.token);
           },
           function(error) {
             transaction.rollback().complete(function(err) {
@@ -123,7 +122,9 @@ var validateDeviceCode = function(res, clientId, clientSecret, deviceCode, scope
 var routes = function(app) {
   var logger = app.get('logger');
 
-  // Client Registration Endpoint
+  /*
+   * Access token endpoint
+   */
 
   app.post('/token', function(req, res) {
     if (!requestHelper.isContentType(req, 'application/json')) {
@@ -157,7 +158,7 @@ var routes = function(app) {
 
     if (deviceCode) {
       // User mode
-      validateDeviceCode(res, clientId, clientSecret, deviceCode, scope);
+      requestUserModeAccessToken(res, clientId, clientSecret, deviceCode, scope);
     }
     else {
       // Client mode
