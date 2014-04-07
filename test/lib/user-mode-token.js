@@ -58,8 +58,9 @@ var initDatabase = function(done) {
     })
     .then(function() {
       return db.Scope.create({
-        id:   5,
-        name: 'example-service.bbc.co.uk'
+        id:           5,
+        name:         'example-service.bbc.co.uk',
+        display_name: 'BBC Radio'
       });
     })
     .then(function() {
@@ -189,6 +190,21 @@ describe("POST /token", function() {
           it("should include the token type", function() {
             expect(this.res.body).to.have.property('token_type');
             expect(this.res.body.token_type).to.equal('bearer');
+          });
+
+          it("should include a description", function() {
+            expect(this.res.body).to.have.property('description');
+            expect(this.res.body.description).to.equal('testuser at BBC Radio');
+          });
+
+          it("should include a short description", function() {
+            expect(this.res.body).to.have.property('short_description');
+            expect(this.res.body.short_description).to.equal('BBC Radio');
+          });
+
+          it("should include the scope", function() {
+            expect(this.res.body).to.have.property('scope');
+            expect(this.res.body.scope).to.equal('example-service.bbc.co.uk');
           });
 
           it("should include a valid refresh token"); // TODO: optional: refresh_token

@@ -105,9 +105,9 @@ describe('POST /associate', function() {
         expect(this.res.body).to.be.an('object');
       });
 
-      // TODO: remove test
       it('should include the device code', function() {
-        expect(this.res.body).to.not.have.property('device_code');
+        expect(this.res.body).to.have.property('device_code');
+        expect(this.res.body.device_code).to.equal('8ecf4b2a0df2df7fd69df128e0ac4fcc');
       });
 
       it('should include the user code', function() {

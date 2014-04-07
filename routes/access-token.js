@@ -1,19 +1,20 @@
 "use strict";
 
-var config        = require('../config');
 var db            = require('../models');
-var authHelper    = require('../lib/auth-helper');
 var generate      = require('../lib/generate');
-var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
-var verify        = require('../lib/verify');
 
-var sendAccessToken = function(res, token) {
+var sendAccessToken = function(res, token, scope, user) {
+  var name = (user !== null) ? user.provider_uid : "This radio";
+
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
   res.json({
-    token:      token,
-    token_type: 'bearer'
+    token:             token,
+    token_type:        'bearer',
+    scope:             scope.name,
+    description:       name + " at " + scope.display_name,
+    short_description: scope.display_name
   });
 };
 
@@ -48,7 +49,7 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scope) 
       db.ServiceAccessToken
         .create(accessToken)
         .success(function(dbAccessToken) {
-          sendAccessToken(res, dbAccessToken.token);
+          sendAccessToken(res, dbAccessToken.token, scope, null);
         })
         .error(function(error){
           res.send(500);
@@ -69,7 +70,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
 
       return db.PairingCode.find({
         where:   { client_id: client.id, device_code: deviceCode },
-        include: [ db.Scope ]
+        include: [ db.Scope, db.User ]
       });
     })
     .then(function(pairingCode) {
@@ -105,7 +106,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
             return transaction.commit();
           })
           .then(function() {
-            sendAccessToken(res, accessToken.token);
+            sendAccessToken(res, accessToken.token, pairingCode.scope, pairingCode.user);
           },
           function(error) {
             transaction.rollback().complete(function(err) {
@@ -164,55 +165,6 @@ var routes = function(app) {
       // Client mode
       requestClientModeAccessToken(res, clientId, clientSecret, scope);
     }
-  });
-
-  var renderVerificationPage = function(req, res, errorMessage) {
-    if (typeof errorMessage === 'string') {
-      res.status(400);
-      res.render('verify.ejs', { 'values': req.body, 'error': errorMessage });
-    }
-    else {
-      res.render('verify.ejs', { 'values': req.body, 'error': null });
-    }
-  };
-
-  app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
-
-  app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
-    if (!req.body.user_code) {
-      logger.error("Missing user_code parameter");
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
-    var userCode = req.body.user_code;
-
-    verify.userCode(userCode, function(err, pairingCode) {
-      if (err || !pairingCode) {
-        renderVerificationPage(req, res, messages.INVALID_USERCODE);
-        return;
-      }
-
-      if (pairingCode.verified) {
-        res.status(400);
-        res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
-        return;
-      }
-
-      pairingCode
-        .updateAttributes({ user_id: req.user.id, verified: true })
-        .success(function() {
-          res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
-        })
-        .error(function() {
-          res.send(500);
-        });
-    });
   });
 };
 

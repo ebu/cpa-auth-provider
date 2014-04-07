@@ -57,7 +57,7 @@ module.exports = function(app) {
           var pairingCode = {
             client_id:           clientId,
             scope_id:            scope.id,
-            device_code:         generate.deviceCode(), // TODO: remove this
+            device_code:         generate.deviceCode(),
             user_code:           generate.userCode(),
             verification_uri:    config.uris.verification_uri
           };
@@ -67,7 +67,7 @@ module.exports = function(app) {
             res.set('Pragma', 'no-cache');
 
             res.json(200, {
-              // device_code:      pairingCode.device_code,
+              device_code:      pairingCode.device_code,
               user_code:        pairingCode.user_code,
               verification_uri: pairingCode.verification_uri,
               expires_in:       3600,
