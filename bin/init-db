@@ -23,7 +23,8 @@ switch(process.env.NODE_ENV) {
     break;
 }
 
-var db = require('../models');
+var db     = require('../models');
+var config = require('../config');
 
 db.sequelize
   .sync({ force: true })
@@ -35,12 +36,11 @@ db.sequelize
 
       if(process.env.NODE_ENV === 'development') {
         db.Scope
-          .bulkCreate([{id: 1, name: 'bbc1-cpa.local.ebu.io'}, {id: 2, name: 'bbc2-cpa.local.ebu.io'}])
+          .bulkCreate(config.scopes)
           .success(function(result) {
             console.log('Database populated');
           });
       }
-
     }
   });
 

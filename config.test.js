@@ -33,3 +33,8 @@ exports.uris = {
   // See draft-recordon-oauth-v2-device-00 section 1.4.
   verification_uri: 'http://example.com/verify'
 };
+
+exports.scopes = [
+  { name: 'http://bbc1-cpa.ebu.io/', display_name: "BBC1" },
+  { name: 'http://bbc2-cpa.ebu.io/', display_name: "BBC2" }
+];

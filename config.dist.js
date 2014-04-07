@@ -43,6 +43,9 @@ exports.uris = {
   verification_uri: 'http://vagrant.ebu.io:3000/'
 };
 
-exports.realm = 'CPA';
-
 exports.enableCORS = true;
+
+exports.scopes = [
+  { name: 'http://bbc1-cpa.ebu.io/', display_name: "BBC1" },
+  { name: 'http://bbc2-cpa.ebu.io/', display_name: "BBC2" }
+];
