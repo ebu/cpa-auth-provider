@@ -59,11 +59,11 @@ module.exports = function(app, options) {
             }
 
             var responseData = {
-              client_id: accessToken.client_id,
-              user_id:   accessToken.user_id
+              client_id: accessToken.client_id
             };
 
             if (accessToken.user) {
+              responseData.user_id      = accessToken.user_id;
               responseData.display_name = accessToken.user.display_name;
               responseData.photo_url    = accessToken.user.photo_url;
             }

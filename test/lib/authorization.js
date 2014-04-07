@@ -16,6 +16,14 @@ var resetDatabase = function(done) {
     });
   })
   .then(function() {
+    return db.ServiceAccessToken.create({
+      token: 'af03736940844fccb0147f12a9d188fb',
+      scope_id: 1,
+      client_id: 4
+    });
+
+  })
+  .then(function() {
     done();
   },
   function(error) {
@@ -81,7 +89,7 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with a valid access token", function() {
+  context("with a valid user mode access token", function() {
     before(function(done) {
       var data = {
         token: 'aed201ffb3362de42700a293bdebf694',
@@ -123,6 +131,49 @@ describe("POST /authorized", function() {
       it("should include the photo url", function() {
         expect(this.res.body).to.have.property('photo_url');
         expect(this.res.body.photo_url).to.equal('http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png');
+      });
+    });
+  });
+
+  context("with a valid client mode access token", function() {
+    before(function(done) {
+      var data = {
+        token: 'af03736940844fccb0147f12a9d188fb',
+        scope: 'example-service.bbc.co.uk'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'json',
+        data:   data
+      }, done);
+    });
+
+    it("should return status 200", function() {
+      expect(this.res.statusCode).to.equal(200);
+    });
+
+    it("should return a JSON object", function() {
+      expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+      expect(this.res.body).to.be.an('object');
+    });
+
+    describe("the returned data", function() {
+      it("should not include a user id", function() {
+        expect(this.res.body).to.not.have.property('user_id');
+      });
+
+      it("should include the client id", function() {
+        expect(this.res.body).to.have.property('client_id');
+        expect(this.res.body.client_id).to.equal(4);
+      });
+
+      it("should not include a display name", function() {
+        expect(this.res.body).to.not.have.property('display_name');
+      });
+
+      it("should not include a photo url", function() {
+        expect(this.res.body).to.not.have.property('photo_url');
       });
     });
   });
