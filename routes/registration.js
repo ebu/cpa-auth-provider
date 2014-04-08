@@ -22,8 +22,7 @@ module.exports = function(app) {
 
   app.post('/register', function(req, res) {
     if (!requestHelper.isContentType(req, 'application/json')) {
-      logger.error("Invalid content type:", req.get('Content-Type'));
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
       return;
     }
 
@@ -54,8 +53,8 @@ module.exports = function(app) {
         },
         function(state, callback) {
           res.json(201, {
-            client_id:                 state.client.id.toString(),
-            client_secret:             state.client.secret
+            client_id:     state.client.id.toString(),
+            client_secret: state.client.secret
           });
 
           callback();

@@ -22,13 +22,12 @@ var routes = function(app) {
 
   app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
     if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
       return;
     }
 
     if (!req.body.user_code) {
-      logger.error("Missing user_code parameter");
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Missing user_code");
       return;
     }
 

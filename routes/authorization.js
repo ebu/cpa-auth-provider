@@ -7,21 +7,21 @@ var requestHelper = require('../lib/request-helper');
 module.exports = function(app, options) {
   app.post('/authorized', function(req, res) {
     if (!requestHelper.isContentType(req, 'application/json')) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
       return;
     }
 
     var accessToken = req.body.token;
 
     if (!accessToken) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Missing access token");
       return;
     }
 
     var scopeName = req.body.scope;
 
     if (!scopeName) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Missing scope");
       return;
     }
 
@@ -36,7 +36,7 @@ module.exports = function(app, options) {
         }
 
         if (!scope) {
-          res.send(401, { error: 'unauthorized' });
+          res.sendUnauthorized("Unknown scope: " + scopeName);
           return;
         }
 
@@ -54,7 +54,7 @@ module.exports = function(app, options) {
             }
 
             if (!accessToken) {
-              res.send(401, { error: 'unauthorized' });
+              res.sendUnauthorized("Invalid access token");
               return;
             }
 

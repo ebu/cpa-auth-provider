@@ -13,7 +13,7 @@ module.exports = function(app) {
 
   app.post('/associate', function(req, res) {
     if (!requestHelper.isContentType(req, 'application/json')) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
       return;
     }
 
@@ -23,34 +23,44 @@ module.exports = function(app) {
 
     // TODO: validate clientId
     if (!clientId) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Missing client_id");
       return;
     }
     else if (!clientId.toString().match(/^\d+$/)) {
-      res.json(400, { error: 'invalid_client' });
+      res.sendInvalidClient("Invalid client_id");
       return;
     }
 
     if (!clientSecret) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Missing client_secret");
       return;
     }
 
     if (!scopeName) {
-      res.json(400, { error: 'invalid_request' });
+      res.sendInvalidRequest("Missing scope");
       return;
     }
 
-    db.Client.find({ where: { id: clientId, secret: clientSecret } }).success(function(client) {
+    db.Client.find({ where: { id: clientId, secret: clientSecret } }).complete(function(err, client) {
+      if (err) {
+        res.send(500);
+        return;
+      }
+
       if (!client) {
-        res.json(400, { error: 'invalid_client' });
+        res.sendInvalidClient("Client " + clientId + " not found");
         return;
       }
 
       db.Scope.find({ where: { name: scopeName }})
-        .success(function(scope) {
+        .complete(function(err, scope) {
+          if (err) {
+            res.send(500);
+            return;
+          }
+
           if (!scope) {
-            res.json(400, { error: 'invalid_request' });
+            res.sendInvalidRequest("Scope " + scopeName + " not found");
             return;
           }
 
@@ -73,14 +83,8 @@ module.exports = function(app) {
               expires_in:       3600,
               interval:         5
             });
-          },
-          function(error) {
-            res.send(500);
           });
         });
-    },
-    function(error) {
-      res.send(500);
     });
   });
 };
