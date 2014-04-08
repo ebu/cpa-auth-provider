@@ -4,10 +4,6 @@ var config   = require('../config');
 var db       = require('../models');
 var generate = require('../lib/generate');
 
-var requestHelper = require('../lib/request-helper');
-
-var jsonSchema = require('jsonschema');
-
 var schema = {
   id: "/associate",
   type: "object",
@@ -29,24 +25,14 @@ var schema = {
   }
 };
 
+var validateJson = require('../lib/validate-json')(schema);
+
 module.exports = function(app) {
   var logger = app.get('logger');
 
   // Client Registration Endpoint
 
-  app.post('/associate', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
-      return;
-    }
-
-    var result = jsonSchema.validate(req.body, schema);
-
-    if (result.errors.length > 0) {
-      res.sendInvalidRequest(result.toString());
-      return;
-    }
-
+  app.post('/associate', validateJson, function(req, res) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var scopeName    = req.body.scope;

@@ -1,13 +1,10 @@
 "use strict";
 
-var config        = require('../config');
-var db            = require('../models');
-var generate      = require('../lib/generate');
-var requestHelper = require('../lib/request-helper');
-var verify        = require('../lib/verify');
+var config   = require('../config');
+var db       = require('../models');
+var generate = require('../lib/generate');
 
-var async      = require('async');
-var jsonSchema = require('jsonschema');
+var async = require('async');
 
 var schema = {
   id: "/register",
@@ -30,6 +27,8 @@ var schema = {
   }
 };
 
+var validateJson = require('../lib/validate-json')(schema);
+
 module.exports = function(app) {
   var logger = app.get('logger');
 
@@ -42,19 +41,7 @@ module.exports = function(app) {
   // Client Registration Endpoint
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
 
-  app.post('/register', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
-      return;
-    }
-
-    var result = jsonSchema.validate(req.body, schema);
-
-    if (result.errors.length > 0) {
-      res.sendInvalidRequest(result.toString());
-      return;
-    }
-
+  app.post('/register', validateJson, function(req, res) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {

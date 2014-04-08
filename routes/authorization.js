@@ -2,10 +2,6 @@
 
 var db = require('../models');
 
-var requestHelper = require('../lib/request-helper');
-
-var jsonSchema = require('jsonschema');
-
 var schema = {
   id: "/authorized",
   type: "object",
@@ -23,20 +19,10 @@ var schema = {
   }
 };
 
+var validateJson = require('../lib/validate-json')(schema);
+
 module.exports = function(app, options) {
-  app.post('/authorized', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
-      return;
-    }
-
-    var result = jsonSchema.validate(req.body, schema);
-
-    if (result.errors.length > 0) {
-      res.sendInvalidRequest(result.toString());
-      return;
-    }
-
+  app.post('/authorized', validateJson, function(req, res) {
     var accessToken = req.body.token;
     var scopeName   = req.body.scope;
 
