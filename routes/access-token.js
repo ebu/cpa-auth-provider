@@ -9,7 +9,7 @@ var sendAccessToken = function(res, token, scope, user) {
 
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
-  res.json({
+  res.send({
     token:             token,
     token_type:        'bearer',
     scope:             scope.name,
@@ -161,7 +161,7 @@ var routes = function(app) {
 
     if (grantType !== 'authorization_code') {
       logger.debug("Unsupported grant_type");
-      res.json(400, { error: 'unsupported_grant_type' });
+      res.send(400, { error: 'unsupported_grant_type' });
       return;
     }
 

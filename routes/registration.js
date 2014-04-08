@@ -52,7 +52,7 @@ module.exports = function(app) {
           });
         },
         function(state, callback) {
-          res.json(201, {
+          res.send(201, {
             client_id:     state.client.id.toString(),
             client_secret: state.client.secret
           });
@@ -69,7 +69,7 @@ module.exports = function(app) {
             else {
               // TODO: distinguish between invalid input parameters and other
               // failure conditions
-              res.json(400, { error: 'invalid_request' });
+              res.send(400, { error: 'invalid_request' });
             }
           });
         }

@@ -68,7 +68,7 @@ module.exports = function(app, options) {
               responseData.photo_url    = accessToken.user.photo_url;
             }
 
-            res.json(responseData);
+            res.send(responseData);
           });
       });
   });

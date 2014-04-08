@@ -76,7 +76,7 @@ module.exports = function(app) {
             res.set('Cache-Control', 'no-store');
             res.set('Pragma', 'no-cache');
 
-            res.json(200, {
+            res.send(200, {
               device_code:      pairingCode.device_code,
               user_code:        pairingCode.user_code,
               verification_uri: pairingCode.verification_uri,
