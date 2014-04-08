@@ -194,7 +194,11 @@ var routes = function(app) {
 
     if (grantType !== 'authorization_code') {
       logger.debug("Unsupported grant_type");
-      res.send(400, { error: 'unsupported_grant_type' });
+
+      res.send(400, {
+        error:             'unsupported_grant_type',
+        error_description: "Unsupported grant type: " + grantType
+      });
       return;
     }
 

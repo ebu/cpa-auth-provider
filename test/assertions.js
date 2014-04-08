@@ -7,5 +7,7 @@ module.exports = {
     expect(res.body).to.be.an('object');
     expect(res.body).to.have.property('error');
     expect(res.body.error).to.equal(error);
+    expect(res.body).to.have.property('error_description');
+    expect(res.body.error_description).to.not.equal('');
   }
 };
