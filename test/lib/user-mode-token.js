@@ -67,6 +67,7 @@ var initDatabase = function(done) {
       return db.User.create({
         id:           3,
         provider_uid: 'testuser',
+        display_name: 'Test User',
         password:     'testpassword'
       });
     })
@@ -194,7 +195,7 @@ describe("POST /token", function() {
 
           it("should include a description", function() {
             expect(this.res.body).to.have.property('description');
-            expect(this.res.body.description).to.equal('testuser at BBC Radio');
+            expect(this.res.body.description).to.equal('Test User at BBC Radio');
           });
 
           it("should include a short description", function() {

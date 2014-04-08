@@ -5,7 +5,7 @@ var generate      = require('../lib/generate');
 var requestHelper = require('../lib/request-helper');
 
 var sendAccessToken = function(res, token, scope, user) {
-  var name = (user !== null) ? user.provider_uid : "This radio";
+  var name = (user !== null) ? user.display_name : "This radio";
 
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
