@@ -6,7 +6,29 @@ var generate      = require('../lib/generate');
 var requestHelper = require('../lib/request-helper');
 var verify        = require('../lib/verify');
 
-var async = require('async');
+var async      = require('async');
+var jsonSchema = require('jsonschema');
+
+var schema = {
+  id: "/register",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    client_name: {
+      type:     "string",
+      required: true
+    },
+    software_id: {
+      type:     "string",
+      required: true
+    },
+    software_version: {
+      type:     "string",
+      required: true
+    }
+  }
+};
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -23,6 +45,13 @@ module.exports = function(app) {
   app.post('/register', function(req, res) {
     if (!requestHelper.isContentType(req, 'application/json')) {
       res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
+      return;
+    }
+
+    var result = jsonSchema.validate(req.body, schema);
+
+    if (result.errors.length > 0) {
+      res.sendInvalidRequest(result.toString());
       return;
     }
 

@@ -6,6 +6,29 @@ var generate = require('../lib/generate');
 
 var requestHelper = require('../lib/request-helper');
 
+var jsonSchema = require('jsonschema');
+
+var schema = {
+  id: "/associate",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    client_id: {
+      type:     "string",
+      required: true
+    },
+    client_secret: {
+      type:     "string",
+      required: true
+    },
+    scope: {
+      type:     "string",
+      required: true
+    }
+  }
+};
+
 module.exports = function(app) {
   var logger = app.get('logger');
 
@@ -17,31 +40,21 @@ module.exports = function(app) {
       return;
     }
 
+    var result = jsonSchema.validate(req.body, schema);
+
+    if (result.errors.length > 0) {
+      res.sendInvalidRequest(result.toString());
+      return;
+    }
+
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var scopeName    = req.body.scope;
 
-    // TODO: validate clientId
-    if (!clientId) {
-      res.sendInvalidRequest("Missing client_id");
-      return;
-    }
-    else if (!clientId.toString().match(/^\d+$/)) {
-      res.sendInvalidClient("Invalid client_id");
-      return;
-    }
-
-    if (!clientSecret) {
-      res.sendInvalidRequest("Missing client_secret");
-      return;
-    }
-
-    if (!scopeName) {
-      res.sendInvalidRequest("Missing scope");
-      return;
-    }
-
-    db.Client.find({ where: { id: clientId, secret: clientSecret } }).complete(function(err, client) {
+    db.Client.find({
+      where: { id: clientId, secret: clientSecret }
+    })
+    .complete(function(err, client) {
       if (err) {
         res.send(500);
         return;
@@ -80,7 +93,7 @@ module.exports = function(app) {
               device_code:      pairingCode.device_code,
               user_code:        pairingCode.user_code,
               verification_uri: pairingCode.verification_uri,
-              expires_in:       3600,
+              expires_in:       3600, // TODO: implement expiry
               interval:         5
             });
           });

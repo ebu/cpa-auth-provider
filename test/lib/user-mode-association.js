@@ -67,7 +67,7 @@ describe('POST /associate', function() {
   context('with valid parameters', function() {
     before(function(done) {
       var data = {
-        client_id:        3,
+        client_id:        '3',
         client_secret:    'a0fe0231-0220-4d45-8431-1fd374998d78',
         scope:            'example-service.bbc.co.uk',
       };
@@ -134,7 +134,7 @@ describe('POST /associate', function() {
     context('with incorrect content type', function() {
       before(function(done) {
         var data = {
-          client_id:     3,
+          client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
           scope:         'example-service.bbc.co.uk',
         };
@@ -194,7 +194,7 @@ describe('POST /associate', function() {
     context('with an unknown client_id', function() {
       before(function(done) {
         var data = {
-          client_id:     4,
+          client_id:     '4',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
           scope:         'example-service.bbc.co.uk'
         };
@@ -214,7 +214,7 @@ describe('POST /associate', function() {
     context('with missing scope', function() {
       before(function(done) {
         var data = {
-          client_id:     3,
+          client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78'
           // scope:         'example-service.bbc.co.uk'
         };
@@ -234,7 +234,7 @@ describe('POST /associate', function() {
     context('with an unknown scope', function() {
       before(function(done) {
         var data = {
-          client_id:     3,
+          client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
           scope:         'unknown'
         };

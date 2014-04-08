@@ -4,6 +4,25 @@ var db = require('../models');
 
 var requestHelper = require('../lib/request-helper');
 
+var jsonSchema = require('jsonschema');
+
+var schema = {
+  id: "/authorized",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    token: {
+      type:     "string",
+      required: true
+    },
+    scope: {
+      type:     "string",
+      required: true
+    }
+  }
+};
+
 module.exports = function(app, options) {
   app.post('/authorized', function(req, res) {
     if (!requestHelper.isContentType(req, 'application/json')) {
@@ -11,19 +30,15 @@ module.exports = function(app, options) {
       return;
     }
 
+    var result = jsonSchema.validate(req.body, schema);
+
+    if (result.errors.length > 0) {
+      res.sendInvalidRequest(result.toString());
+      return;
+    }
+
     var accessToken = req.body.token;
-
-    if (!accessToken) {
-      res.sendInvalidRequest("Missing access token");
-      return;
-    }
-
-    var scopeName = req.body.scope;
-
-    if (!scopeName) {
-      res.sendInvalidRequest("Missing scope");
-      return;
-    }
+    var scopeName   = req.body.scope;
 
     // TODO: do this in a single query?
 

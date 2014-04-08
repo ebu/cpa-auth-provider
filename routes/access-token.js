@@ -4,6 +4,8 @@ var db            = require('../models');
 var generate      = require('../lib/generate');
 var requestHelper = require('../lib/request-helper');
 
+var jsonSchema = require('jsonschema');
+
 var sendAccessToken = function(res, token, scope, user) {
   var name = (user !== null) ? user.display_name : "This radio";
 
@@ -135,6 +137,35 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
     });
 };
 
+var schema = {
+  id: "/token",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    grant_type: {
+      type:     "string",
+      required: true
+    },
+    client_id: {
+      type:     "string",
+      required: true
+    },
+    client_secret: {
+      type:     "string",
+      required: true
+    },
+    device_code: {
+      type:     "string",
+      required: false
+    },
+    scope: {
+      type:     "string",
+      required: true
+    }
+  }
+};
+
 var routes = function(app) {
   var logger = app.get('logger');
 
@@ -148,36 +179,22 @@ var routes = function(app) {
       return;
     }
 
+    var result = jsonSchema.validate(req.body, schema);
+
+    if (result.errors.length > 0) {
+      res.sendInvalidRequest(result.toString());
+      return;
+    }
+
     var grantType    = req.body.grant_type;
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var deviceCode   = req.body.device_code;
     var scope        = req.body.scope;
 
-    if (!grantType) {
-      res.sendInvalidRequest("Missing grant_type");
-      return;
-    }
-
     if (grantType !== 'authorization_code') {
       logger.debug("Unsupported grant_type");
       res.send(400, { error: 'unsupported_grant_type' });
-      return;
-    }
-
-    // TODO: validate clientId
-    if (!clientId) {
-      res.sendInvalidRequest("Missing client_id");
-      return;
-    }
-
-    if (!clientSecret) {
-      res.sendInvalidRequest("Missing client_secret");
-      return;
-    }
-
-    if (!scope) {
-      res.sendInvalidRequest("Missing scope");
       return;
     }
 
