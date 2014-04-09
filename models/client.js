@@ -21,18 +21,6 @@ module.exports = function(sequelize, DataTypes) {
         notEmpty: true
       }
     },
-
-    //redirect_uris: DataTypes.STRING,
-    //logo_uri
-    //contacts
-    //tos_uri
-    //policy_uri
-    //token_endpoint_auth_method
-    //scope
-    //grant_types
-    //response_types
-    //jwks_uri
-
     software_id: {
       type: DataTypes.STRING,
       validate: {
