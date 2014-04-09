@@ -45,7 +45,7 @@ var routes = function(app) {
         return;
       }
 
-      if (pairingCode.getTimeToLive() <= 0.0) {
+      if (pairingCode.hasExpired()) {
         res.status(400);
         res.render('verify-info.ejs', { message: messages.EXPIRED_USERCODE, status: 'warning' });
         return;

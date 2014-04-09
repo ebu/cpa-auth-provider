@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
 
       /**
-       * Returns the duration, in seconds, before the given pairing code
+       * Returns the duration, in seconds, before this pairing code
        * expires.
        */
 
@@ -26,6 +26,14 @@ module.exports = function(sequelize, DataTypes) {
         var timeToLive = config.valid_pairing_code_duration - duration;
 
         return timeToLive;
+      },
+
+      /**
+       * Returns true if this pairing code has expired, or false otherwise.
+       */
+
+      hasExpired: function() {
+        return this.getTimeToLive() <= 0.0;
       }
     },
 

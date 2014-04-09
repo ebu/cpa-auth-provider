@@ -97,9 +97,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
             return;
           }
 
-          var timeToLive = pairingCode.getTimeToLive();
-
-          if (timeToLive <= 0.0) {
+          if (pairingCode.hasExpired()) {
             res.sendErrorResponse(400, "user_code_expired", "Pairing code expired");
             return;
           }
