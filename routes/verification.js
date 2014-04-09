@@ -1,9 +1,9 @@
 "use strict";
 
+var db            = require('../models');
 var authHelper    = require('../lib/auth-helper');
 var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
-var verify        = require('../lib/verify');
 
 var routes = function(app) {
   var logger = app.get('logger');
@@ -30,40 +30,47 @@ var routes = function(app) {
       return;
     }
 
-    if (!req.body.user_code) {
+    var userCode = req.body.user_code;
+
+    if (!userCode) {
       res.sendInvalidRequest("Missing user_code");
       return;
     }
 
-    var userCode = req.body.user_code;
-
-    verify.userCode(userCode, function(err, pairingCode) {
-      if (err || !pairingCode) {
-        renderVerificationPage(req, res, messages.INVALID_USERCODE);
-        return;
-      }
-
-      if (pairingCode.verified) {
-        res.status(400);
-        res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
-        return;
-      }
-
-      if (pairingCode.hasExpired()) {
-        res.status(400);
-        res.render('verify-info.ejs', { message: messages.EXPIRED_USERCODE, status: 'warning' });
-        return;
-      }
-
-      pairingCode
-        .updateAttributes({ user_id: req.user.id, verified: true })
-        .success(function() {
-          res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
-        })
-        .error(function() {
+    db.PairingCode
+      .find({ where: { 'user_code': userCode }})
+      .complete(function(err, pairingCode) {
+        if (err) {
           res.send(500);
-        });
-    });
+          return;
+        }
+
+        if (!pairingCode) {
+          renderVerificationPage(req, res, messages.INVALID_USERCODE);
+          return;
+        }
+
+        if (pairingCode.verified) {
+          res.status(400);
+          res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
+          return;
+        }
+
+        if (pairingCode.hasExpired()) {
+          res.status(400);
+          res.render('verify-info.ejs', { message: messages.EXPIRED_USERCODE, status: 'warning' });
+          return;
+        }
+
+        pairingCode
+          .updateAttributes({ user_id: req.user.id, verified: true })
+          .success(function() {
+            res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
+          })
+          .error(function() {
+            res.send(500);
+          });
+      });
   });
 };
 
