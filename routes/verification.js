@@ -45,6 +45,12 @@ var routes = function(app) {
         return;
       }
 
+      if (pairingCode.getTimeToLive() <= 0.0) {
+        res.status(400);
+        res.render('verify-info.ejs', { message: messages.EXPIRED_USERCODE, status: 'warning' });
+        return;
+      }
+
       pairingCode
         .updateAttributes({ user_id: req.user.id, verified: true })
         .success(function() {
