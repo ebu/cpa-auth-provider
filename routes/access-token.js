@@ -43,9 +43,6 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scopeNa
             return;
           }
 
-          // TODO: must validate clientId and clientSecret before creating access
-          // token
-
           var accessToken = {
             token:     generate.accessToken(),
             user_id:   null,
@@ -97,6 +94,13 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
 
           if (!pairingCode.scope || pairingCode.scope.name !== scope) {
             res.sendInvalidClient("Pairing code scope mismatch");
+            return;
+          }
+
+          var timeToLive = pairingCode.getTimeToLive();
+
+          if (timeToLive <= 0.0) {
+            res.sendInvalidClient("Pairing code expired");
             return;
           }
 

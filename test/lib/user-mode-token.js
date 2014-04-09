@@ -72,6 +72,8 @@ var initDatabase = function(done) {
       });
     })
     .then(function() {
+      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
+
       return db.PairingCode.create({
         id:               50,
         client_id:        100,
@@ -80,10 +82,13 @@ var initDatabase = function(done) {
         user_code:        '1234',
         verification_uri: 'http://example.com',
         verified:         false, // authorization_pending
-        user_id:          3
+        created_at:       date,
+        updated_at:       date
       });
     })
     .then(function() {
+      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
+
       return db.PairingCode.create({
         id:               51,
         client_id:        101,
@@ -92,7 +97,9 @@ var initDatabase = function(done) {
         user_code:        '5678',
         verification_uri: 'http://example.com',
         verified:         true,
-        user_id:          3
+        user_id:          3,
+        created_at:       date,
+        updated_at:       date
       });
     })
     .then(function() {
@@ -101,6 +108,14 @@ var initDatabase = function(done) {
     function(error) {
       done(new Error(JSON.stringify(error)));
     });
+};
+
+var resetDatabase = function(done) {
+  clearDatabase(function() {
+    initDatabase(function() {
+      done();
+    });
+  });
 };
 
 describe("POST /token", function() {
@@ -112,12 +127,21 @@ describe("POST /token", function() {
     generate.accessToken.restore();
   });
 
-  before(clearDatabase);
-  before(initDatabase);
-
   context("when the client polls to obtain an access token (user mode)", function() {
     context("and the device code is pending user verification", function() {
       context("and the client provides valid parameters", function() {
+        before(resetDatabase);
+
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
         before(function(done) {
           var requestBody = {
             grant_type:    'authorization_code',
@@ -147,6 +171,18 @@ describe("POST /token", function() {
 
     context("and the user has input the correct user code", function() {
       context("and the client provides valid parameters", function() {
+        before(resetDatabase);
+
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
         before(function(done) {
           var requestBody = {
             grant_type:    'authorization_code',
@@ -268,6 +304,8 @@ describe("POST /token", function() {
     });
 
     context("with incorrect content type", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -290,6 +328,8 @@ describe("POST /token", function() {
     });
 
     context("with missing grant_type", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           // grant_type:    'authorization_code',
@@ -312,6 +352,8 @@ describe("POST /token", function() {
     });
 
     context("with invalid grant_type", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'invalid',
@@ -334,6 +376,8 @@ describe("POST /token", function() {
     });
 
     context("with missing client_id", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -356,6 +400,8 @@ describe("POST /token", function() {
     });
 
     context("with incorrect client_id", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -378,6 +424,8 @@ describe("POST /token", function() {
     });
 
     context("with missing client_secret", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -400,6 +448,8 @@ describe("POST /token", function() {
     });
 
     context("with incorrect client_secret", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -425,6 +475,8 @@ describe("POST /token", function() {
     // a client-mode access token request.
 
     context("with incorrect device_code", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -447,6 +499,8 @@ describe("POST /token", function() {
     });
 
     context("with missing scope", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -469,6 +523,8 @@ describe("POST /token", function() {
     });
 
     context("with incorrect scope", function() {
+      before(resetDatabase);
+
       before(function(done) {
         var requestBody = {
           grant_type:    'authorization_code',
@@ -476,6 +532,40 @@ describe("POST /token", function() {
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
           scope:         'unknown'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
+      });
+    });
+
+    context("when the pairing code has expired", function() {
+      before(resetDatabase);
+
+      before(function() {
+        // The pairing code should expire one hour it was created
+        var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+        this.clock = sinon.useFakeTimers(time, "Date");
+      });
+
+      after(function() {
+        this.clock.restore();
+      });
+
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'authorization_code',
+          client_id:     '101', // client with verified pairing code
+          client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+          device_code:   'c691343f-0ac0-467d-8659-5041cfc3dc4a',
+          scope:         'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {

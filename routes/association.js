@@ -71,17 +71,23 @@ module.exports = function(app) {
             verification_uri:    config.uris.verification_uri
           };
 
-          db.PairingCode.create(pairingCode).then(function() {
-            res.set('Cache-Control', 'no-store');
-            res.set('Pragma', 'no-cache');
+          db.PairingCode.create(pairingCode)
+            .complete(function(err, pairingCode) {
+              if (err) {
+                res.send(500);
+                return;
+              }
 
-            res.send(200, {
-              device_code:      pairingCode.device_code,
-              user_code:        pairingCode.user_code,
-              verification_uri: pairingCode.verification_uri,
-              expires_in:       3600, // TODO: implement expiry
-              interval:         5
-            });
+              res.set('Cache-Control', 'no-store');
+              res.set('Pragma', 'no-cache');
+
+              res.send(200, {
+                device_code:      pairingCode.device_code,
+                user_code:        pairingCode.user_code,
+                verification_uri: pairingCode.verification_uri,
+                expires_in:       Math.floor(pairingCode.getTimeToLive()),
+                interval:         config.max_poll_interval
+              });
           });
         });
     });

@@ -65,6 +65,15 @@ describe('POST /associate', function() {
   before(createScope);
 
   context('with valid parameters', function() {
+    before(function() {
+      var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+      this.clock = sinon.useFakeTimers(time, "Date");
+    });
+
+    after(function() {
+      this.clock.restore();
+    });
+
     before(function(done) {
       var data = {
         client_id:        '3',
