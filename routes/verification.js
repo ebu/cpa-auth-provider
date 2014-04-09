@@ -18,6 +18,10 @@ var routes = function(app) {
     }
   };
 
+  var renderVerificationInfo = function(res, message, status) {
+    res.render('verify-info.ejs', { message: message, status: status });
+  };
+
   app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
 
   /**
@@ -52,20 +56,20 @@ var routes = function(app) {
 
         if (pairingCode.verified) {
           res.status(400);
-          res.render('verify-info.ejs', { message: messages.OBSOLETE_USERCODE, status: 'warning' });
+          renderVerificationInfo(res, messages.OBSOLETE_USERCODE, 'warning');
           return;
         }
 
         if (pairingCode.hasExpired()) {
           res.status(400);
-          res.render('verify-info.ejs', { message: messages.EXPIRED_USERCODE, status: 'warning' });
+          renderVerificationInfo(res, messages.EXPIRED_USERCODE, 'warning');
           return;
         }
 
         pairingCode
           .updateAttributes({ user_id: req.user.id, verified: true })
           .success(function() {
-            res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
+            renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
           })
           .error(function() {
             res.send(500);
