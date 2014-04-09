@@ -1,12 +1,33 @@
 "use strict";
 
-var config        = require('../config');
-var db            = require('../models');
-var generate      = require('../lib/generate');
-var requestHelper = require('../lib/request-helper');
-var verify        = require('../lib/verify');
+var config   = require('../config');
+var db       = require('../models');
+var generate = require('../lib/generate');
 
 var async = require('async');
+
+var schema = {
+  id: "/register",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    client_name: {
+      type:     "string",
+      required: true
+    },
+    software_id: {
+      type:     "string",
+      required: true
+    },
+    software_version: {
+      type:     "string",
+      required: true
+    }
+  }
+};
+
+var validateJson = require('../lib/validate-json')(schema);
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -20,13 +41,7 @@ module.exports = function(app) {
   // Client Registration Endpoint
   // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
 
-  app.post('/register', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      logger.error("Invalid content type:", req.get('Content-Type'));
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
+  app.post('/register', validateJson, function(req, res) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
@@ -53,9 +68,9 @@ module.exports = function(app) {
           });
         },
         function(state, callback) {
-          res.json(201, {
-            client_id:                 state.client.id.toString(),
-            client_secret:             state.client.secret
+          res.send(201, {
+            client_id:     state.client.id.toString(),
+            client_secret: state.client.secret
           });
 
           callback();
@@ -70,7 +85,7 @@ module.exports = function(app) {
             else {
               // TODO: distinguish between invalid input parameters and other
               // failure conditions
-              res.json(400, { error: 'invalid_request' });
+              res.send(400, { error: 'invalid_request' });
             }
           });
         }

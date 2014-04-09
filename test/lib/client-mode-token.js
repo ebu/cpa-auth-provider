@@ -63,7 +63,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          client_id:     100,
+          client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           scope:         'example-service.bbc.co.uk'
         };
@@ -160,7 +160,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          client_id:     100,
+          client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           scope:         'example-service.bbc.co.uk'
         };
@@ -181,7 +181,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          // client_id:     100,
+          // client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           scope:         'example-service.bbc.co.uk'
         };
@@ -223,7 +223,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          client_id:     100,
+          client_id:     '100',
           // client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           scope:         'example-service.bbc.co.uk'
         };
@@ -244,7 +244,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          client_id:     100,
+          client_id:     '100',
           client_secret: 'unknown',
           scope:         'example-service.bbc.co.uk'
         };
@@ -265,7 +265,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          client_id:     100,
+          client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a'
           // scope:         'example-service.bbc.co.uk'
         };
@@ -286,7 +286,7 @@ describe('POST /token', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
-          client_id:     100,
+          client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           scope:         'unknown'
         };

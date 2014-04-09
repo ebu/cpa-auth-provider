@@ -2,28 +2,29 @@
 
 var db = require('../models');
 
-var requestHelper = require('../lib/request-helper');
+var schema = {
+  id: "/authorized",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    token: {
+      type:     "string",
+      required: true
+    },
+    scope: {
+      type:     "string",
+      required: true
+    }
+  }
+};
+
+var validateJson = require('../lib/validate-json')(schema);
 
 module.exports = function(app, options) {
-  app.post('/authorized', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
+  app.post('/authorized', validateJson, function(req, res) {
     var accessToken = req.body.token;
-
-    if (!accessToken) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
-    var scopeName = req.body.scope;
-
-    if (!scopeName) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
+    var scopeName   = req.body.scope;
 
     // TODO: do this in a single query?
 
@@ -36,7 +37,7 @@ module.exports = function(app, options) {
         }
 
         if (!scope) {
-          res.send(401, { error: 'unauthorized' });
+          res.sendUnauthorized("Unknown scope: " + scopeName);
           return;
         }
 
@@ -54,7 +55,7 @@ module.exports = function(app, options) {
             }
 
             if (!accessToken) {
-              res.send(401, { error: 'unauthorized' });
+              res.sendUnauthorized("Invalid access token");
               return;
             }
 
@@ -68,7 +69,7 @@ module.exports = function(app, options) {
               responseData.photo_url    = accessToken.user.photo_url;
             }
 
-            res.json(responseData);
+            res.send(responseData);
           });
       });
   });

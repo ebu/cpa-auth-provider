@@ -20,7 +20,8 @@
     "lodash": "~2.4.1",
     "optimist": "git+https://github.com/chrisn/node-optimist.git",
     "winston": "~0.7.2",
-    "async": "~0.2.10"
+    "async": "~0.2.10",
+    "jsonschema": "~0.4.0"
   },
   "devDependencies": {
     "supertest": "~0.8.2",

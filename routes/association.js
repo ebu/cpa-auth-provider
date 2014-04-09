@@ -4,53 +4,62 @@ var config   = require('../config');
 var db       = require('../models');
 var generate = require('../lib/generate');
 
-var requestHelper = require('../lib/request-helper');
+var schema = {
+  id: "/associate",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    client_id: {
+      type:     "string",
+      required: true
+    },
+    client_secret: {
+      type:     "string",
+      required: true
+    },
+    scope: {
+      type:     "string",
+      required: true
+    }
+  }
+};
+
+var validateJson = require('../lib/validate-json')(schema);
 
 module.exports = function(app) {
   var logger = app.get('logger');
 
   // Client Registration Endpoint
 
-  app.post('/associate', function(req, res) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
+  app.post('/associate', validateJson, function(req, res) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var scopeName    = req.body.scope;
 
-    // TODO: validate clientId
-    if (!clientId) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-    else if (!clientId.toString().match(/^\d+$/)) {
-      res.json(400, { error: 'invalid_client' });
-      return;
-    }
+    db.Client.find({
+      where: { id: clientId, secret: clientSecret }
+    })
+    .complete(function(err, client) {
+      if (err) {
+        res.send(500);
+        return;
+      }
 
-    if (!clientSecret) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
-    if (!scopeName) {
-      res.json(400, { error: 'invalid_request' });
-      return;
-    }
-
-    db.Client.find({ where: { id: clientId, secret: clientSecret } }).success(function(client) {
       if (!client) {
-        res.json(400, { error: 'invalid_client' });
+        res.sendInvalidClient("Client " + clientId + " not found");
         return;
       }
 
       db.Scope.find({ where: { name: scopeName }})
-        .success(function(scope) {
+        .complete(function(err, scope) {
+          if (err) {
+            res.send(500);
+            return;
+          }
+
           if (!scope) {
-            res.json(400, { error: 'invalid_request' });
+            res.sendInvalidRequest("Scope " + scopeName + " not found");
             return;
           }
 
@@ -66,21 +75,15 @@ module.exports = function(app) {
             res.set('Cache-Control', 'no-store');
             res.set('Pragma', 'no-cache');
 
-            res.json(200, {
+            res.send(200, {
               device_code:      pairingCode.device_code,
               user_code:        pairingCode.user_code,
               verification_uri: pairingCode.verification_uri,
-              expires_in:       3600,
+              expires_in:       3600, // TODO: implement expiry
               interval:         5
             });
-          },
-          function(error) {
-            res.send(500);
           });
         });
-    },
-    function(error) {
-      res.send(500);
     });
   });
 };
