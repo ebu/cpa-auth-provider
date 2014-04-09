@@ -174,7 +174,7 @@ var validateJson = require('../lib/validate-json')(schema);
 var routes = function(app) {
   var logger = app.get('logger');
 
-  /*
+  /**
    * Access token endpoint
    */
 

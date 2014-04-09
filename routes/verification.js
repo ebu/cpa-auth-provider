@@ -20,6 +20,10 @@ var routes = function(app) {
 
   app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
 
+  /**
+   * User code verification endpoint
+   */
+
   app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
     if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
       res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));

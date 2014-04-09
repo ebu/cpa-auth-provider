@@ -22,6 +22,11 @@ var schema = {
 var validateJson = require('../lib/validate-json')(schema);
 
 module.exports = function(app, options) {
+
+  /**
+   * Access token authorization endpoint
+   */
+
   app.post('/authorized', validateJson, function(req, res) {
     var accessToken = req.body.token;
     var scopeName   = req.body.scope;

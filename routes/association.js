@@ -30,7 +30,9 @@ var validateJson = require('../lib/validate-json')(schema);
 module.exports = function(app) {
   var logger = app.get('logger');
 
-  // Client Registration Endpoint
+  /**
+   * Client association endpoint
+   */
 
   app.post('/associate', validateJson, function(req, res) {
     var clientId     = req.body.client_id;
