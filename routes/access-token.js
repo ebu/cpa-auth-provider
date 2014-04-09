@@ -1,7 +1,7 @@
 "use strict";
 
-var db            = require('../models');
-var generate      = require('../lib/generate');
+var db       = require('../models');
+var generate = require('../lib/generate');
 
 var sendAccessToken = function(res, token, scope, user) {
   var name = (user !== null) ? user.display_name : "This radio";
@@ -180,12 +180,7 @@ var routes = function(app) {
     var scope        = req.body.scope;
 
     if (grantType !== 'authorization_code') {
-      logger.debug("Unsupported grant_type");
-
-      res.send(400, {
-        error:             'unsupported_grant_type',
-        error_description: "Unsupported grant type: " + grantType
-      });
+      res.sendErrorResponse(400, 'unsupported_grant_type', "Unsupported grant type: " + grantType);
       return;
     }
 
