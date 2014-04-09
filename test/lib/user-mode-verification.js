@@ -316,7 +316,7 @@ describe('POST /verify', function() {
 
       context('with an expired user_code', function() {
         before(function() {
-          // The pairing code should expire one hour it was created
+          // The pairing code should expire one hour after it was created
           var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
           this.clock = sinon.useFakeTimers(time, "Date");
         });
