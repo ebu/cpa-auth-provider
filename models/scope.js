@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       Scope.hasMany(models.PairingCode);
-      Scope.hasMany(models.ServiceAccessToken);
+      Scope.hasMany(models.AccessToken);
     }
   });
 

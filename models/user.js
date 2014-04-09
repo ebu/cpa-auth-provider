@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     associate: function(models) {
-      User.hasMany(models.ServiceAccessToken);
+      User.hasMany(models.AccessToken);
       User.belongsTo(models.IdentityProvider);
     }
   });

@@ -11,7 +11,7 @@ var _ = require('lodash');
 var clearDatabase = function(done) {
   db.sequelize.query('DELETE FROM PairingCodes')
     .then(function() {
-      return db.sequelize.query('DELETE FROM ServiceAccessTokens');
+      return db.sequelize.query('DELETE FROM AccessTokens');
     })
     .then(function() {
       return db.sequelize.query('DELETE FROM Clients');
@@ -253,7 +253,7 @@ describe("POST /token", function() {
           before(function(done) {
             var self = this;
 
-            db.ServiceAccessToken.findAll()
+            db.AccessToken.findAll()
               .then(function(accessTokens) {
                 self.accessTokens = accessTokens;
                 return db.PairingCode.findAll();

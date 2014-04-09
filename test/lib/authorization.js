@@ -7,8 +7,8 @@ var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
 var resetDatabase = function(done) {
-  db.sequelize.query('DELETE FROM ServiceAccessTokens').then(function() {
-    return db.ServiceAccessToken.create({
+  db.sequelize.query('DELETE FROM AccessTokens').then(function() {
+    return db.AccessToken.create({
       token: 'aed201ffb3362de42700a293bdebf694',
       scope_id: 1,
       client_id: 2,
@@ -16,12 +16,11 @@ var resetDatabase = function(done) {
     });
   })
   .then(function() {
-    return db.ServiceAccessToken.create({
+    return db.AccessToken.create({
       token: 'af03736940844fccb0147f12a9d188fb',
       scope_id: 1,
       client_id: 4
     });
-
   })
   .then(function() {
     done();
