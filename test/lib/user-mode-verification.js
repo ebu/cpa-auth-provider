@@ -56,6 +56,8 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
+      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
+
       return db.PairingCode.create({
         client_id:        3,
         scope_id:         5,
@@ -63,7 +65,9 @@ var initDatabase = function(opts, done) {
         user_code:        '1234',
         verification_uri: 'http://example.com',
         verified:         opts.verified,
-        user_id:          opts.user_id
+        user_id:          opts.user_id,
+        created_at:       date,
+        updated_at:       date
       });
     })
     .then(function() {
@@ -92,16 +96,6 @@ var resetDatabase = function(opts, done) {
 
 describe('GET /verify', function() {
   context('When requesting the form to validate a user code', function() {
-    context('and the user is not authenticated', function() {
-      before(function(done) {
-        requestHelper.sendRequest(this, '/verify', null, done);
-      });
-
-      it('should reply a status 401', function() {
-        expect(this.res.statusCode).to.equal(401);
-      });
-    });
-
     context('and the user is authenticated', function() {
       before(function(done) {
         var self = this;
@@ -135,27 +129,23 @@ describe('GET /verify', function() {
         });
       });
     });
+
+    context('and the user is not authenticated', function() {
+      before(function(done) {
+        requestHelper.sendRequest(this, '/verify', null, done);
+      });
+
+      it('should reply a status 401', function() {
+        expect(this.res.statusCode).to.equal(401);
+      });
+    });
   });
 });
 
 describe('POST /verify', function() {
+  before(resetDatabase);
+
   context('When validating a user_code', function() {
-    context('and the user is not authenticated', function() {
-      before(resetDatabase);
-
-      before(function(done) {
-        requestHelper.sendRequest(this, '/verify', {
-          method: 'post',
-          type:   'form',
-          data:   { user_code: '1234' }
-        }, done);
-      });
-
-      it('should return a status 401', function() {
-        expect(this.res.statusCode).to.equal(401);
-      });
-    });
-
     context('and the user is authenticated', function() {
       before(function(done) {
         var self = this;
@@ -170,52 +160,16 @@ describe('POST /verify', function() {
           });
       });
 
-      context('without providing a user_code', function() {
-        before(resetDatabase);
-
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   { user_code: null }
-          }, done);
-        });
-
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-      });
-
-      context('using an invalid user_code', function() {
-        before(resetDatabase);
-
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   { user_code: '5678' }
-          }, done);
-        });
-
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-
-        it('should return HTML', function() {
-          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-        });
-
-        describe('the response body', function() {
-          it('should contain the error message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function() {
-            expect(this.res.text).to.contain(messages.INVALID_USERCODE);
-          });
-        });
-      });
-
       context('using a valid user_code', function() {
-        before(resetDatabase);
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
 
         before(function(done) {
           requestHelper.sendRequest(this, '/verify', {
@@ -287,7 +241,51 @@ describe('POST /verify', function() {
         });
       });
 
-      context('using an already verified user_code', function() {
+      context('with a missing user_code', function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   {}
+          }, done);
+        });
+
+        it('should return a status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+      });
+
+      context('with an invalid user_code', function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '5678' }
+          }, done);
+        });
+
+        it('should return a status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the error message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function() {
+            expect(this.res.text).to.contain(messages.INVALID_USERCODE);
+          });
+        });
+      });
+
+      context('with an already verified user_code', function() {
         before(function(done) {
           resetDatabase({ verified: true, user_id: 5 }, done);
         });
@@ -314,6 +312,59 @@ describe('POST /verify', function() {
             expect(this.res.text).to.contain(messages.OBSOLETE_USERCODE);
           });
         });
+      });
+
+      context('with an expired user_code', function() {
+        before(function() {
+          // The pairing code should expire one hour after it was created
+          var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
+        before(resetDatabase);
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { user_code: '1234' }
+          }, done);
+        });
+
+        it('should return a status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the message EXPIRED_USERCODE: ' + messages.EXPIRED_USERCODE, function() {
+            expect(this.res.text).to.contain(messages.EXPIRED_USERCODE);
+          });
+        });
+      });
+    });
+
+    context('and the user is not authenticated', function() {
+      before(resetDatabase);
+
+      before(function(done) {
+        requestHelper.sendRequest(this, '/verify', {
+          method: 'post',
+          type:   'form',
+          data:   { user_code: '1234' }
+        }, done);
+      });
+
+      it('should return a status 401', function() {
+        expect(this.res.statusCode).to.equal(401);
       });
     });
   });

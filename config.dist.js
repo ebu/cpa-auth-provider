@@ -49,3 +49,6 @@ exports.scopes = [
   { name: 'http://bbc1-cpa.ebu.io/', display_name: "BBC1" },
   { name: 'http://bbc2-cpa.ebu.io/', display_name: "BBC2" }
 ];
+
+exports.valid_pairing_code_duration = 3600; // seconds
+exports.max_poll_interval = 5; // seconds
