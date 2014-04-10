@@ -70,7 +70,7 @@ module.exports = function(app) {
             scope_id:            scope.id,
             device_code:         generate.deviceCode(),
             user_code:           generate.userCode(),
-            verification_uri:    config.uris.verification_uri
+            verification_uri:    config.verification_uri
           };
 
           db.PairingCode.create(pairingCode)
