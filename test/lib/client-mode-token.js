@@ -11,7 +11,7 @@ var clearDatabase = function(done) {
     return db.sequelize.query('DELETE FROM Clients');
   })
   .then(function() {
-    return db.sequelize.query('DELETE FROM ServiceAccessTokens');
+    return db.sequelize.query('DELETE FROM AccessTokens');
   })
   .then(function() {
     done();
@@ -119,7 +119,7 @@ describe('POST /token', function() {
         before(function(done) {
           var self = this;
 
-          db.ServiceAccessToken.findAll()
+          db.AccessToken.findAll()
             .then(function(accessTokens) {
               self.accessTokens = accessTokens;
               done();

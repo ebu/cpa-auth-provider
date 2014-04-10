@@ -32,14 +32,19 @@ var validateJson = require('../lib/validate-json')(schema);
 module.exports = function(app) {
   var logger = app.get('logger');
 
-  // Returns the client's IP address from the given HTTP request.
+  /**
+   * Returns the client's IP address from the given HTTP request.
+   */
 
   var getClientIpAddress = function(req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   };
 
-  // Client Registration Endpoint
-  // http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
+  /**
+   * Client registration endpoint
+   *
+   * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
+   */
 
   app.post('/register', validateJson, function(req, res) {
     db.sequelize.transaction(function(transaction) {

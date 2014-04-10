@@ -22,6 +22,11 @@ var schema = {
 var validateJson = require('../lib/validate-json')(schema);
 
 module.exports = function(app, options) {
+
+  /**
+   * Access token authorization endpoint
+   */
+
   app.post('/authorized', validateJson, function(req, res) {
     var accessToken = req.body.token;
     var scopeName   = req.body.scope;
@@ -46,7 +51,7 @@ module.exports = function(app, options) {
           scope_id: scope.id
         };
 
-        db.ServiceAccessToken
+        db.AccessToken
           .find({ where: query, include: [db.User]})
           .complete(function(err, accessToken) {
             if (err) {

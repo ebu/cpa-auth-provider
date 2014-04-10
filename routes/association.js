@@ -30,7 +30,9 @@ var validateJson = require('../lib/validate-json')(schema);
 module.exports = function(app) {
   var logger = app.get('logger');
 
-  // Client Registration Endpoint
+  /**
+   * Client association endpoint
+   */
 
   app.post('/associate', validateJson, function(req, res) {
     var clientId     = req.body.client_id;
@@ -68,7 +70,7 @@ module.exports = function(app) {
             scope_id:            scope.id,
             device_code:         generate.deviceCode(),
             user_code:           generate.userCode(),
-            verification_uri:    config.uris.verification_uri
+            verification_uri:    config.verification_uri
           };
 
           db.PairingCode.create(pairingCode)
