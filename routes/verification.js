@@ -20,7 +20,7 @@ var routes = function(app) {
 
   app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
 
-  app.post('/verify', authHelper.ensureAuthenticated, function(req, res) {
+  app.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
     if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
       res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
       return;
@@ -56,8 +56,8 @@ var routes = function(app) {
         .success(function() {
           res.render('verify-info.ejs', { message: messages.SUCCESSFUL_PAIRING, status: 'success' });
         })
-        .error(function() {
-          res.send(500);
+        .error(function(err) {
+          next(err);
         });
     });
   });

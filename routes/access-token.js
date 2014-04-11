@@ -17,11 +17,11 @@ var sendAccessToken = function(res, token, scope, user) {
   });
 };
 
-var requestClientModeAccessToken = function(res, clientId, clientSecret, scopeName) {
+var requestClientModeAccessToken = function(res, next, clientId, clientSecret, scopeName) {
   db.Client.find({ where: { id: clientId, secret: clientSecret } })
     .complete(function(err, client) {
       if (err) {
-        res.send(500);
+        next(err);
         return;
       }
 
@@ -33,7 +33,7 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scopeNa
       db.Scope.find({ where: { name: scopeName }})
         .complete(function(err, scope) {
           if (err) {
-            res.send(500);
+            next(err);
             return;
           }
 
@@ -54,7 +54,7 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scopeNa
           db.ServiceAccessToken.create(accessToken)
             .complete(function(err, dbAccessToken) {
               if (err) {
-                res.send(500);
+                next(err);
                 return;
               }
 
@@ -64,11 +64,11 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scopeNa
     });
 };
 
-var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCode, scope) {
+var requestUserModeAccessToken = function(res, next, clientId, clientSecret, deviceCode, scope) {
   db.Client.find({ where: { id: clientId, secret: clientSecret } })
     .complete(function(err, client) {
       if (err) {
-        res.send(500);
+        next(err);
         return;
       }
 
@@ -84,7 +84,8 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
         })
         .complete(function(err, pairingCode) {
           if (err) {
-            res.send(500);
+            next(err);
+            return;
           }
 
           if (!pairingCode) {
@@ -128,7 +129,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
               },
               function(error) {
                 transaction.rollback().complete(function(err) {
-                  res.send(500);
+                  next(err);
                 });
               });
           });
@@ -174,7 +175,7 @@ var routes = function(app) {
    * Access token endpoint
    */
 
-  app.post('/token', validateJson, function(req, res) {
+  app.post('/token', validateJson, function(req, res, next) {
     var grantType    = req.body.grant_type;
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
@@ -188,11 +189,11 @@ var routes = function(app) {
 
     if (deviceCode) {
       // User mode
-      requestUserModeAccessToken(res, clientId, clientSecret, deviceCode, scope);
+      requestUserModeAccessToken(res, next, clientId, clientSecret, deviceCode, scope);
     }
     else {
       // Client mode
-      requestClientModeAccessToken(res, clientId, clientSecret, scope);
+      requestClientModeAccessToken(res, next, clientId, clientSecret, scope);
     }
   });
 };
