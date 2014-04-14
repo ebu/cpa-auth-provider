@@ -575,8 +575,8 @@ describe("POST /token", function() {
         }, done);
       });
 
-      it("should return a user_code_expired error", function() {
-        assertions.verifyError(this.res, 400, 'user_code_expired');
+      it("should return an 'expired' error", function() {
+        assertions.verifyError(this.res, 400, 'expired');
       });
     });
   });
