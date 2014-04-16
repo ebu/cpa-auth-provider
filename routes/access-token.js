@@ -103,7 +103,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
           }
 
           if (!pairingCode.verified) {
-            res.send(202);
+            res.send(202, { "reason": "authorization_pending" });
             return;
           }
 
