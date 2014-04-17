@@ -1,7 +1,7 @@
 "use strict";
 
+var config     = require('../../config');
 var db         = require('../../models');
-var config     = require('../../config.js');
 var authHelper = require('../../lib/auth-helper');
 
 module.exports = function (app, options) {
