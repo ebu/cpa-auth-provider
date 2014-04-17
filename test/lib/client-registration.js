@@ -40,28 +40,6 @@ describe('POST /register', function() {
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
-    context('while providing a wrong Content-Type', function() {
-      before(clearDatabase);
-
-      before(function(done) {
-        var data = {
-          client_name: 'Test client',
-          software_id: 'CPA AP Test',
-          software_version: '0.0.1'
-        };
-
-        requestHelper.sendRequest(this, '/register', {
-          method: 'post',
-          type:   'form',
-          data:   JSON.stringify(data)
-        }, done);
-      });
-
-      it('should return status 400', function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-    });
-
     context('when providing a correct request', function() {
       before(clearDatabase);
 
@@ -126,6 +104,28 @@ describe('POST /register', function() {
             expect(this.client.software_version).to.equal('0.0.1');
           });
         });
+      });
+    });
+
+    context('while providing a wrong Content-Type', function() {
+      before(clearDatabase);
+
+      before(function(done) {
+        var data = {
+          client_name: 'Test client',
+          software_id: 'CPA AP Test',
+          software_version: '0.0.1'
+        };
+
+        requestHelper.sendRequest(this, '/register', {
+          method: 'post',
+          type:   'form',
+          data:   JSON.stringify(data)
+        }, done);
+      });
+
+      it('should return status 400', function() {
+        expect(this.res.statusCode).to.equal(400);
       });
     });
 

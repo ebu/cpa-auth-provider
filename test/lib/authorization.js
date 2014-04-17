@@ -70,25 +70,6 @@ describe("POST /authorized", function() {
   before(createScope);
   before(createUser);
 
-  context("with incorrect content type", function() {
-    before(function(done) {
-      var data = {
-        token: 'aed201ffb3362de42700a293bdebf694',
-        scope: 'example-service.bbc.co.uk'
-      };
-
-      requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'form', // should be 'json'
-        data:   data
-      }, done);
-    });
-
-    it("should return an 'invalid_request' error", function() {
-      assertions.verifyError(this.res, 400, 'invalid_request');
-    });
-  });
-
   context("with a valid user mode access token", function() {
     before(function(done) {
       var data = {
@@ -175,6 +156,25 @@ describe("POST /authorized", function() {
       it("should not include a photo url", function() {
         expect(this.res.body).to.not.have.property('photo_url');
       });
+    });
+  });
+
+  context("with incorrect content type", function() {
+    before(function(done) {
+      var data = {
+        token: 'aed201ffb3362de42700a293bdebf694',
+        scope: 'example-service.bbc.co.uk'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method: 'post',
+        type:   'form', // should be 'json'
+        data:   data
+      }, done);
+    });
+
+    it("should return an 'invalid_request' error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 
