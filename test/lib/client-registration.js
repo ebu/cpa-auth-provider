@@ -124,8 +124,8 @@ describe('POST /register', function() {
         }, done);
       });
 
-      it('should return status 400', function() {
-        expect(this.res.statusCode).to.equal(400);
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 
@@ -150,8 +150,8 @@ describe('POST /register', function() {
           }, done);
         });
 
-        it('should return status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
     });
@@ -175,15 +175,8 @@ describe('POST /register', function() {
           }, done);
         });
 
-        it('should return status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-
-        describe("the response body", function() {
-          it("should include the error", function() {
-            expect(this.res.body).to.have.property('error');
-            expect(this.res.body.error).to.equal('invalid_request');
-          });
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
     });
