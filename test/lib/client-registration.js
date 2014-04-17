@@ -60,8 +60,9 @@ describe('POST /register', function() {
         expect(this.res.statusCode).to.equal(201);
       });
 
-      it('should respond with JSON', function() {
+      it("should return a JSON object", function() {
         expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+        expect(this.res.body).to.be.an('object');
       });
 
       describe("the response body", function() {
