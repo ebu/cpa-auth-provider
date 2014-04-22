@@ -40,28 +40,6 @@ describe('POST /register', function() {
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
-    context('while providing a wrong Content-Type', function() {
-      before(clearDatabase);
-
-      before(function(done) {
-        var data = {
-          client_name: 'Test client',
-          software_id: 'CPA AP Test',
-          software_version: '0.0.1'
-        };
-
-        requestHelper.sendRequest(this, '/register', {
-          method: 'post',
-          type:   'form',
-          data:   JSON.stringify(data)
-        }, done);
-      });
-
-      it('should return status 400', function() {
-        expect(this.res.statusCode).to.equal(400);
-      });
-    });
-
     context('when providing a correct request', function() {
       before(clearDatabase);
 
@@ -82,8 +60,9 @@ describe('POST /register', function() {
         expect(this.res.statusCode).to.equal(201);
       });
 
-      it('should respond with JSON', function() {
+      it("should return a JSON object", function() {
         expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+        expect(this.res.body).to.be.an('object');
       });
 
       describe("the response body", function() {
@@ -129,6 +108,28 @@ describe('POST /register', function() {
       });
     });
 
+    context('while providing a wrong Content-Type', function() {
+      before(clearDatabase);
+
+      before(function(done) {
+        var data = {
+          client_name: 'Test client',
+          software_id: 'CPA AP Test',
+          software_version: '0.0.1'
+        };
+
+        requestHelper.sendRequest(this, '/register', {
+          method: 'post',
+          type:   'form',
+          data:   JSON.stringify(data)
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
+
     var fields = ['client_name', 'software_id', 'software_version'];
 
     fields.forEach(function(field) {
@@ -150,8 +151,8 @@ describe('POST /register', function() {
           }, done);
         });
 
-        it('should return status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
     });
@@ -175,15 +176,8 @@ describe('POST /register', function() {
           }, done);
         });
 
-        it('should return status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-
-        describe("the response body", function() {
-          it("should include the error", function() {
-            expect(this.res.body).to.have.property('error');
-            expect(this.res.body.error).to.equal('invalid_request');
-          });
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
     });

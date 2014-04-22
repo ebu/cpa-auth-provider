@@ -90,7 +90,10 @@ module.exports = function(app) {
             else {
               // TODO: distinguish between invalid input parameters and other
               // failure conditions
-              res.send(400, { error: 'invalid_request' });
+
+              // TODO: report more specific error message, e.g, which field
+              // is invalid.
+              res.sendInvalidRequest("Invalid request");
             }
           });
         }

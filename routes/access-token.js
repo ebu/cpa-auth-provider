@@ -97,12 +97,12 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
           }
 
           if (pairingCode.hasExpired()) {
-            res.sendErrorResponse(400, "user_code_expired", "Pairing code expired");
+            res.sendErrorResponse(400, "expired", "Pairing code expired");
             return;
           }
 
           if (!pairingCode.verified) {
-            res.send(202);
+            res.send(202, { "reason": "authorization_pending" });
             return;
           }
 
