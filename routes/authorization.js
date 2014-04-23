@@ -1,4 +1,3 @@
-
 "use strict";
 
 var db = require('../models');
@@ -58,7 +57,7 @@ module.exports = function(app, options) {
         };
 
         db.AccessToken
-          .find({ where: query, include: [db.User]})
+          .find({ where: query, include: [db.User] })
           .complete(function(err, accessToken) {
             if (err) {
               next(err);
@@ -67,6 +66,11 @@ module.exports = function(app, options) {
 
             if (!accessToken) {
               res.sendUnauthorized("Invalid access token");
+              return;
+            }
+
+            if (accessToken.hasExpired()) {
+              res.sendErrorResponse(401, "expired", "Access token has expired");
               return;
             }
 

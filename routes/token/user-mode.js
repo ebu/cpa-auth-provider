@@ -1,14 +1,13 @@
 "use strict";
 
-var db       = require('../../models');
-var generate = require('../../lib/generate');
+var db              = require('../../models');
+var generate        = require('../../lib/generate');
 var sendAccessToken = require('./send-token');
 
-var async    = require('async');
-
+var async = require('async');
 
 var userModeSchema = {
-  id: "/token",
+  id: "/token/device_code",
   type: "object",
   required: true,
   additionalProperties: false,
@@ -104,17 +103,18 @@ module.exports = function(req, res, next) {
     };
 
     var createAccessToken = function(pairingCode, callback) {
-      db.sequelize.transaction(function(transaction) {
-        var accessToken = {
-          token:     generate.accessToken(),
-          user_id:   pairingCode.user_id,
-          client_id: pairingCode.client_id,
-          domain_id:  pairingCode.domain_id
-        };
+      var accessToken;
 
+      db.sequelize.transaction(function(transaction) {
         db.AccessToken
-          .create(accessToken)
-          .then(function() {
+          .create({
+            token:      generate.accessToken(),
+            user_id:    pairingCode.user_id,
+            client_id:  pairingCode.client_id,
+            domain_id:  pairingCode.domain_id
+          })
+          .then(function(token) {
+            accessToken = token;
             return pairingCode.destroy();
           })
           .then(function() {

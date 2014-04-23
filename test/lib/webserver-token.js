@@ -68,8 +68,6 @@ var createUser = function(callback) {
 };
 
 var createAuthorizationCode = function(callback) {
-  var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
   db.AuthorizationCode.create({
     id:                 50,
     client_id:          100,
@@ -77,9 +75,7 @@ var createAuthorizationCode = function(callback) {
     domain_id:          5,
     authorization_code: '4e72e9fdd4bdc3892d0e8eefaec9bef2',
     redirect_uri:       'https://example-service.bbc.co.uk/callback',
-    state:              '',
-    created_at:       date,
-    updated_at:       date
+    state:              ''
   }).complete(callback);
 };
 
@@ -109,27 +105,37 @@ var resetDatabase = function(done) {
 describe("POST /token", function() {
   before(function() {
     sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf694');
+    sinon.stub(generate, 'refreshToken').returns('6483922db068454a891253a53f5b175a');
   });
 
   after(function() {
     generate.accessToken.restore();
+    generate.refreshToken.restore();
   });
 
-  context("when the client request an access token (webserver mode)", function() {
+  context("when the client requests an access token (webserver mode)", function() {
     context("and the authorization code is valid", function() {
-      before(resetDatabase);
+      before(function(done) {
+        var self = this;
 
-      before(function() {
-        // Ensure pairing code has not expired
-        var time = new Date("Wed Apr 09 2014 11:00:30 GMT+0100").getTime();
+        var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
         this.clock = sinon.useFakeTimers(time, "Date");
+
+        resetDatabase(function() {
+          self.clock.restore();
+
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:00:30 GMT+0100").getTime();
+          self.clock = sinon.useFakeTimers(time, "Date");
+          done();
+        });
       });
 
       after(function() {
         this.clock.restore();
       });
 
-      context("and the request doesn't specify any scope", function() {
+      context("and the request doesn't specify a scope", function() {
         before(function(done) {
           var requestBody = {
             grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
@@ -181,6 +187,11 @@ describe("POST /token", function() {
             expect(this.res.body.user_name).to.equal('Test User');
           });
 
+          it("should include a valid refresh token", function() {
+            expect(this.res.body).to.have.property('refresh_token');
+            expect(this.res.body.refresh_token).to.equal('6483922db068454a891253a53f5b175a');
+          });
+
 //          it("should include a scope", function() {
 //            expect(this.res.body).to.have.property('scope');
 //            expect(this.res.body.scope).to.equal('userinfo');
@@ -189,13 +200,21 @@ describe("POST /token", function() {
         });
       });
 
-      context.skip("and the request specify a scope", function() {
-        before(resetDatabase);
+      context.skip("and the request specifies a scope", function() {
+        before(function(done) {
+          var self = this;
 
-        before(function() {
-          // Ensure pairing code has not expired
-          var time = new Date("Wed Apr 09 2014 11:00:30 GMT+0100").getTime();
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
           this.clock = sinon.useFakeTimers(time, "Date");
+
+          resetDatabase(function() {
+            self.clock.restore();
+
+            // Ensure pairing code has not expired
+            var time = new Date("Wed Apr 09 2014 11:00:30 GMT+0100").getTime();
+            self.clock = sinon.useFakeTimers(time, "Date");
+            done();
+          });
         });
 
         after(function() {
@@ -260,21 +279,35 @@ describe("POST /token", function() {
               expect(this.res.body.scope).to.equal('userinfo');
             });
 
-            it("should include a valid refresh token"); // TODO: optional: refresh_token
-            it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+            it("should include a valid refresh token", function() {
+              expect(this.res.body).to.have.property('refresh_token');
+              expect(this.res.body.refresh_token).to.equal('6483922db068454a891253a53f5b175a');
+            });
 
+            it("should include the lifetime of the access token", function() {
+              expect(this.res.body).to.have.property('expires_in');
+              expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
+            });
           });
         });
       });
     });
 
     context("with expired authorization code", function() {
-      before(resetDatabase);
+      before(function(done) {
+        var self = this;
 
-      before(function() {
-        // The authorization code should expire 10 minutes after it was created
-        var time = new Date("Wed Apr 09 2014 11:10:00 GMT+0100").getTime();
+        var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
         this.clock = sinon.useFakeTimers(time, "Date");
+
+        resetDatabase(function() {
+          self.clock.restore();
+
+          // The authorization code should expire 10 minutes after it was created
+          var time = new Date("Wed Apr 09 2014 11:10:00 GMT+0100").getTime();
+          self.clock = sinon.useFakeTimers(time, "Date");
+          done();
+        });
       });
 
       after(function() {

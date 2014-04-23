@@ -9,17 +9,24 @@ var requestHelper = require('../request-helper');
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM AccessTokens').then(function() {
     return db.AccessToken.create({
-      token: 'aed201ffb3362de42700a293bdebf694',
+      token:     'aed201ffb3362de42700a293bdebf694',
       domain_id: 1,
       client_id: 2,
-      user_id: 3
+      user_id:   3
     });
   })
   .then(function() {
     return db.AccessToken.create({
-      token: 'af03736940844fccb0147f12a9d188fb',
+      token:     'af03736940844fccb0147f12a9d188fb',
       domain_id: 1,
       client_id: 4
+    });
+  })
+  .then(function() {
+    db.AccessToken.create({
+      token:     '8a7be6ef96a946b6993b1c79a39702b0',
+      domain_id: 1,
+      client_id: 5
     });
   })
   .then(function() {
@@ -59,6 +66,16 @@ var createUser = function(done) {
 };
 
 describe("POST /authorized", function() {
+  before(function() {
+    // The access token should expire 30 days after it was created
+    var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+    this.clock = sinon.useFakeTimers(time, "Date");
+  });
+
+  after(function() {
+    this.clock.restore();
+  });
+
   before(resetDatabase);
   before(createDomain);
   before(createUser);
@@ -194,8 +211,34 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with an expired client access token", function() {
-    it("should return status 401");
+  context("with an expired access token", function() {
+    before(function() {
+      // The access token should expire 30 days after it was created
+      var time = new Date("Fri May 9 2014 11:00:00 GMT+0100").getTime();
+      this.clock = sinon.useFakeTimers(time, "Date");
+    });
+
+    after(function() {
+      this.clock.restore();
+    });
+
+    before(function(done) {
+      var data = {
+        access_token: '8a7be6ef96a946b6993b1c79a39702b0',
+        domain:       'example-service.bbc.co.uk'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
+      }, done);
+    });
+
+    it("should return status 401", function() {
+      assertions.verifyError(this.res, 401, 'expired');
+    });
   });
 
   context("with missing client access token", function() {

@@ -61,6 +61,17 @@ describe('POST /token', function() {
     before(initDatabase);
 
     context('with valid parameters', function() {
+      before(function() {
+        // Fix creation time of access token, so we can verify the expires_in
+        // field.
+        var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+        this.clock = sinon.useFakeTimers(time, "Date");
+      });
+
+      after(function() {
+        this.clock.restore();
+      });
+
       before(function(done) {
         var body = {
           grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
@@ -111,7 +122,12 @@ describe('POST /token', function() {
         });
 
         it("should include a valid refresh token"); // TODO: optional: refresh_token
-        it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+
+        it("should include the lifetime of the access token", function() {
+          expect(this.res.body).to.have.property('expires_in');
+          expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
+        });
+
         it("should include the scope of the access token"); // TODO: optional(?): scope
       });
 

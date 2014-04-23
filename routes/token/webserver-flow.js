@@ -1,15 +1,13 @@
 "use strict";
 
-var db       = require('../../models');
-var generate = require('../../lib/generate');
+var db              = require('../../models');
+var generate        = require('../../lib/generate');
 var sendAccessToken = require('./send-token');
 
-var async    = require('async');
-
-
+var async = require('async');
 
 var webServerFlowSchema = {
-  id: "/token",
+  id: "/token/authorization_code",
   type: "object",
   required: true,
   additionalProperties: false,
@@ -50,11 +48,11 @@ module.exports = function(req, res, next) {
       return;
     }
 
-    var clientId = req.body.client_id;
-    var code = req.body.code;
+    var clientId    = req.body.client_id;
+    var code        = req.body.code;
     var redirectUri = req.body.redirect_uri;
-    var domainName = req.body.domain;
-    var scope = req.body.scope;
+    var domainName  = req.body.domain;
+    var scope       = req.body.scope;
 
     var findAuthorizationCode = function(callback) {
 
@@ -97,15 +95,17 @@ module.exports = function(req, res, next) {
 
     var createAccessToken = function(authorizationCode, callback) {
       db.sequelize.transaction(function(transaction) {
-        var accessToken = {
-          token:     generate.accessToken(),
-          user_id:   authorizationCode.user_id,
-          client_id: authorizationCode.client_id
-        };
+        var accessToken;
 
         db.AccessToken
-          .create(accessToken)
-          .then(function() {
+          .create({
+            token:         generate.accessToken(),
+            user_id:       authorizationCode.user_id,
+            client_id:     authorizationCode.client_id,
+            refresh_token: generate.refreshToken()
+          })
+          .then(function(token) {
+            accessToken = token;
             return authorizationCode.destroy();
           })
           .then(function() {
@@ -125,7 +125,7 @@ module.exports = function(req, res, next) {
     async.waterfall([
       findAuthorizationCode,
       createAccessToken
-    ], function(err, accessToken, authorizationCode){
+    ], function(err, accessToken, authorizationCode) {
       if (err) {
         next(err);
         return;

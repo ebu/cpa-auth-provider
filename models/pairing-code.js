@@ -1,6 +1,7 @@
 "use strict";
 
-var config = require('../config');
+var config       = require('../config');
+var expiresMixin = require('../lib/expires-mixin');
 
 module.exports = function(sequelize, DataTypes) {
 
@@ -13,29 +14,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     underscored: true,
 
-    instanceMethods: {
-
-      /**
-       * Returns the duration, in seconds, before this pairing code
-       * expires.
-       */
-
-      getTimeToLive: function() {
-        var now = new Date();
-        var duration = (now - this.created_at) / 1000.0;
-        var timeToLive = config.valid_pairing_code_duration - duration;
-
-        return timeToLive;
-      },
-
-      /**
-       * Returns true if this pairing code has expired, or false otherwise.
-       */
-
-      hasExpired: function() {
-        return this.getTimeToLive() <= 0.0;
-      }
-    },
+    instanceMethods: expiresMixin(config.pairing_code_lifetime),
 
     associate: function(models) {
       PairingCode.belongsTo(models.Client);
@@ -43,8 +22,6 @@ module.exports = function(sequelize, DataTypes) {
       PairingCode.belongsTo(models.Domain);
     }
   });
-
-  PairingCode.scopeValues = PairingCode;
 
   return PairingCode;
 };

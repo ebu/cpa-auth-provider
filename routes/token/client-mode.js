@@ -1,13 +1,13 @@
 "use strict";
 
-var db       = require('../../models');
-var generate = require('../../lib/generate');
+var db              = require('../../models');
+var generate        = require('../../lib/generate');
 var sendAccessToken = require('./send-token');
 
-var async    = require('async');
+var async = require('async');
 
 var clientModeSchema = {
-  id: "/token",
+  id: "/token/client_credentials",
   type: "object",
   required: true,
   additionalProperties: false,
@@ -91,6 +91,7 @@ module.exports = function(req, res, next) {
         next(err);
         return;
       }
+
       sendAccessToken(res, accessToken, domain, null);
     });
   });

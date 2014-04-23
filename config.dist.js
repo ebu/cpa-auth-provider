@@ -74,10 +74,13 @@ module.exports = {
   }],
 
   // The length of time that user (pairing) codes are valid, in seconds.
-  valid_pairing_code_duration: 3600,
+  pairing_code_lifetime: 60 * 60, // 1 hour
+
+  // The length of time that a access tokens are valid, in seconds.
+  access_token_lifetime: 24 * 60 * 60, // 1 day
 
   // The length of time that an authorization code is valid, in seconds.
-  valid_authorization_code_duration: 600,
+  authorization_code_lifetime: 10 * 60, // 10 minutes
 
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.

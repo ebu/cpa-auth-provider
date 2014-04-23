@@ -73,8 +73,6 @@ var initDatabase = function(done) {
       });
     })
     .then(function() {
-      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
       return db.PairingCode.create({
         id:               50,
         client_id:        100,
@@ -82,14 +80,10 @@ var initDatabase = function(done) {
         device_code:      '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        verified:         false, // authorization_pending
-        created_at:       date,
-        updated_at:       date
+        verified:         false // authorization_pending
       });
     })
     .then(function() {
-      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
       return db.PairingCode.create({
         id:               51,
         client_id:        101,
@@ -98,9 +92,7 @@ var initDatabase = function(done) {
         user_code:        '5678',
         verification_uri: 'http://example.com',
         verified:         true,
-        user_id:          3,
-        created_at:       date,
-        updated_at:       date
+        user_id:          3
       });
     })
     .then(function() {
@@ -131,12 +123,21 @@ describe("POST /token", function() {
   context("when the client polls to obtain an access token (user mode)", function() {
     context("and the device code is pending user verification", function() {
       context("and the client provides valid parameters", function() {
-        before(resetDatabase);
+        before(function(done) {
+          var self = this;
 
-        before(function() {
-          // Ensure pairing code has not expired
-          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+          // The access token should expire 30 days after it was created
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
           this.clock = sinon.useFakeTimers(time, "Date");
+
+          resetDatabase(function() {
+            self.clock.restore();
+
+            // Ensure pairing code has not expired
+            var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+            self.clock = sinon.useFakeTimers(time, "Date");
+            done();
+          });
         });
 
         after(function() {
@@ -183,12 +184,21 @@ describe("POST /token", function() {
 
     context("and the user has input the correct user code", function() {
       context("and the client provides valid parameters", function() {
-        before(resetDatabase);
+        before(function(done) {
+          var self = this;
 
-        before(function() {
-          // Ensure pairing code has not expired
-          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+          // The access token should expire 30 days after it was created
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
           this.clock = sinon.useFakeTimers(time, "Date");
+
+          resetDatabase(function() {
+            self.clock.restore();
+
+            // Ensure pairing code has not expired
+            var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+            self.clock = sinon.useFakeTimers(time, "Date");
+            done();
+          });
         });
 
         after(function() {
@@ -257,7 +267,12 @@ describe("POST /token", function() {
           });
 
           it("should include a valid refresh token"); // TODO: optional: refresh_token
-          it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+
+          it("should include the lifetime of the access token", function() {
+            expect(this.res.body).to.have.property('expires_in');
+            expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
+          });
+
           it("should include the scope of the access token"); // TODO: optional(?): scope
         });
 
@@ -483,8 +498,29 @@ describe("POST /token", function() {
       });
     });
 
-    // Note: don't test for missing device_code - this would be
-    // a client-mode access token request.
+    context("with missing device code", function() {
+      before(resetDatabase);
+
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          // device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          domain:        'example-service.bbc.co.uk'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
 
     context("with incorrect device_code", function() {
       before(resetDatabase);
@@ -559,12 +595,20 @@ describe("POST /token", function() {
     });
 
     context("when the pairing code has expired", function() {
-      before(resetDatabase);
+      before(function(done) {
+        var self = this;
 
-      before(function() {
-        // The pairing code should expire one hour after it was created
-        var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+        var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
         this.clock = sinon.useFakeTimers(time, "Date");
+
+        resetDatabase(function() {
+          self.clock.restore();
+
+          // The pairing code should expire one hour after it was created
+          var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+          self.clock = sinon.useFakeTimers(time, "Date");
+          done();
+        });
       });
 
       after(function() {
