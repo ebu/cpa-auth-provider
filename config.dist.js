@@ -16,6 +16,9 @@ exports.identity_providers = {
   },
   ebu: {
     enabled: false
+  },
+  local: {
+    enabled: false
   }
 };
 
