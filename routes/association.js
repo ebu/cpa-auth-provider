@@ -32,7 +32,7 @@ module.exports = function(app) {
 
   // Client Registration Endpoint
 
-  app.post('/associate', validateJson, function(req, res) {
+  app.post('/associate', validateJson, function(req, res, next) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var scopeName    = req.body.scope;
@@ -42,7 +42,7 @@ module.exports = function(app) {
     })
     .complete(function(err, client) {
       if (err) {
-        res.send(500);
+        next(err);
         return;
       }
 
@@ -54,7 +54,7 @@ module.exports = function(app) {
       db.Scope.find({ where: { name: scopeName }})
         .complete(function(err, scope) {
           if (err) {
-            res.send(500);
+            next(err);
             return;
           }
 
@@ -74,7 +74,7 @@ module.exports = function(app) {
           db.PairingCode.create(pairingCode)
             .complete(function(err, pairingCode) {
               if (err) {
-                res.send(500);
+                next(err);
                 return;
               }
 
