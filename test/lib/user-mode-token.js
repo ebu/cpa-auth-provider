@@ -162,12 +162,12 @@ describe("POST /token", function() {
           expect(this.res.statusCode).to.equal(202);
         });
 
-        describe("the response body", function() {
-          it("should return a JSON object", function() {
-            expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-            expect(this.res.body).to.be.an('object');
-          });
+        it("should return a JSON object", function() {
+          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+          expect(this.res.body).to.be.an('object');
+        });
 
+        describe("the response body", function() {
           it("should contain 'reason': 'authorization_pending'", function() {
             expect(this.res.body).to.deep.equal({ 'reason': 'authorization_pending' });
           });

@@ -145,7 +145,7 @@ describe('POST /token', function() {
             expect(this.accessTokens[0].client_id).to.equal(100);
           });
 
-          it("should not be associated with a user", function(){
+          it("should not be associated with a user", function() {
             expect(this.accessTokens[0].user_id).to.equal(null);
           });
 
