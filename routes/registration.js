@@ -46,7 +46,7 @@ module.exports = function(app) {
    * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
    */
 
-  app.post('/register', validateJson, function(req, res) {
+  app.post('/register', validateJson, function(req, res, next) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
@@ -85,7 +85,7 @@ module.exports = function(app) {
         if (error) {
           transaction.rollback().complete(function(err) {
             if (err) {
-              res.send(500);
+              next(err);
             }
             else {
               // TODO: distinguish between invalid input parameters and other

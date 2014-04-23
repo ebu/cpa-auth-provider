@@ -1,3 +1,4 @@
+
 "use strict";
 
 var db = require('../models');
@@ -27,7 +28,7 @@ module.exports = function(app, options) {
    * Access token authorization endpoint
    */
 
-  app.post('/authorized', validateJson, function(req, res) {
+  app.post('/authorized', validateJson, function(req, res, next) {
     var accessToken = req.body.token;
     var scopeName   = req.body.scope;
 
@@ -37,7 +38,7 @@ module.exports = function(app, options) {
       .find({ where: { name: scopeName } })
       .complete(function(err, scope) {
         if (err) {
-          res.send(500);
+          next(err);
           return;
         }
 
@@ -55,7 +56,7 @@ module.exports = function(app, options) {
           .find({ where: query, include: [db.User]})
           .complete(function(err, accessToken) {
             if (err) {
-              res.send(500);
+              next(err);
               return;
             }
 
