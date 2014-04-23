@@ -43,22 +43,21 @@ var requestClientModeAccessToken = function(res, clientId, clientSecret, scopeNa
             return;
           }
 
-          var accessToken = {
-            token:     generate.accessToken(),
-            user_id:   null,
-            client_id: clientId,
-            scope_id:  scope.id
-          };
-
           // TODO: Handle duplicated tokens
-          db.ServiceAccessToken.create(accessToken)
-            .complete(function(err, dbAccessToken) {
+          db.AccessToken
+            .create({
+              token:     generate.accessToken(),
+              user_id:   null,
+              client_id: clientId,
+              scope_id:  scope.id
+            })
+            .complete(function(err, accessToken) {
               if (err) {
                 res.send(500);
                 return;
               }
 
-              sendAccessToken(res, dbAccessToken.token, scope, null);
+              sendAccessToken(res, accessToken.token, scope, null);
             });
         });
     });
@@ -115,7 +114,7 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
               scope_id:  pairingCode.scope_id
             };
 
-            db.ServiceAccessToken
+            db.AccessToken
               .create(accessToken)
               .then(function() {
                 return pairingCode.destroy();
@@ -124,7 +123,12 @@ var requestUserModeAccessToken = function(res, clientId, clientSecret, deviceCod
                 return transaction.commit();
               })
               .then(function() {
-                sendAccessToken(res, accessToken.token, pairingCode.scope, pairingCode.user);
+                sendAccessToken(
+                  res,
+                  accessToken.token,
+                  pairingCode.scope,
+                  pairingCode.user
+                );
               },
               function(error) {
                 transaction.rollback().complete(function(err) {
@@ -170,7 +174,7 @@ var validateJson = require('../lib/validate-json')(schema);
 var routes = function(app) {
   var logger = app.get('logger');
 
-  /*
+  /**
    * Access token endpoint
    */
 
