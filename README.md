@@ -78,10 +78,7 @@ To generate a test coverage report (in the `coverage` directory);
 
 * [Chris Needham](https://github.com/chrisn) (BBC)
 * [Michael Barroco](https://github.com/barroco) (EBU)
-<<<<<<< HEAD
 * [Andy Buckingham](https://github.com/andybee) (togglebit)
-=======
->>>>>>> 04666a0244035795f105960f06c0ff62825c82b3
 * [Matthew Glubb](https://github.com/mglubb) (Kite Development & Consulting)
 
 
