@@ -33,12 +33,13 @@ var resetDatabase = function(done) {
 var createScope = function(done) {
   var data = {
     id:   1,
-    name: 'example-service.bbc.co.uk'
+    name: 'example-service.bbc.co.uk',
+    access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
   };
 
   db.Scope
     .create(data)
-    .complete(function(err, createScope) {
+    .complete(function(err, scope) {
       done();
     });
 };
@@ -77,9 +78,10 @@ describe("POST /authorized", function() {
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'json',
-        data:   data
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 
@@ -123,9 +125,10 @@ describe("POST /authorized", function() {
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'json',
-        data:   data
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 
@@ -166,9 +169,10 @@ describe("POST /authorized", function() {
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'form', // should be 'json'
-        data:   data
+        method:      'post',
+        type:        'form', // should be 'json'
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 
@@ -177,7 +181,7 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with an invalid access token", function() {
+  context("with an invalid client access token", function() {
     before(function(done) {
       var data = {
         token: 'unknown',
@@ -185,9 +189,10 @@ describe("POST /authorized", function() {
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'json',
-        data:   data
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 
@@ -196,20 +201,21 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with an expired access token", function() {
+  context("with an expired client access token", function() {
     it("should return status 401");
   });
 
-  context("with missing access token", function() {
+  context("with missing client access token", function() {
     before(function(done) {
       var data = {
         scope: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'json',
-        data:   data
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 
@@ -226,9 +232,10 @@ describe("POST /authorized", function() {
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'json',
-        data:   data
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 
@@ -244,9 +251,10 @@ describe("POST /authorized", function() {
       };
 
       requestHelper.sendRequest(this, '/authorized', {
-        method: 'post',
-        type:   'json',
-        data:   data
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
       }, done);
     });
 

@@ -37,13 +37,12 @@ var createClient = function(done) {
 };
 
 var createScope = function(done) {
-  var data = {
-    id:     1,
-    name:   'example-service.bbc.co.uk'
-  };
-
   db.Scope
-    .create(data)
+    .create({
+      id:           1,
+      name:         'example-service.bbc.co.uk',
+      access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+    })
     .complete(function(err, scope) {
       done();
     });

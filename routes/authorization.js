@@ -23,12 +23,17 @@ var schema = {
 var validateJson = require('../lib/validate-json')(schema);
 
 module.exports = function(app, options) {
+  var logger = app.get('logger');
+  var config = app.get('config');
+
+  var protectedResourceHandler =
+    require('../lib/protected-resource-handler')(config, db, logger);
 
   /**
    * Access token authorization endpoint
    */
 
-  app.post('/authorized', validateJson, function(req, res, next) {
+  app.post('/authorized', protectedResourceHandler, validateJson, function(req, res, next) {
     var accessToken = req.body.token;
     var scopeName   = req.body.scope;
 
