@@ -57,13 +57,6 @@ var createUser = function(done) {
     });
 };
 
-var verifyError = function(res, error) {
-  expect(res.headers['content-type']).to.equal('application/json; charset=utf-8');
-  expect(res.body).to.be.an('object');
-  expect(res.body).to.have.property('error');
-  expect(res.body.error).to.equal(error);
-};
-
 describe("POST /authorized", function() {
   before(resetDatabase);
   before(createScope);
