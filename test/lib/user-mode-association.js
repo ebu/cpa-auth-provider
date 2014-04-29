@@ -51,8 +51,8 @@ var createScope = function(done) {
 
 describe('POST /associate', function() {
   before(function() {
-    sinon.stub(generate, "deviceCode").returns("8ecf4b2a0df2df7fd69df128e0ac4fcc");
-    sinon.stub(generate, "userCode").returns("0a264");
+    sinon.stub(generate, "deviceCode").returns("8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc");
+    sinon.stub(generate, "userCode").returns("DcTrYDLD");
   });
 
   after(function() {
@@ -116,12 +116,12 @@ describe('POST /associate', function() {
 
       it('should include the device code', function() {
         expect(this.res.body).to.have.property('device_code');
-        expect(this.res.body.device_code).to.equal('8ecf4b2a0df2df7fd69df128e0ac4fcc');
+        expect(this.res.body.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
       });
 
       it('should include the user code', function() {
         expect(this.res.body).to.have.property('user_code');
-        expect(this.res.body.user_code).to.equal('0a264');
+        expect(this.res.body.user_code).to.equal('DcTrYDLD');
       });
 
       it('should include the verification uri', function() {
