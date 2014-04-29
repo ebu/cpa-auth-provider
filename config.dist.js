@@ -40,12 +40,15 @@ module.exports = {
     debug: true
   },
 
+  // Session cookie is signed with this secret to prevent tampering
+  session_secret: 'LKASDMjnr234n90lasndfsadf',
+
+  enableCORS: true,
+
   // The end-user verification URI on the authorization server. The URI should
   // be short and easy to remember as end-users will be asked to manually type
   // it into their user-agent.
   verification_uri: 'http://vagrant.ebu.io:3000/',
-
-  enableCORS: true,
 
   scopes: [
     { name: 'http://bbc1-cpa.ebu.io/', display_name: "BBC1" },
