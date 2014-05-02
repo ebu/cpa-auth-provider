@@ -41,6 +41,15 @@ module.exports = function(sequelize, DataTypes) {
         notNull: true,
         isIP: true
       }
+    },
+    registration_type: {
+      type: DataTypes.ENUM,
+      values: ['dynamic', 'static'],
+      defaultValue: 'dynamic',
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
     }
   }, {
     underscored: true,

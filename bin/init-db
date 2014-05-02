@@ -38,8 +38,14 @@ db.sequelize
       if (process.env.NODE_ENV === 'development') {
         db.Scope
           .bulkCreate(config.scopes)
-          .success(function(result) {
-            console.log('Database populated');
+          .success(function() {
+            console.log('[SCOPE] Database populated');
+
+            db.Client
+              .bulkCreate(config.server_clients)
+              .success(function() {
+                console.log('[CLIENT] Database populated');
+              });
           });
       }
     }

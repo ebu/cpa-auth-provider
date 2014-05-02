@@ -103,6 +103,7 @@ describe('POST /register', function() {
             expect(this.client.name).to.equal('Test client');
             expect(this.client.software_id).to.equal('CPA AP Test');
             expect(this.client.software_version).to.equal('0.0.1');
+            expect(this.client.registration_type).to.equal('dynamic');
           });
         });
       });

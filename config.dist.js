@@ -52,6 +52,15 @@ module.exports = {
     { name: 'http://bbc2-cpa.ebu.io/', display_name: "BBC2" }
   ],
 
+  server_clients : [{
+    name: '',
+    software_id: '',
+    software_version: '',
+    ip: '127.0.0.1',
+    secret: '',
+    registration_type: 'static'
+  }],
+
   // The length of time that user (pairing) codes are valid, in seconds.
   valid_pairing_code_duration: 3600,
 
