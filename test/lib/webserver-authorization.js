@@ -146,9 +146,39 @@ describe('GET /authorize', function() {
         });
 
         it("should return an invalid_request error", function() {
-          assertions.verifyError(this.res, 400, 'invalid_request');
+          assertions.verifyRedirectError(this.res, 'unauthorized_client');
         });
       });
     });
+//    context('without client_id', function() {
+//
+//      before(function(done) {
+//        var self = this;
+//
+//        request
+//          .post('/login')
+//          .type('form')
+//          .send({ username: 'testuser', password: 'testpassword' })
+//          .end(function(err, res) {
+//            self.cookie = res.headers['set-cookie'];
+//            done(err);
+//          });
+//      });
+//
+//      before(function(done) {
+//        var path = '/authorize?' +
+//          'response_type=code' +
+//          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+//
+//        requestHelper.sendRequest(this, path, {
+//          method: 'get',
+//          cookie: this.cookie
+//        }, done);
+//      });
+//
+//      it("should return an invalid_request error", function() {
+//        assertions.verifyRedirectError(this.res, 'invalid_request');
+//      });
+//    });
   });
 });

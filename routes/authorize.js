@@ -1,7 +1,11 @@
 "use strict";
 
+var async = require('async');
+var url = require('url');
+
 var db = require('../models');
-var authHelper    = require('../lib/auth-helper');
+var authHelper = require('../lib/auth-helper');
+var generate = require('../lib/generate');
 
 var schemaGet = {
   id: "/authorize",
@@ -112,6 +116,7 @@ module.exports = function(app, options) {
   app.post('/authorize', validatePostBody, function(req, res, next) {
     var responseType  = req.body.response_type;
     var clientId      = req.body.client_id;
+    var userId        = req.user.id;
     var redirectUri   = req.body.redirect_uri;
     var scope         = req.body.scope;
     var state         = req.body.state;
@@ -123,8 +128,47 @@ module.exports = function(app, options) {
         'The resource owner or authorization server denied the request.',
         state);
     }
-
     // Generate Authorization code
+//
+//    var findScope = function(callback) {
+//      db.Scope.find({ where: { name: scopeName }})
+//        .complete(callback);
+//    };
+
+    var createAssociationCode = function(callback) {
+      var authorizationCode = {
+        client_id: clientId,
+//        scope_id:            scope.id,
+        user_id: userId,
+        authorization_code: generate.authorizationCode()
+      };
+
+      db.AuthorizationCode.create(authorizationCode)
+        .complete(callback);
+    };
+
+    var finalCallback = function (err, result) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      var urlObj = url.parse(redirectUri);
+      if (!urlObj.query) {
+        urlObj.query = {};
+      }
+      urlObj.query['code'] = result.authorization_code;
+      urlObj.query['state'] = state;
+
+      res.redirect(url.format(urlObj));
+    };
+
+    async.waterfall([
+//      findScope,
+        createAssociationCode
+      ],
+      finalCallback
+    );
 
   });
 };
