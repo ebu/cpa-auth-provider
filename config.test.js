@@ -27,12 +27,15 @@ module.exports = {
     debug: false
   },
 
+  // Session cookie is signed with this secret to prevent tampering
+  session_secret: 'LKASDMjnr234n90lasndfsadf',
+
+  enableCORS: true,
+
   // The end-user verification URI on the authorization server. The URI should
   // be short and easy to remember as end-users will be asked to manually type
   // it into their user-agent.
   verification_uri: 'http://example.com/verify',
-
-  enableCORS: true,
 
   scopes: [
     {
