@@ -1,0 +1,27 @@
+<% include layout/head %>
+
+<div></div>
+
+<div class="panel panel-info">
+  <div class="panel-heading">Authorization</div>
+
+  <div class="panel-body">
+    <form method="POST" action="/authorize">
+      <div class="form-group has-success">
+        Would you like to authorize <%= client_name %> to
+        act on your behalf ?
+      </div>
+
+      <input type="hidden" name="client_id" value="<%=client_id%>">
+      <input type="hidden" name="redirect_uri" value="<%=redirect_uri%>">
+      <input type="hidden" name="scope" value="<%=scope%>">
+      <input type="hidden" name="state" value="<%=state%>">
+
+      <input type="submit" class="btn btn-success" name="submit" value="Allow">
+      <input type="submit" class="btn btn-danger" name="submit" value="Deny">
+
+    </form>
+  </div>
+</div>
+
+<% include layout/foot %>
