@@ -29,8 +29,16 @@ module.exports = function(app, options) {
   app.get('/auth/facebook', passport.authenticate('facebook'));
 
   app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: '/',
     failureRedirect: '/?error=login_failed'
-  }));
+  }), function (req, res, next) {
 
+    var redirectUri = req.session.auth_origin;
+    delete req.session.auth_origin;
+
+    if (redirectUri) {
+      return res.redirect(redirectUri);
+    }
+
+    res.redirect('/');
+  });
 };

@@ -27,7 +27,17 @@ module.exports = function(app, options) {
   app.get('/auth/github',
     passport.authenticate('github'));
 
-  app.get('/auth/github/callback', passport.authenticate('github', { successRedirect: '/',
-    failureRedirect: '/?error=login_failed' } ));
+  app.get('/auth/github/callback', passport.authenticate('github', {
+    failureRedirect: '/?error=login_failed'
+  }), function (req, res, next) {
 
+      var redirectUri = req.session.auth_origin;
+      delete req.session.auth_origin;
+
+      if (redirectUri) {
+        return res.redirect(redirectUri);
+      }
+
+      res.redirect('/');
+    });
 };
