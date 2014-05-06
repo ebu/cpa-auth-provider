@@ -7,6 +7,7 @@ module.exports = function(sequelize, DataTypes) {
   var AuthorizationCode = sequelize.define('AuthorizationCode', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     authorization_code: DataTypes.STRING,
+    redirect_uri: DataTypes.STRING,
     state: DataTypes.STRING
   }, {
     underscored: true,

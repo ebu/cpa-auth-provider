@@ -139,6 +139,7 @@ module.exports = function(app, options) {
       var authorizationCode = {
         client_id: clientId,
 //        scope_id:            scope.id,
+        redirect_uri: redirectUri,
         user_id: userId,
         authorization_code: generate.authorizationCode()
       };
