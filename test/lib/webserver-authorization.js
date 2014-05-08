@@ -62,7 +62,27 @@ describe('GET /authorize', function() {
     before(clearDatabase);
     before(initDatabase);
 
-    context('with valid parameters', function() {
+
+    context('when user is not authenticated', function() {
+
+      before(function(done) {
+        var path = '/authorize?' +
+          'response_type=code' +
+          '&client_id=100' +
+          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+
+        requestHelper.sendRequest(this, path, {
+          method: 'get'
+        }, done);
+      });
+
+      it('should reply with a status code 302', function() {
+        expect(this.res.statusCode).to.equal(302);
+      });
+
+    });
+
+    context('when user is authenticated', function() {
 
       before(function(done) {
         var self = this;
@@ -77,66 +97,12 @@ describe('GET /authorize', function() {
           });
       });
 
-      before(function(done) {
-        var path = '/authorize?' +
-          'response_type=code' +
-          '&client_id=100' +
-          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-        requestHelper.sendRequest(this, path, {
-          method: 'get',
-          cookie: this.cookie
-        }, done);
-      });
-
-      it('should reply with a status code 200', function() {
-        expect(this.res.statusCode).to.equal(200);
-      });
-
-      it('should return HTML', function() {
-        expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      });
-
-      describe('the response body', function() {
-        it('should contain hidden inputs with request informations', function() {
-          var $ = cheerio.load(this.res.text);
-          expect($('input[name="client_id"]').length).to.equal(1);
-          expect($('input[name="client_id"]')[0].attribs.value).to.equal('100');
-          expect($('input[name="redirect_uri"]').length).to.equal(1);
-          expect($('input[name="scope"]').length).to.equal(1);
-          expect($('input[name="state"]').length).to.equal(1);
-        });
-
-        it('should display the button authorize', function() {
-          var $ = cheerio.load(this.res.text);
-          expect($('input[value="Allow"]').length).to.equal(1);
-        });
-
-        it('should display the button cancel', function() {
-          var $ = cheerio.load(this.res.text);
-          expect($('input[value="Deny"]').length).to.equal(1);
-        });
-      });
-
-      context('with invalid client_id', function() {
-
-        before(function(done) {
-          var self = this;
-
-          request
-            .post('/login')
-            .type('form')
-            .send({ username: 'testuser', password: 'testpassword' })
-            .end(function(err, res) {
-              self.cookie = res.headers['set-cookie'];
-              done(err);
-            });
-        });
+      context('with valid parameters', function() {
 
         before(function(done) {
           var path = '/authorize?' +
             'response_type=code' +
-            '&client_id=in' +
+            '&client_id=100' +
             '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
 
           requestHelper.sendRequest(this, path, {
@@ -145,8 +111,65 @@ describe('GET /authorize', function() {
           }, done);
         });
 
-        it("should return an invalid_request error", function() {
-          assertions.verifyRedirectError(this.res, 'unauthorized_client');
+        it('should reply with a status code 200', function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain hidden inputs with request informations', function() {
+            var $ = cheerio.load(this.res.text);
+            expect($('input[name="client_id"]').length).to.equal(1);
+            expect($('input[name="client_id"]')[0].attribs.value).to.equal('100');
+            expect($('input[name="redirect_uri"]').length).to.equal(1);
+            expect($('input[name="scope"]').length).to.equal(1);
+            expect($('input[name="state"]').length).to.equal(1);
+          });
+
+          it('should display the button authorize', function() {
+            var $ = cheerio.load(this.res.text);
+            expect($('input[value="Allow"]').length).to.equal(1);
+          });
+
+          it('should display the button cancel', function() {
+            var $ = cheerio.load(this.res.text);
+            expect($('input[value="Deny"]').length).to.equal(1);
+          });
+        });
+
+        context('with invalid client_id', function() {
+
+          before(function(done) {
+            var self = this;
+
+            request
+              .post('/login')
+              .type('form')
+              .send({ username: 'testuser', password: 'testpassword' })
+              .end(function(err, res) {
+                self.cookie = res.headers['set-cookie'];
+                done(err);
+              });
+          });
+
+          before(function(done) {
+            var path = '/authorize?' +
+              'response_type=code' +
+              '&client_id=in' +
+              '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+
+            requestHelper.sendRequest(this, path, {
+              method: 'get',
+              cookie: this.cookie
+            }, done);
+          });
+
+          it("should return an invalid_request error", function() {
+            assertions.verifyRedirectError(this.res, 'unauthorized_client');
+          });
         });
       });
     });

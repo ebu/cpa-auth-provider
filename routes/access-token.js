@@ -141,7 +141,68 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
     });
 };
 
-var schema = {
+
+var requestServerFlowAccessToken = function(res, next, authorizationCodeKey, redirectUri, scopeName) {
+
+  db.AuthorizationCode
+    .find({
+      where:   { authorization_code: authorizationCodeKey },
+      include: [ db.Scope, db.User ]
+    })
+    .complete(function(err, authorizationCode) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      if (!authorizationCode) {
+        res.sendInvalidClient("Authorization code not found");
+        return;
+      }
+
+//      if (!authorizationCode.scope || authorizationCode.scope.name !== scopeName) {
+//        res.sendInvalidClient("Pairing code scope mismatch");
+//        return;
+//      }
+
+      if (authorizationCode.hasExpired()) {
+        res.sendErrorResponse(400, "expired", "Pairing code expired");
+        return;
+      }
+
+      db.sequelize.transaction(function(transaction) {
+        var accessToken = {
+          token:     generate.accessToken(),
+          user_id:   authorizationCode.user_id,
+          client_id: authorizationCode.client_id
+        };
+
+        db.AccessToken
+          .create(accessToken)
+          .then(function() {
+            return authorizationCode.destroy();
+          })
+          .then(function() {
+            return transaction.commit();
+          })
+          .then(function() {
+            sendAccessToken(
+              res,
+              accessToken.token,
+              { 'name': 'default', 'display_name': 'default scope' }, //TODO
+              authorizationCode.user
+            );
+          },
+          function(error) {
+            transaction.rollback().complete(function(err) {
+              next(err);
+            });
+          });
+      });
+    });
+};
+
+var schemaDevice = {
   id: "/token",
   type: "object",
   required: true,
@@ -170,7 +231,37 @@ var schema = {
   }
 };
 
-var validateJson = require('../lib/validate-json')(schema);
+
+var schemaServer = {
+  id: "/token",
+  type: "object",
+  required: true,
+  additionalProperties: false,
+  properties: {
+    grant_type: {
+      type:     "string",
+      required: true
+    },
+    code: {
+      type:     "string",
+      required: true
+    },
+    redirect_uri: {
+      type:     "string",
+      required: false
+    },
+    scope: {
+      type:     "string",
+      required: false
+    }
+  }
+};
+
+var isDeviceFlow = function(req) {
+  return (req.body.client_secret);
+};
+
+var validateJson = require('../lib/validate-json')([schemaDevice, schemaServer]);
 
 var routes = function(app) {
   var logger = app.get('logger');
@@ -181,9 +272,6 @@ var routes = function(app) {
 
   app.post('/token', validateJson, function(req, res, next) {
     var grantType    = req.body.grant_type;
-    var clientId     = req.body.client_id;
-    var clientSecret = req.body.client_secret;
-    var deviceCode   = req.body.device_code;
     var scope        = req.body.scope;
 
     if (grantType !== 'authorization_code') {
@@ -191,13 +279,25 @@ var routes = function(app) {
       return;
     }
 
-    if (deviceCode) {
-      // User mode
-      requestUserModeAccessToken(res, next, clientId, clientSecret, deviceCode, scope);
+    if (isDeviceFlow(req)) {
+      var clientId     = req.body.client_id;
+      var clientSecret = req.body.client_secret;
+      var deviceCode   = req.body.device_code;
+
+      if (deviceCode) {
+        // User mode
+        requestUserModeAccessToken(res, next, clientId, clientSecret, deviceCode, scope);
+      }
+      else {
+        // Client mode
+        requestClientModeAccessToken(res, next, clientId, clientSecret, scope);
+      }
     }
     else {
-      // Client mode
-      requestClientModeAccessToken(res, next, clientId, clientSecret, scope);
+      //Server Flow
+      var authorizationCode = req.body.code;
+      var redirectUri    = req.body.redirect_uri;
+      requestServerFlowAccessToken(res, next, authorizationCode, redirectUri, scope);
     }
   });
 };
