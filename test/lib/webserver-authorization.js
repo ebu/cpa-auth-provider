@@ -6,6 +6,7 @@ var generate = require('../../lib/generate');
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
+var async = require('async');
 var cheerio = require('cheerio');
 
 var clearDatabase = function(done) {
@@ -23,30 +24,52 @@ var clearDatabase = function(done) {
   });
 };
 
-var initDatabase = function(done) {
+var createStaticClient = function(callback) {
   db.Client
     .create({
       id:                 100,
       secret:             'e2412cd1-f010-4514-acab-c8af59e5501a',
-      name:               'Test client',
+      name:               'Test Static client',
       software_id:        'CPA AP Test',
       software_version:   '0.0.1',
       ip:                 '127.0.0.1',
       registration_type:  'static'
-    })
-    .then(function() {
-      return db.Scope.create({
-        id:           5,
-        name:         'example-service.bbc.co.uk',
-        display_name: 'BBC Radio',
-        access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-      });
-    })
-    .then(function() {
+    }).complete(callback);
+};
+
+var createDynamicClient = function(client, callback) {
+  db.Client
+    .create({
+      id:                 101,
+      secret:             'cfadc123-f0af0-4514-acab-c8af59e5501a',
+      name:               'Test Dynamic client',
+      software_id:        'CPA AP Test',
+      software_version:   '0.0.1',
+      ip:                 '127.0.0.1'
+    }).complete(callback);
+};
+
+var createScope = function(client, callback) {
+  db.Scope.create({
+    id:           5,
+    name:         'example-service.bbc.co.uk',
+    display_name: 'BBC Radio',
+    access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+  }).complete(callback);
+};
+
+var initDatabase = function(done) {
+
+  async.waterfall([
+    createStaticClient,
+    createDynamicClient,
+    createScope
+  ], function(err) {
+      if(err){
+        done(new Error(JSON.stringify(err)));
+        return;
+      }
       done();
-    },
-    function(error) {
-      done(new Error(JSON.stringify(error)));
     });
 };
 
@@ -62,26 +85,6 @@ describe('GET /authorize', function() {
 
     before(clearDatabase);
     before(initDatabase);
-
-
-    context('when user is not authenticated', function() {
-
-      before(function(done) {
-        var path = '/authorize?' +
-          'response_type=code' +
-          '&client_id=100' +
-          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-        requestHelper.sendRequest(this, path, {
-          method: 'get'
-        }, done);
-      });
-
-      it('should reply with a status code 302', function() {
-        expect(this.res.statusCode).to.equal(302);
-      });
-
-    });
 
     context('when user is authenticated', function() {
 
@@ -141,39 +144,91 @@ describe('GET /authorize', function() {
           });
         });
 
-        context('with invalid client_id', function() {
+      });
 
-          before(function(done) {
-            var self = this;
+      context('with missing client_id', function() {
+        before(function(done) {
+          var self = this;
 
-            request
-              .post('/login')
-              .type('form')
-              .send({ username: 'testuser', password: 'testpassword' })
-              .end(function(err, res) {
-                self.cookie = res.headers['set-cookie'];
-                done(err);
-              });
-          });
+          request
+            .post('/login')
+            .type('form')
+            .send({ username: 'testuser', password: 'testpassword' })
+            .end(function(err, res) {
+              self.cookie = res.headers['set-cookie'];
+              done(err);
+            });
+        });
 
-          before(function(done) {
-            var path = '/authorize?' +
-              'response_type=code' +
-              '&client_id=in' +
-              '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+        before(function(done) {
+          var path = '/authorize?' +
+            'response_type=code' +
+            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
 
-            requestHelper.sendRequest(this, path, {
-              method: 'get',
-              cookie: this.cookie
-            }, done);
-          });
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
+        });
 
-          it("should return an invalid_request error", function() {
-            assertions.verifyRedirectError(this.res, 'unauthorized_client');
-          });
+        it("should return an invalid_request error", function() {
+          assertions.verifyRedirectError(this.res, 'invalid_request');
         });
       });
+
+
+      context('with invalid client_id', function() {
+        before(function(done) {
+          var self = this;
+
+          request
+            .post('/login')
+            .type('form')
+            .send({ username: 'testuser', password: 'testpassword' })
+            .end(function(err, res) {
+              self.cookie = res.headers['set-cookie'];
+              done(err);
+            });
+        });
+
+        before(function(done) {
+          var path = '/authorize?' +
+            'response_type=code' +
+            '&client_id=in' +
+            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
+        });
+
+        it("should return an invalid_request error", function() {
+          assertions.verifyRedirectError(this.res, 'invalid_request');
+        });
+      });
+
     });
+
+    context('when user is not authenticated', function() {
+
+      before(function(done) {
+        var path = '/authorize?' +
+          'response_type=code' +
+          '&client_id=100' +
+          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+
+        requestHelper.sendRequest(this, path, {
+          method: 'get'
+        }, done);
+      });
+
+      it('should reply with a status code 302', function() {
+        expect(this.res.statusCode).to.equal(302);
+      });
+
+    });
+
 //    context('without client_id', function() {
 //
 //      before(function(done) {
