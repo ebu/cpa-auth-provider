@@ -157,8 +157,8 @@ var requestServerFlowAccessToken = function(res, next, clientId, code, redirectU
 
   db.AuthorizationCode
     .find({
-      where:   { client_id: clientId, authorization_code: code },
-      include: [ db.Scope, db.User ]
+      where:   { authorization_code: code },
+      include: [ db.Client, db.Scope, db.User ]
     })
     .complete(function(err, authorizationCode) {
       if (err) {
@@ -167,8 +167,15 @@ var requestServerFlowAccessToken = function(res, next, clientId, code, redirectU
       }
 
       if (!authorizationCode) {
-        res.sendInvalidClient("Authorization code not found");
+        res.sendInvalidRequest("Authorization code not found");
         return;
+      }
+
+      if (authorizationCode.client_id !== clientId ||
+        authorizationCode.redirect_uri !== redirectUri) {
+          res.sendInvalidClient(
+            'Unauthorized redirect uri');
+          return;
       }
 
 //      if (!authorizationCode.scope || authorizationCode.scope.name !== scopeName) {
@@ -177,7 +184,7 @@ var requestServerFlowAccessToken = function(res, next, clientId, code, redirectU
 //      }
 
       if (authorizationCode.hasExpired()) {
-        res.sendErrorResponse(400, "expired", "Pairing code expired");
+        res.sendErrorResponse(400, "expired", "Authorization code expired");
         return;
       }
 
@@ -263,7 +270,7 @@ var schemaServer = {
     },
     redirect_uri: {
       type:     "string",
-      required: false
+      required: true
     },
     scope: {
       type:     "string",
