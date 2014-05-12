@@ -53,6 +53,9 @@ module.exports = {
   // The length of time that user (pairing) codes are valid, in seconds.
   valid_pairing_code_duration: 3600,
 
+  // The length of time that an authorization code is valid, in seconds.
+  valid_authorization_code_duration: 600,
+
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.
   max_poll_interval: 5,

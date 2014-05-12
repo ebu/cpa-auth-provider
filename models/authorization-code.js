@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
       getTimeToLive: function() {
         var now = new Date();
         var duration = (now - this.created_at) / 1000.0;
-        var timeToLive = config.valid_pairing_code_duration - duration;
+        var timeToLive = config.valid_authorization_code_duration - duration;
 
         return timeToLive;
       },
