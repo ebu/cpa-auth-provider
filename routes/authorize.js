@@ -65,7 +65,7 @@ var schemaPost = {
   }
 };
 
-var validateUri = require('../lib/validate-json')(schemaGet, 'query');
+var validateUri = require('../lib/validate-json')(schemaGet, 'query', true);
 var validatePostBody = require('../lib/validate-form')(schemaPost);
 
 module.exports = function(app, options) {
@@ -95,11 +95,20 @@ module.exports = function(app, options) {
       .find({ where: { id: clientId } })
       .complete(function(err, client) {
         if(err || !client) {
-          return res.redirectError(redirectUri,
-            'unauthorized_client',
-            'The client is not authorized to request an ' +
-            'authorization code using this method.',
+          res.redirectError(redirectUri,
+            'invalid_request',
+            'The request is missing a required parameter, includes an invalid parameter' +
+            'value, includes a parameter more than once, or is otherwise malformed.',
             state);
+          return;
+        }
+        if (client.registration_type === 'dynamic') {
+          res.redirectError(redirectUri,
+            'unauthorized_client',
+            'The client is not authorized to request an authorization code using this' +
+            'method',
+            state);
+          return;
         }
 
         res.render('authorize.ejs', {

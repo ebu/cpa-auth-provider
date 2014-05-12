@@ -59,7 +59,6 @@ var createScope = function(client, callback) {
 };
 
 var initDatabase = function(done) {
-
   async.waterfall([
     createStaticClient,
     createDynamicClient,
@@ -75,19 +74,10 @@ var initDatabase = function(done) {
 
 describe('GET /authorize', function() {
   context("when the client redirects the resource owner for authorization", function() {
-    before(function() {
-//      sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf6123');
-    });
-
-    after(function() {
-//      generate.accessToken.restore();
-    });
-
     before(clearDatabase);
     before(initDatabase);
 
     context('when user is authenticated', function() {
-
       before(function(done) {
         var self = this;
 
@@ -102,7 +92,6 @@ describe('GET /authorize', function() {
       });
 
       context('with valid parameters', function() {
-
         before(function(done) {
           var path = '/authorize?' +
             'response_type=code' +
@@ -146,20 +135,25 @@ describe('GET /authorize', function() {
 
       });
 
-      context('with missing client_id', function() {
+      context('with client_id of a client registered dynamically', function() {
         before(function(done) {
-          var self = this;
+          var path = '/authorize?' +
+            'response_type=code' +
+            '&client_id=101' +
+            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
 
-          request
-            .post('/login')
-            .type('form')
-            .send({ username: 'testuser', password: 'testpassword' })
-            .end(function(err, res) {
-              self.cookie = res.headers['set-cookie'];
-              done(err);
-            });
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
         });
 
+        it("should return an unauthorized_client error", function() {
+          assertions.verifyRedirectError(this.res, 'unauthorized_client');
+        });
+      });
+
+      context('with missing client_id', function() {
         before(function(done) {
           var path = '/authorize?' +
             'response_type=code' +
@@ -176,21 +170,7 @@ describe('GET /authorize', function() {
         });
       });
 
-
       context('with invalid client_id', function() {
-        before(function(done) {
-          var self = this;
-
-          request
-            .post('/login')
-            .type('form')
-            .send({ username: 'testuser', password: 'testpassword' })
-            .end(function(err, res) {
-              self.cookie = res.headers['set-cookie'];
-              done(err);
-            });
-        });
-
         before(function(done) {
           var path = '/authorize?' +
             'response_type=code' +
@@ -207,11 +187,9 @@ describe('GET /authorize', function() {
           assertions.verifyRedirectError(this.res, 'invalid_request');
         });
       });
-
     });
 
     context('when user is not authenticated', function() {
-
       before(function(done) {
         var path = '/authorize?' +
           'response_type=code' +
@@ -228,36 +206,5 @@ describe('GET /authorize', function() {
       });
 
     });
-
-//    context('without client_id', function() {
-//
-//      before(function(done) {
-//        var self = this;
-//
-//        request
-//          .post('/login')
-//          .type('form')
-//          .send({ username: 'testuser', password: 'testpassword' })
-//          .end(function(err, res) {
-//            self.cookie = res.headers['set-cookie'];
-//            done(err);
-//          });
-//      });
-//
-//      before(function(done) {
-//        var path = '/authorize?' +
-//          'response_type=code' +
-//          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-//
-//        requestHelper.sendRequest(this, path, {
-//          method: 'get',
-//          cookie: this.cookie
-//        }, done);
-//      });
-//
-//      it("should return an invalid_request error", function() {
-//        assertions.verifyRedirectError(this.res, 'invalid_request');
-//      });
-//    });
   });
 });
