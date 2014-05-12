@@ -253,6 +253,10 @@ var schemaServer = {
       type:     "string",
       required: true
     },
+    client_id: {
+      type:     "integer",
+      required: true
+    },
     code: {
       type:     "string",
       required: true
@@ -306,8 +310,8 @@ var routes = function(app) {
     }
     else {
       //Server Flow
-      var code = req.body.code;
-      var redirectUri    = req.body.redirect_uri;
+      var code        = req.body.code;
+      var redirectUri = req.body.redirect_uri;
       requestServerFlowAccessToken(res, next, clientId, code, redirectUri, scope);
     }
   });
