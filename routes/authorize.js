@@ -147,14 +147,13 @@ module.exports = function(app, options) {
         state);
     }
 
-
 //    var findScope = function(callback) {
 //      db.Scope.find({ where: { name: scopeName }})
 //        .complete(callback);
 //    };
 
     // Generate Authorization code
-    var createAssociationCode = function(callback) {
+    var createAuthorizationCode = function(callback) {
       var authorizationCode = {
         client_id: clientId,
 //        scope_id:            scope.id,
@@ -167,7 +166,11 @@ module.exports = function(app, options) {
         .complete(callback);
     };
 
-    var finalCallback = function (err, result) {
+    async.waterfall([
+//    findScope,
+      createAuthorizationCode
+    ],
+    function (err, result) {
       if (err) {
         next(err);
         return;
@@ -177,18 +180,11 @@ module.exports = function(app, options) {
       if (!urlObj.query) {
         urlObj.query = {};
       }
-      urlObj.query['code'] = result.authorization_code;
-      urlObj.query['state'] = state;
+      urlObj.query.code = result.authorization_code;
+      urlObj.query.state = state;
 
       res.redirect(url.format(urlObj));
-    };
-
-    async.waterfall([
-//      findScope,
-        createAssociationCode
-      ],
-      finalCallback
-    );
+    });
 
   });
 };

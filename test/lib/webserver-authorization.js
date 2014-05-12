@@ -120,7 +120,7 @@ describe('GET /authorize', function() {
             expect($('input[name="client_id"]')[0].attribs.value).to.equal('100');
             expect($('input[name="redirect_uri"]').length).to.equal(1);
             expect($('input[name="scope"]').length).to.equal(1);
-            expect($('input[name="state"]').length).to.equal(1);
+            expect($('input[name="state"]').length).to.equal(0);
           });
 
           it('should display the button authorize', function() {
