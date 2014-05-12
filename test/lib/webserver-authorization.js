@@ -38,7 +38,8 @@ var initDatabase = function(done) {
       return db.Scope.create({
         id:           5,
         name:         'example-service.bbc.co.uk',
-        display_name: 'BBC Radio'
+        display_name: 'BBC Radio',
+        access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
       });
     })
     .then(function() {
