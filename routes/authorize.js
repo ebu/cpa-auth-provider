@@ -85,16 +85,13 @@ module.exports = function(app, options) {
     var scope        = req.query.scope;
     var state        = req.query.state;
 
-    if (responseType !== 'code') {
-      res.sendInvalidRequest("Wrong response type: 'code' required.");
-    }
-
     // Verify redirect uri corresponds to client id
 
     db.Client
       .find({ where: { id: clientId } })
       .complete(function(err, client) {
         if(err || !client) {
+          //TODO: We MUST NOT redirect the client to redirectUri.
           res.redirectError(redirectUri,
             'invalid_request',
             'The request is missing a required parameter, includes an invalid parameter' +
@@ -103,11 +100,23 @@ module.exports = function(app, options) {
           return;
         }
         if (client.registration_type === 'dynamic') {
-          res.redirectError(redirectUri,
+          res.redirectError(client.redirect_uri,
             'unauthorized_client',
-            'The client is not authorized to request an authorization code using this' +
-            'method',
+              'The client is not authorized to request an authorization code using this' +
+              'method',
             state);
+          return;
+        }
+        if (client.redirect_uri !== redirectUri) {
+          res.redirectError(client.redirect_uri,
+            'invalid_request',
+            'Unauthorized redirect uri',
+            state);
+          return;
+        }
+        if (responseType !== 'code') {
+          res.redirectError(client.redirect_uri, 'unsupported_response_type',
+            "Wrong response type: 'code' required.");
           return;
         }
 
@@ -137,13 +146,14 @@ module.exports = function(app, options) {
         'The resource owner or authorization server denied the request.',
         state);
     }
-    // Generate Authorization code
-//
+
+
 //    var findScope = function(callback) {
 //      db.Scope.find({ where: { name: scopeName }})
 //        .complete(callback);
 //    };
 
+    // Generate Authorization code
     var createAssociationCode = function(callback) {
       var authorizationCode = {
         client_id: clientId,

@@ -50,6 +50,9 @@ module.exports = function(sequelize, DataTypes) {
         notNull: true,
         notEmpty: true
       }
+    },
+    redirect_uri: { //TODO: Move to its own table
+      type: DataTypes.STRING
     }
   }, {
     underscored: true,

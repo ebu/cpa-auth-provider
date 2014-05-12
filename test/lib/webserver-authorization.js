@@ -33,7 +33,8 @@ var createStaticClient = function(callback) {
       software_id:        'CPA AP Test',
       software_version:   '0.0.1',
       ip:                 '127.0.0.1',
-      registration_type:  'static'
+      registration_type:  'static',
+      redirect_uri:       'https://example-client.bbc.co.uk/callback'
     }).complete(callback);
 };
 
@@ -165,8 +166,9 @@ describe('GET /authorize', function() {
           }, done);
         });
 
-        it("should return an invalid_request error", function() {
-          assertions.verifyRedirectError(this.res, 'invalid_request');
+        it.skip("should return an invalid_request error", function() {
+//          assertions.verifyRedirectError(this.res, 'invalid_request');
+          //TODO: Agree on the behaviour on the spec
         });
       });
 
@@ -183,10 +185,81 @@ describe('GET /authorize', function() {
           }, done);
         });
 
+        it.skip("should return an invalid_request error", function() {
+          //TODO: Agree on the behaviour on the spec
+        });
+      });
+
+      context('with missing response_type', function() {
+        before(function(done) {
+          var path = '/authorize?' +
+            'client_id=100' +
+            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
+        });
+
         it("should return an invalid_request error", function() {
           assertions.verifyRedirectError(this.res, 'invalid_request');
         });
       });
+
+      context('with invalid response_type', function() {
+        before(function(done) {
+          var path = '/authorize?' +
+            'response_type=device' +
+            '&client_id=100' +
+            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
+
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
+        });
+
+        it("should return an unsupported response type error", function() {
+          assertions.verifyRedirectError(this.res, 'unsupported_response_type');
+        });
+      });
+
+      context('with missing redirect_uri', function() {
+        before(function(done) {
+          var path = '/authorize?' +
+            'response_type=code' +
+            '&client_id=100';
+
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
+        });
+
+        it.skip("should return an invalid_request error", function() {
+          //TODO: Agree on the behaviour on the spec
+        });
+      });
+
+      context('with a different redirect_uri than the client\'s one', function() {
+        before(function(done) {
+          var path = '/authorize?' +
+            'response_type=code' +
+            '&client_id=100' +
+            '&redirect_uri=' + encodeURI('https://example-client.ebu.io/callback');
+
+          requestHelper.sendRequest(this, path, {
+            method: 'get',
+            cookie: this.cookie
+          }, done);
+        });
+
+        it("should return an invalid_request error", function() {
+          assertions.verifyRedirectError(this.res, 'invalid_request');
+        });
+      });
+
     });
 
     context('when user is not authenticated', function() {
