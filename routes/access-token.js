@@ -8,6 +8,17 @@ var sendAccessToken = function(res, token, scope, user) {
 
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
+
+  /**
+   * Should reply:
+   * user_name
+   * token
+   * token_type
+   * scope
+   * domain
+   * domain_display_name
+   */
+
   res.send({
     token:             token,
     token_type:        'bearer',
@@ -142,11 +153,11 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
 };
 
 
-var requestServerFlowAccessToken = function(res, next, authorizationCodeKey, redirectUri, scopeName) {
+var requestServerFlowAccessToken = function(res, next, clientId, code, redirectUri, scopeName) {
 
   db.AuthorizationCode
     .find({
-      where:   { authorization_code: authorizationCodeKey },
+      where:   { client_id: clientId, authorization_code: code },
       include: [ db.Scope, db.User ]
     })
     .complete(function(err, authorizationCode) {
@@ -273,6 +284,7 @@ var routes = function(app) {
   app.post('/token', validateJson, function(req, res, next) {
     var grantType    = req.body.grant_type;
     var scope        = req.body.scope;
+    var clientId     = req.body.client_id;
 
     if (grantType !== 'authorization_code') {
       res.sendErrorResponse(400, 'unsupported_grant_type', "Unsupported grant type: " + grantType);
@@ -280,7 +292,6 @@ var routes = function(app) {
     }
 
     if (isDeviceFlow(req)) {
-      var clientId     = req.body.client_id;
       var clientSecret = req.body.client_secret;
       var deviceCode   = req.body.device_code;
 
@@ -295,9 +306,9 @@ var routes = function(app) {
     }
     else {
       //Server Flow
-      var authorizationCode = req.body.code;
+      var code = req.body.code;
       var redirectUri    = req.body.redirect_uri;
-      requestServerFlowAccessToken(res, next, authorizationCode, redirectUri, scope);
+      requestServerFlowAccessToken(res, next, clientId, code, redirectUri, scope);
     }
   });
 };
