@@ -38,7 +38,7 @@ var createStaticClient = function(callback) {
     }).complete(callback);
 };
 
-var createDynamicClient = function(client, callback) {
+var createDynamicClient = function(callback) {
   db.Client
     .create({
       id:                 101,
@@ -50,7 +50,7 @@ var createDynamicClient = function(client, callback) {
     }).complete(callback);
 };
 
-var createScope = function(client, callback) {
+var createScope = function(callback) {
   db.Scope.create({
     id:           5,
     name:         'example-service.bbc.co.uk',
@@ -60,7 +60,7 @@ var createScope = function(client, callback) {
 };
 
 var initDatabase = function(done) {
-  async.waterfall([
+  async.series([
     createStaticClient,
     createDynamicClient,
     createScope
