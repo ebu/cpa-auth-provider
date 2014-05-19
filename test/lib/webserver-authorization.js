@@ -150,7 +150,7 @@ describe('GET /authorize', function() {
         });
 
         it("should return an unauthorized_client error", function() {
-          assertions.verifyRedirectError(this.res, 'unauthorized_client');
+          assertions.verifyError(this.res, 400, 'unauthorized_client');
         });
       });
 
@@ -166,9 +166,8 @@ describe('GET /authorize', function() {
           }, done);
         });
 
-        it.skip("should return an invalid_request error", function() {
-//          assertions.verifyRedirectError(this.res, 'invalid_request');
-          //TODO: Agree on the behaviour on the spec
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -185,8 +184,8 @@ describe('GET /authorize', function() {
           }, done);
         });
 
-        it.skip("should return an invalid_request error", function() {
-          //TODO: Agree on the behaviour on the spec
+        it("should return an invalid_client error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_client');
         });
       });
 
@@ -237,8 +236,8 @@ describe('GET /authorize', function() {
           }, done);
         });
 
-        it.skip("should return an invalid_request error", function() {
-          //TODO: Agree on the behaviour on the spec
+        it("should return an invalid_request error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_request');
         });
       });
 
@@ -255,8 +254,8 @@ describe('GET /authorize', function() {
           }, done);
         });
 
-        it("should return an invalid_request error", function() {
-          assertions.verifyRedirectError(this.res, 'invalid_request');
+        it("should return an invalid_client error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_client');
         });
       });
 
