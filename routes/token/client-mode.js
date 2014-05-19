@@ -31,7 +31,7 @@ var clientModeSchema = {
   }
 };
 
-var validateClientModeJson = require('../../lib/validate-json')(clientModeSchema);
+var validateClientModeJson = require('../../lib/validate-json').middleware(clientModeSchema);
 
 module.exports = function(req, res, next) {
   validateClientModeJson(req, res, function(err) {

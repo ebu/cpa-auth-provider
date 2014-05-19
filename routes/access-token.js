@@ -11,8 +11,6 @@ var userMode      = require('./token/user-mode');
 var webServerFlow = require('./token/webserver-flow');
 
 var routes = function(app) {
-  var logger = app.get('logger');
-
   /**
    * Access token endpoint
    */

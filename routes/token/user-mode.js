@@ -36,7 +36,7 @@ var userModeSchema = {
   }
 };
 
-var validateUserModeJson = require('../../lib/validate-json')(userModeSchema);
+var validateUserModeJson = require('../../lib/validate-json').middleware(userModeSchema);
 
 module.exports = function(req, res, next) {
   validateUserModeJson(req, res, function(err) {

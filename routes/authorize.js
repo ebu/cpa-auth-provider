@@ -65,7 +65,7 @@ var schemaPost = {
   }
 };
 
-var validateUri = require('../lib/validate-json')(schemaGet, 'query', true);
+var validateUri = require('../lib/validate-json').validate;
 var validatePostBody = require('../lib/validate-form')(schemaPost);
 
 module.exports = function(app, options) {
@@ -75,7 +75,6 @@ module.exports = function(app, options) {
    */
 
   app.get('/authorize',
-    validateUri,
     authHelper.authenticateFirst,
     function(req, res, next) {
 
@@ -85,49 +84,54 @@ module.exports = function(app, options) {
     var scope        = req.query.scope;
     var state        = req.query.state;
 
-    // Verify redirect uri corresponds to client id
+    if (!req.query.hasOwnProperty('client_id')) {
+      res.sendInvalidRequest('Missing client_id');
+      return;
+    }
+
+    if (!req.query.hasOwnProperty('redirect_uri')) {
+      res.sendInvalidRequest('Missing redirect_uri');
+      return;
+    }
 
     db.Client
       .find({ where: { id: clientId } })
       .complete(function(err, client) {
         if(err || !client) {
-          //TODO: We MUST NOT redirect the client to redirectUri.
-          res.redirectError(redirectUri,
-            'invalid_request',
-            'The request is missing a required parameter, includes an invalid parameter' +
-            'value, includes a parameter more than once, or is otherwise malformed.',
-            state);
+          res.sendInvalidClient('Unknown client');
           return;
         }
         if (client.registration_type === 'dynamic') {
-          res.redirectError(client.redirect_uri,
-            'unauthorized_client',
-              'The client is not authorized to request an authorization code using this' +
-              'method',
-            state);
+          res.sendErrorResponse(400, 'unauthorized_client',
+            'The client is not authorized to request ' +
+            'an authorization code using this method');
           return;
         }
         if (client.redirect_uri !== redirectUri) {
-          res.redirectError(client.redirect_uri,
-            'invalid_request',
-            'Unauthorized redirect uri',
-            state);
-          return;
-        }
-        if (responseType !== 'code') {
-          res.redirectError(client.redirect_uri, 'unsupported_response_type',
-            "Wrong response type: 'code' required.");
+          res.sendInvalidClient('Unauthorized redirect uri');
           return;
         }
 
-        res.render('authorize.ejs', {
-          client_name: client.name,
-          client_id: clientId,
-          redirect_uri: redirectUri,
-          scope: scope,
-          state: state,
-          error: null
-        });
+        var validationError = validateUri(req.query, schemaGet);
+        if (!validationError) {
+          if (responseType !== 'code') {
+            res.redirectError(client.redirect_uri, 'unsupported_response_type',
+              "Wrong response type: 'code' required.");
+            return;
+          }
+
+          res.render('authorize.ejs', {
+            client_name: client.name,
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            scope: scope,
+            state: state,
+            error: null
+          });
+        }
+        else {
+          res.redirectError(client.redirect_uri, 'invalid_request', validationError);
+        }
       });
   });
 

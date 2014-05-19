@@ -37,7 +37,7 @@ var webServerFlowSchema = {
   }
 };
 
-var validateWebServerFlow = require('../../lib/validate-json')(webServerFlowSchema);
+var validateWebServerFlow = require('../../lib/validate-json').middleware(webServerFlowSchema);
 
 module.exports = function(req, res, next) {
   validateWebServerFlow(req, res, function(err) {
