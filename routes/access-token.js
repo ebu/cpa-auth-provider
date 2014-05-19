@@ -3,6 +3,8 @@
 var db       = require('../models');
 var generate = require('../lib/generate');
 
+var async    = require('async');
+
 var sendAccessToken = function(res, token, scope, user) {
   var name = (user !== null) ? user.display_name : "This radio";
 
@@ -66,49 +68,56 @@ var validateClientMode = function(req, res, next) {
     var clientSecret = req.body.client_secret;
     var scopeName = req.body.scope;
 
-    db.Client.find({ where: { id: clientId, secret: clientSecret } })
-      .complete(function(err, client) {
-        if (err) {
-          next(err);
-          return;
-        }
+    var findClient = function(callback) {
+      db.Client.find({ where: { id: clientId, secret: clientSecret } })
+        .complete(function(err, client) {
+          if (!client) {
+            res.sendInvalidClient("Unknown client: " + clientId);
+            return;
+          }
+          callback(err, client);
+        });
+    };
 
-        if (!client) {
-          res.sendInvalidClient("Unknown client: " + clientId);
-          return;
-        }
+    var findScope = function(client, callback) {
+      db.Scope.find({ where: { name: scopeName }})
+        .complete(function(err, scope) {
+          if (!scope) {
+            // SPEC : define correct error message
+            //callback(new Error("Unknown scope: " + scope));
+            res.sendInvalidClient("Unknown scope: " + scopeName);
+            return;
+          }
 
-        db.Scope.find({ where: { name: scopeName }})
-          .complete(function(err, scope) {
-            if (err) {
-              next(err);
-              return;
-            }
+          callback(err, client, scope);
+        });
+    };
 
-            if (!scope) {
-              // SPEC : define correct error message
-              res.sendInvalidClient("Unknown scope: " + scopeName);
-              return;
-            }
+    var createAccessToken = function(client, scope, callback) {
+      // TODO: Handle duplicated tokens
+      db.AccessToken
+        .create({
+          token: generate.accessToken(),
+          user_id: null,
+          client_id: client.id,
+          scope_id: scope.id
+        })
+        .complete(function(err, accessToken) {
+          callback(err, accessToken, scope);
+        });
+    };
 
-            // TODO: Handle duplicated tokens
-            db.AccessToken
-              .create({
-                token:     generate.accessToken(),
-                user_id:   null,
-                client_id: clientId,
-                scope_id:  scope.id
-              })
-              .complete(function(err, accessToken) {
-                if (err) {
-                  next(err);
-                  return;
-                }
-
-                sendAccessToken(res, accessToken.token, scope, null);
-              });
-          });
-      });
+    async.waterfall([
+      findClient,
+      findScope,
+      createAccessToken
+    ], function(err, accessToken, scope) {
+      if (err) {
+        next(err);
+        return;
+      }
+      sendAccessToken(res, accessToken.token, scope, null);
+    });
   });
 };
 
@@ -155,82 +164,104 @@ var requestUserModeAccessToken = function(req, res, next) {
     var deviceCode = req.body.device_code;
     var scope = req.body.scope;
 
-    db.Client.find({ where: { id: clientId, secret: clientSecret } })
-      .complete(function(err, client) {
-        if (err) {
-          next(err);
-          return;
-        }
+    var findClient = function(callback) {
+      db.Client
+        .find({ where: { id: clientId, secret: clientSecret } })
+        .complete(function(err, client) {
+          if (err) {
+            callback(err);
+            return;
+          }
 
-        if (!client) {
-          res.sendInvalidClient("Unknown client: " + clientId);
-          return;
-        }
+          if (!client) {
+            res.sendInvalidClient("Unknown client: " + clientId);
+            return;
+          }
+          callback(null, client);
+      });
+    };
 
-        db.PairingCode
-          .find({
-            where:   { client_id: client.id, device_code: deviceCode },
-            include: [ db.Scope, db.User ]
+    var findPairingCode = function(client, callback) {
+      db.PairingCode
+        .find({
+          where:   { client_id: client.id, device_code: deviceCode },
+          include: [ db.Scope, db.User ]
+        })
+        .complete(function(err, pairingCode) {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          if (!pairingCode) {
+            res.sendInvalidClient("Pairing code not found");
+            return;
+          }
+
+          if (!pairingCode.scope || pairingCode.scope.name !== scope) {
+            res.sendInvalidClient("Pairing code scope mismatch");
+            return;
+          }
+
+          if (pairingCode.hasExpired()) {
+            res.sendErrorResponse(400, "expired", "Pairing code expired");
+            return;
+          }
+
+          if (!pairingCode.verified) {
+            res.send(202, { "reason": "authorization_pending" });
+            return;
+          }
+
+          callback(null, pairingCode);
+        });
+    };
+
+    var createAccessToken = function(pairingCode, callback) {
+      db.sequelize.transaction(function(transaction) {
+        var accessToken = {
+          token:     generate.accessToken(),
+          user_id:   pairingCode.user_id,
+          client_id: pairingCode.client_id,
+          scope_id:  pairingCode.scope_id
+        };
+
+        db.AccessToken
+          .create(accessToken)
+          .then(function() {
+            return pairingCode.destroy();
           })
-          .complete(function(err, pairingCode) {
-            if (err) {
+          .then(function() {
+            return transaction.commit();
+          })
+          .then(function() {
+            callback(null, accessToken, pairingCode);
+          },
+          function(error) {
+            transaction.rollback().complete(function(err) {
               next(err);
-              return;
-            }
-
-            if (!pairingCode) {
-              res.sendInvalidClient("Pairing code not found");
-              return;
-            }
-
-            if (!pairingCode.scope || pairingCode.scope.name !== scope) {
-              res.sendInvalidClient("Pairing code scope mismatch");
-              return;
-            }
-
-            if (pairingCode.hasExpired()) {
-              res.sendErrorResponse(400, "expired", "Pairing code expired");
-              return;
-            }
-
-            if (!pairingCode.verified) {
-              res.send(202, { "reason": "authorization_pending" });
-              return;
-            }
-
-            db.sequelize.transaction(function(transaction) {
-              var accessToken = {
-                token:     generate.accessToken(),
-                user_id:   pairingCode.user_id,
-                client_id: pairingCode.client_id,
-                scope_id:  pairingCode.scope_id
-              };
-
-              db.AccessToken
-                .create(accessToken)
-                .then(function() {
-                  return pairingCode.destroy();
-                })
-                .then(function() {
-                  return transaction.commit();
-                })
-                .then(function() {
-                  sendAccessToken(
-                    res,
-                    accessToken.token,
-                    pairingCode.scope,
-                    pairingCode.user
-                  );
-                },
-                function(error) {
-                  transaction.rollback().complete(function(err) {
-                    next(err);
-                  });
-                });
             });
           });
       });
+    };
 
+    async.waterfall([
+      findClient,
+      findPairingCode,
+      createAccessToken
+    ], function(err, accessToken, pairingCode) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      sendAccessToken(
+        res,
+        accessToken.token,
+        pairingCode.scope,
+        pairingCode.user
+      );
+    });
   });
 };
 
@@ -279,72 +310,90 @@ var requestServerFlowAccessToken = function(req, res, next) {
     var redirectUri = req.body.redirect_uri;
     var scopeName = req.body.scope;
 
-    db.AuthorizationCode
-      .find({
-        where:   { authorization_code: code },
-        include: [ db.Client, db.Scope, db.User ]
-      })
-      .complete(function(err, authorizationCode) {
-        if (err) {
-          next(err);
-          return;
-        }
+    var findAuthorizationCode = function(callback) {
 
-        if (!authorizationCode) {
-          res.sendInvalidRequest("Authorization code not found");
-          return;
-        }
+      db.AuthorizationCode
+        .find({
+          where:   { authorization_code: code },
+          include: [ db.Client, db.Scope, db.User ]
+        })
+        .complete(function(err, authorizationCode) {
+          if (err) {
+            next(err);
+            return;
+          }
 
-        if (authorizationCode.client_id !== clientId ||
-          authorizationCode.redirect_uri !== redirectUri) {
-          res.sendInvalidClient(
-            'Unauthorized redirect uri');
-          return;
-        }
+          if (!authorizationCode) {
+            res.sendInvalidRequest("Authorization code not found");
+            return;
+          }
 
-//      if (!authorizationCode.scope || authorizationCode.scope.name !== scopeName) {
-//        res.sendInvalidClient("Pairing code scope mismatch");
-//        return;
-//      }
+          if (authorizationCode.client_id !== clientId ||
+            authorizationCode.redirect_uri !== redirectUri) {
+            res.sendInvalidClient(
+              'Unauthorized redirect uri');
+            return;
+          }
 
-        if (authorizationCode.hasExpired()) {
-          res.sendErrorResponse(400, "expired", "Authorization code expired");
-          return;
-        }
+//        if (!authorizationCode.scope || authorizationCode.scope.name !== scopeName) {
+//          res.sendInvalidClient("Pairing code scope mismatch");
+//          return;
+//        }
 
-        db.sequelize.transaction(function(transaction) {
-          var accessToken = {
-            token:     generate.accessToken(),
-            user_id:   authorizationCode.user_id,
-            client_id: authorizationCode.client_id
-          };
+          if (authorizationCode.hasExpired()) {
+            res.sendErrorResponse(400, "expired", "Authorization code expired");
+            return;
+          }
 
-          db.AccessToken
-            .create(accessToken)
-            .then(function() {
-              return authorizationCode.destroy();
-            })
-            .then(function() {
-              return transaction.commit();
-            })
-            .then(function() {
-              sendAccessToken(
-                res,
-                accessToken.token,
-                { 'name': 'default', 'display_name': 'default scope' }, //TODO
-                authorizationCode.user
-              );
-            },
-            function(error) {
-              transaction.rollback().complete(function(err) {
-                next(err);
-              });
-            });
+          callback(err, authorizationCode);
         });
+    };
+
+    var createAccessToken = function(authorizationCode, callback) {
+      db.sequelize.transaction(function(transaction) {
+        var accessToken = {
+          token:     generate.accessToken(),
+          user_id:   authorizationCode.user_id,
+          client_id: authorizationCode.client_id
+        };
+
+        db.AccessToken
+          .create(accessToken)
+          .then(function() {
+            return authorizationCode.destroy();
+          })
+          .then(function() {
+            return transaction.commit();
+          })
+          .then(function() {
+            callback(null, accessToken, authorizationCode);
+          },
+          function(error) {
+            transaction.rollback().complete(function(err) {
+              callback(err);
+            });
+          });
       });
+    };
+
+    async.waterfall([
+      findAuthorizationCode,
+      createAccessToken
+    ], function(err, accessToken, authorizationCode){
+      if (err) {
+        next(err);
+        return;
+      }
+
+      sendAccessToken(
+        res,
+        accessToken.token,
+        { 'name': 'default', 'display_name': 'default scope' }, //TODO
+        authorizationCode.user
+      );
+    });
   });
 };
-
 
 var routes = function(app) {
   var logger = app.get('logger');
@@ -352,7 +401,6 @@ var routes = function(app) {
   /**
    * Access token endpoint
    */
-
   app.post('/token', function(req, res, next) {
     var grantType    = req.body.grant_type;
 
