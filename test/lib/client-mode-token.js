@@ -7,7 +7,7 @@ var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
 var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Scopes').then(function() {
+  db.sequelize.query('DELETE FROM Domains').then(function() {
     return db.sequelize.query('DELETE FROM Clients');
   })
   .then(function() {
@@ -32,7 +32,7 @@ var initDatabase = function(done) {
       ip:               '127.0.0.1'
     })
     .then(function() {
-      return db.Scope.create({
+      return db.Domain.create({
         id:           5,
         name:         'example-service.bbc.co.uk',
         display_name: 'BBC Radio',
@@ -66,7 +66,7 @@ describe('POST /token', function() {
           grant_type:    'authorization_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -101,14 +101,14 @@ describe('POST /token', function() {
           expect(this.res.body.description).to.equal('This radio at BBC Radio');
         });
 
-        it("should include a short description", function() {
-          expect(this.res.body).to.have.property('short_description');
-          expect(this.res.body.short_description).to.equal('BBC Radio');
+        it("should include a display name for the domain", function() {
+          expect(this.res.body).to.have.property('domain_display_name');
+          expect(this.res.body.domain_display_name).to.equal('BBC Radio');
         });
 
-        it("should include the scope", function() {
-          expect(this.res.body).to.have.property('scope');
-          expect(this.res.body.scope).to.equal('example-service.bbc.co.uk');
+        it("should include the domain", function() {
+          expect(this.res.body).to.have.property('domain');
+          expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
         });
 
         it("should include a valid refresh token"); // TODO: optional: refresh_token
@@ -150,8 +150,8 @@ describe('POST /token', function() {
             expect(this.accessTokens[0].user_id).to.equal(null);
           });
 
-          it("should be associated with the correct scope", function() {
-            expect(this.accessTokens[0].scope_id).to.equal(5);
+          it("should be associated with the correct domain", function() {
+            expect(this.accessTokens[0].domain_id).to.equal(5);
           });
         });
       });
@@ -184,7 +184,7 @@ describe('POST /token', function() {
           grant_type:    'authorization_code',
           // client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -205,7 +205,7 @@ describe('POST /token', function() {
           grant_type:    'authorization_code',
           client_id:     'unknown',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -226,7 +226,7 @@ describe('POST /token', function() {
           grant_type:    'authorization_code',
           client_id:     '100',
           // client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -247,7 +247,7 @@ describe('POST /token', function() {
           grant_type:    'authorization_code',
           client_id:     '100',
           client_secret: 'unknown',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -262,13 +262,13 @@ describe('POST /token', function() {
       });
     });
 
-    context('with missing scope', function() {
+    context('with missing domain', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a'
-          // scope:         'example-service.bbc.co.uk'
+          // domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -283,13 +283,13 @@ describe('POST /token', function() {
       });
     });
 
-    context('with incorrect scope', function() {
+    context('with incorrect domain', function() {
       before(function(done) {
         var body = {
           grant_type:    'authorization_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          scope:         'unknown'
+          domain:        'unknown'
         };
 
         requestHelper.sendRequest(this, '/token', {

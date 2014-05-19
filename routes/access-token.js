@@ -3,21 +3,21 @@
 var db       = require('../models');
 var generate = require('../lib/generate');
 
-var sendAccessToken = function(res, token, scope, user) {
+var sendAccessToken = function(res, token, domain, user) {
   var name = (user !== null) ? user.display_name : "This radio";
 
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
   res.send({
-    token:             token,
-    token_type:        'bearer',
-    scope:             scope.name,
-    description:       name + " at " + scope.display_name,
-    short_description: scope.display_name
+    token:               token,
+    token_type:          'bearer',
+    domain:              domain.name,
+    description:         name + " at " + domain.display_name,
+    domain_display_name: domain.display_name
   });
 };
 
-var requestClientModeAccessToken = function(res, next, clientId, clientSecret, scopeName) {
+var requestClientModeAccessToken = function(res, next, clientId, clientSecret, domainName) {
   db.Client.find({ where: { id: clientId, secret: clientSecret } })
     .complete(function(err, client) {
       if (err) {
@@ -30,16 +30,16 @@ var requestClientModeAccessToken = function(res, next, clientId, clientSecret, s
         return;
       }
 
-      db.Scope.find({ where: { name: scopeName }})
-        .complete(function(err, scope) {
+      db.Domain.find({ where: { name: domainName }})
+        .complete(function(err, domain) {
           if (err) {
             next(err);
             return;
           }
 
-          if (!scope) {
+          if (!domain) {
             // SPEC : define correct error message
-            res.sendInvalidClient("Unknown scope: " + scopeName);
+            res.sendInvalidClient("Unknown domain: " + domainName);
             return;
           }
 
@@ -49,7 +49,7 @@ var requestClientModeAccessToken = function(res, next, clientId, clientSecret, s
               token:     generate.accessToken(),
               user_id:   null,
               client_id: clientId,
-              scope_id:  scope.id
+              domain_id: domain.id
             })
             .complete(function(err, accessToken) {
               if (err) {
@@ -57,13 +57,13 @@ var requestClientModeAccessToken = function(res, next, clientId, clientSecret, s
                 return;
               }
 
-              sendAccessToken(res, accessToken.token, scope, null);
+              sendAccessToken(res, accessToken.token, domain, null);
             });
         });
     });
 };
 
-var requestUserModeAccessToken = function(res, next, clientId, clientSecret, deviceCode, scope) {
+var requestUserModeAccessToken = function(res, next, clientId, clientSecret, deviceCode, domain) {
   db.Client.find({ where: { id: clientId, secret: clientSecret } })
     .complete(function(err, client) {
       if (err) {
@@ -79,7 +79,7 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
       db.PairingCode
         .find({
           where:   { client_id: client.id, device_code: deviceCode },
-          include: [ db.Scope, db.User ]
+          include: [ db.Domain, db.User ]
         })
         .complete(function(err, pairingCode) {
           if (err) {
@@ -92,8 +92,8 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
             return;
           }
 
-          if (!pairingCode.scope || pairingCode.scope.name !== scope) {
-            res.sendInvalidClient("Pairing code scope mismatch");
+          if (!pairingCode.domain || pairingCode.domain.name !== domain) {
+            res.sendInvalidClient("Pairing code domain mismatch");
             return;
           }
 
@@ -112,7 +112,7 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
               token:     generate.accessToken(),
               user_id:   pairingCode.user_id,
               client_id: pairingCode.client_id,
-              scope_id:  pairingCode.scope_id
+              domain_id: pairingCode.domain_id
             };
 
             db.AccessToken
@@ -127,7 +127,7 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
                 sendAccessToken(
                   res,
                   accessToken.token,
-                  pairingCode.scope,
+                  pairingCode.domain,
                   pairingCode.user
                 );
               },
@@ -163,7 +163,7 @@ var schema = {
       type:     "string",
       required: false
     },
-    scope: {
+    domain: {
       type:     "string",
       required: true
     }
@@ -184,7 +184,7 @@ var routes = function(app) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var deviceCode   = req.body.device_code;
-    var scope        = req.body.scope;
+    var domain       = req.body.domain;
 
     if (grantType !== 'authorization_code') {
       res.sendErrorResponse(400, 'unsupported_grant_type', "Unsupported grant type: " + grantType);
@@ -193,11 +193,11 @@ var routes = function(app) {
 
     if (deviceCode) {
       // User mode
-      requestUserModeAccessToken(res, next, clientId, clientSecret, deviceCode, scope);
+      requestUserModeAccessToken(res, next, clientId, clientSecret, deviceCode, domain);
     }
     else {
       // Client mode
-      requestClientModeAccessToken(res, next, clientId, clientSecret, scope);
+      requestClientModeAccessToken(res, next, clientId, clientSecret, domain);
     }
   });
 };
