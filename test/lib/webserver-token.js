@@ -132,7 +132,7 @@ describe("POST /token", function() {
       context("and the request doesn't specify any scope", function() {
         before(function(done) {
           var requestBody = {
-            grant_type:    'authorization_code',
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
             code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
             client_id:     100,
             redirect_uri:  'https://example-service.bbc.co.uk/callback'
@@ -201,7 +201,7 @@ describe("POST /token", function() {
 
         before(function(done) {
           var requestBody = {
-            grant_type:    'authorization_code',
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
             code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
             client_id:     100,
             redirect_uri:  'https://example-service.bbc.co.uk/callback',
@@ -270,7 +270,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           client_id:     100,
@@ -294,7 +294,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           client_id:     100,
           scope:         'example-service.bbc.co.uk'
@@ -317,7 +317,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          'invalid',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           client_id:     100,
@@ -341,7 +341,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     100,
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
@@ -389,7 +389,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           scope:         'example-service.bbc.co.uk'
@@ -412,7 +412,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     99,
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
@@ -436,7 +436,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     100,
           scope:         'example-service.bbc.co.uk'
@@ -459,7 +459,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           redirect_uri:  'https://example-service.bbc.co.uk/wrong_callback',
           client_id:     100,
