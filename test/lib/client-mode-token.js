@@ -86,9 +86,13 @@ describe('POST /token', function() {
       });
 
       describe("the response body", function() {
+        it("should not include a user name", function() {
+          expect(this.res.body).to.not.have.property('user_name');
+        });
+
         it("should include a valid access token", function() {
-          expect(this.res.body).to.have.property('token');
-          expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf6123');
+          expect(this.res.body).to.have.property('access_token');
+          expect(this.res.body.access_token).to.equal('aed201ffb3362de42700a293bdebf6123');
         });
 
         it("should include the token type", function() {
@@ -96,19 +100,14 @@ describe('POST /token', function() {
           expect(this.res.body.token_type).to.equal('bearer');
         });
 
-        it("should include a description", function() {
-          expect(this.res.body).to.have.property('description');
-          expect(this.res.body.description).to.equal('This radio at BBC Radio');
+        it("should include the domain", function() {
+          expect(this.res.body).to.have.property('domain');
+          expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
         });
 
         it("should include a display name for the domain", function() {
           expect(this.res.body).to.have.property('domain_display_name');
           expect(this.res.body.domain_display_name).to.equal('BBC Radio');
-        });
-
-        it("should include the domain", function() {
-          expect(this.res.body).to.have.property('domain');
-          expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
         });
 
         it("should include a valid refresh token"); // TODO: optional: refresh_token

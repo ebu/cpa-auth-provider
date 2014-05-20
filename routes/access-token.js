@@ -3,18 +3,29 @@
 var db       = require('../models');
 var generate = require('../lib/generate');
 
-var sendAccessToken = function(res, token, domain, user) {
-  var name = (user !== null) ? user.display_name : "This radio";
+/**
+ * @param res HTTP response object.
+ * @param {Token} token
+ * @param {Domain} domain
+ * @param {User?} user
+ */
 
+var sendAccessToken = function(res, token, domain, user) {
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
-  res.send({
-    token:               token,
+
+  var response = {
+    access_token:        token.token,
     token_type:          'bearer',
     domain:              domain.name,
-    description:         name + " at " + domain.display_name,
     domain_display_name: domain.display_name
-  });
+  };
+
+  if (user) {
+    response.user_name = user.display_name;
+  }
+
+  res.send(response);
 };
 
 var requestClientModeAccessToken = function(res, next, clientId, clientSecret, domainName) {
@@ -57,7 +68,7 @@ var requestClientModeAccessToken = function(res, next, clientId, clientSecret, d
                 return;
               }
 
-              sendAccessToken(res, accessToken.token, domain, null);
+              sendAccessToken(res, accessToken, domain, null);
             });
         });
     });
@@ -126,7 +137,7 @@ var requestUserModeAccessToken = function(res, next, clientId, clientSecret, dev
               .then(function() {
                 sendAccessToken(
                   res,
-                  accessToken.token,
+                  accessToken,
                   pairingCode.domain,
                   pairingCode.user
                 );
