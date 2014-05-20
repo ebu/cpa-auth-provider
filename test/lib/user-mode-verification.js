@@ -16,7 +16,7 @@ var clearDatabase = function(done) {
     return db.sequelize.query('DELETE FROM Users');
   })
   .then(function() {
-    return db.sequelize.query('DELETE FROM Scopes');
+    return db.sequelize.query('DELETE FROM Domains');
   })
   .then(function() {
     done();
@@ -50,7 +50,7 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
-      return db.Scope.create({
+      return db.Domain.create({
         id:           5,
         name:         'example-service.bbc.co.uk',
         access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
@@ -61,7 +61,7 @@ var initDatabase = function(opts, done) {
 
       return db.PairingCode.create({
         client_id:        3,
-        scope_id:         5,
+        domain_id:        5,
         device_code:      'abcd1234',
         user_code:        '1234',
         verification_uri: 'http://example.com',
@@ -235,8 +235,8 @@ describe('POST /verify', function() {
               expect(this.pairingCode.user_id).to.equal(4);
             });
 
-            it('should be associated with the correct scope', function() {
-              expect(this.pairingCode.scope_id).to.equal(5);
+            it('should be associated with the correct domain', function() {
+              expect(this.pairingCode.domain_id).to.equal(5);
             });
           });
         });

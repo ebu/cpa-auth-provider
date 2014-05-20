@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes) {
     associate: function(models) {
       PairingCode.belongsTo(models.Client);
       PairingCode.belongsTo(models.User);
-      PairingCode.belongsTo(models.Scope);
+      PairingCode.belongsTo(models.Domain);
     }
   });
 

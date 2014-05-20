@@ -18,7 +18,7 @@ var schema = {
       type:     "string",
       required: true
     },
-    scope: {
+    domain: {
       type:     "string",
       required: true
     }
@@ -37,7 +37,7 @@ module.exports = function(app) {
   app.post('/associate', validateJson, function(req, res, next) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
-    var scopeName    = req.body.scope;
+    var domainName   = req.body.domain;
 
     db.Client.find({
       where: { id: clientId, secret: clientSecret }
@@ -53,21 +53,21 @@ module.exports = function(app) {
         return;
       }
 
-      db.Scope.find({ where: { name: scopeName }})
-        .complete(function(err, scope) {
+      db.Domain.find({ where: { name: domainName }})
+        .complete(function(err, domain) {
           if (err) {
             next(err);
             return;
           }
 
-          if (!scope) {
-            res.sendInvalidRequest("Scope " + scopeName + " not found");
+          if (!domain) {
+            res.sendInvalidRequest("Domain " + domainName + " not found");
             return;
           }
 
           var pairingCode = {
             client_id:           clientId,
-            scope_id:            scope.id,
+            domain_id:           domain.id,
             device_code:         generate.deviceCode(),
             user_code:           generate.userCode(),
             verification_uri:    config.verification_uri

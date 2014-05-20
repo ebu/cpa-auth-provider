@@ -10,7 +10,7 @@ var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM AccessTokens').then(function() {
     return db.AccessToken.create({
       token: 'aed201ffb3362de42700a293bdebf694',
-      scope_id: 1,
+      domain_id: 1,
       client_id: 2,
       user_id: 3
     });
@@ -18,7 +18,7 @@ var resetDatabase = function(done) {
   .then(function() {
     return db.AccessToken.create({
       token: 'af03736940844fccb0147f12a9d188fb',
-      scope_id: 1,
+      domain_id: 1,
       client_id: 4
     });
   })
@@ -30,16 +30,16 @@ var resetDatabase = function(done) {
   });
 };
 
-var createScope = function(done) {
+var createDomain = function(done) {
   var data = {
     id:   1,
     name: 'example-service.bbc.co.uk',
     access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
   };
 
-  db.Scope
+  db.Domain
     .create(data)
-    .complete(function(err, scope) {
+    .complete(function(err, domain) {
       done();
     });
 };
@@ -60,14 +60,14 @@ var createUser = function(done) {
 
 describe("POST /authorized", function() {
   before(resetDatabase);
-  before(createScope);
+  before(createDomain);
   before(createUser);
 
   context("with a valid user mode access token", function() {
     before(function(done) {
       var data = {
-        token: 'aed201ffb3362de42700a293bdebf694',
-        scope: 'example-service.bbc.co.uk'
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -113,8 +113,8 @@ describe("POST /authorized", function() {
   context("with a valid client mode access token", function() {
     before(function(done) {
       var data = {
-        token: 'af03736940844fccb0147f12a9d188fb',
-        scope: 'example-service.bbc.co.uk'
+        access_token: 'af03736940844fccb0147f12a9d188fb',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -157,8 +157,8 @@ describe("POST /authorized", function() {
   context("with incorrect content type", function() {
     before(function(done) {
       var data = {
-        token: 'aed201ffb3362de42700a293bdebf694',
-        scope: 'example-service.bbc.co.uk'
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -177,8 +177,8 @@ describe("POST /authorized", function() {
   context("with an invalid client access token", function() {
     before(function(done) {
       var data = {
-        token: 'unknown',
-        scope: 'example-service.bbc.co.uk'
+        access_token: 'unknown',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -201,7 +201,8 @@ describe("POST /authorized", function() {
   context("with missing client access token", function() {
     before(function(done) {
       var data = {
-        scope: 'example-service.bbc.co.uk'
+        // access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -217,11 +218,11 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with invalid scope", function() {
+  context("with invalid domain", function() {
     before(function(done) {
       var data = {
-        token: 'aed201ffb3362de42700a293bdebf694',
-        scope: 'unknown'
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'unknown'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -237,10 +238,11 @@ describe("POST /authorized", function() {
     });
   });
 
-  context("with missing scope", function() {
+  context("with missing domain", function() {
     before(function(done) {
       var data = {
-        token: 'aed201ffb3362de42700a293bdebf694'
+        access_token: 'aed201ffb3362de42700a293bdebf694'
+        // domain: 'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
