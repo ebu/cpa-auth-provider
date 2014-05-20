@@ -9,7 +9,7 @@ var schema = {
   required: true,
   additionalProperties: false,
   properties: {
-    token: {
+    access_token: {
       type:     "string",
       required: true
     },
@@ -34,7 +34,7 @@ module.exports = function(app, options) {
    */
 
   app.post('/authorized', protectedResourceHandler, validateJson, function(req, res, next) {
-    var accessToken = req.body.token;
+    var accessToken = req.body.access_token;
     var domainName  = req.body.domain;
 
     // TODO: do this in a single query?

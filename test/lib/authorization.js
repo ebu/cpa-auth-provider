@@ -66,8 +66,8 @@ describe("POST /authorized", function() {
   context("with a valid user mode access token", function() {
     before(function(done) {
       var data = {
-        token:  'aed201ffb3362de42700a293bdebf694',
-        domain: 'example-service.bbc.co.uk'
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -113,8 +113,8 @@ describe("POST /authorized", function() {
   context("with a valid client mode access token", function() {
     before(function(done) {
       var data = {
-        token:  'af03736940844fccb0147f12a9d188fb',
-        domain: 'example-service.bbc.co.uk'
+        access_token: 'af03736940844fccb0147f12a9d188fb',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -157,8 +157,8 @@ describe("POST /authorized", function() {
   context("with incorrect content type", function() {
     before(function(done) {
       var data = {
-        token:  'aed201ffb3362de42700a293bdebf694',
-        domain: 'example-service.bbc.co.uk'
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -177,8 +177,8 @@ describe("POST /authorized", function() {
   context("with an invalid client access token", function() {
     before(function(done) {
       var data = {
-        token:  'unknown',
-        domain: 'example-service.bbc.co.uk'
+        access_token: 'unknown',
+        domain:       'example-service.bbc.co.uk'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -201,7 +201,7 @@ describe("POST /authorized", function() {
   context("with missing client access token", function() {
     before(function(done) {
       var data = {
-        // token:  'aed201ffb3362de42700a293bdebf694',
+        // access_token: 'aed201ffb3362de42700a293bdebf694',
         domain: 'example-service.bbc.co.uk'
       };
 
@@ -221,8 +221,8 @@ describe("POST /authorized", function() {
   context("with invalid domain", function() {
     before(function(done) {
       var data = {
-        token:  'aed201ffb3362de42700a293bdebf694',
-        domain: 'unknown'
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'unknown'
       };
 
       requestHelper.sendRequest(this, '/authorized', {
@@ -241,7 +241,7 @@ describe("POST /authorized", function() {
   context("with missing domain", function() {
     before(function(done) {
       var data = {
-        token: 'aed201ffb3362de42700a293bdebf694'
+        access_token: 'aed201ffb3362de42700a293bdebf694'
         // domain: 'example-service.bbc.co.uk'
       };
 
