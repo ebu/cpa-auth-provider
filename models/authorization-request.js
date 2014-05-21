@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       AuthorizationRequest.belongsTo(models.Client);
-      AuthorizationRequest.belongsTo(models.Scope);
+      AuthorizationRequest.belongsTo(models.Domain);
     }
   });
 

@@ -30,6 +30,10 @@ var webServerFlowSchema = {
       type:     "string",
       required: true
     },
+    domain: {
+      type:     "string",
+      required: true
+    },
     scope: {
       type:     "string",
       required: false
@@ -49,14 +53,15 @@ module.exports = function(req, res, next) {
     var clientId = req.body.client_id;
     var code = req.body.code;
     var redirectUri = req.body.redirect_uri;
-    var scopeName = req.body.scope;
+    var domainName = req.body.domain;
+    var scope = req.body.scope;
 
     var findAuthorizationCode = function(callback) {
 
       db.AuthorizationCode
         .find({
           where:   { authorization_code: code },
-          include: [ db.Client, db.Scope, db.User ]
+          include: [ db.Client, db.Domain, db.User ]
         })
         .complete(function(err, authorizationCode) {
           if (err) {
@@ -76,10 +81,10 @@ module.exports = function(req, res, next) {
             return;
           }
 
-//        if (!authorizationCode.scope || authorizationCode.scope.name !== scopeName) {
-//          res.sendInvalidClient("Pairing code scope mismatch");
-//          return;
-//        }
+          if (!authorizationCode.domain || authorizationCode.domain.name !== domainName) {
+            res.sendInvalidClient("Pairing code domain mismatch");
+            return;
+          }
 
           if (authorizationCode.hasExpired()) {
             res.sendErrorResponse(400, "expired", "Authorization code expired");
@@ -128,8 +133,8 @@ module.exports = function(req, res, next) {
 
       sendAccessToken(
         res,
-        accessToken.token,
-        { 'name': 'default', 'display_name': 'default scope' }, //TODO
+        accessToken,
+        authorizationCode.domain,
         authorizationCode.user
       );
     });

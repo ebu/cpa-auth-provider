@@ -10,7 +10,7 @@ var async = require('async');
 var cheerio = require('cheerio');
 
 var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Scopes').then(function() {
+  db.sequelize.query('DELETE FROM Domains').then(function() {
     return db.sequelize.query('DELETE FROM Clients');
   })
   .then(function() {
@@ -50,8 +50,8 @@ var createDynamicClient = function(callback) {
     }).complete(callback);
 };
 
-var createScope = function(callback) {
-  db.Scope.create({
+var createDomain = function(callback) {
+  db.Domain.create({
     id:           5,
     name:         'example-service.bbc.co.uk',
     display_name: 'BBC Radio',
@@ -63,7 +63,7 @@ var initDatabase = function(done) {
   async.series([
     createStaticClient,
     createDynamicClient,
-    createScope
+    createDomain
   ], function(err) {
       if(err){
         done(new Error(JSON.stringify(err)));
@@ -119,7 +119,7 @@ describe('GET /authorize', function() {
             expect($('input[name="client_id"]').length).to.equal(1);
             expect($('input[name="client_id"]')[0].attribs.value).to.equal('100');
             expect($('input[name="redirect_uri"]').length).to.equal(1);
-            expect($('input[name="scope"]').length).to.equal(1);
+            expect($('input[name="domain"]').length).to.equal(1);
             expect($('input[name="state"]').length).to.equal(0);
           });
 

@@ -36,14 +36,14 @@ var createClient = function(done) {
     });
 };
 
-var createScope = function(done) {
-  db.Scope
+var createDomain = function(done) {
+  db.Domain
     .create({
       id:           1,
       name:         'example-service.bbc.co.uk',
       access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
     })
-    .complete(function(err, scope) {
+    .complete(function(err, domain) {
       done();
     });
 };
@@ -61,7 +61,7 @@ describe('POST /associate', function() {
 
   before(clearDatabase);
   before(createClient);
-  before(createScope);
+  before(createDomain);
 
   context('with valid parameters', function() {
     before(function() {
@@ -77,7 +77,7 @@ describe('POST /associate', function() {
       var data = {
         client_id:        '3',
         client_secret:    'a0fe0231-0220-4d45-8431-1fd374998d78',
-        scope:            'example-service.bbc.co.uk',
+        domain:           'example-service.bbc.co.uk',
       };
 
       requestHelper.sendRequest(this, '/associate', {
@@ -144,7 +144,7 @@ describe('POST /associate', function() {
         var data = {
           client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
-          scope:         'example-service.bbc.co.uk',
+          domain:        'example-service.bbc.co.uk',
         };
 
         requestHelper.sendRequest(this, '/associate', {
@@ -164,7 +164,7 @@ describe('POST /associate', function() {
         var data = {
           client_id:     null,
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
-          scope:         'example-service.bbc.co.uk',
+          domain:        'example-service.bbc.co.uk',
         };
 
         requestHelper.sendRequest(this, '/associate', {
@@ -184,7 +184,7 @@ describe('POST /associate', function() {
         var data = {
           client_id:     '-|13',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/associate', {
@@ -204,7 +204,7 @@ describe('POST /associate', function() {
         var data = {
           client_id:     '4',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/associate', {
@@ -219,12 +219,12 @@ describe('POST /associate', function() {
       });
     });
 
-    context('with missing scope', function() {
+    context('with missing domain', function() {
       before(function(done) {
         var data = {
           client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78'
-          // scope:         'example-service.bbc.co.uk'
+          // domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/associate', {
@@ -239,12 +239,12 @@ describe('POST /associate', function() {
       });
     });
 
-    context('with an unknown scope', function() {
+    context('with an unknown domain', function() {
       before(function(done) {
         var data = {
           client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
-          scope:         'unknown'
+          domain:        'unknown'
         };
 
         requestHelper.sendRequest(this, '/associate', {

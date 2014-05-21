@@ -2,7 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
 
-  var Scope = sequelize.define('Scope', {
+  var Domain = sequelize.define('Domain', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -25,10 +25,10 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     associate: function(models) {
-      Scope.hasMany(models.PairingCode);
-      Scope.hasMany(models.AccessToken);
+      Domain.hasMany(models.PairingCode);
+      Domain.hasMany(models.AccessToken);
     }
   });
 
-  return Scope;
+  return Domain;
 };

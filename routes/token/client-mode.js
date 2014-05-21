@@ -24,7 +24,7 @@ var clientModeSchema = {
       type:     "string",
       required: true
     },
-    scope: {
+    domain: {
       type:     "string",
       required: true
     }
@@ -42,7 +42,7 @@ module.exports = function(req, res, next) {
 
     var clientId = req.body.client_id;
     var clientSecret = req.body.client_secret;
-    var scopeName = req.body.scope;
+    var domainName = req.body.domain;
 
     var findClient = function(callback) {
       db.Client.find({ where: { id: clientId, secret: clientSecret } })
@@ -55,44 +55,43 @@ module.exports = function(req, res, next) {
         });
     };
 
-    var findScope = function(client, callback) {
-      db.Scope.find({ where: { name: scopeName }})
-        .complete(function(err, scope) {
-          if (!scope) {
+    var findDomain = function(client, callback) {
+      db.Domain.find({ where: { name: domainName }})
+        .complete(function(err, domain) {
+          if (!domain) {
             // SPEC : define correct error message
-            //callback(new Error("Unknown scope: " + scope));
-            res.sendInvalidClient("Unknown scope: " + scopeName);
+            res.sendInvalidClient("Unknown domain: " + domainName);
             return;
           }
 
-          callback(err, client, scope);
+          callback(err, client, domain);
         });
     };
 
-    var createAccessToken = function(client, scope, callback) {
+    var createAccessToken = function(client, domain, callback) {
       // TODO: Handle duplicated tokens
       db.AccessToken
         .create({
           token: generate.accessToken(),
           user_id: null,
           client_id: client.id,
-          scope_id: scope.id
+          domain_id: domain.id
         })
         .complete(function(err, accessToken) {
-          callback(err, accessToken, scope);
+          callback(err, accessToken, domain);
         });
     };
 
     async.waterfall([
       findClient,
-      findScope,
+      findDomain,
       createAccessToken
-    ], function(err, accessToken, scope) {
+    ], function(err, accessToken, domain) {
       if (err) {
         next(err);
         return;
       }
-      sendAccessToken(res, accessToken.token, scope, null);
+      sendAccessToken(res, accessToken, domain, null);
     });
   });
 };

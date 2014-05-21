@@ -50,14 +50,14 @@ module.exports = {
   // it into their user-agent.
   verification_uri: 'http://vagrant.ebu.io:3000/',
 
-  scopes: [
+  domains: [
     {
-      name:         'http://bbc1-cpa.ebu.io/',
+      name:         'bbc1-cpa.ebu.io',
       display_name: 'BBC1',
       access_token: 'b4949eba147f4cf88985b43c039cd05b'
     },
     {
-      name:         'http://bbc2-cpa.ebu.io/',
+      name:         'bbc2-cpa.ebu.io',
       display_name: 'BBC2',
       access_token: 'b3dd734356524ef9b9ab3d03f1b1558e'
     }

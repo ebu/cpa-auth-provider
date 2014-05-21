@@ -9,11 +9,11 @@ var schema = {
   required: true,
   additionalProperties: false,
   properties: {
-    token: {
+    access_token: {
       type:     "string",
       required: true
     },
-    scope: {
+    domain: {
       type:     "string",
       required: true
     }
@@ -34,27 +34,27 @@ module.exports = function(app, options) {
    */
 
   app.post('/authorized', protectedResourceHandler, validateJson, function(req, res, next) {
-    var accessToken = req.body.token;
-    var scopeName   = req.body.scope;
+    var accessToken = req.body.access_token;
+    var domainName  = req.body.domain;
 
     // TODO: do this in a single query?
 
-    db.Scope
-      .find({ where: { name: scopeName } })
-      .complete(function(err, scope) {
+    db.Domain
+      .find({ where: { name: domainName } })
+      .complete(function(err, domain) {
         if (err) {
           next(err);
           return;
         }
 
-        if (!scope) {
-          res.sendUnauthorized("Unknown scope: " + scopeName);
+        if (!domain) {
+          res.sendUnauthorized("Unknown domain: " + domainName);
           return;
         }
 
         var query = {
-          token:    accessToken,
-          scope_id: scope.id
+          token:     accessToken,
+          domain_id: domain.id
         };
 
         db.AccessToken

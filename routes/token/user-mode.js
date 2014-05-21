@@ -27,9 +27,9 @@ var userModeSchema = {
     },
     device_code: {
       type:     "string",
-      required: false
+      required: true
     },
-    scope: {
+    domain: {
       type:     "string",
       required: true
     }
@@ -48,7 +48,7 @@ module.exports = function(req, res, next) {
     var clientId = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var deviceCode = req.body.device_code;
-    var scope = req.body.scope;
+    var domainName = req.body.domain;
 
     var findClient = function(callback) {
       db.Client
@@ -71,7 +71,7 @@ module.exports = function(req, res, next) {
       db.PairingCode
         .find({
           where:   { client_id: client.id, device_code: deviceCode },
-          include: [ db.Scope, db.User ]
+          include: [ db.Domain, db.User ]
         })
         .complete(function(err, pairingCode) {
           if (err) {
@@ -84,8 +84,8 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          if (!pairingCode.scope || pairingCode.scope.name !== scope) {
-            res.sendInvalidClient("Pairing code scope mismatch");
+          if (!pairingCode.domain || pairingCode.domain.name !== domainName) {
+            res.sendInvalidClient("Pairing code domain mismatch");
             return;
           }
 
@@ -109,7 +109,7 @@ module.exports = function(req, res, next) {
           token:     generate.accessToken(),
           user_id:   pairingCode.user_id,
           client_id: pairingCode.client_id,
-          scope_id:  pairingCode.scope_id
+          domain_id:  pairingCode.domain_id
         };
 
         db.AccessToken
@@ -143,8 +143,8 @@ module.exports = function(req, res, next) {
 
       sendAccessToken(
         res,
-        accessToken.token,
-        pairingCode.scope,
+        accessToken,
+        pairingCode.domain,
         pairingCode.user
       );
     });

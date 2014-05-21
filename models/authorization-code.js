@@ -39,7 +39,7 @@ module.exports = function(sequelize, DataTypes) {
     associate: function(models) {
       AuthorizationCode.belongsTo(models.Client);
       AuthorizationCode.belongsTo(models.User);
-      AuthorizationCode.belongsTo(models.Scope);
+      AuthorizationCode.belongsTo(models.Domain);
     }
   });
 

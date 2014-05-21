@@ -36,8 +36,9 @@ db.sequelize
       console.log('Synchronization done.');
 
       if (process.env.NODE_ENV === 'development') {
-        db.Scope
-          .bulkCreate(config.scopes)
+
+        db.Domain
+          .bulkCreate(config.domains)
           .success(function() {
             console.log('[SCOPE] Database populated');
 

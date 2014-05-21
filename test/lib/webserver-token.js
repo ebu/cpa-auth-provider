@@ -21,7 +21,7 @@ var clearDatabase = function(done) {
       return db.sequelize.query('DELETE FROM Users');
     })
     .then(function() {
-      return db.sequelize.query('DELETE FROM Scopes');
+      return db.sequelize.query('DELETE FROM Domains');
     })
     .then(function() {
       done();
@@ -49,8 +49,8 @@ var createClient = function(callback) {
     }).complete(callback);
 };
 
-var createScope = function(callback) {
-  db.Scope.create({
+var createDomain = function(callback) {
+  db.Domain.create({
     id:           5,
     name:         'example-service.bbc.co.uk',
     display_name: 'BBC Radio',
@@ -74,7 +74,7 @@ var createAuthorizationCode = function(callback) {
     id:                 50,
     client_id:          100,
     user_id:            3,
-    scope_id:           5,
+    domain_id:          5,
     authorization_code: '4e72e9fdd4bdc3892d0e8eefaec9bef2',
     redirect_uri:       'https://example-service.bbc.co.uk/callback',
     state:              '',
@@ -86,7 +86,7 @@ var createAuthorizationCode = function(callback) {
 var initDatabase = function(done) {
   async.series([
     createClient,
-    createScope,
+    createDomain,
     createUser,
     createAuthorizationCode
   ], function(err) {
@@ -129,7 +129,7 @@ describe("POST /token", function() {
         this.clock.restore();
       });
 
-      context("and the request doesn't specify any scope", function() {
+      context.skip("and the request doesn't specify any scope", function() {
         before(function(done) {
           var requestBody = {
             grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
@@ -175,82 +175,9 @@ describe("POST /token", function() {
             expect(this.res.body.short_description).to.equal('default scope');
           });
 
-          it("should include the default scope", function() {
-            expect(this.res.body).to.have.property('scope');
-            expect(this.res.body.scope).to.equal('default');
-          });
-
           it("should include a valid refresh token"); // TODO: optional: refresh_token
           it("should include the lifetime of the access token"); // TODO: recommended: expires_in
 
-        });
-      });
-
-      context("and the request specify a scope", function() {
-        before(resetDatabase);
-
-        before(function() {
-          // Ensure pairing code has not expired
-          var time = new Date("Wed Apr 09 2014 11:00:30 GMT+0100").getTime();
-          this.clock = sinon.useFakeTimers(time, "Date");
-        });
-
-        after(function() {
-          this.clock.restore();
-        });
-
-        before(function(done) {
-          var requestBody = {
-            grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
-            code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
-            client_id:     100,
-            redirect_uri:  'https://example-service.bbc.co.uk/callback',
-            scope:         'example-service.bbc.co.uk'
-          };
-
-          requestHelper.sendRequest(this, '/token', {
-            method: 'post',
-            type:   'json',
-            data:   requestBody
-          }, done);
-        });
-
-        it("should return status 200", function() {
-          expect(this.res.statusCode).to.equal(200);
-        });
-
-        it("should return a JSON object", function() {
-          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-          expect(this.res.body).to.be.an('object');
-        });
-
-        describe("the response body", function() {
-          describe("the response body", function() {
-            it("should include a valid access token", function() {
-              expect(this.res.body).to.have.property('token');
-              expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf694');
-            });
-
-            it("should include the token type", function() {
-              expect(this.res.body).to.have.property('token_type');
-              expect(this.res.body.token_type).to.equal('bearer');
-            });
-
-            it("should include a description", function() {
-              expect(this.res.body).to.have.property('description');
-//              expect(this.res.body.description).to.equal('Test User at BBC Radio');
-            });
-
-            it("should include a short description", function() {
-              expect(this.res.body).to.have.property('short_description');
-//              expect(this.res.body.short_description).to.equal('BBC Radio');
-            });
-
-            it("should include a valid refresh token"); // TODO: optional: refresh_token
-            it("should include the lifetime of the access token"); // TODO: recommended: expires_in
-            it("should include the scope of the access token"); // TODO: scope (not default)
-
-          });
         });
       });
     });
@@ -274,7 +201,7 @@ describe("POST /token", function() {
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           client_id:     100,
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -297,7 +224,7 @@ describe("POST /token", function() {
           grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           client_id:     100,
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -321,7 +248,7 @@ describe("POST /token", function() {
           code:          'invalid',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
           client_id:     100,
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -345,7 +272,7 @@ describe("POST /token", function() {
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     100,
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -369,7 +296,7 @@ describe("POST /token", function() {
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     100,
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -392,7 +319,7 @@ describe("POST /token", function() {
           grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -416,7 +343,7 @@ describe("POST /token", function() {
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     99,
           redirect_uri:  'https://example-service.bbc.co.uk/callback',
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -439,7 +366,7 @@ describe("POST /token", function() {
           grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           client_id:     100,
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {
@@ -463,7 +390,7 @@ describe("POST /token", function() {
           code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
           redirect_uri:  'https://example-service.bbc.co.uk/wrong_callback',
           client_id:     100,
-          scope:         'example-service.bbc.co.uk'
+          domain:        'example-service.bbc.co.uk'
         };
 
         requestHelper.sendRequest(this, '/token', {

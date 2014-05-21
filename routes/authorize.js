@@ -81,7 +81,7 @@ module.exports = function(app, options) {
     var responseType = req.query.response_type;
     var clientId     = req.query.client_id;
     var redirectUri  = req.query.redirect_uri;
-    var scope        = req.query.scope;
+    var domain       = req.query.domain;
     var state        = req.query.state;
 
     if (!req.query.hasOwnProperty('client_id')) {
@@ -124,7 +124,7 @@ module.exports = function(app, options) {
             client_name: client.name,
             client_id: clientId,
             redirect_uri: redirectUri,
-            scope: scope,
+            domain: domain,
             state: state,
             error: null
           });
@@ -140,7 +140,7 @@ module.exports = function(app, options) {
     var clientId      = req.body.client_id;
     var userId        = req.user.id;
     var redirectUri   = req.body.redirect_uri;
-    var scope         = req.body.scope;
+    var domainName    = req.body.domain;
     var state         = req.body.state;
     var authorization = req.body.authorization;
 
@@ -151,18 +151,18 @@ module.exports = function(app, options) {
         state);
     }
 
-//    var findScope = function(callback) {
-//      db.Scope.find({ where: { name: scopeName }})
-//        .complete(callback);
-//    };
+    var findDomain = function(callback) {
+      db.Domain.find({ where: { name: domainName }})
+        .complete(callback);
+    };
 
     // Generate Authorization code
-    var createAuthorizationCode = function(callback) {
+    var createAuthorizationCode = function(domain, callback) {
       var authorizationCode = {
-        client_id: clientId,
-//        scope_id:            scope.id,
-        redirect_uri: redirectUri,
-        user_id: userId,
+        client_id:          clientId,
+        domain_id:          domain.id,
+        redirect_uri:       redirectUri,
+        user_id:            userId,
         authorization_code: generate.authorizationCode()
       };
 
@@ -171,7 +171,7 @@ module.exports = function(app, options) {
     };
 
     async.waterfall([
-//    findScope,
+      findDomain,
       createAuthorizationCode
     ],
     function (err, result) {
