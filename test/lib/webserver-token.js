@@ -129,13 +129,14 @@ describe("POST /token", function() {
         this.clock.restore();
       });
 
-      context.skip("and the request doesn't specify any scope", function() {
+      context("and the request doesn't specify any scope", function() {
         before(function(done) {
           var requestBody = {
             grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
             code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
             client_id:     100,
-            redirect_uri:  'https://example-service.bbc.co.uk/callback'
+            redirect_uri:  'https://example-service.bbc.co.uk/callback',
+            domain:        'example-service.bbc.co.uk'
           };
 
           requestHelper.sendRequest(this, '/token', {
@@ -156,8 +157,8 @@ describe("POST /token", function() {
 
         describe("the response body", function() {
           it("should include a valid access token", function() {
-            expect(this.res.body).to.have.property('token');
-            expect(this.res.body.token).to.equal('aed201ffb3362de42700a293bdebf694');
+            expect(this.res.body).to.have.property('access_token');
+            expect(this.res.body.access_token).to.equal('aed201ffb3362de42700a293bdebf694');
           });
 
           it("should include the token type", function() {
@@ -165,19 +166,104 @@ describe("POST /token", function() {
             expect(this.res.body.token_type).to.equal('bearer');
           });
 
-          it("should include a description", function() {
-            expect(this.res.body).to.have.property('description');
-            expect(this.res.body.description).to.equal('Test User at default scope');
+          it("should include a domain", function() {
+            expect(this.res.body).to.have.property('domain');
+            expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
           });
 
-          it("should include a short description", function() {
-            expect(this.res.body).to.have.property('short_description');
-            expect(this.res.body.short_description).to.equal('default scope');
+          it("should include a domain_display_name", function() {
+            expect(this.res.body).to.have.property('domain_display_name');
+            expect(this.res.body.domain_display_name).to.equal('BBC Radio');
           });
 
-          it("should include a valid refresh token"); // TODO: optional: refresh_token
-          it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+          it("should include a user_name", function() {
+            expect(this.res.body).to.have.property('user_name');
+            expect(this.res.body.user_name).to.equal('Test User');
+          });
 
+//          it("should include a scope", function() {
+//            expect(this.res.body).to.have.property('scope');
+//            expect(this.res.body.scope).to.equal('userinfo');
+//          });
+
+        });
+      });
+
+      context.skip("and the request specify a scope", function() {
+        before(resetDatabase);
+
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:00:30 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
+        before(function(done) {
+          var requestBody = {
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
+            code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
+            client_id:     100,
+            redirect_uri:  'https://example-service.bbc.co.uk/callback',
+            scope:         'userinfo',
+            domain:        'example-service.bbc.co.uk'
+          };
+
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return status 200", function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it("should return a JSON object", function() {
+          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+          expect(this.res.body).to.be.an('object');
+        });
+
+        describe("the response body", function() {
+          describe("the response body", function() {
+            it("should include a valid access token", function() {
+              expect(this.res.body).to.have.property('access_token');
+              expect(this.res.body.access_token).to.equal('aed201ffb3362de42700a293bdebf694');
+            });
+
+            it("should include the token type", function() {
+              expect(this.res.body).to.have.property('token_type');
+              expect(this.res.body.token_type).to.equal('bearer');
+            });
+
+            it("should include a domain", function() {
+              expect(this.res.body).to.have.property('domain');
+              expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
+            });
+
+            it("should include a domain_display_name", function() {
+              expect(this.res.body).to.have.property('domain_display_name');
+              expect(this.res.body.domain_display_name).to.equal('BBC Radio');
+            });
+
+            it("should include a user_name", function() {
+              expect(this.res.body).to.have.property('user_name');
+              expect(this.res.body.user_name).to.equal('Test User');
+            });
+
+            it("should include a scope", function() {
+              expect(this.res.body).to.have.property('scope');
+              expect(this.res.body.scope).to.equal('userinfo');
+            });
+
+            it("should include a valid refresh token"); // TODO: optional: refresh_token
+            it("should include the lifetime of the access token"); // TODO: recommended: expires_in
+
+          });
         });
       });
     });
