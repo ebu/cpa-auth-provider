@@ -27,7 +27,7 @@ var schema = {
   }
 };
 
-var validateJson = require('../lib/validate-json')(schema);
+var validateJson = require('../lib/validate-json').middleware(schema);
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -63,19 +63,18 @@ module.exports = function(app) {
             ip:               clientIp
           })
           .complete(function(err, client) {
-            var state = { client: client };
-            callback(err, state);
+            callback(err, client);
           });
         },
-        function(state, callback) {
+        function(client, callback) {
           transaction.commit().complete(function(err) {
-            callback(err, state);
+            callback(err, client);
           });
         },
-        function(state, callback) {
+        function(client, callback) {
           res.send(201, {
-            client_id:     state.client.id.toString(),
-            client_secret: state.client.secret
+            client_id:     client.id.toString(),
+            client_secret: client.secret
           });
 
           callback();

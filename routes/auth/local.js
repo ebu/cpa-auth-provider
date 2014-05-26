@@ -19,8 +19,17 @@ passport.use(new LocalStrategy(localStrategyCallback));
 
 module.exports = function(app, options) {
   app.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/auth',
+    failureRedirect: '/?error=login_failed',
     failureFlash:    true
-  }));
+  }), function (req, res, next) {
+
+    var redirectUri = req.session.auth_origin;
+    delete req.session.auth_origin;
+
+    if (redirectUri) {
+      return res.redirect(redirectUri);
+    }
+
+    res.redirect('/');
+  });
 };

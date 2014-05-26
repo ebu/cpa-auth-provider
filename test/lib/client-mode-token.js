@@ -63,7 +63,7 @@ describe('POST /token', function() {
     context('with valid parameters', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           domain:        'example-service.bbc.co.uk'
@@ -159,7 +159,7 @@ describe('POST /token', function() {
     context('with incorrect content type', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           scope:         'example-service.bbc.co.uk'
@@ -180,7 +180,7 @@ describe('POST /token', function() {
     context('with missing client_id', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           // client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           domain:        'example-service.bbc.co.uk'
@@ -201,7 +201,7 @@ describe('POST /token', function() {
     context('with incorrect client_id', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     'unknown',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           domain:        'example-service.bbc.co.uk'
@@ -222,7 +222,7 @@ describe('POST /token', function() {
     context('with missing client_secret', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '100',
           // client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           domain:        'example-service.bbc.co.uk'
@@ -243,7 +243,7 @@ describe('POST /token', function() {
     context('with incorrect client_secret', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '100',
           client_secret: 'unknown',
           domain:        'example-service.bbc.co.uk'
@@ -264,7 +264,7 @@ describe('POST /token', function() {
     context('with missing domain', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a'
           // domain:        'example-service.bbc.co.uk'
@@ -285,7 +285,7 @@ describe('POST /token', function() {
     context('with incorrect domain', function() {
       before(function(done) {
         var body = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           domain:        'unknown'

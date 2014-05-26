@@ -63,8 +63,21 @@ module.exports = {
     }
   ],
 
+  server_clients : [{
+    name: '',
+    software_id: '',
+    software_version: '',
+    ip: '127.0.0.1',
+    secret: '',
+    registration_type: 'static',
+    redirect_uri: ''
+  }],
+
   // The length of time that user (pairing) codes are valid, in seconds.
   valid_pairing_code_duration: 3600,
+
+  // The length of time that an authorization code is valid, in seconds.
+  valid_authorization_code_duration: 600,
 
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.

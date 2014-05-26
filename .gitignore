@@ -9,3 +9,5 @@ data/test.sqlite
 
 coverage
 docs
+
+sessions.db
