@@ -145,7 +145,7 @@ describe("POST /token", function() {
 
         before(function(done) {
           var requestBody = {
-            grant_type:    'authorization_code',
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
             client_id:     '100',
             client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
             device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -197,7 +197,7 @@ describe("POST /token", function() {
 
         before(function(done) {
           var requestBody = {
-            grant_type:    'authorization_code',
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
             client_id:     '101', // client with verified pairing code
             client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
             device_code:   'c691343f-0ac0-467d-8659-5041cfc3dc4a',
@@ -320,7 +320,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -344,7 +344,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          // grant_type:    'authorization_code',
+          // grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -392,7 +392,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           // client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -416,7 +416,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     'unknown',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -440,7 +440,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           // client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -464,7 +464,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           client_secret: 'unknown',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -491,7 +491,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   'unknown',
@@ -515,7 +515,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -539,7 +539,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '100',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
@@ -573,7 +573,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'authorization_code',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
           client_id:     '101', // client with verified pairing code
           client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
           device_code:   'c691343f-0ac0-467d-8659-5041cfc3dc4a',

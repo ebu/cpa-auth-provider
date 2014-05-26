@@ -20,7 +20,7 @@ var schema = {
   }
 };
 
-var validateJson = require('../lib/validate-json')(schema);
+var validateJson = require('../lib/validate-json').middleware(schema);
 
 module.exports = function(app, options) {
   var logger = app.get('logger');

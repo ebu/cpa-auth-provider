@@ -22,7 +22,8 @@
     "winston": "~0.7.2",
     "async": "~0.2.10",
     "jsonschema": "~0.4.0",
-    "node-uuid": "~1.4.1"
+    "node-uuid": "~1.4.1",
+    "connect-sqlite3": "~0.9.2"
   },
   "devDependencies": {
     "supertest": "~0.8.2",
