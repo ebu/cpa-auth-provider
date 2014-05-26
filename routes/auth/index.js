@@ -20,18 +20,10 @@ module.exports = function(app) {
     res.render('./auth/provider_list.ejs');
   });
 
-  if (config.identity_providers.facebook.enabled) {
-    logger.info('Facebook authentication enabled');
-    require('./facebook')(app);
-  }
-
-  if (config.identity_providers.github.enabled) {
-    logger.info('Github authentication enabled');
-    require('./github')(app);
-  }
-
-  if (config.identity_providers.local.enabled) {
-    logger.info('Local authentication enabled');
-    require('./local')(app);
+  for (var idp in config.identity_providers) {
+    if (config.identity_providers[idp].enabled) {
+      logger.info(idp + ' authentication enabled');
+      require('./'+idp)(app);
+    }
   }
 };
