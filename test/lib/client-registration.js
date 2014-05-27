@@ -182,9 +182,28 @@ describe('POST /register', function() {
         });
       });
     });
+
+    context("with an extra parameter", function() {
+      before(function(done) {
+        var data = {
+          client_name:      'Test client',
+          software_id:      'CPA AP Test',
+          software_version: '0.0.1',
+          extra:            'test'
+        };
+
+        requestHelper.sendRequest(this, '/register', {
+          method: 'post',
+          data:   data
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
   });
 });
-
 
 describe('GET /register/:client_id', function() {
   context("When updating configuration information about a client", function() {

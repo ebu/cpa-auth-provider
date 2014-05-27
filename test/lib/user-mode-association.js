@@ -258,5 +258,26 @@ describe('POST /associate', function() {
         assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
+
+    context("with an extra parameter", function() {
+      before(function(done) {
+        var data = {
+          client_id:     '3',
+          client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
+          domain:        'example-service.bbc.co.uk',
+          extra:         'test'
+        };
+
+        requestHelper.sendRequest(this, '/associate', {
+          method: 'post',
+          type:   'json',
+          data:   data
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
   });
 });
