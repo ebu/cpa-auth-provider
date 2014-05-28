@@ -558,6 +558,29 @@ describe("POST /token", function() {
       });
     });
 
+    context("with an extra parameter", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/device_code',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          device_code:   '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+          domain:        'example-service.bbc.co.uk',
+          extra:         'test'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
+
     context("when the pairing code has expired", function() {
       before(resetDatabase);
 

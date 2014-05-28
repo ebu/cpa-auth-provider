@@ -491,6 +491,29 @@ describe("POST /token", function() {
       });
     });
 
+    context("with an extra parameter", function() {
+      before(function(done) {
+        var requestBody = {
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/authorization_code',
+          code:          '4e72e9fdd4bdc3892d0e8eefaec9bef2',
+          redirect_uri:  'https://example-service.bbc.co.uk/callback',
+          client_id:     100,
+          domain:        'example-service.bbc.co.uk',
+          extra:         'test',
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   requestBody
+        }, done);
+      });
+
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
+
     // TODO: Scope
   });
 });
