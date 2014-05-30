@@ -136,8 +136,10 @@ describe('GET /verify', function() {
         requestHelper.sendRequest(this, '/verify', null, done);
       });
 
-      it('should reply a status 401', function() {
-        expect(this.res.statusCode).to.equal(401);
+      it('should redirect to the login page', function() {
+        expect(this.res.statusCode).to.equal(302);
+        expect(this.res.headers.location).to.equal("/auth");
+        // TODO: check that the url to redirect to after login is /verify
       });
     });
   });

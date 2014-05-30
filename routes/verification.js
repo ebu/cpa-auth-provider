@@ -30,7 +30,7 @@ var routes = function(app) {
     res.render('verify-info.ejs', { message: message, status: status });
   };
 
-  app.get('/verify', authHelper.ensureAuthenticated, renderVerificationPage);
+  app.get('/verify', authHelper.authenticateFirst, renderVerificationPage);
 
   /**
    * User code verification endpoint
