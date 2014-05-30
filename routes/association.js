@@ -74,6 +74,10 @@ module.exports = function(app) {
             verification_uri:    config.verification_uri
           };
 
+          if (client.user) {
+            pairingCode.user_id = client.user.id;
+          }
+
           db.PairingCode.create(pairingCode)
             .complete(function(err, pairingCode) {
               if (err) {

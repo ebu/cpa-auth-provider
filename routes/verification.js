@@ -9,13 +9,21 @@ var routes = function(app) {
   var logger = app.get('logger');
 
   var renderVerificationPage = function(req, res, errorMessage) {
-    if (typeof errorMessage === 'string') {
-      res.status(400);
-      res.render('verify.ejs', { 'values': req.body, 'error': errorMessage });
-    }
-    else {
-      res.render('verify.ejs', { 'values': req.body, 'error': null });
-    }
+    db.PairingCode.findAll({ where: { user_id: req.user.id, verified: false }})
+      .complete(function(err, pairingCodes) {
+        if (pairingCodes.length > 0) {
+          res.render('verify.ejs', { 'values': pairingCodes, 'error': errorMessage });
+        }
+        else {
+          if (typeof errorMessage === 'string') {
+            res.status(400);
+            res.render('verify.ejs', { 'values': req.body, 'error': errorMessage });
+          }
+          else {
+            res.render('verify.ejs', { 'values': req.body, 'error': null });
+          }
+        }
+      });
   };
 
   var renderVerificationInfo = function(res, message, status) {
