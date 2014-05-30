@@ -60,6 +60,7 @@ module.exports = function(sequelize, DataTypes) {
     associate: function(models) {
       Client.hasMany(models.PairingCode);
       Client.hasMany(models.AccessToken);
+      Client.belongsTo(models.User);
     }
   });
 

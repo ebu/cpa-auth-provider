@@ -1,11 +1,11 @@
 "use strict";
 
-var db       = require('../../models');
-var generate = require('../../lib/generate');
+var config          = require('../../config');
+var db              = require('../../models');
+var generate        = require('../../lib/generate');
 var sendAccessToken = require('./send-token');
 
-var async    = require('async');
-
+var async = require('async');
 
 var userModeSchema = {
   id: "/token",
@@ -45,10 +45,10 @@ module.exports = function(req, res, next) {
       return;
     }
 
-    var clientId = req.body.client_id;
+    var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
-    var deviceCode = req.body.device_code;
-    var domainName = req.body.domain;
+    var deviceCode   = req.body.device_code;
+    var domainName   = req.body.domain;
 
     var findClient = function(callback) {
       db.Client
@@ -94,26 +94,30 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          if (!pairingCode.verified) {
+          if (!config.auto_provision_tokens && !pairingCode.verified) {
             res.send(202, { "reason": "authorization_pending" });
             return;
           }
 
-          callback(null, pairingCode);
+          callback(null, client, pairingCode);
         });
     };
 
-    var createAccessToken = function(pairingCode, callback) {
+    var createAccessToken = function(client, pairingCode, callback) {
       db.sequelize.transaction(function(transaction) {
         var accessToken = {
           token:     generate.accessToken(),
           user_id:   pairingCode.user_id,
           client_id: pairingCode.client_id,
-          domain_id:  pairingCode.domain_id
+          domain_id: pairingCode.domain_id
         };
 
         db.AccessToken
           .create(accessToken)
+          .then(function() {
+            // Associate client with user
+            return client.updateAttributes({ user_id: pairingCode.user_id });
+          })
           .then(function() {
             return pairingCode.destroy();
           })

@@ -40,7 +40,8 @@ module.exports = function(app) {
     var domainName   = req.body.domain;
 
     db.Client.find({
-      where: { id: clientId, secret: clientSecret }
+      where: { id: clientId, secret: clientSecret },
+      include: [ db.User ]
     })
     .complete(function(err, client) {
       if (err) {
@@ -83,13 +84,34 @@ module.exports = function(app) {
               res.set('Cache-Control', 'no-store');
               res.set('Pragma', 'no-cache');
 
-              res.send(200, {
-                device_code:      pairingCode.device_code,
-                user_code:        pairingCode.user_code,
-                verification_uri: pairingCode.verification_uri,
-                expires_in:       Math.floor(pairingCode.getTimeToLive()),
-                interval:         config.max_poll_interval
-              });
+              if (client.user) {
+                if (config.auto_provision_tokens) {
+                  // Automatically grant access
+                  res.send(200, {
+                    device_code:      pairingCode.device_code,
+                    expires_in:       Math.floor(pairingCode.getTimeToLive())
+                  });
+                }
+                else {
+                  // Ask user's permission to grant access
+                  res.send(200, {
+                    device_code:      pairingCode.device_code,
+                    verification_uri: pairingCode.verification_uri,
+                    interval:         config.max_poll_interval,
+                    expires_in:       Math.floor(pairingCode.getTimeToLive())
+                  });
+                }
+              }
+              else {
+                // Must pair with user account
+                res.send(200, {
+                  device_code:      pairingCode.device_code,
+                  user_code:        pairingCode.user_code,
+                  verification_uri: pairingCode.verification_uri,
+                  interval:         config.max_poll_interval,
+                  expires_in:       Math.floor(pairingCode.getTimeToLive())
+                });
+              }
           });
         });
     });
