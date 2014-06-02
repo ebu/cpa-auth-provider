@@ -57,13 +57,37 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
+      return db.Domain.create({
+        id:           134,
+        name:         'example-service2.bbc.co.uk',
+        access_token: '70fc2cbe54a749c38da34b6a02e8dabc'
+      });
+    })
+    .then(function() {
       var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
 
       return db.PairingCode.create({
+        id:               12,
         client_id:        3,
         domain_id:        5,
         device_code:      'abcd1234',
         user_code:        '1234',
+        verification_uri: 'http://example.com',
+        verified:         opts.verified,
+        user_id:          opts.user_id,
+        created_at:       date,
+        updated_at:       date
+      });
+    })
+    .then(function() {
+      var date = new Date("Wed Apr 09 2014 11:00:05 GMT+0100");
+
+      return db.PairingCode.create({
+        id:               15,
+        client_id:        3,
+        domain_id:        134,
+        device_code:      '123gdd',
+        user_code:        '',
         verification_uri: 'http://example.com',
         verified:         opts.verified,
         user_id:          opts.user_id,
@@ -82,7 +106,7 @@ var initDatabase = function(opts, done) {
 var resetDatabase = function(opts, done) {
   if (!done) {
     done = opts;
-    opts = { verified: false, user_id: null };
+    opts = { verified: false, user_id: 4 };
   }
 
   clearDatabase(function(err) {
@@ -96,9 +120,9 @@ var resetDatabase = function(opts, done) {
 };
 
 describe('GET /verify', function() {
-  context('When requesting the form to validate a user code', function() {
+  before(resetDatabase);
+  context('When requesting the form to validate a domain', function() {
     context('and the user is authenticated', function() {
-      before(resetDatabase);
       before(function(done) {
         var self = this;
 
@@ -125,9 +149,12 @@ describe('GET /verify', function() {
       });
 
       describe('the response body', function() {
-        it('should display an input with name', function() {
+        it('should display an input with the pairing codes', function() {
           var $ = cheerio.load(this.res.text);
-          expect($('input[name="user_code"]').length).to.equal(1);
+          expect($('input[name="pairing_code_15"]').length).to.equal(2);
+          expect($('input[name="pairing_code_15"]')[0].attribs.value).to.equal('yes');
+          expect($('input[name="pairing_code_12"]').length).to.equal(2);
+          expect($('input[name="pairing_code_12"]')[0].attribs.value).to.equal('yes');
         });
       });
     });
@@ -148,8 +175,9 @@ describe('GET /verify', function() {
 describe('POST /verify', function() {
   before(resetDatabase);
 
-  context('When validating a user_code', function() {
+  context('When validating a domain', function() {
     context('and the user is authenticated', function() {
+
       before(function(done) {
         var self = this;
 
@@ -163,10 +191,10 @@ describe('POST /verify', function() {
           });
       });
 
-      context('using a valid user_code', function() {
+      context('and the user allows the domain', function() {
         before(function() {
           // Ensure pairing code has not expired
-          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+          var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
           this.clock = sinon.useFakeTimers(time, "Date");
         });
 
@@ -179,23 +207,14 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { user_code: '1234' }
+            data:   { pairing_code_12: 'yes' }
           }, done);
         });
 
-        it('should return a status 200', function() {
-          expect(this.res.statusCode).to.equal(200);
-        });
-
-        it('should return HTML', function() {
-          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-        });
-
-        describe('the response body', function() {
-          it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function() {
-            expect(this.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
-          });
-        });
+        it('should return a status 302 with location /verify', function() {
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers['location']).to.equal('/verify');
+        })
 
         describe('the database', function() {
           before(function(done) {
@@ -211,18 +230,14 @@ describe('POST /verify', function() {
               });
           });
 
-          it('should have one pairing code', function() {
+          it('should have two pairing codes', function() {
             expect(this.pairingCodes).to.be.an('array');
-            expect(this.pairingCodes.length).to.equal(1);
+            expect(this.pairingCodes.length).to.equal(2);
           });
 
-          describe('the pairing code', function() {
+          describe('the first pairing code', function() {
             before(function() {
               this.pairingCode = this.pairingCodes[0];
-            });
-
-            it('should contain the correct user code', function() {
-              expect(this.pairingCode.user_code).to.equal('1234');
             });
 
             it('should be marked as verified', function() {
@@ -241,118 +256,33 @@ describe('POST /verify', function() {
               expect(this.pairingCode.domain_id).to.equal(5);
             });
           });
-        });
-      });
 
-      context('with a missing user_code', function() {
-        before(resetDatabase);
+          describe('the second pairing code', function() {
+            before(function() {
+              this.pairingCode = this.pairingCodes[1];
+            });
 
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   {}
-          }, done);
-        });
+            it('should be marked as verified', function() {
+              expect(this.pairingCode.verified).to.equal(false);
+            });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-      });
+            it('should be associated with the correct client', function() {
+              expect(this.pairingCode.client_id).to.equal(3);
+            });
 
-      context('with an invalid user_code', function() {
-        before(resetDatabase);
+            it('should be associated with the signed-in user', function() {
+              expect(this.pairingCode.user_id).to.equal(4);
+            });
 
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   { user_code: '5678' }
-          }, done);
-        });
-
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-
-        it('should return HTML', function() {
-          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-        });
-
-        describe('the response body', function() {
-          it('should contain the error message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function() {
-            expect(this.res.text).to.contain(messages.INVALID_USERCODE);
+            it('should be associated with the correct domain', function() {
+              expect(this.pairingCode.domain_id).to.equal(134);
+            });
           });
         });
       });
 
-      context('with an already verified user_code', function() {
-        before(function(done) {
-          resetDatabase({ verified: true, user_id: 5 }, done);
-        });
+      //TODO : context('with an expired user_code')
 
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   { user_code: '1234' }
-          }, done);
-        });
-
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-
-        it('should return HTML', function() {
-          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-        });
-
-        describe('the response body', function() {
-          it('should contain the message OBSOLETE_USERCODE: ' + messages.OBSOLETE_USERCODE, function() {
-            expect(this.res.text).to.contain(messages.OBSOLETE_USERCODE);
-          });
-        });
-      });
-
-      context('with an expired user_code', function() {
-        before(function() {
-          // The pairing code should expire one hour after it was created
-          var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
-          this.clock = sinon.useFakeTimers(time, "Date");
-        });
-
-        after(function() {
-          this.clock.restore();
-        });
-
-        before(resetDatabase);
-
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   { user_code: '1234' }
-          }, done);
-        });
-
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
-        });
-
-        it('should return HTML', function() {
-          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-        });
-
-        describe('the response body', function() {
-          it('should contain the message EXPIRED_USERCODE: ' + messages.EXPIRED_USERCODE, function() {
-            expect(this.res.text).to.contain(messages.EXPIRED_USERCODE);
-          });
-        });
-      });
     });
 
     context('and the user is not authenticated', function() {
