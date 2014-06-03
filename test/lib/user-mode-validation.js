@@ -213,8 +213,8 @@ describe('POST /verify', function() {
 
         it('should return a status 302 with location /verify', function() {
           expect(this.res.statusCode).to.equal(302);
-          expect(this.res.headers['location']).to.equal('/verify');
-        })
+          expect(this.res.headers.location).to.equal('/verify');
+        });
 
         describe('the database', function() {
           before(function(done) {
