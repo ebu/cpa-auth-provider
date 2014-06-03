@@ -5,22 +5,26 @@ var authHelper    = require('../lib/auth-helper');
 var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
 
+var async = require('async');
+
 var routes = function(app) {
   var logger = app.get('logger');
 
   var renderVerificationPage = function(req, res, errorMessage) {
-    db.PairingCode.findAll({ where: { user_id: req.user.id, verified: false }})
-      .complete(function(err, pairingCodes) {
+    db.PairingCode.findAll({
+      where: { user_id: req.user.id, verified: false },
+      include: [ db.User, db.Domain ]
+    }).complete(function(err, pairingCodes) {
         if (pairingCodes.length > 0) {
-          res.render('verify.ejs', { 'values': pairingCodes, 'error': errorMessage });
+          res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
         }
         else {
           if (typeof errorMessage === 'string') {
             res.status(400);
-            res.render('verify.ejs', { 'values': req.body, 'error': errorMessage });
+            res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': errorMessage });
           }
           else {
-            res.render('verify.ejs', { 'values': req.body, 'error': null });
+            res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': null });
           }
         }
       });
@@ -33,8 +37,36 @@ var routes = function(app) {
   app.get('/verify', authHelper.authenticateFirst, renderVerificationPage);
 
   /**
-   * User code verification endpoint
+   * User code verification and validation endpoint
    */
+
+
+  var validatePairingCodes = function(userId, formCodes, done) {
+
+    async.each(formCodes, function(code, callback) {
+      db.PairingCode.find({
+        where: { id: code.id, user_id: userId, verified: false },
+        include: [ db.User, db.Domain ]
+      }).complete(function(err, c) {
+        if (err || !c) {
+          callback('PairingCode with id: ' + code.id + ' not found');
+          return;
+        }
+
+        c.verified = (code.value === 'yes');
+        c.save(['verified']).complete(callback);
+      });
+    },
+    function(err){
+      if( err ) {
+        console.log(err);
+        done(err);
+      } else {
+        done(null);
+      }
+    });
+
+  };
 
   app.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
     if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
@@ -42,8 +74,24 @@ var routes = function(app) {
       return;
     }
 
-    var userCode = req.body.user_code;
+    var codes = [];
+    for (var k in req.body) {
+      if(k.indexOf('pairing_code_') === 0) {
+        codes.push({id:k.substr('pairing_code_'.length), value:req.body[k]});
+      }
+    }
 
+    if (codes.length > 0) {
+      return validatePairingCodes(req.user.id, codes, function(err) {
+        if (err) {
+          res.send(500);
+          return;
+        }
+        res.redirect('/verify');
+      });
+    }
+
+    var userCode = req.body.user_code;
     if (!userCode) {
       res.sendInvalidRequest("Missing user_code");
       return;

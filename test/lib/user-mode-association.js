@@ -256,7 +256,7 @@ describe('POST /associate', function() {
       });
 
       after(function() {
-        config.auto_provision_tokens = this.tokens;
+        config.auto_provision_tokens = this.policy;
       });
 
       before(function() {
