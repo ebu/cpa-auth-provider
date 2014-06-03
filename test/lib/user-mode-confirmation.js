@@ -497,9 +497,10 @@ describe('POST /verify', function() {
           }, done);
         });
 
+        // TODO: redirect to /verify page and display an error message
+        // to the user?
         it('should return status 500', function() {
           expect(this.res.statusCode).to.equal(500);
-          // expect(this.res.headers.location).to.equal('/verify');
         });
 
         describe('the pairing code', function() {
@@ -530,6 +531,55 @@ describe('POST /verify', function() {
 
           it('should be associated with the correct domain', function() {
             expect(this.pairingCode.domain_id).to.equal(5);
+          });
+        });
+      });
+
+      context('with a pairing code for another user', function() {
+        before(resetDatabase);
+
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { pairing_code_17: 'yes' }
+          }, done);
+        });
+
+        // TODO: redirect to /verify page and display an error message
+        // to the user?
+        it('should return status 500', function() {
+          expect(this.res.statusCode).to.equal(500);
+        });
+
+        describe('the database', function() {
+          before(function(done) {
+            var self = this;
+
+            db.PairingCode.findAll()
+              .success(function(pairingCodes) {
+                self.pairingCodes = pairingCodes;
+                done();
+              })
+              .error(function(error) {
+                done(error);
+              });
+          });
+
+          it('should contain 3 pairing codes', function() {
+            expect(this.pairingCodes).to.be.an('array');
+            expect(this.pairingCodes.length).to.equal(3);
           });
         });
       });
