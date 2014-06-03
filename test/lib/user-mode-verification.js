@@ -45,8 +45,9 @@ var initDatabase = function(opts, done) {
     })
     .then(function() {
       return db.User.create({
+        id:           5,
         provider_uid: 'testuser',
-        password: 'testpassword'
+        password:     'testpassword'
       });
     })
     .then(function() {
@@ -235,7 +236,7 @@ describe('POST /verify', function() {
             });
 
             it('should be associated with the signed-in user', function() {
-              expect(this.pairingCode.user_id).to.equal(4);
+              expect(this.pairingCode.user_id).to.equal(5);
             });
 
             it('should be associated with the correct domain', function() {

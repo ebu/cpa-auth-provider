@@ -37,16 +37,27 @@ var initDatabase = function(done) {
       ip:               '127.0.0.1'
     })
     .then(function() {
+      return db.Client.create({
+        id:               101,
+        secret:           '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+        name:             'Test client',
+        software_id:      'CPA AP Test',
+        software_version: '0.0.1',
+        ip:               '127.0.0.1'
+      });
+    })
+    .then(function() {
       return db.User.create({
-        id:           4,
+        id:           3,
         provider_uid: 'https://facebook.com/user',
         enable_sso:   true
       });
     })
     .then(function() {
       return db.User.create({
+        id:           4,
         provider_uid: 'testuser',
-        password: 'testpassword'
+        password:     'testpassword'
       });
     })
     .then(function() {
@@ -91,6 +102,22 @@ var initDatabase = function(done) {
         verification_uri: 'http://example.com',
         state:            'pending',
         user_id:          4,
+        created_at:       date,
+        updated_at:       date
+      });
+    })
+    .then(function() {
+      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
+
+      return db.PairingCode.create({
+        id:               16,
+        client_id:        101,
+        domain_id:        5,
+        device_code:      'efgh5678',
+        user_code:        '1234',
+        verification_uri: 'http://example.com',
+        state:            'pending',
+        user_id:          3,
         created_at:       date,
         updated_at:       date
       });
@@ -215,7 +242,7 @@ describe('POST /verify', function() {
           before(function(done) {
             var self = this;
 
-            db.PairingCode.findAll()
+            db.PairingCode.findAll({ where: { user_id: 4 } })
               .success(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
@@ -225,7 +252,7 @@ describe('POST /verify', function() {
               });
           });
 
-          it('should have two pairing codes', function() {
+          it('should have two pairing codes for the signed in user', function() {
             expect(this.pairingCodes).to.be.an('array');
             expect(this.pairingCodes.length).to.equal(2);
           });
@@ -311,7 +338,7 @@ describe('POST /verify', function() {
           before(function(done) {
             var self = this;
 
-            db.PairingCode.findAll()
+            db.PairingCode.findAll({ where: { user_id: 4 } })
               .success(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
@@ -321,7 +348,7 @@ describe('POST /verify', function() {
               });
           });
 
-          it('should have two pairing codes', function() {
+          it('should have two pairing codes for the signed in user', function() {
             expect(this.pairingCodes).to.be.an('array');
             expect(this.pairingCodes.length).to.equal(2);
           });
@@ -407,7 +434,7 @@ describe('POST /verify', function() {
           before(function(done) {
             var self = this;
 
-            db.PairingCode.findAll()
+            db.PairingCode.findAll({ where: { user_id: 4 } })
               .success(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
@@ -417,7 +444,7 @@ describe('POST /verify', function() {
               });
           });
 
-          it('should have two pairing codes', function() {
+          it('should have two pairing codes for the signed in user', function() {
             expect(this.pairingCodes).to.be.an('array');
             expect(this.pairingCodes.length).to.equal(2);
           });
@@ -444,6 +471,65 @@ describe('POST /verify', function() {
             it('should be associated with the correct domain', function() {
               expect(this.pairingCode.domain_id).to.equal(5);
             });
+          });
+        });
+      });
+
+      context('with a pairing code for another user', function() {
+        before(resetDatabase);
+
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { pairing_code_16: 'yes' }
+          }, done);
+        });
+
+        it('should return status 500', function() {
+          expect(this.res.statusCode).to.equal(500);
+          // expect(this.res.headers.location).to.equal('/verify');
+        });
+
+        describe('the pairing code', function() {
+          before(function(done) {
+            var self = this;
+
+            db.PairingCode.find(16)
+              .success(function(pairingCode) {
+                self.pairingCode = pairingCode;
+                done();
+              })
+              .error(function(error) {
+                done(error);
+              });
+          });
+
+          it('should still be pending', function() {
+            expect(this.pairingCode.state).to.equal('pending');
+          });
+
+          it('should be associated with the correct client', function() {
+            expect(this.pairingCode.client_id).to.equal(101);
+          });
+
+          it('should be associated with the correct user', function() {
+            expect(this.pairingCode.user_id).to.equal(3);
+          });
+
+          it('should be associated with the correct domain', function() {
+            expect(this.pairingCode.domain_id).to.equal(5);
           });
         });
       });
