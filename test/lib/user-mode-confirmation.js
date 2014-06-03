@@ -116,6 +116,7 @@ var resetDatabase = function(done) {
 
 describe('GET /verify', function() {
   before(resetDatabase);
+
   context('When requesting the form to validate a domain', function() {
     context('and the user is authenticated', function() {
       before(function(done) {
@@ -168,11 +169,8 @@ describe('GET /verify', function() {
 });
 
 describe('POST /verify', function() {
-  before(resetDatabase);
-
   context('When validating a domain', function() {
     context('and the user is authenticated', function() {
-
       before(function(done) {
         var self = this;
 
@@ -187,6 +185,8 @@ describe('POST /verify', function() {
       });
 
       context('and the user allows the domain', function() {
+        before(resetDatabase);
+
         before(function() {
           // Ensure pairing code has not expired
           var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
@@ -232,7 +232,9 @@ describe('POST /verify', function() {
 
           describe('the first pairing code', function() {
             before(function() {
-              this.pairingCode = this.pairingCodes[0];
+              this.pairingCode = this.pairingCodes.filter(function(pairingCode) {
+                return pairingCode.id === 12;
+              })[0];
             });
 
             it('should be marked as verified', function() {
@@ -254,7 +256,9 @@ describe('POST /verify', function() {
 
           describe('the second pairing code', function() {
             before(function() {
-              this.pairingCode = this.pairingCodes[1];
+              this.pairingCode = this.pairingCodes.filter(function(pairingCode) {
+                return pairingCode.id === 15;
+              })[0];
             });
 
             it('should still be pending', function() {
@@ -276,8 +280,173 @@ describe('POST /verify', function() {
         });
       });
 
-      //TODO : context('with an expired user_code')
+      context('and the user denies the domain', function() {
+        before(resetDatabase);
 
+        before(function() {
+          // Ensure pairing code has not expired
+          var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { pairing_code_12: 'no' }
+          }, done);
+        });
+
+        it('should return a status 302 with location /verify', function() {
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers.location).to.equal('/verify');
+        });
+
+        describe('the database', function() {
+          before(function(done) {
+            var self = this;
+
+            db.PairingCode.findAll()
+              .success(function(pairingCodes) {
+                self.pairingCodes = pairingCodes;
+                done();
+              })
+              .error(function(error) {
+                done(error);
+              });
+          });
+
+          it('should have two pairing codes', function() {
+            expect(this.pairingCodes).to.be.an('array');
+            expect(this.pairingCodes.length).to.equal(2);
+          });
+
+          describe('the first pairing code', function() {
+            before(function() {
+              this.pairingCode = this.pairingCodes.filter(function(pairingCode) {
+                return pairingCode.id === 12;
+              })[0];
+            });
+
+            it('should be marked as denied', function() {
+              expect(this.pairingCode.state).to.equal('denied');
+            });
+
+            it('should be associated with the correct client', function() {
+              expect(this.pairingCode.client_id).to.equal(3);
+            });
+
+            it('should be associated with the signed-in user', function() {
+              expect(this.pairingCode.user_id).to.equal(4);
+            });
+
+            it('should be associated with the correct domain', function() {
+              expect(this.pairingCode.domain_id).to.equal(5);
+            });
+          });
+
+          describe('the second pairing code', function() {
+            before(function() {
+              this.pairingCode = this.pairingCodes.filter(function(pairingCode) {
+                return pairingCode.id === 15;
+              })[0];
+            });
+
+            it('should still be pending', function() {
+              expect(this.pairingCode.state).to.equal('pending');
+            });
+
+            it('should be associated with the correct client', function() {
+              expect(this.pairingCode.client_id).to.equal(3);
+            });
+
+            it('should be associated with the signed-in user', function() {
+              expect(this.pairingCode.user_id).to.equal(4);
+            });
+
+            it('should be associated with the correct domain', function() {
+              expect(this.pairingCode.domain_id).to.equal(134);
+            });
+          });
+        });
+      });
+
+      context('with an expired pairing code', function() {
+        before(resetDatabase);
+
+        before(function() {
+          // Ensure pairing code has expired
+          var time = new Date("Sat May 31 2014 11:00:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
+
+        after(function() {
+          this.clock.restore();
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { pairing_code_12: 'yes' }
+          }, done);
+        });
+
+        it('should return a status 302 with location /verify', function() {
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers.location).to.equal('/verify');
+        });
+
+        describe('the database', function() {
+          before(function(done) {
+            var self = this;
+
+            db.PairingCode.findAll()
+              .success(function(pairingCodes) {
+                self.pairingCodes = pairingCodes;
+                done();
+              })
+              .error(function(error) {
+                done(error);
+              });
+          });
+
+          it('should have two pairing codes', function() {
+            expect(this.pairingCodes).to.be.an('array');
+            expect(this.pairingCodes.length).to.equal(2);
+          });
+
+          describe('the first pairing code', function() {
+            before(function() {
+              this.pairingCode = this.pairingCodes.filter(function(pairingCode) {
+                return pairingCode.id === 12;
+              })[0];
+            });
+
+            it('should still be pending', function() {
+              expect(this.pairingCode.state).to.equal('pending');
+            });
+
+            it('should be associated with the correct client', function() {
+              expect(this.pairingCode.client_id).to.equal(3);
+            });
+
+            it('should be associated with the signed-in user', function() {
+              expect(this.pairingCode.user_id).to.equal(4);
+            });
+
+            it('should be associated with the correct domain', function() {
+              expect(this.pairingCode.domain_id).to.equal(5);
+            });
+          });
+        });
+      });
     });
 
     context('and the user is not authenticated', function() {

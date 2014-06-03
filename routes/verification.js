@@ -62,8 +62,14 @@ var routes = function(app) {
           return;
         }
 
-        pairingCode.state = (code.value === 'yes') ? 'verified' : 'denied';
-        pairingCode.save(['state']).complete(callback);
+        if (pairingCode.hasExpired()) {
+          // Don't update expired pairing code
+          callback();
+        }
+        else {
+          pairingCode.state = (code.value === 'yes') ? 'verified' : 'denied';
+          pairingCode.save(['state']).complete(callback);
+        }
       });
     },
     function(err) {
