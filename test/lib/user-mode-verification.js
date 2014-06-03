@@ -139,6 +139,7 @@ describe('GET /verify', function() {
 
       it('should redirect to the login page', function() {
         expect(this.res.statusCode).to.equal(302);
+        expect(this.res.headers.location).to.equal("/auth");
         // TODO: check redirect location and page to return to after login
       });
     });
