@@ -49,7 +49,7 @@ var routes = function(app) {
         include: [ db.User, db.Domain ]
       }).complete(function(err, c) {
         if (err || !c) {
-          callback('PairingCode with id: ' + code.id + ' not found');
+          callback(new Error('PairingCode with id: ' + code.id + ' not found'));
           return;
         }
 
@@ -59,7 +59,6 @@ var routes = function(app) {
     },
     function(err){
       if( err ) {
-        console.log(err);
         done(err);
       } else {
         done(null);
@@ -84,7 +83,7 @@ var routes = function(app) {
     if (codes.length > 0) {
       return validatePairingCodes(req.user.id, codes, function(err) {
         if (err) {
-          res.send(500);
+          next(err);
           return;
         }
         res.redirect('/verify');
@@ -101,7 +100,7 @@ var routes = function(app) {
       .find({ where: { 'user_code': userCode }})
       .complete(function(err, pairingCode) {
         if (err) {
-          res.send(500);
+          next(err);
           return;
         }
 
