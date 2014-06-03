@@ -103,18 +103,13 @@ var initDatabase = function(opts, done) {
     });
 };
 
-var resetDatabase = function(opts, done) {
-  if (!done) {
-    done = opts;
-    opts = { verified: false, user_id: 4 };
-  }
-
+var resetDatabase = function(done) {
   clearDatabase(function(err) {
     if (err) {
       done(err);
     }
     else {
-      initDatabase(opts, done);
+      initDatabase({ verified: false, user_id: 4 }, done);
     }
   });
 };
