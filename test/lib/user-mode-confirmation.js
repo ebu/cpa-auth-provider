@@ -26,7 +26,7 @@ var clearDatabase = function(done) {
   });
 };
 
-var initDatabase = function(opts, done) {
+var initDatabase = function(done) {
   db.Client
     .create({
       id:               3,
@@ -73,8 +73,8 @@ var initDatabase = function(opts, done) {
         device_code:      'abcd1234',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        state:            opts.state,
-        user_id:          opts.user_id,
+        state:            'pending',
+        user_id:          4,
         created_at:       date,
         updated_at:       date
       });
@@ -89,8 +89,8 @@ var initDatabase = function(opts, done) {
         device_code:      '123gdd',
         user_code:        '',
         verification_uri: 'http://example.com',
-        state:            opts.state,
-        user_id:          opts.user_id,
+        state:            'pending',
+        user_id:          4,
         created_at:       date,
         updated_at:       date
       });
@@ -109,7 +109,7 @@ var resetDatabase = function(done) {
       done(err);
     }
     else {
-      initDatabase({ state: 'pending', user_id: 4 }, done);
+      initDatabase(done);
     }
   });
 };
