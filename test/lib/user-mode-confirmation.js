@@ -73,7 +73,7 @@ var initDatabase = function(opts, done) {
         device_code:      'abcd1234',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        verified:         opts.verified,
+        state:            opts.state,
         user_id:          opts.user_id,
         created_at:       date,
         updated_at:       date
@@ -89,7 +89,7 @@ var initDatabase = function(opts, done) {
         device_code:      '123gdd',
         user_code:        '',
         verification_uri: 'http://example.com',
-        verified:         opts.verified,
+        state:            opts.state,
         user_id:          opts.user_id,
         created_at:       date,
         updated_at:       date
@@ -109,7 +109,7 @@ var resetDatabase = function(done) {
       done(err);
     }
     else {
-      initDatabase({ verified: false, user_id: 4 }, done);
+      initDatabase({ state: 'pending', user_id: 4 }, done);
     }
   });
 };
@@ -236,7 +236,7 @@ describe('POST /verify', function() {
             });
 
             it('should be marked as verified', function() {
-              expect(this.pairingCode.verified).to.equal(true);
+              expect(this.pairingCode.state).to.equal('verified');
             });
 
             it('should be associated with the correct client', function() {
@@ -257,8 +257,8 @@ describe('POST /verify', function() {
               this.pairingCode = this.pairingCodes[1];
             });
 
-            it('should be marked as verified', function() {
-              expect(this.pairingCode.verified).to.equal(false);
+            it('should still be pending', function() {
+              expect(this.pairingCode.state).to.equal('pending');
             });
 
             it('should be associated with the correct client', function() {

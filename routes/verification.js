@@ -12,22 +12,28 @@ var routes = function(app) {
 
   var renderVerificationPage = function(req, res, errorMessage) {
     db.PairingCode.findAll({
-      where: { user_id: req.user.id, verified: false },
+      where: { user_id: req.user.id, state: 'pending' },
       include: [ db.User, db.Domain ]
-    }).complete(function(err, pairingCodes) {
-        if (pairingCodes.length > 0) {
-          res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
+    })
+    .complete(function(err, pairingCodes) {
+      if (err) {
+        res.send(500);
+        return;
+      }
+
+      if (pairingCodes.length > 0) {
+        res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
+      }
+      else {
+        if (typeof errorMessage === 'string') {
+          res.status(400);
+          res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': errorMessage });
         }
         else {
-          if (typeof errorMessage === 'string') {
-            res.status(400);
-            res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': errorMessage });
-          }
-          else {
-            res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': null });
-          }
+          res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': null });
         }
-      });
+      }
+    });
   };
 
   var renderVerificationInfo = function(res, message, status) {
@@ -37,34 +43,32 @@ var routes = function(app) {
   app.get('/verify', authHelper.authenticateFirst, renderVerificationPage);
 
   /**
-   * User code verification and validation endpoint
+   * User code verification and confirmation endpoint
    */
 
-
   var validatePairingCodes = function(userId, formCodes, done) {
-
     async.each(formCodes, function(code, callback) {
       db.PairingCode.find({
-        where: { id: code.id, user_id: userId, verified: false },
+        where: { id: code.id, user_id: userId, state: 'pending' },
         include: [ db.User, db.Domain ]
-      }).complete(function(err, c) {
-        if (err || !c) {
+      }).complete(function(err, pairingCode) {
+        if (err) {
+          callback(err);
+          return;
+        }
+
+        if (!pairingCode) {
           callback(new Error('PairingCode with id: ' + code.id + ' not found'));
           return;
         }
 
-        c.verified = (code.value === 'yes');
-        c.save(['verified']).complete(callback);
+        pairingCode.state = (code.value === 'yes') ? 'verified' : 'denied';
+        pairingCode.save(['state']).complete(callback);
       });
     },
-    function(err){
-      if( err ) {
-        done(err);
-      } else {
-        done(null);
-      }
+    function(err) {
+      done(err);
     });
-
   };
 
   app.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
@@ -109,7 +113,7 @@ var routes = function(app) {
           return;
         }
 
-        if (pairingCode.verified) {
+        if (pairingCode.state === 'verified') {
           res.status(400);
           renderVerificationInfo(res, messages.OBSOLETE_USERCODE, 'warning');
           return;
@@ -122,12 +126,12 @@ var routes = function(app) {
         }
 
         pairingCode
-          .updateAttributes({ user_id: req.user.id, verified: true })
+          .updateAttributes({ user_id: req.user.id, state: 'verified' })
           .success(function() {
             renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
           })
-          .error(function() {
-            res.send(500);
+          .error(function(err) {
+            next(err);
           });
       });
   });

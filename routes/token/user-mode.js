@@ -94,7 +94,7 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          if (!config.auto_provision_tokens && !pairingCode.verified) {
+          if (!config.auto_provision_tokens && pairingCode.state === 'pending') {
             res.send(202, { "reason": "authorization_pending" });
             return;
           }

@@ -82,7 +82,7 @@ var initDatabase = function(done) {
         device_code:      '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        verified:         false, // authorization_pending
+        state:            'pending', // authorization_pending
         created_at:       date,
         updated_at:       date
       });
@@ -97,7 +97,7 @@ var initDatabase = function(done) {
         device_code:      'c691343f-0ac0-467d-8659-5041cfc3dc4a',
         user_code:        '5678',
         verification_uri: 'http://example.com',
-        verified:         true,
+        state:            'verified',
         user_id:          3,
         created_at:       date,
         updated_at:       date

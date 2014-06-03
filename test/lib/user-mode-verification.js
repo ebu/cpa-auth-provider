@@ -65,7 +65,7 @@ var initDatabase = function(opts, done) {
         device_code:      'abcd1234',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        verified:         opts.verified,
+        state:            opts.state,
         user_id:          opts.user_id,
         created_at:       date,
         updated_at:       date
@@ -82,7 +82,7 @@ var initDatabase = function(opts, done) {
 var resetDatabase = function(opts, done) {
   if (!done) {
     done = opts;
-    opts = { verified: false, user_id: null };
+    opts = { state: 'pending', user_id: null };
   }
 
   clearDatabase(function(err) {
@@ -227,7 +227,7 @@ describe('POST /verify', function() {
             });
 
             it('should be marked as verified', function() {
-              expect(this.pairingCode.verified).to.equal(true);
+              expect(this.pairingCode.state).to.equal('verified');
             });
 
             it('should be associated with the correct client', function() {
@@ -291,7 +291,7 @@ describe('POST /verify', function() {
 
       context('with an already verified user_code', function() {
         before(function(done) {
-          resetDatabase({ verified: true, user_id: 5 }, done);
+          resetDatabase({ state: 'verified', user_id: 5 }, done);
         });
 
         before(function(done) {
