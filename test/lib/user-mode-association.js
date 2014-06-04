@@ -166,12 +166,12 @@ describe('POST /associate', function() {
   context('with a client that is associated with a user account', function() {
     context('and server is configured not to auto-provision tokens', function() {
       before(function() {
-        this.policy = config.auto_provision_tokens;
+        this.auto_provision_tokens = config.auto_provision_tokens;
         config.auto_provision_tokens = false;
       });
 
       after(function() {
-        config.auto_provision_tokens = this.policy;
+        config.auto_provision_tokens = this.auto_provision_tokens;
       });
 
       before(function() {
@@ -251,12 +251,12 @@ describe('POST /associate', function() {
 
     context('and server is configured to auto-provision tokens', function() {
       before(function() {
-        this.policy = config.auto_provision_tokens;
+        this.auto_provision_tokens = config.auto_provision_tokens;
         config.auto_provision_tokens = true;
       });
 
       after(function() {
-        config.auto_provision_tokens = this.policy;
+        config.auto_provision_tokens = this.auto_provision_tokens;
       });
 
       before(function() {
