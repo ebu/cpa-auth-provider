@@ -1,7 +1,5 @@
 "use strict";
 
-var cheerio = require('cheerio');
-
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
 var db       = require('../../models');
@@ -160,7 +158,7 @@ describe('GET /verify', function() {
       });
 
       before(function(done) {
-        requestHelper.sendRequest(this, '/verify', { cookie: this.cookie }, done);
+        requestHelper.sendRequest(this, '/verify', { cookie: this.cookie, parseDOM: true }, done);
       });
 
       it('should return a status 200', function() {
@@ -173,11 +171,10 @@ describe('GET /verify', function() {
 
       describe('the response body', function() {
         it('should display an input with the pairing codes', function() {
-          var $ = cheerio.load(this.res.text);
-          expect($('input[name="pairing_code_15"]').length).to.equal(2);
-          expect($('input[name="pairing_code_15"]')[0].attribs.value).to.equal('yes');
-          expect($('input[name="pairing_code_12"]').length).to.equal(2);
-          expect($('input[name="pairing_code_12"]')[0].attribs.value).to.equal('yes');
+          expect(this.$('input[name="pairing_code_15"]').length).to.equal(2);
+          expect(this.$('input[name="pairing_code_15"]')[0].attribs.value).to.equal('yes');
+          expect(this.$('input[name="pairing_code_12"]').length).to.equal(2);
+          expect(this.$('input[name="pairing_code_12"]')[0].attribs.value).to.equal('yes');
         });
       });
     });
