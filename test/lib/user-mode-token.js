@@ -82,7 +82,7 @@ var initDatabase = function(done) {
         device_code:      '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        verified:         false, // authorization_pending
+        state:            'pending', // authorization_pending
         created_at:       date,
         updated_at:       date
       });
@@ -97,7 +97,7 @@ var initDatabase = function(done) {
         device_code:      'c691343f-0ac0-467d-8659-5041cfc3dc4a',
         user_code:        '5678',
         verification_uri: 'http://example.com',
-        verified:         true,
+        state:            'verified',
         user_id:          3,
         created_at:       date,
         updated_at:       date
@@ -272,6 +272,10 @@ describe("POST /token", function() {
               })
               .then(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
+                return db.Client.find(101);
+              })
+              .then(function(client) {
+                self.client = client;
                 done();
               },
               function(error) {
@@ -309,6 +313,12 @@ describe("POST /token", function() {
 
             it("should be associated with the correct domain", function() {
               expect(this.accessTokens[0].domain_id).to.equal(5);
+            });
+          });
+
+          describe("the client", function() {
+            it("should be associated with the correct user", function() {
+              expect(this.client.user_id).to.equal(3);
             });
           });
         });

@@ -45,8 +45,9 @@ var initDatabase = function(opts, done) {
     })
     .then(function() {
       return db.User.create({
+        id:           5,
         provider_uid: 'testuser',
-        password: 'testpassword'
+        password:     'testpassword'
       });
     })
     .then(function() {
@@ -65,7 +66,7 @@ var initDatabase = function(opts, done) {
         device_code:      'abcd1234',
         user_code:        '1234',
         verification_uri: 'http://example.com',
-        verified:         opts.verified,
+        state:            opts.state,
         user_id:          opts.user_id,
         created_at:       date,
         updated_at:       date
@@ -82,7 +83,7 @@ var initDatabase = function(opts, done) {
 var resetDatabase = function(opts, done) {
   if (!done) {
     done = opts;
-    opts = { verified: false, user_id: null };
+    opts = { state: 'pending', user_id: null };
   }
 
   clearDatabase(function(err) {
@@ -98,6 +99,7 @@ var resetDatabase = function(opts, done) {
 describe('GET /verify', function() {
   context('When requesting the form to validate a user code', function() {
     context('and the user is authenticated', function() {
+      before(resetDatabase);
       before(function(done) {
         var self = this;
 
@@ -136,8 +138,10 @@ describe('GET /verify', function() {
         requestHelper.sendRequest(this, '/verify', null, done);
       });
 
-      it('should reply a status 401', function() {
-        expect(this.res.statusCode).to.equal(401);
+      it('should redirect to the login page', function() {
+        expect(this.res.statusCode).to.equal(302);
+        expect(this.res.headers.location).to.equal("/auth");
+        // TODO: check redirect location and page to return to after login
       });
     });
   });
@@ -224,7 +228,7 @@ describe('POST /verify', function() {
             });
 
             it('should be marked as verified', function() {
-              expect(this.pairingCode.verified).to.equal(true);
+              expect(this.pairingCode.state).to.equal('verified');
             });
 
             it('should be associated with the correct client', function() {
@@ -232,7 +236,7 @@ describe('POST /verify', function() {
             });
 
             it('should be associated with the signed-in user', function() {
-              expect(this.pairingCode.user_id).to.equal(4);
+              expect(this.pairingCode.user_id).to.equal(5);
             });
 
             it('should be associated with the correct domain', function() {
@@ -288,7 +292,7 @@ describe('POST /verify', function() {
 
       context('with an already verified user_code', function() {
         before(function(done) {
-          resetDatabase({ verified: true, user_id: 5 }, done);
+          resetDatabase({ state: 'verified', user_id: 5 }, done);
         });
 
         before(function(done) {

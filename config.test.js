@@ -50,6 +50,12 @@ module.exports = {
     }
   ],
 
+  // This option controls how the authorization server responds to requests to
+  // associate an existing client with a new domain:
+  // - false: The user must authenticate and confirm access to the new domain
+  // - true: The user is automatically granted access without confirmation
+  auto_provision_tokens: false,
+
   // The length of time that user (pairing) codes are valid, in seconds.
   valid_pairing_code_duration: 3600,
 

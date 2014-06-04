@@ -63,6 +63,12 @@ module.exports = {
     }
   ],
 
+  // This option controls how the authorization server responds to requests to
+  // associate an existing client with a new domain:
+  // - false: The user must authenticate and confirm access to the new domain
+  // - true: The user is automatically granted access without confirmation
+  auto_provision_tokens: false,
+
   server_clients : [{
     name: '',
     software_id: '',
