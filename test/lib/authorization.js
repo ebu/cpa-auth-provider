@@ -206,8 +206,8 @@ describe("POST /authorized", function() {
       }, done);
     });
 
-    it("should return an 'unauthorized' error", function() {
-      assertions.verifyError(this.res, 401, 'unauthorized');
+    it("should return a 'not_found' error", function() {
+      assertions.verifyError(this.res, 404, 'not_found');
     });
   });
 
@@ -236,8 +236,8 @@ describe("POST /authorized", function() {
       }, done);
     });
 
-    it("should return status 401", function() {
-      assertions.verifyError(this.res, 401, 'expired');
+    it("should return a 'not_found' error", function() {
+      assertions.verifyError(this.res, 404, 'not_found');
     });
   });
 

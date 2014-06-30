@@ -65,12 +65,12 @@ module.exports = function(app, options) {
             }
 
             if (!accessToken) {
-              res.sendUnauthorized("Invalid access token");
+              res.sendErrorResponse(404, "not_found", "Unknown access token");
               return;
             }
 
             if (accessToken.hasExpired()) {
-              res.sendErrorResponse(401, "expired", "Access token has expired");
+              res.sendErrorResponse(404, "not_found", "Access token has expired");
               return;
             }
 
