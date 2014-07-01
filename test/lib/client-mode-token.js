@@ -121,8 +121,6 @@ describe('POST /token', function() {
           expect(this.res.body.domain_display_name).to.equal('BBC Radio');
         });
 
-        it("should include a valid refresh token"); // TODO: optional: refresh_token
-
         it("should include the lifetime of the access token", function() {
           expect(this.res.body).to.have.property('expires_in');
           expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);

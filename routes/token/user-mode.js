@@ -98,11 +98,11 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          callback(null, pairingCode);
+          callback(null, client, pairingCode);
         });
     };
 
-    var createAccessToken = function(pairingCode, callback) {
+    var createAccessToken = function(client, pairingCode, callback) {
       var accessToken;
 
       db.sequelize.transaction(function(transaction) {
@@ -115,6 +115,12 @@ module.exports = function(req, res, next) {
           })
           .then(function(token) {
             accessToken = token;
+
+            // Associate this client with the user
+            client.user_id = pairingCode.user_id;
+            return client.save();
+          })
+          .then(function(token) {
             return pairingCode.destroy();
           })
           .then(function() {

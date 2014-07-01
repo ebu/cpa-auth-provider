@@ -48,7 +48,8 @@ var initDatabase = function(done) {
       software_id:       'CPA AP Test',
       software_version:  '0.0.1',
       ip:                '127.0.0.1',
-      registration_type: 'dynamic'
+      registration_type: 'dynamic',
+      user_id:           301,
     })
     .then(function() {
       return db.Client.create({
@@ -58,7 +59,8 @@ var initDatabase = function(done) {
         software_id:       'CPA AP Test',
         software_version:  '0.0.1',
         ip:                '127.0.0.1',
-        registration_type: 'dynamic'
+        registration_type: 'dynamic',
+        user_id:           null
       });
     })
     .then(function() {
@@ -70,7 +72,8 @@ var initDatabase = function(done) {
         software_version:  '0.0.1',
         ip:                '127.0.0.1',
         registration_type: 'static',
-        redirect_uri:      'https://example-client.com/cpa/callback'
+        redirect_uri:      'https://example-client.com/cpa/callback',
+        user_id:           null
       });
     })
     .then(function() {
@@ -85,7 +88,7 @@ var initDatabase = function(done) {
       return db.Domain.create({
         id:           202,
         name:         'example-service.com',
-        display_name: 'CPA Example service',
+        display_name: 'CPA Example Service',
         access_token: '44e948140678443fbe1d89d1b7313911'
       });
     })
@@ -157,156 +160,308 @@ describe("POST /token", function() {
     generate.accessToken.restore();
   });
 
-  context("with refresh_device_token grant type", function() {
-    context("and a client that has an access token for the requested domain", function() {
-      before(function() {
-        var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-        this.clock = sinon.useFakeTimers(time, "Date");
-      });
-
-      after(function() {
-        this.clock.restore();
-      });
-
-      before(resetDatabase);
-
-      before(function(done) {
-        var requestBody = {
-          grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_device_token',
-          client_id:     '101',
-          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
-          domain:        'example-service.bbc.co.uk'
-        };
-
-        requestHelper.sendRequest(this, '/token', {
-          method: 'post',
-          type:   'json',
-          data:   requestBody
-        }, done);
-      });
-
-      it("should return status 200", function() {
-        expect(this.res.statusCode).to.equal(200);
-      });
-
-      it("should return a Cache-Control: no-store header", function() {
-        expect(this.res.headers).to.have.property('cache-control');
-        expect(this.res.headers['cache-control']).to.equal('no-store');
-      });
-
-      it("should return a Pragma: no-cache header", function() {
-        expect(this.res.headers).to.have.property('pragma');
-        expect(this.res.headers.pragma).to.equal('no-cache');
-      });
-
-      it("should return a JSON object", function() {
-        expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-        expect(this.res.body).to.be.an('object');
-      });
-
-      describe("the response body", function() {
-        it("should include the user name", function() {
-          expect(this.res.body).to.have.property('user_name');
-          expect(this.res.body.user_name).to.equal('Test User');
+  context("Refreshing an access token", function() {
+    context("with a device client", function() {
+      context("that has an existing user mode access token for the requested domain", function() {
+        before(function() {
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
         });
 
-        it("should include a valid access token", function() {
-          expect(this.res.body).to.have.property('access_token');
-          expect(this.res.body.access_token).to.equal('aed201ffb3362de42700a293bdebf694');
+        after(function() {
+          this.clock.restore();
         });
 
-        it("should include the token type", function() {
-          expect(this.res.body).to.have.property('token_type');
-          expect(this.res.body.token_type).to.equal('bearer');
-        });
+        before(resetDatabase);
 
-        it("should include the domain", function() {
-          expect(this.res.body).to.have.property('domain');
-          expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
-        });
-
-        it("should include a valid refresh token"); // TODO: optional: refresh_token
-
-        it("should include a display name for the domain", function() {
-          expect(this.res.body).to.have.property('domain_display_name');
-          expect(this.res.body.domain_display_name).to.equal('BBC Radio');
-        });
-
-        it("should include the lifetime of the access token", function() {
-          expect(this.res.body).to.have.property('expires_in');
-          expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
-        });
-
-        it("should include the scope of the access token"); // TODO: optional(?): scope
-      });
-
-      describe("the database", function() {
         before(function(done) {
-          var self = this;
+          var requestBody = {
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
+            client_id:     '101',
+            client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+            domain:        'example-service.bbc.co.uk'
+          };
 
-          db.AccessToken.findAll({ where: { client_id: 101 } })
-            .then(function(accessTokens) {
-              self.accessTokens = accessTokens;
-              done();
-            },
-            function(error) {
-              done(error);
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return status 200", function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it("should return a Cache-Control: no-store header", function() {
+          expect(this.res.headers).to.have.property('cache-control');
+          expect(this.res.headers['cache-control']).to.equal('no-store');
+        });
+
+        it("should return a Pragma: no-cache header", function() {
+          expect(this.res.headers).to.have.property('pragma');
+          expect(this.res.headers.pragma).to.equal('no-cache');
+        });
+
+        it("should return a JSON object", function() {
+          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+          expect(this.res.body).to.be.an('object');
+        });
+
+        describe("the response body", function() {
+          it("should include the user name", function() {
+            expect(this.res.body).to.have.property('user_name');
+            expect(this.res.body.user_name).to.equal('Test User');
+          });
+
+          it("should include a valid access token", function() {
+            expect(this.res.body).to.have.property('access_token');
+            expect(this.res.body.access_token).to.equal('aed201ffb3362de42700a293bdebf694');
+          });
+
+          it("should include the token type", function() {
+            expect(this.res.body).to.have.property('token_type');
+            expect(this.res.body.token_type).to.equal('bearer');
+          });
+
+          it("should include the domain", function() {
+            expect(this.res.body).to.have.property('domain');
+            expect(this.res.body.domain).to.equal('example-service.bbc.co.uk');
+          });
+
+          it("should include a display name for the domain", function() {
+            expect(this.res.body).to.have.property('domain_display_name');
+            expect(this.res.body.domain_display_name).to.equal('BBC Radio');
+          });
+
+          it("should include the lifetime of the access token", function() {
+            expect(this.res.body).to.have.property('expires_in');
+            expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
+          });
+
+          it("should include the scope of the access token"); // TODO: optional(?): scope
+        });
+
+        describe("the database", function() {
+          before(function(done) {
+            var self = this;
+
+            db.AccessToken.findAll({ where: { client_id: 101 } })
+              .then(function(accessTokens) {
+                self.accessTokens = accessTokens;
+                done();
+              },
+              function(error) {
+                done(error);
+              });
+          });
+
+          it("should contain the new access token", function() {
+            expect(this.accessTokens.length).to.equal(1);
+          });
+
+          describe("the access token", function() {
+            it("should have correct value", function() {
+              expect(this.accessTokens[0].token).to.equal('aed201ffb3362de42700a293bdebf694');
             });
+
+            it("should be associated with the correct client", function() {
+              expect(this.accessTokens[0].client_id).to.equal(101);
+            });
+
+            it("should be associated with the correct user", function() {
+              expect(this.accessTokens[0].user_id).to.equal(301);
+            });
+
+            it("should be associated with the correct domain", function() {
+              expect(this.accessTokens[0].domain_id).to.equal(201);
+            });
+          });
+        });
+      });
+
+      context("that has an existing client mode access token for the requested domain", function() {
+        before(function() {
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
         });
 
-        it("should contain the new access token", function() {
-          expect(this.accessTokens.length).to.equal(1);
+        after(function() {
+          this.clock.restore();
         });
 
-        describe("the access token", function() {
-          it("should have correct value", function() {
-            expect(this.accessTokens[0].token).to.equal('aed201ffb3362de42700a293bdebf694');
+        before(resetDatabase);
+
+        before(function(done) {
+          var requestBody = {
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
+            client_id:     '102',
+            client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+            domain:        'example-service.com'
+          };
+
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return status 200", function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it("should return a Cache-Control: no-store header", function() {
+          expect(this.res.headers).to.have.property('cache-control');
+          expect(this.res.headers['cache-control']).to.equal('no-store');
+        });
+
+        it("should return a Pragma: no-cache header", function() {
+          expect(this.res.headers).to.have.property('pragma');
+          expect(this.res.headers.pragma).to.equal('no-cache');
+        });
+
+        it("should return a JSON object", function() {
+          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+          expect(this.res.body).to.be.an('object');
+        });
+
+        describe("the response body", function() {
+          it("should not include a the user name", function() {
+            expect(this.res.body).to.not.have.property('user_name');
           });
 
-          it("should be associated with the correct client", function() {
-            expect(this.accessTokens[0].client_id).to.equal(101);
+          it("should include a valid access token", function() {
+            expect(this.res.body).to.have.property('access_token');
+            expect(this.res.body.access_token).to.equal('aed201ffb3362de42700a293bdebf694');
           });
 
-          it("should be associated with the correct user", function() {
-            expect(this.accessTokens[0].user_id).to.equal(301);
+          it("should include the token type", function() {
+            expect(this.res.body).to.have.property('token_type');
+            expect(this.res.body.token_type).to.equal('bearer');
           });
 
-          it("should be associated with the correct domain", function() {
-            expect(this.accessTokens[0].domain_id).to.equal(201);
+          it("should include the domain", function() {
+            expect(this.res.body).to.have.property('domain');
+            expect(this.res.body.domain).to.equal('example-service.com');
           });
+
+          it("should include a display name for the domain", function() {
+            expect(this.res.body).to.have.property('domain_display_name');
+            expect(this.res.body.domain_display_name).to.equal('CPA Example Service');
+          });
+
+          it("should include the lifetime of the access token", function() {
+            expect(this.res.body).to.have.property('expires_in');
+            expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
+          });
+
+          it("should include the scope of the access token"); // TODO: optional(?): scope
+        });
+
+        describe("the database", function() {
+          before(function(done) {
+            var self = this;
+
+            db.AccessToken.findAll({ where: { client_id: 102 } })
+              .then(function(accessTokens) {
+                self.accessTokens = accessTokens;
+                return db.Client.find(102);
+              })
+              .then(function(client) {
+                self.client = client;
+                done();
+              },
+              function(error) {
+                done(error);
+              });
+          });
+
+          it("should contain the new access token", function() {
+            expect(this.accessTokens.length).to.equal(1);
+          });
+
+          describe("the access token", function() {
+            it("should have correct value", function() {
+              expect(this.accessTokens[0].token).to.equal('aed201ffb3362de42700a293bdebf694');
+            });
+
+            it("should be associated with the correct client", function() {
+              expect(this.accessTokens[0].client_id).to.equal(102);
+            });
+
+            it("should not be associated a user", function() {
+              expect(this.accessTokens[0].user_id).to.equal(null);
+            });
+
+            it("should be associated with the correct domain", function() {
+              expect(this.accessTokens[0].domain_id).to.equal(202);
+            });
+          });
+
+          describe("the client", function() {
+            it("should not be associated with a user", function() {
+              expect(this.client.user_id).to.equal(null);
+            });
+          });
+        });
+      });
+
+      /*
+      context("that does not have an access token for the requested domain", function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          var requestBody = {
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
+            client_id:     '102',
+            client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+            domain:        'example-service.bbc.co.uk'
+          };
+
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return an unauthorized error", function() {
+          assertions.verifyError(this.res, 401, 'unauthorized');
+        });
+      });
+      */
+
+      context("with an unknown client", function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          var requestBody = {
+            grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
+            client_id:     'unknown',
+            client_secret: 'unknown',
+            domain:        'example-service.bbc.co.uk'
+          };
+
+          requestHelper.sendRequest(this, '/token', {
+            method: 'post',
+            type:   'json',
+            data:   requestBody
+          }, done);
+        });
+
+        it("should return an invalid_client error", function() {
+          assertions.verifyError(this.res, 400, 'invalid_client');
         });
       });
     });
 
-    context("and a client that does not have an access token for the requested domain", function() {
+    context("with a web server client", function() {
       before(resetDatabase);
 
       before(function(done) {
         var requestBody = {
-          grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_device_token',
-          client_id:     '102',
-          client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
-          domain:        'example-service.bbc.co.uk'
-        };
-
-        requestHelper.sendRequest(this, '/token', {
-          method: 'post',
-          type:   'json',
-          data:   requestBody
-        }, done);
-      });
-
-      it("should return an unauthorized error", function() {
-        assertions.verifyError(this.res, 401, 'unauthorized');
-      });
-    });
-
-    context("and a web server client", function() {
-      before(resetDatabase);
-
-      before(function(done) {
-        var requestBody = {
-          grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_device_token',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '103',
           client_secret: '399a8f42-365e-42db-a745-cf8b0e5b7ab7',
           domain:        'example-service.bbc.co.uk'
@@ -319,31 +474,8 @@ describe("POST /token", function() {
         }, done);
       });
 
-      it("should return an unauthorized error", function() {
-        assertions.verifyError(this.res, 401, 'unauthorized');
-      });
-    });
-
-    context("and an unknown client", function() {
-      before(resetDatabase);
-
-      before(function(done) {
-        var requestBody = {
-          grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_device_token',
-          client_id:     'unknown',
-          client_secret: 'unknown',
-          domain:        'example-service.bbc.co.uk'
-        };
-
-        requestHelper.sendRequest(this, '/token', {
-          method: 'post',
-          type:   'json',
-          data:   requestBody
-        }, done);
-      });
-
-      it("should return an unauthorized error", function() {
-        assertions.verifyError(this.res, 401, 'unauthorized');
+      it("should return an invalid_client error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_client');
       });
     });
   });
@@ -356,7 +488,7 @@ describe("POST /token", function() {
 
       before(function(done) {
         var data = {
-          grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_device_token',
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
           client_id:     '101',
           client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           domain:        'example-service.bbc.co.uk'
@@ -382,7 +514,7 @@ describe("POST /token", function() {
 
     before(function(done) {
       var data = {
-        grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_device_token',
+        grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
         client_id:     '101',
         client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
         domain:        'example-service.bbc.co.uk',

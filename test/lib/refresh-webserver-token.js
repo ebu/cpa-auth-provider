@@ -360,7 +360,7 @@ describe("POST /token", function() {
         var requestBody = {
           grant_type:    'http://tech.ebu.ch/cpa/1.0/refresh_token',
           client_id:     '101',
-          client_secret: '399a8f42-365e-42db-a745-cf8b0e5b7ab7',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
           refresh_token: 'cc726aeb-7ee0-444f-9dda-074eedce3804'
           // domain:        'example-service.bbc.co.uk'
         };

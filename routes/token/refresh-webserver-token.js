@@ -52,7 +52,11 @@ var refreshAccessToken = function(req, res, next) {
       include: [
         {
           model: db.Client,
-          where: { id: clientId, secret: clientSecret }
+          where: {
+            id:                clientId,
+            secret:            clientSecret,
+            registration_type: 'static'
+          },
         },
         {
           model: db.Domain,

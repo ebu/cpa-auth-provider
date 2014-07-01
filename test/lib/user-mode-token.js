@@ -266,8 +266,6 @@ describe("POST /token", function() {
             expect(this.res.body.domain_display_name).to.equal('BBC Radio');
           });
 
-          it("should include a valid refresh token"); // TODO: optional: refresh_token
-
           it("should include the lifetime of the access token", function() {
             expect(this.res.body).to.have.property('expires_in');
             expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
@@ -287,6 +285,10 @@ describe("POST /token", function() {
               })
               .then(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
+                return db.Client.find(101);
+              })
+              .then(function(client) {
+                self.client = client;
                 done();
               },
               function(error) {
@@ -324,6 +326,12 @@ describe("POST /token", function() {
 
             it("should be associated with the correct domain", function() {
               expect(this.accessTokens[0].domain_id).to.equal(5);
+            });
+          });
+
+          describe("the client", function() {
+            it("should be associated with the correct user", function() {
+              expect(this.client.user_id).to.equal(3);
             });
           });
         });

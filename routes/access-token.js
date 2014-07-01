@@ -6,7 +6,6 @@ var generate = require('../lib/generate');
 var clientMode            = require('./token/client-mode');
 var userMode              = require('./token/user-mode');
 var webServerFlow         = require('./token/webserver-flow');
-var refreshDeviceToken    = require('./token/refresh-device-token');
 var refreshWebServerToken = require('./token/refresh-webserver-token');
 
 var routes = function(app) {
@@ -32,9 +31,6 @@ var routes = function(app) {
 
       case 'http://tech.ebu.ch/cpa/1.0/authorization_code':
         return webServerFlow(req, res, next);
-
-      case 'http://tech.ebu.ch/cpa/1.0/refresh_device_token':
-        return refreshDeviceToken(req, res, next);
 
       case 'http://tech.ebu.ch/cpa/1.0/refresh_token':
         return refreshWebServerToken(req, res, next);

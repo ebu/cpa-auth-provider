@@ -40,19 +40,22 @@ module.exports = function(req, res, next) {
       return;
     }
 
-    var clientId = req.body.client_id;
+    var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
-    var domainName = req.body.domain;
+    var domainName   = req.body.domain;
 
     var findClient = function(callback) {
-      db.Client.find({ where: { id: clientId, secret: clientSecret } })
-        .complete(function(err, client) {
-          if (!client) {
-            res.sendInvalidClient("Unknown client: " + clientId);
-            return;
-          }
-          callback(err, client);
-        });
+      db.Client.find({
+        where: { id: clientId, secret: clientSecret, registration_type: 'dynamic' },
+        include: [ db.User ]
+      })
+      .complete(function(err, client) {
+        if (!client) {
+          res.sendInvalidClient("Unknown client: " + clientId);
+          return;
+        }
+        callback(err, client);
+      });
     };
 
     var findDomain = function(client, callback) {
@@ -68,31 +71,50 @@ module.exports = function(req, res, next) {
         });
     };
 
+    /**
+     * Delete any existing access token for the given client at the
+     * given domain.
+     */
+
+    var deleteAccessToken = function(client, domain, callback) {
+      db.sequelize.query(
+        "DELETE FROM AccessTokens WHERE client_id=? AND domain_id=?",
+        null, { raw: true }, [ client.id, domain.id ]
+      )
+      .then(function(err) {
+        callback(err, client, domain);
+      },
+      function(err) {
+        console.log("error cb");
+      });
+    };
+
     var createAccessToken = function(client, domain, callback) {
       // TODO: Handle duplicated tokens
       db.AccessToken
         .create({
-          token: generate.accessToken(),
-          user_id: null,
+          token:     generate.accessToken(),
+          user_id:   client.user_id,
           client_id: client.id,
           domain_id: domain.id
         })
         .complete(function(err, accessToken) {
-          callback(err, accessToken, domain);
+          callback(err, client, domain, accessToken);
         });
     };
 
     async.waterfall([
       findClient,
       findDomain,
+      deleteAccessToken,
       createAccessToken
-    ], function(err, accessToken, domain) {
+    ], function(err, client, domain, accessToken) {
       if (err) {
         next(err);
         return;
       }
 
-      sendAccessToken(res, accessToken, domain, null);
+      sendAccessToken(res, accessToken, domain, client.user);
     });
   });
 };
