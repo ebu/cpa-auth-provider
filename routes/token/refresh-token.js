@@ -7,7 +7,7 @@ var sendAccessToken = require('./send-token');
 var async = require('async');
 
 var schema = {
-  id: "/token/refresh/webserver",
+  id: "/token/refresh",
   type: "object",
   required: true,
   additionalProperties: false,

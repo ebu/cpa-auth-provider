@@ -3,10 +3,10 @@
 var db       = require('../models');
 var generate = require('../lib/generate');
 
-var clientMode            = require('./token/client-mode');
-var userMode              = require('./token/user-mode');
-var webServerFlow         = require('./token/webserver-flow');
-var refreshWebServerToken = require('./token/refresh-webserver-token');
+var clientMode    = require('./token/client-mode');
+var userMode      = require('./token/user-mode');
+var webServerFlow = require('./token/webserver-flow');
+var refreshToken  = require('./token/refresh-token');
 
 var routes = function(app) {
 
@@ -33,7 +33,7 @@ var routes = function(app) {
         return webServerFlow(req, res, next);
 
       case 'http://tech.ebu.ch/cpa/1.0/refresh_token':
-        return refreshWebServerToken(req, res, next);
+        return refreshToken(req, res, next);
 
       default:
         return res.sendErrorResponse(
