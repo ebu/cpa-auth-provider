@@ -300,4 +300,25 @@ describe("POST /authorized", function() {
       assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
+
+  context("with an extra parameter", function() {
+    before(function(done) {
+      var data = {
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'example-service.bbc.co.uk',
+        extra:        'test'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
+      }, done);
+    });
+
+    it("should return an 'invalid_request' error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
+    });
+  });
 });

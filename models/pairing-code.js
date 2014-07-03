@@ -6,11 +6,29 @@ var expiresMixin = require('../lib/expires-mixin');
 module.exports = function(sequelize, DataTypes) {
 
   var PairingCode = sequelize.define('PairingCode', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    device_code: DataTypes.STRING,
-    user_code: DataTypes.STRING,
-    verification_uri: DataTypes.STRING,
-    verified: { type: DataTypes.BOOLEAN, defaultValue: false }
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    device_code: {
+      type: DataTypes.STRING
+    },
+    user_code: {
+      type: DataTypes.STRING
+    },
+    verification_uri: {
+      type: DataTypes.STRING
+    },
+    state: {
+      type: DataTypes.ENUM,
+      values: ['pending', 'verified', 'denied'],
+      defaultValue: 'pending',
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    }
   }, {
     underscored: true,
 

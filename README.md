@@ -1,7 +1,7 @@
-# Cross-Platform Authentication - Authentication Provider
+# Cross-Platform Authentication - Authorization Provider
 
 This project contains a reference implementation of the Cross-Platform
-Authentication Authentication Provider.
+Authentication Authorization Provider.
 
 More information on the [EBU Cross-Platform Authentication project](http://tech.ebu.ch/cpa)
 

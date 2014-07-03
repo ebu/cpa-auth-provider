@@ -36,17 +36,22 @@ db.sequelize
       console.log('Synchronization done.');
 
       if (process.env.NODE_ENV === 'development') {
-
         db.Domain
           .bulkCreate(config.domains)
           .success(function() {
             console.log('[SCOPE] Database populated');
 
-            db.Client
-              .bulkCreate(config.server_clients)
-              .success(function() {
-                console.log('[CLIENT] Database populated');
-              });
+            if (config.hasOwnProperty('server_clients') &&
+                config.server_clients.length > 0) {
+              db.Client
+                .bulkCreate(config.server_clients)
+                .success(function() {
+                  console.log('[CLIENT] Database populated');
+                });
+            }
+            else {
+              console.log("No server clients configured");
+            }
           });
       }
     }

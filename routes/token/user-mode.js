@@ -1,5 +1,6 @@
 "use strict";
 
+var config          = require('../../config');
 var db              = require('../../models');
 var generate        = require('../../lib/generate');
 var sendAccessToken = require('./send-token');
@@ -44,14 +45,17 @@ module.exports = function(req, res, next) {
       return;
     }
 
-    var clientId = req.body.client_id;
+    var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
-    var deviceCode = req.body.device_code;
-    var domainName = req.body.domain;
+    var deviceCode   = req.body.device_code;
+    var domainName   = req.body.domain;
 
     var findClient = function(callback) {
       db.Client
-        .find({ where: { id: clientId, secret: clientSecret } })
+        .find({
+          where:   { id: clientId, secret: clientSecret },
+          include: [ db.User ]
+        })
         .complete(function(err, client) {
           if (err) {
             callback(err);
@@ -70,7 +74,7 @@ module.exports = function(req, res, next) {
       db.PairingCode
         .find({
           where:   { client_id: client.id, device_code: deviceCode },
-          include: [ db.Domain, db.User ]
+          include: [ db.Domain, db.User, db.Client ]
         })
         .complete(function(err, pairingCode) {
           if (err) {
@@ -93,16 +97,24 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          if (!pairingCode.verified) {
-            res.send(202, { "reason": "authorization_pending" });
-            return;
+          if (config.auto_provision_tokens) {
+            if (pairingCode.user_id == null) {
+              res.send(202, { "reason": "authorization_pending" });
+              return;
+            }
+          }
+          else {
+            if (pairingCode.state === 'pending') {
+              res.send(202, { "reason": "authorization_pending" });
+              return;
+            }
           }
 
-          callback(null, client, pairingCode);
+          callback(null, client, pairingCode.user, pairingCode);
         });
     };
 
-    var createAccessToken = function(client, pairingCode, callback) {
+    var createAccessToken = function(client, user, pairingCode, callback) {
       var accessToken;
 
       db.sequelize.transaction(function(transaction) {

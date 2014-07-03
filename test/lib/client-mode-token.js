@@ -316,5 +316,27 @@ describe('POST /token', function() {
         assertions.verifyError(this.res, 400, 'invalid_client');
       });
     });
+
+    context("with an extra parameter", function() {
+      before(function(done) {
+        var body = {
+          grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
+          client_id:     '100',
+          client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+          domain:        'example-service.bbc.co.uk',
+          extra:         'test'
+        };
+
+        requestHelper.sendRequest(this, '/token', {
+          method: 'post',
+          type:   'json',
+          data:   body
+        }, done);
+      });
+
+      it("should return an 'invalid_request' error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
+      });
+    });
   });
 });
