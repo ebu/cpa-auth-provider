@@ -97,16 +97,22 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          if (config.auto_provision_tokens) {
-            if (pairingCode.user_id == null) {
-              res.send(202, { "reason": "authorization_pending" });
-              return;
-            }
+          if (pairingCode.state === "denied") {
+            res.sendErrorResponse(400, "access_denied", "User denied access");
+            return;
           }
           else {
-            if (pairingCode.state === 'pending') {
-              res.send(202, { "reason": "authorization_pending" });
-              return;
+            if (config.auto_provision_tokens) {
+              if (pairingCode.user_id == null) {
+                res.send(202, { "reason": "authorization_pending" });
+                return;
+              }
+            }
+            else {
+              if (pairingCode.state === 'pending') {
+                res.send(202, { "reason": "authorization_pending" });
+                return;
+              }
             }
           }
 
@@ -121,15 +127,15 @@ module.exports = function(req, res, next) {
         db.AccessToken
           .create({
             token:      generate.accessToken(),
-            user_id:    pairingCode.user_id,
-            client_id:  pairingCode.client_id,
+            user_id:    user.id,
+            client_id:  client.id,
             domain_id:  pairingCode.domain_id
           })
           .then(function(token) {
             accessToken = token;
 
             // Associate this client with the user
-            client.user_id = pairingCode.user_id;
+            client.user_id = user.id;
             return client.save();
           })
           .then(function(token) {
@@ -139,7 +145,7 @@ module.exports = function(req, res, next) {
             return transaction.commit();
           })
           .then(function() {
-            callback(null, accessToken, pairingCode);
+            callback(null, user, accessToken, pairingCode);
           },
           function(error) {
             transaction.rollback().complete(function(err) {
@@ -153,7 +159,7 @@ module.exports = function(req, res, next) {
       findClient,
       findPairingCode,
       createAccessToken
-    ], function(err, accessToken, pairingCode) {
+    ], function(err, user, accessToken, pairingCode) {
       if (err) {
         next(err);
         return;
@@ -163,7 +169,7 @@ module.exports = function(req, res, next) {
         res,
         accessToken,
         pairingCode.domain,
-        pairingCode.user
+        user
       );
     });
   });
