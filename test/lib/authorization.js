@@ -233,8 +233,8 @@ describe("POST /authorized", function() {
       }, done);
     });
 
-    it("should return an 'unauthorized' error", function() {
-      assertions.verifyError(this.res, 401, 'unauthorized');
+    it("should return an 'invalid_request' error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 
