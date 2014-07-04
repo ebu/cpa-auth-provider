@@ -7,7 +7,6 @@ var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
 var async = require('async');
-var cheerio = require('cheerio');
 
 var clearDatabase = function(done) {
   db.sequelize.query('DELETE FROM Domains').then(function() {
@@ -100,8 +99,9 @@ describe('GET /authorize', function() {
             '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
 
           requestHelper.sendRequest(this, path, {
-            method: 'get',
-            cookie: this.cookie
+            method:   'get',
+            cookie:   this.cookie,
+            parseDOM: true
           }, done);
         });
 
@@ -115,25 +115,21 @@ describe('GET /authorize', function() {
 
         describe('the response body', function() {
           it('should contain hidden inputs with request informations', function() {
-            var $ = cheerio.load(this.res.text);
-            expect($('input[name="client_id"]').length).to.equal(1);
-            expect($('input[name="client_id"]')[0].attribs.value).to.equal('100');
-            expect($('input[name="redirect_uri"]').length).to.equal(1);
-            expect($('input[name="domain"]').length).to.equal(1);
-            expect($('input[name="state"]').length).to.equal(0);
+            expect(this.$('input[name="client_id"]').length).to.equal(1);
+            expect(this.$('input[name="client_id"]')[0].attribs.value).to.equal('100');
+            expect(this.$('input[name="redirect_uri"]').length).to.equal(1);
+            expect(this.$('input[name="domain"]').length).to.equal(1);
+            expect(this.$('input[name="state"]').length).to.equal(0);
           });
 
           it('should display the button authorize', function() {
-            var $ = cheerio.load(this.res.text);
-            expect($('input[value="Allow"]').length).to.equal(1);
+            expect(this.$('input[value="Allow"]').length).to.equal(1);
           });
 
           it('should display the button cancel', function() {
-            var $ = cheerio.load(this.res.text);
-            expect($('input[value="Deny"]').length).to.equal(1);
+            expect(this.$('input[value="Deny"]').length).to.equal(1);
           });
         });
-
       });
 
       context('with client_id of a client registered dynamically', function() {

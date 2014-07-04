@@ -1,7 +1,5 @@
 "use strict";
 
-var cheerio = require('cheerio');
-
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
 var db       = require('../../models');
@@ -114,7 +112,10 @@ describe('GET /verify', function() {
       });
 
       before(function(done) {
-        requestHelper.sendRequest(this, '/verify', { cookie: this.cookie }, done);
+        requestHelper.sendRequest(this, '/verify', {
+          cookie:   this.cookie,
+          parseDOM: true
+        }, done);
       });
 
       it('should return a status 200', function() {
@@ -127,8 +128,7 @@ describe('GET /verify', function() {
 
       describe('the response body', function() {
         it('should display an input with name', function() {
-          var $ = cheerio.load(this.res.text);
-          expect($('input[name="user_code"]').length).to.equal(1);
+          expect(this.$('input[name="user_code"]').length).to.equal(1);
         });
       });
     });
