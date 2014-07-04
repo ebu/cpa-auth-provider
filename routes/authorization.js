@@ -36,8 +36,6 @@ module.exports = function(app, options) {
     var accessToken = req.body.access_token;
     var domainName  = req.body.domain;
 
-    // TODO: do this in a single query?
-
     db.Domain
       .find({ where: { name: domainName } })
       .complete(function(err, domain) {
@@ -47,7 +45,7 @@ module.exports = function(app, options) {
         }
 
         if (!domain) {
-          res.sendUnauthorized("Unknown domain: " + domainName);
+          res.sendInvalidRequest("Unknown domain: " + domainName);
           return;
         }
 

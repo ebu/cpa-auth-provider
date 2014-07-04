@@ -8,6 +8,8 @@ var userMode      = require('./token/user-mode');
 var webServerFlow = require('./token/webserver-flow');
 var refreshToken  = require('./token/refresh-token');
 
+var async = require('async');
+
 var routes = function(app) {
 
   /**
