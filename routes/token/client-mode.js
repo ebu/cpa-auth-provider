@@ -1,10 +1,10 @@
 "use strict";
 
-var db       = require('../../models');
-var generate = require('../../lib/generate');
+var db              = require('../../models');
+var generate        = require('../../lib/generate');
 var sendAccessToken = require('./send-token');
 
-var async    = require('async');
+var async = require('async');
 
 var clientModeSchema = {
   id: "/token",
@@ -40,9 +40,9 @@ module.exports = function(req, res, next) {
       return;
     }
 
-    var clientId = req.body.client_id;
+    var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
-    var domainName = req.body.domain;
+    var domainName   = req.body.domain;
 
     var findClient = function(callback) {
       db.Client.find({ where: { id: clientId, secret: clientSecret } })

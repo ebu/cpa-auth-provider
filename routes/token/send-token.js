@@ -1,17 +1,20 @@
 "use strict";
 
 /**
- * @param res HTTP response object.
+ * Sends an HTTP response containing an access token
+ *
+ * @param res HTTP response object
  * @param {Token} token
  * @param {Domain} domain
  * @param {User?} user
+ * @param {Scope?} scope
  */
 
 var sendAccessToken = function(res, token, domain, user, scope) {
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
 
-  //TODO: Scope for webflow
+  // TODO: Scope for webflow
 
   var response = {
     access_token:        token.token,
