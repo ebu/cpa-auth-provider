@@ -83,12 +83,12 @@ module.exports = function(req, res, next) {
           }
 
           if (!pairingCode) {
-            res.sendInvalidClient("Pairing code not found");
+            res.sendInvalidRequest("Pairing code not found");
             return;
           }
 
           if (!pairingCode.domain || pairingCode.domain.name !== domainName) {
-            res.sendInvalidClient("Pairing code domain mismatch");
+            res.sendInvalidRequest("Pairing code domain mismatch");
             return;
           }
 

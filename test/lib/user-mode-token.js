@@ -719,8 +719,8 @@ describe("POST /token", function() {
       }, done);
     });
 
-    it("should return an invalid_client error", function() {
-      assertions.verifyError(this.res, 400, 'invalid_client');
+    it("should return an invalid_request error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 
@@ -767,8 +767,8 @@ describe("POST /token", function() {
       }, done);
     });
 
-    it("should return an invalid_client error", function() {
-      assertions.verifyError(this.res, 400, 'invalid_client');
+    it("should return an invalid_request error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 

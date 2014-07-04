@@ -63,7 +63,7 @@ module.exports = function(req, res, next) {
         .complete(function(err, domain) {
           if (!domain) {
             // SPEC : define correct error message
-            res.sendInvalidClient("Unknown domain: " + domainName);
+            res.sendInvalidRequest("Unknown domain: " + domainName);
             return;
           }
 

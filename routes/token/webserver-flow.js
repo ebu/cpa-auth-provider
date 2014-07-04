@@ -55,7 +55,6 @@ module.exports = function(req, res, next) {
     var scope       = req.body.scope;
 
     var findAuthorizationCode = function(callback) {
-
       db.AuthorizationCode
         .find({
           where:   { authorization_code: code },
