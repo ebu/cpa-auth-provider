@@ -407,31 +407,6 @@ describe("POST /token", function() {
         });
       });
 
-      /*
-      context("that does not have an access token for the requested domain", function() {
-        before(resetDatabase);
-
-        before(function(done) {
-          var requestBody = {
-            grant_type:    'http://tech.ebu.ch/cpa/1.0/client_credentials',
-            client_id:     '102',
-            client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
-            domain:        'example-service.bbc.co.uk'
-          };
-
-          requestHelper.sendRequest(this, '/token', {
-            method: 'post',
-            type:   'json',
-            data:   requestBody
-          }, done);
-        });
-
-        it("should return an unauthorized error", function() {
-          assertions.verifyError(this.res, 401, 'unauthorized');
-        });
-      });
-      */
-
       context("with an unknown client", function() {
         before(resetDatabase);
 
