@@ -85,7 +85,7 @@ module.exports = function(req, res, next) {
         callback(err, client, domain);
       },
       function(err) {
-        console.log("error cb");
+        callback(err);
       });
     };
 
