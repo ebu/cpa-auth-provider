@@ -1,11 +1,30 @@
 "use strict";
 
+var config       = require('../config');
+var expiresMixin = require('../lib/expires-mixin');
+
 module.exports = function(sequelize, DataTypes) {
 
   var AccessToken = sequelize.define('AccessToken', {
-    token: { type: DataTypes.STRING, primaryKey: true }
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    token: {
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    refresh_token: {
+      type: DataTypes.STRING
+    }
   }, {
     underscored: true,
+
+    instanceMethods: expiresMixin(config.access_token_lifetime),
 
     associate: function(models) {
       AccessToken.belongsTo(models.Client);

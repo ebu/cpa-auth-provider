@@ -12,6 +12,7 @@ module.exports = {
     expect(res.body).to.have.property('error_description');
     expect(res.body.error_description).to.not.equal('');
   },
+
   verifyRedirectError: function(res, error) {
     expect(res.statusCode).to.equal(302);
     expect(res.headers['content-type']).to.equal('text/plain; charset=UTF-8');

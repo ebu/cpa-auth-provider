@@ -148,6 +148,15 @@ describe('GET /verify', function() {
 });
 
 describe('POST /verify', function() {
+  before(function() {
+    var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+    this.clock = sinon.useFakeTimers(time, "Date");
+  });
+
+  after(function() {
+    this.clock.restore();
+  });
+
   before(resetDatabase);
 
   context('When validating a user_code', function() {
@@ -320,17 +329,26 @@ describe('POST /verify', function() {
       });
 
       context('with an expired user_code', function() {
-        before(function() {
-          // The pairing code should expire one hour after it was created
-          var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+        before(function(done) {
+          var self = this;
+
+          // Set creation time of the pairing code
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
           this.clock = sinon.useFakeTimers(time, "Date");
+
+          resetDatabase(function() {
+            self.clock.restore();
+            // The pairing code should expire one hour after it was created
+            var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+            self.clock = sinon.useFakeTimers(time, "Date");
+
+            done();
+          });
         });
 
         after(function() {
           this.clock.restore();
         });
-
-        before(resetDatabase);
 
         before(function(done) {
           requestHelper.sendRequest(this, '/verify', {

@@ -6,6 +6,7 @@ var generate = require('../lib/generate');
 var clientMode    = require('./token/client-mode');
 var userMode      = require('./token/user-mode');
 var webServerFlow = require('./token/webserver-flow');
+var refreshToken  = require('./token/refresh-token');
 
 var async = require('async');
 
@@ -18,29 +19,30 @@ var routes = function(app) {
   app.post('/token', function(req, res, next) {
     if (!req.body.hasOwnProperty('grant_type')) {
       res.sendErrorResponse(400, 'invalid_request', 'Missing grant type');
+      return;
     }
-    else {
-      switch (req.body.grant_type) {
-        case 'http://tech.ebu.ch/cpa/1.0/client_credentials':
-          clientMode(req, res, next);
-          break;
 
-        case 'http://tech.ebu.ch/cpa/1.0/device_code':
-          userMode(req, res, next);
-          break;
+    var grantType = req.body.grant_type;
 
-        case 'http://tech.ebu.ch/cpa/1.0/authorization_code':
-          webServerFlow(req, res, next);
-          break;
+    switch (grantType) {
+      case 'http://tech.ebu.ch/cpa/1.0/client_credentials':
+        return clientMode(req, res, next);
 
-        default:
-          res.sendErrorResponse(
-            400,
-            'unsupported_grant_type',
-            "Unsupported grant type: " + req.body.grant_type
-          );
-          break;
-      }
+      case 'http://tech.ebu.ch/cpa/1.0/device_code':
+        return userMode(req, res, next);
+
+      case 'http://tech.ebu.ch/cpa/1.0/authorization_code':
+        return webServerFlow(req, res, next);
+
+      case 'http://tech.ebu.ch/cpa/1.0/refresh_token':
+        return refreshToken(req, res, next);
+
+      default:
+        return res.sendErrorResponse(
+          400,
+          'unsupported_grant_type',
+          "Unsupported grant type: " + grantType
+        );
     }
   });
 };

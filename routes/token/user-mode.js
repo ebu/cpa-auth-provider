@@ -8,7 +8,7 @@ var sendAccessToken = require('./send-token');
 var async = require('async');
 
 var userModeSchema = {
-  id: "/token",
+  id: "/token/device_code",
   type: "object",
   required: true,
   additionalProperties: false,
@@ -83,12 +83,12 @@ module.exports = function(req, res, next) {
           }
 
           if (!pairingCode) {
-            res.sendInvalidClient("Pairing code not found");
+            res.sendInvalidRequest("Pairing code not found");
             return;
           }
 
           if (!pairingCode.domain || pairingCode.domain.name !== domainName) {
-            res.sendInvalidClient("Pairing code domain mismatch");
+            res.sendInvalidRequest("Pairing code domain mismatch");
             return;
           }
 
@@ -97,16 +97,22 @@ module.exports = function(req, res, next) {
             return;
           }
 
-          if (config.auto_provision_tokens) {
-            if (pairingCode.user_id == null) {
-              res.send(202, { "reason": "authorization_pending" });
-              return;
-            }
+          if (pairingCode.state === "denied") {
+            res.sendErrorResponse(400, "access_denied", "User denied access");
+            return;
           }
           else {
-            if (pairingCode.state === 'pending') {
-              res.send(202, { "reason": "authorization_pending" });
-              return;
+            if (config.auto_provision_tokens) {
+              if (pairingCode.user_id == null) {
+                res.send(202, { "reason": "authorization_pending" });
+                return;
+              }
+            }
+            else {
+              if (pairingCode.state === 'pending') {
+                res.send(202, { "reason": "authorization_pending" });
+                return;
+              }
             }
           }
 
@@ -115,21 +121,24 @@ module.exports = function(req, res, next) {
     };
 
     var createAccessToken = function(client, user, pairingCode, callback) {
-      db.sequelize.transaction(function(transaction) {
-        var accessToken = {
-          token:     generate.accessToken(),
-          user_id:   user.id,
-          client_id: client.id,
-          domain_id: pairingCode.domain_id
-        };
+      var accessToken;
 
+      db.sequelize.transaction(function(transaction) {
         db.AccessToken
-          .create(accessToken)
-          .then(function() {
-            // Associate client with user
-            return client.updateAttributes({ user_id: user.id });
+          .create({
+            token:      generate.accessToken(),
+            user_id:    user.id,
+            client_id:  client.id,
+            domain_id:  pairingCode.domain_id
           })
-          .then(function() {
+          .then(function(token) {
+            accessToken = token;
+
+            // Associate this client with the user
+            client.user_id = user.id;
+            return client.save();
+          })
+          .then(function(token) {
             return pairingCode.destroy();
           })
           .then(function() {
