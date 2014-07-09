@@ -234,10 +234,10 @@ describe("POST /token", function() {
             context("and the client polls too quickly", function() {
               it("should return status 400");
               it("should return slow_down error");
+              it("should return retry_in field");
             });
           });
 
-          //context("and the user has input the correct user code", function() {
           context("and the user has approved access", function() {
             context("and the client provides valid parameters", function() {
               before(resetDatabase);
@@ -317,8 +317,6 @@ describe("POST /token", function() {
                   expect(this.res.body).to.have.property('expires_in');
                   expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
                 });
-
-                it("should include the scope of the access token"); // TODO: optional(?): scope
               });
 
               describe("the database", function() {
