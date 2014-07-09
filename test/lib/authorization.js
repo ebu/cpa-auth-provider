@@ -115,11 +115,13 @@ describe("POST /authorized", function() {
         expect(this.res.body.client_id).to.equal(2);
       });
 
+      // Implementation specific (Not in spec)
       it("should include the display name", function() {
         expect(this.res.body).to.have.property('display_name');
         expect(this.res.body.display_name).to.equal('Joe Bloggs');
       });
 
+      // Implementation specific (Not in spec)
       it("should include the photo url", function() {
         expect(this.res.body).to.have.property('photo_url');
         expect(this.res.body.photo_url).to.equal('http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png');
