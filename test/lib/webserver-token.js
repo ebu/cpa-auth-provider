@@ -425,8 +425,8 @@ describe("POST /token", function() {
         }, done);
       });
 
-      it("should return an unsupported_grant_type error", function() {
-        assertions.verifyError(this.res, 400, 'unsupported_grant_type');
+      it("should return an invalid_request error", function() {
+        assertions.verifyError(this.res, 400, 'invalid_request');
       });
     });
 

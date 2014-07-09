@@ -40,7 +40,7 @@ var routes = function(app) {
       default:
         return res.sendErrorResponse(
           400,
-          'unsupported_grant_type',
+          'invalid_request',
           "Unsupported grant type: " + grantType
         );
     }
