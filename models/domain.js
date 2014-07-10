@@ -14,6 +14,9 @@ module.exports = function(sequelize, DataTypes) {
     display_name: {
       type: DataTypes.STRING
     },
+
+    // Access token used by the service provider when making requests to
+    // /authorized
     access_token: {
       type: DataTypes.STRING,
       validate: {
