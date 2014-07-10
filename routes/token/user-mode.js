@@ -98,7 +98,7 @@ module.exports = function(req, res, next) {
           }
 
           if (pairingCode.state === "denied") {
-            res.sendErrorResponse(400, "access_denied", "User denied access");
+            res.sendErrorResponse(400, "cancelled", "User denied access");
             return;
           }
           else {

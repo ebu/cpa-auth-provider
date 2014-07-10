@@ -237,7 +237,6 @@ describe("POST /token", function() {
             });
           });
 
-          //context("and the user has input the correct user code", function() {
           context("and the user has approved access", function() {
             context("and the client provides valid parameters", function() {
               before(resetDatabase);
@@ -412,8 +411,8 @@ describe("POST /token", function() {
                 }, done);
               });
 
-              it("should return an access_denied error", function() {
-                assertions.verifyError(this.res, 400, 'access_denied');
+              it("should return a 'cancelled' error", function() {
+                assertions.verifyError(this.res, 400, 'cancelled');
               });
             });
           });
