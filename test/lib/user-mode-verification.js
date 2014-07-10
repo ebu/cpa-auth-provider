@@ -5,24 +5,7 @@ var messages = require('../../lib/messages');
 var db       = require('../../models');
 
 var requestHelper = require('../request-helper');
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Clients').then(function() {
-    return db.sequelize.query('DELETE FROM PairingCodes');
-  })
-  .then(function() {
-    return db.sequelize.query('DELETE FROM Users');
-  })
-  .then(function() {
-    return db.sequelize.query('DELETE FROM Domains');
-  })
-  .then(function() {
-    done();
-  },
-  function(error) {
-    done(error);
-  });
-};
+var dbHelper      = require('../db-helper');
 
 var initDatabase = function(opts, done) {
   db.Client
@@ -84,7 +67,7 @@ var resetDatabase = function(opts, done) {
     opts = { state: 'pending', user_id: null };
   }
 
-  clearDatabase(function(err) {
+  dbHelper.clearDatabase(function(err) {
     if (err) {
       done(err);
     }

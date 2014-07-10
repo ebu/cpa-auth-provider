@@ -5,28 +5,7 @@ var generate = require('../../lib/generate');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM PairingCodes')
-    .then(function() {
-      return db.sequelize.query('DELETE FROM AccessTokens');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Clients');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Users');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Domains');
-    })
-    .then(function() {
-      done();
-    },
-    function(error) {
-      done(error);
-    });
-};
+var dbHelper      = require('../db-helper');
 
 /*
  * For testing, create three clients:
@@ -182,10 +161,15 @@ var initDatabase = function(done) {
 };
 
 var resetDatabase = function(done) {
-  clearDatabase(function() {
-    initDatabase(function() {
-      done();
-    });
+  dbHelper.clearDatabase(function(error) {
+    if (error) {
+      done(error);
+    }
+    else {
+      initDatabase(function(error) {
+        done(error);
+      });
+    }
   });
 };
 

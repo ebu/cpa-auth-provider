@@ -5,21 +5,7 @@ var generate = require('../../lib/generate');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Domains').then(function() {
-    return db.sequelize.query('DELETE FROM Clients');
-  })
-  .then(function() {
-    return db.sequelize.query('DELETE FROM AccessTokens');
-  })
-  .then(function() {
-    done();
-  },
-  function(error) {
-    done(new Error(JSON.stringify(error)));
-  });
-};
+var dbHelper      = require('../db-helper');
 
 var initDatabase = function(done) {
   db.Client
@@ -47,6 +33,10 @@ var initDatabase = function(done) {
     });
 };
 
+var resetDatabase = function(done) {
+  return dbHelper.resetDatabase(initDatabase, done);
+};
+
 describe('POST /token', function() {
   context("when the client requests an access token (client mode)", function() {
     before(function() {
@@ -57,8 +47,7 @@ describe('POST /token', function() {
       generate.accessToken.restore();
     });
 
-    before(clearDatabase);
-    before(initDatabase);
+    before(resetDatabase);
 
     context('with valid parameters', function() {
       before(function() {

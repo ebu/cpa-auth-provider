@@ -4,25 +4,11 @@ var config   = require('../../config');
 var db       = require('../../models');
 var generate = require('../../lib/generate');
 
-var assertions = require('../assertions');
+var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
+var dbHelper      = require('../db-helper');
 
-// Tests for the End-point implementing the OAuth 2.0 Device Profile
-// http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#page-3
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Clients').then(function() {
-    done();
-  })
-  .then(function() {
-    return db.sequelize.query('DELETE FROM Users');
-  },
-  function(error) {
-    done(error);
-  });
-};
-
-var createClient = function(done) {
+var initDatabase = function(done) {
   db.Client
     .create({
       id:               3,
@@ -52,6 +38,13 @@ var createClient = function(done) {
       });
     })
     .then(function() {
+      return db.Domain.create({
+        id:           1,
+        name:         'example-service.bbc.co.uk',
+        access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+      });
+    })
+    .then(function() {
       done();
     },
     function(err) {
@@ -59,16 +52,8 @@ var createClient = function(done) {
     });
 };
 
-var createDomain = function(done) {
-  db.Domain
-    .create({
-      id:           1,
-      name:         'example-service.bbc.co.uk',
-      access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-    })
-    .complete(function(err, domain) {
-      done();
-    });
+var resetDatabase = function(done) {
+  return dbHelper.resetDatabase(initDatabase, done);
 };
 
 describe('POST /associate', function() {
@@ -82,9 +67,7 @@ describe('POST /associate', function() {
     generate.userCode.restore();
   });
 
-  before(clearDatabase);
-  before(createClient);
-  before(createDomain);
+  before(resetDatabase);
 
   context('with a client not associated with a user account', function() {
     before(function() {

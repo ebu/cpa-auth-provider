@@ -5,22 +5,16 @@ var generate = require('../../lib/generate');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
+var dbHelper      = require('../db-helper');
 
 var async = require('async');
 
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Domains').then(function() {
-    return db.sequelize.query('DELETE FROM Clients');
+var createUser = function(callback) {
+  db.User.create({
+    provider_uid: 'testuser',
+    password:     'testpassword'
   })
-  .then(function() {
-    return db.sequelize.query('DELETE FROM AccessTokens');
-  })
-  .then(function() {
-    done();
-  },
-  function(error) {
-    done(new Error(JSON.stringify(error)));
-  });
+  .complete(callback);
 };
 
 var createStaticClient = function(callback) {
@@ -60,6 +54,7 @@ var createDomain = function(callback) {
 
 var initDatabase = function(done) {
   async.series([
+    createUser,
     createStaticClient,
     createDynamicClient,
     createDomain
@@ -72,10 +67,13 @@ var initDatabase = function(done) {
     });
 };
 
+var resetDatabase = function(done) {
+  return dbHelper.resetDatabase(initDatabase, done);
+};
+
 describe('GET /authorize', function() {
   context("when the client redirects the resource owner for authorization", function() {
-    before(clearDatabase);
-    before(initDatabase);
+    before(resetDatabase);
 
     context('when user is authenticated', function() {
       before(function(done) {

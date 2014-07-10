@@ -5,31 +5,9 @@ var generate = require('../../lib/generate');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
+var dbHelper      = require('../db-helper');
 
-var _ = require('lodash');
 var async = require('async');
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM PairingCodes')
-    .then(function() {
-      return db.sequelize.query('DELETE FROM AccessTokens');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Clients');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Users');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Domains');
-    })
-    .then(function() {
-      done();
-    },
-    function(error) {
-      done(error);
-    });
-};
 
 /**
  * For testing,
@@ -95,11 +73,7 @@ var initDatabase = function(done) {
 };
 
 var resetDatabase = function(done) {
-  clearDatabase(function() {
-    initDatabase(function() {
-      done();
-    });
-  });
+  return dbHelper.resetDatabase(initDatabase, done);
 };
 
 describe("POST /token", function() {

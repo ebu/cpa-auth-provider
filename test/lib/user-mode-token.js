@@ -6,30 +6,7 @@ var generate = require('../../lib/generate');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
-
-var _ = require('lodash');
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM PairingCodes')
-    .then(function() {
-      return db.sequelize.query('DELETE FROM AccessTokens');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Clients');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Users');
-    })
-    .then(function() {
-      return db.sequelize.query('DELETE FROM Domains');
-    })
-    .then(function() {
-      done();
-    },
-    function(error) {
-      done(error);
-    });
-};
+var dbHelper      = require('../db-helper');
 
 /**
  * For testing, create two clients, each with its own pairing code. One
@@ -156,11 +133,7 @@ var initDatabase = function(done) {
 };
 
 var resetDatabase = function(done) {
-  clearDatabase(function() {
-    initDatabase(function() {
-      done();
-    });
-  });
+  return dbHelper.resetDatabase(initDatabase, done);
 };
 
 describe("POST /token", function() {

@@ -5,26 +5,7 @@ var generate = require('../../lib/generate');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
-
-var async = require('async');
-
-var clearDatabase = function(done) {
-  var tables = [
-    'AccessTokens',
-    'AuthorizationCodes',
-    'Clients',
-    'Domains',
-    'IdentityProviders',
-    'PairingCodes',
-    'Users'
-  ];
-
-  var deleteData = function(table, done) {
-    db.sequelize.query("DELETE from " + table).complete(done);
-  };
-
-  async.eachSeries(tables, deleteData, done);
-};
+var dbHelper      = require('../db-helper');
 
 var initDatabase = function(done) {
   db.Domain.create({
@@ -77,7 +58,7 @@ var initDatabase = function(done) {
 };
 
 var resetDatabase = function(done) {
-  clearDatabase(function(error) {
+  dbHelper.clearDatabase(function(error) {
     initDatabase(function(error) {
       done(error);
     });

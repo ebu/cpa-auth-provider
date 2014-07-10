@@ -2,46 +2,18 @@
 
 // Test for the dynamic registration end point
 
-var _ = require('lodash');
-
 var db = require('../../models');
 
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
-
-var clearDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Clients').then(function() {
-    done();
-  },
-  function(error) {
-    done(error);
-  });
-};
-
-var initDatabase = function(done) {
-  db.Client
-    .create({
-      id:               3,
-      secret:           'secret',
-      name:             'Test client',
-      software_id:      'CPA AP Test',
-      software_version: '0.0.1',
-      ip:               '127.0.0.1'
-    })
-    .then(function() {
-      done();
-    },
-    function(err) {
-      done(new Error(JSON.stringify(err)));
-    });
-};
+var dbHelper      = require('../db-helper');
 
 describe('POST /register', function() {
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
 
     context('when providing a correct request', function() {
-      before(clearDatabase);
+      before(dbHelper.clearDatabase);
 
       before(function(done) {
         var data = {
@@ -110,7 +82,7 @@ describe('POST /register', function() {
     });
 
     context('while providing a wrong Content-Type', function() {
-      before(clearDatabase);
+      before(dbHelper.clearDatabase);
 
       before(function(done) {
         var data = {
@@ -135,7 +107,7 @@ describe('POST /register', function() {
 
     fields.forEach(function(field) {
       context('with missing ' + field + ' field', function() {
-        before(clearDatabase);
+        before(dbHelper.clearDatabase);
 
         before(function(done) {
           var data = {
@@ -160,7 +132,7 @@ describe('POST /register', function() {
 
     fields.forEach(function(field) {
       context('with blank ' + field + ' field', function() {
-        before(clearDatabase);
+        before(dbHelper.clearDatabase);
 
         before(function(done) {
           var data = {

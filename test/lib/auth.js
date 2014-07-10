@@ -4,13 +4,12 @@ var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
 var requestHelper = require('../request-helper');
+var dbHelper      = require('../db-helper');
 
-var resetDatabase = function(done) {
-  db.sequelize.query('DELETE FROM Users').then(function() {
-    return db.User.create({
-      provider_uid: 'testuser',
-      password: 'testpassword'
-    });
+var initDatabase = function(done) {
+  db.User.create({
+    provider_uid: 'testuser',
+    password: 'testpassword'
   })
   .then(function() {
     done();
@@ -18,6 +17,10 @@ var resetDatabase = function(done) {
   function(error) {
     done(error);
   });
+};
+
+var resetDatabase = function(done) {
+  return dbHelper.resetDatabase(initDatabase, done);
 };
 
 describe('GET /auth', function() {
