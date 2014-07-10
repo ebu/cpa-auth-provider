@@ -6,8 +6,47 @@ var generate = require('../../lib/generate');
 var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 
-var resetDatabase = function(done) {
-  db.sequelize.query('DELETE FROM AccessTokens').then(function() {
+var async = require('async');
+
+var clearDatabase = function(done) {
+  var tables = [
+    'AccessTokens',
+    'AuthorizationCodes',
+    'Clients',
+    'Domains',
+    'IdentityProviders',
+    'PairingCodes',
+    'Users'
+  ];
+
+  var deleteData = function(table, done) {
+    db.sequelize.query("DELETE from " + table).complete(done);
+  };
+
+  async.eachSeries(tables, deleteData, done);
+};
+
+var initDatabase = function(done) {
+  db.Domain.create({
+    id:           1,
+    name:         'example-service.bbc.co.uk',
+    access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+  })
+  .then(function() {
+    return db.Domain.create({
+      id:           2,
+      name:         'another-example-service.com',
+      access_token: '831ba433eeaf49dabc5c3089b306d10f'
+    });
+  })
+  .then(function() {
+    return db.User.create({
+      id:           3,
+      display_name: 'Joe Bloggs',
+      photo_url:    'http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png'
+    });
+  })
+  .then(function() {
     return db.AccessToken.create({
       token:     'aed201ffb3362de42700a293bdebf694',
       domain_id: 1,
@@ -23,7 +62,7 @@ var resetDatabase = function(done) {
     });
   })
   .then(function() {
-    db.AccessToken.create({
+    return db.AccessToken.create({
       token:     '8a7be6ef96a946b6993b1c79a39702b0',
       domain_id: 1,
       client_id: 5
@@ -37,50 +76,18 @@ var resetDatabase = function(done) {
   });
 };
 
-var createDomain = function(done) {
-  var data = {
-    id:   1,
-    name: 'example-service.bbc.co.uk',
-    access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-  };
-
-  db.Domain
-    .create(data)
-    .complete(function(err, domain) {
-      done();
+var resetDatabase = function(done) {
+  clearDatabase(function(error) {
+    initDatabase(function(error) {
+      done(error);
     });
-};
-
-var createUser = function(done) {
-  var data = {
-    id:           3,
-    display_name: 'Joe Bloggs',
-    photo_url:    'http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png'
-  };
-
-  db.User
-    .create(data)
-    .complete(function(err, user) {
-      done();
-    });
+  });
 };
 
 describe("POST /authorized", function() {
-  before(function() {
-    // The access token should expire 30 days after it was created
-    var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-    this.clock = sinon.useFakeTimers(time, "Date");
-  });
-
-  after(function() {
-    this.clock.restore();
-  });
-
-  before(resetDatabase);
-  before(createDomain);
-  before(createUser);
-
   context("with a valid user mode access token", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'aed201ffb3362de42700a293bdebf694',
@@ -128,6 +135,8 @@ describe("POST /authorized", function() {
   });
 
   context("with a valid client mode access token", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'af03736940844fccb0147f12a9d188fb',
@@ -172,6 +181,8 @@ describe("POST /authorized", function() {
   });
 
   context("with incorrect content type", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'aed201ffb3362de42700a293bdebf694',
@@ -192,6 +203,8 @@ describe("POST /authorized", function() {
   });
 
   context("with an invalid client access token", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'unknown',
@@ -212,10 +225,20 @@ describe("POST /authorized", function() {
   });
 
   context("with an expired access token", function() {
-    before(function() {
-      // The access token should expire 30 days after it was created
-      var time = new Date("Fri May 9 2014 11:00:00 GMT+0100").getTime();
+    before(function(done) {
+      var self = this;
+
+      // Set creation time of the pairing code
+      var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
       this.clock = sinon.useFakeTimers(time, "Date");
+
+      resetDatabase(function() {
+        // The access token should expire 30 days after it was created
+        var time = new Date("Fri May 09 2014 11:00:00 GMT+0100").getTime();
+        self.clock = sinon.useFakeTimers(time, "Date");
+
+        done();
+      });
     });
 
     after(function() {
@@ -242,6 +265,8 @@ describe("POST /authorized", function() {
   });
 
   context("with missing client access token", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         // access_token: 'aed201ffb3362de42700a293bdebf694',
@@ -262,6 +287,8 @@ describe("POST /authorized", function() {
   });
 
   context("with invalid domain", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'aed201ffb3362de42700a293bdebf694',
@@ -282,6 +309,8 @@ describe("POST /authorized", function() {
   });
 
   context("with missing domain", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'aed201ffb3362de42700a293bdebf694'
@@ -302,6 +331,8 @@ describe("POST /authorized", function() {
   });
 
   context("with an extra parameter", function() {
+    before(resetDatabase);
+
     before(function(done) {
       var data = {
         access_token: 'aed201ffb3362de42700a293bdebf694',
@@ -319,6 +350,28 @@ describe("POST /authorized", function() {
 
     it("should return an 'invalid_request' error", function() {
       assertions.verifyError(this.res, 400, 'invalid_request');
+    });
+  });
+
+  context("with mismatched domain", function() {
+    before(resetDatabase);
+
+    before(function(done) {
+      var data = {
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain:       'another-example-service.com'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
+      }, done);
+    });
+
+    it("should return a not_found error", function() {
+      assertions.verifyError(this.res, 404, 'not_found');
     });
   });
 });
