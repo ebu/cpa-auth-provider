@@ -114,8 +114,6 @@ describe('POST /token', function() {
           expect(this.res.body).to.have.property('expires_in');
           expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
         });
-
-        it("should include the scope of the access token"); // TODO: optional(?): scope
       });
 
       describe("the database", function() {

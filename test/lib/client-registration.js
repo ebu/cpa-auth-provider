@@ -177,7 +177,8 @@ describe('POST /register', function() {
   });
 });
 
-describe('GET /register/:client_id', function() {
+// Implementation specific (Not in spec)
+describe('PUT /register/:client_id', function() {
   context("When updating configuration information about a client", function() {
     before(function(done) {
       requestHelper.sendRequest(this, '/register', { method: 'put' }, done);
@@ -189,7 +190,8 @@ describe('GET /register/:client_id', function() {
   });
 });
 
-describe('GET /register?client_id=:client_id', function() {
+// Implementation specific (Not in spec)
+describe('PUT /register?client_id=:client_id', function() {
   context("When updating configuration information about a client", function() {
     before(function(done) {
       requestHelper.sendRequest(this, '/register', { method: 'put' }, done);
@@ -201,6 +203,7 @@ describe('GET /register?client_id=:client_id', function() {
   });
 });
 
+// Implementation specific (Not in spec)
 describe('PUT /register', function() {
   context("When updating configuration information about a client", function() {
     before(function(done) {
@@ -213,6 +216,7 @@ describe('PUT /register', function() {
   });
 });
 
+// Implementation specific (Not in spec)
 describe('DELETE /register', function() {
   context('When deleting configuration information about a client', function() {
     before(function(done) {

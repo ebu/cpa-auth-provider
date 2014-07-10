@@ -207,6 +207,7 @@ describe("POST /token", function() {
             context("and the client polls too quickly", function() {
               it("should return status 400");
               it("should return slow_down error");
+              it("should return retry_in field");
             });
           });
 
@@ -289,8 +290,6 @@ describe("POST /token", function() {
                   expect(this.res.body).to.have.property('expires_in');
                   expect(this.res.body.expires_in).to.equal(30 * 24 * 60 * 60);
                 });
-
-                it("should include the scope of the access token"); // TODO: optional(?): scope
               });
 
               describe("the database", function() {
@@ -547,8 +546,8 @@ describe("POST /token", function() {
       }, done);
     });
 
-    it("should return an unsupported_grant_type error", function() {
-      assertions.verifyError(this.res, 400, 'unsupported_grant_type');
+    it("should return an invalid_request error", function() {
+      assertions.verifyError(this.res, 400, 'invalid_request');
     });
   });
 
