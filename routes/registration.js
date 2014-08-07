@@ -40,20 +40,20 @@ module.exports = function(app) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   };
 
-  var handleRegister = function(req, res, next) {
+  var handleRegister = function(params, res, next) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
-          var clientIp     = getClientIpAddress(req);
+          var clientIp     = params.client_ip_address;
           var clientSecret = generate.clientSecret(clientIp);
 
           // TODO: Check mandatory fields.
           db.Client.create({
             id:               null,
             secret:           clientSecret,
-            name:             req.body.client_name,
-            software_id:      req.body.software_id,
-            software_version: req.body.software_version,
+            name:             params.client_name,
+            software_id:      params.software_id,
+            software_version: params.software_version,
             ip:               clientIp
           })
           .complete(function(err, client) {
@@ -101,19 +101,36 @@ module.exports = function(app) {
    */
 
   app.post('/register', validateJson, function(req, res, next) {
-    handleRegister(req, res, next);
+    var params = {
+      client_ip_address: getClientIpAddress(req),
+      client_name:       req.body.client_name,
+      software_id:       req.body.software_id,
+      software_version:  req.body.software_version
+    };
+
+    handleRegister(params, res, next);
   });
 
-  // client_id is given in the path
-  app.get('/register/:client_id', function(req, res) {
-    var clientId = req.params.client_id;
-    res.send(501);
+  // parameters: client_name, software_id, and software_version
+  //
+  app.get('/register', function(req, res, next) {
+    var params = {
+      client_ip_address: getClientIpAddress(req),
+      client_name:       req.param.client_name,
+      software_id:       req.param.software_id,
+      software_version:  req.param.software_version
+    };
+
+    handleRegister(params, res, next);
+
+    //var clientId = req.params.client_id;
+    //res.send(501);
   });
 
   // client_id is given as a GET Parameter
-  app.get('/register', function(req, res) {
-    res.send(501);
-  });
+  // app.get('/register', function(req, res) {
+  //   res.send(501);
+  // });
 
   app.put('/register', function(req, res) {
     res.send(501);
