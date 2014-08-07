@@ -30,7 +30,15 @@ var validateJson = require('../lib/validate-json').middleware(schema);
 module.exports = function(app) {
   var logger = app.get('logger');
 
-  var handleAssociate = function(params, res, next) {
+  var createError = function(status, error, description) {
+    var err = new Error(description);
+    err.error = error;
+    err.statusCode = status;
+
+    return err;
+  };
+
+  var handleAssociate = function(params, done) {
     var clientId     = params.clientId;
     var clientSecret = params.clientSecret;
     var domainName   = params.domain;
@@ -41,24 +49,26 @@ module.exports = function(app) {
     })
     .complete(function(err, client) {
       if (err) {
-        next(err);
+        done(err);
         return;
       }
 
       if (!client) {
-        res.sendInvalidClient("Client " + clientId + " not found");
+        err = createError(400, 'invalid_client', "Client " + clientId + " not found");
+        done(err);
         return;
       }
 
       db.Domain.find({ where: { name: domainName }})
         .complete(function(err, domain) {
           if (err) {
-            next(err);
+            done(err);
             return;
           }
 
           if (!domain) {
-            res.sendInvalidRequest("Domain " + domainName + " not found");
+            err = createError(400, 'invalid_request', "Domain " + domainName + " not found");
+            done(err);
             return;
           }
 
@@ -77,24 +87,21 @@ module.exports = function(app) {
           db.PairingCode.create(pairingCode)
             .complete(function(err, pairingCode) {
               if (err) {
-                next(err);
+                done(err);
                 return;
               }
-
-              res.set('Cache-Control', 'no-store');
-              res.set('Pragma', 'no-cache');
 
               if (client.user) {
                 if (config.auto_provision_tokens) {
                   // Automatically grant access
-                  res.send(200, {
+                  done(null, {
                     device_code:      pairingCode.device_code,
                     expires_in:       Math.floor(pairingCode.getTimeToLive())
                   });
                 }
                 else {
                   // Ask user's permission to grant access
-                  res.send(200, {
+                  done(null, {
                     device_code:      pairingCode.device_code,
                     verification_uri: pairingCode.verification_uri,
                     interval:         config.max_poll_interval,
@@ -104,7 +111,7 @@ module.exports = function(app) {
               }
               else {
                 // Must pair with user account
-                res.send(200, {
+                done(null, {
                   device_code:      pairingCode.device_code,
                   user_code:        pairingCode.user_code,
                   verification_uri: pairingCode.verification_uri,
@@ -128,7 +135,26 @@ module.exports = function(app) {
       domain:       req.body.domain
     };
 
-    handleAssociate(params, res, next);
+    handleAssociate(params, function(err, pairingInfo) {
+      if (err) {
+        if (err.statusCode) {
+          res.sendErrorResponse(
+            err.statusCode,
+            err.error,
+            err.message
+          );
+        }
+        else {
+          next(err);
+        }
+        return;
+      }
+
+      res.set('Cache-Control', 'no-store');
+      res.set('Pragma', 'no-cache');
+
+      res.send(200, pairingInfo);
+    });
   });
 
   /**
@@ -149,6 +175,23 @@ module.exports = function(app) {
       domain:       req.params.domain
     };
 
-    handleAssociate(params, res, next);
+    handleAssociate(params, function(err, pairingInfo) {
+      if (err) {
+        if (err.statusCode) {
+          res.status(err.statusCode);
+          res.jsonp({ error: err.error, error_description: err.message });
+        }
+        else {
+          next(err);
+        }
+
+        return;
+      }
+
+      res.set('Cache-Control', 'no-store');
+      res.set('Pragma', 'no-cache');
+
+      res.jsonp(200, pairingInfo);
+    });
   });
 };
