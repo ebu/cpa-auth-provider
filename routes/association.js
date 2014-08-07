@@ -30,11 +30,7 @@ var validateJson = require('../lib/validate-json').middleware(schema);
 module.exports = function(app) {
   var logger = app.get('logger');
 
-  /**
-   * Client association endpoint
-   */
-
-  app.post('/associate', validateJson, function(req, res, next) {
+  var handleAssociate = function(req, res, next) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var domainName   = req.body.domain;
@@ -119,5 +115,13 @@ module.exports = function(app) {
           });
         });
     });
+  };
+
+  /**
+   * Client association endpoint
+   */
+
+  app.post('/associate', validateJson, function(req, res, next) {
+    handleAssociate(req, res, next);
   });
 };
