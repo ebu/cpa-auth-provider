@@ -30,10 +30,10 @@ var validateJson = require('../lib/validate-json').middleware(schema);
 module.exports = function(app) {
   var logger = app.get('logger');
 
-  var handleAssociate = function(req, res, next) {
-    var clientId     = req.body.client_id;
-    var clientSecret = req.body.client_secret;
-    var domainName   = req.body.domain;
+  var handleAssociate = function(params, res, next) {
+    var clientId     = params.clientId;
+    var clientSecret = params.clientSecret;
+    var domainName   = params.domain;
 
     db.Client.find({
       where: { id: clientId, secret: clientSecret },
@@ -122,6 +122,33 @@ module.exports = function(app) {
    */
 
   app.post('/associate', validateJson, function(req, res, next) {
-    handleAssociate(req, res, next);
+    var params = {
+      clientId:     req.body.client_id,
+      clientSecret: req.body.client_secret,
+      domain:       req.body.domain
+    };
+
+    handleAssociate(params, res, next);
+  });
+
+  /**
+   * Client association endpoint
+   *
+   * @example
+   * <code>GET /associate?client_id=abc123&client_secret=xyzzy&domain=example.com</code>
+   *
+   * @param client_id
+   * @param client_secret
+   * @param domain
+   */
+
+  app.get('/associate', function(req, res, next) {
+    var params = {
+      clientId:     req.params.client_id,
+      clientSecret: req.params.client_secret,
+      domain:       req.params.domain
+    };
+
+    handleAssociate(params, res, next);
   });
 };
