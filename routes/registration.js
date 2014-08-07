@@ -44,17 +44,16 @@ module.exports = function(app) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
-          var clientIp     = params.client_ip_address;
-          var clientSecret = generate.clientSecret(clientIp);
+          var clientSecret = generate.clientSecret(params.clientIpAddress);
 
           // TODO: Check mandatory fields.
           db.Client.create({
             id:               null,
             secret:           clientSecret,
-            name:             params.client_name,
-            software_id:      params.software_id,
-            software_version: params.software_version,
-            ip:               clientIp
+            name:             params.clientName,
+            software_id:      params.softwareId,
+            software_version: params.softwareVersion,
+            ip:               params.clientIpAddress
           })
           .complete(function(err, client) {
             callback(err, client);
@@ -107,10 +106,10 @@ module.exports = function(app) {
 
   app.post('/register', validateJson, function(req, res, next) {
     var params = {
-      client_ip_address: getClientIpAddress(req),
-      client_name:       req.body.client_name,
-      software_id:       req.body.software_id,
-      software_version:  req.body.software_version
+      clientIpAddress: getClientIpAddress(req),
+      clientName:      req.body.client_name,
+      softwareId:      req.body.software_id,
+      softwareVersion: req.body.software_version
     };
 
     handleRegister(params, function(err, clientInfo) {
@@ -141,6 +140,9 @@ module.exports = function(app) {
    * <code>client_id</code> and <code>client_secret</code> in the
    * <code>cpa</code> cookie
    *
+   * @example
+   * <code>GET /register?client_name=Test%20client&software_id=test_client&software_version=1.0</code>
+   *
    * @param client_name
    * @param software_id
    * @param software_version
@@ -148,10 +150,10 @@ module.exports = function(app) {
 
   app.get('/register', function(req, res, next) {
     var params = {
-      client_ip_address: getClientIpAddress(req),
-      client_name:       req.param.client_name,
-      software_id:       req.param.software_id,
-      software_version:  req.param.software_version
+      clientIpAddress: getClientIpAddress(req),
+      clientName:      req.params.client_name,
+      softwareId:      req.params.software_id,
+      softwareVersion: req.params.software_version
     };
 
     handleRegister(params, function(err, clientInfo) {
