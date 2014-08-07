@@ -128,10 +128,7 @@ module.exports = function(app) {
         return;
       }
 
-      res.send(201, {
-        client_id:     clientInfo.client_id,
-        client_secret: clientInfo.client_secret
-      });
+      res.send(201, clientInfo);
     });
   });
 
