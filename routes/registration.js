@@ -40,7 +40,7 @@ module.exports = function(app) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   };
 
-  var handleRegister = function(params, res, next) {
+  var handleRegister = function(params, done) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
@@ -66,19 +66,17 @@ module.exports = function(app) {
           });
         },
         function(client, callback) {
-          res.send(201, {
+          callback(null, {
             client_id:     client.id.toString(),
             client_secret: client.secret
           });
-
-          callback();
         }
       ],
-      function(error) {
+      function(error, clientInfo) {
         if (error) {
           transaction.rollback().complete(function(err) {
             if (err) {
-              next(err);
+              done(err);
             }
             else {
               // TODO: distinguish between invalid input parameters and other
@@ -86,9 +84,16 @@ module.exports = function(app) {
 
               // TODO: report more specific error message, e.g, which field
               // is invalid.
-              res.sendInvalidRequest("Invalid request");
+              err = new Error();
+              err.statusCode = 400;
+              err.error = "invalid_request";
+              err.description = "Invalid request";
+              done(err);
             }
           });
+        }
+        else {
+          done(null, clientInfo);
         }
       });
     });
@@ -108,11 +113,39 @@ module.exports = function(app) {
       software_version:  req.body.software_version
     };
 
-    handleRegister(params, res, next);
+    handleRegister(params, function(err, clientInfo) {
+      if (err) {
+        if (err.statusCode) {
+          res.sendErrorResponse(
+            err.statusCode,
+            err.error,
+            err.description
+          );
+        }
+        else {
+          next(err);
+        }
+
+        return;
+      }
+
+      res.send(201, {
+        client_id:     clientInfo.client_id,
+        client_secret: clientInfo.client_secret
+      });
+    });
   });
 
-  // parameters: client_name, software_id, and software_version
-  //
+  /**
+   * Client registration endpoint. On success, returns status 201, with the
+   * <code>client_id</code> and <code>client_secret</code> in the
+   * <code>cpa</code> cookie
+   *
+   * @param client_name
+   * @param software_id
+   * @param software_version
+   */
+
   app.get('/register', function(req, res, next) {
     var params = {
       client_ip_address: getClientIpAddress(req),
@@ -121,10 +154,25 @@ module.exports = function(app) {
       software_version:  req.param.software_version
     };
 
-    handleRegister(params, res, next);
+    handleRegister(params, function(err, clientInfo) {
+      if (err) {
+        if (err.statusCode) {
+          res.sendErrorResponse(
+            err.statusCode,
+            err.error,
+            err.description
+          );
+        }
+        else {
+          next(err);
+        }
 
-    //var clientId = req.params.client_id;
-    //res.send(501);
+        return;
+      }
+
+      res.cookie('cpa', clientInfo, { httpOnly: true });
+      res.send(201);
+    });
   });
 
   // client_id is given as a GET Parameter
