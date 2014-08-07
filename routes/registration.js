@@ -40,13 +40,7 @@ module.exports = function(app) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   };
 
-  /**
-   * Client registration endpoint
-   *
-   * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
-   */
-
-  app.post('/register', validateJson, function(req, res, next) {
+  var handleRegister = function(req, res, next) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
@@ -98,6 +92,16 @@ module.exports = function(app) {
         }
       });
     });
+  };
+
+  /**
+   * Client registration endpoint
+   *
+   * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
+   */
+
+  app.post('/register', validateJson, function(req, res, next) {
+    handleRegister(req, res, next);
   });
 
   // client_id is given in the path
