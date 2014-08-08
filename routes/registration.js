@@ -148,9 +148,9 @@ module.exports = function(app) {
   app.get('/register', function(req, res, next) {
     var params = {
       clientIpAddress: getClientIpAddress(req),
-      clientName:      req.params.client_name,
-      softwareId:      req.params.software_id,
-      softwareVersion: req.params.software_version
+      clientName:      req.query.client_name,
+      softwareId:      req.query.software_id,
+      softwareVersion: req.query.software_version
     };
 
     handleRegister(params, function(err, clientInfo) {

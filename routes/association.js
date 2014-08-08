@@ -170,9 +170,9 @@ module.exports = function(app) {
 
   app.get('/associate', function(req, res, next) {
     var params = {
-      clientId:     req.params.client_id,
-      clientSecret: req.params.client_secret,
-      domain:       req.params.domain
+      clientId:     req.query.client_id,
+      clientSecret: req.query.client_secret,
+      domain:       req.query.domain
     };
 
     handleAssociate(params, function(err, pairingInfo) {
