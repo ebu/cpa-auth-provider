@@ -161,17 +161,26 @@ module.exports = function(app) {
    * Client association endpoint
    *
    * @example
-   * <code>GET /associate?client_id=abc123&client_secret=xyzzy&domain=example.com</code>
+   * <code>GET /associate?domain=example.com&callback=jsonPCallback</code>
    *
-   * @param client_id
-   * @param client_secret
-   * @param domain
+   * @param {String} domain
+   * @param {String} jsonPCallback JSONP callback function name
+   *
+   * The client should include a CPA cookie in the request containing the
+   * client_id and client_secret
    */
 
   app.get('/associate', function(req, res, next) {
+    var clientId, clientSecret;
+
+    if (req.cookies && req.cookies.cpa) {
+      clientId     = req.cookies.cpa.client_id;
+      clientSecret = req.cookies.cpa.client_secret;
+    }
+
     var params = {
-      clientId:     req.query.client_id,
-      clientSecret: req.query.client_secret,
+      clientId:     clientId,
+      clientSecret: clientSecret,
       domain:       req.query.domain
     };
 

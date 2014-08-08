@@ -457,3 +457,99 @@ describe('POST /associate', function() {
     });
   });
 });
+
+describe('GET /associate', function() {
+  before(function() {
+    sinon.stub(generate, "deviceCode").returns("8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc");
+    sinon.stub(generate, "userCode").returns("DcTrYDLD");
+  });
+
+  after(function() {
+    generate.deviceCode.restore();
+    generate.userCode.restore();
+  });
+
+  before(resetDatabase);
+
+  context('with a client not associated with a user account', function() {
+    before(function() {
+      var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+      this.clock = sinon.useFakeTimers(time, "Date");
+    });
+
+    after(function() {
+      this.clock.restore();
+    });
+
+    before(function(done) {
+      requestHelper.sendRequest(this, '/associate', {
+        method: 'get',
+        type:   'json',
+        query: {
+          domain: 'example-service.bbc.co.uk',
+          callback: 'jsonPCallback'
+        },
+        cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+          client_id:     '3',
+          client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78' 
+        }))
+      }, done);
+    });
+
+    it('should return a status 200', function() {
+      expect(this.res.statusCode).to.equal(200);
+    });
+
+    it("should return a Cache-Control: no-store header", function() {
+      expect(this.res.headers).to.have.property('cache-control');
+      expect(this.res.headers['cache-control']).to.equal('no-store');
+    });
+
+    it("should return a Pragma: no-cache header", function() {
+      expect(this.res.headers).to.have.property('pragma');
+      expect(this.res.headers.pragma).to.equal('no-cache');
+    });
+
+    it('should return JavaScript', function() {
+      expect(this.res.headers['content-type']).to.equal('text/javascript; charset=utf-8');
+    });
+
+    describe('the response body', function() {
+      var jsonPData = null;
+
+      var jsonPCallback = function(data) {
+        jsonPData = data;
+      };
+
+      it('should be a JSON object', function() {
+        // jshint evil:true
+        eval(this.res.text);
+      });
+
+      it('should include the device code', function() {
+        expect(jsonPData).to.have.property('device_code');
+        expect(jsonPData.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
+      });
+
+      it('should include the user code', function() {
+        expect(jsonPData).to.have.property('user_code');
+        expect(jsonPData.user_code).to.equal('DcTrYDLD');
+      });
+
+      it('should include the verification uri', function() {
+        expect(jsonPData).to.have.property('verification_uri');
+        expect(jsonPData.verification_uri).to.equal('http://example.com/verify');
+      });
+
+      it('should include the expiry (time to live) of the user code', function() {
+        expect(jsonPData).to.have.property('expires_in');
+        expect(jsonPData.expires_in).to.equal(3600); // duration in seconds
+      });
+
+      it('should include the minimum polling interval', function() {
+        expect(jsonPData).to.have.property('interval');
+        expect(jsonPData.interval).to.equal(5); // interval in seconds
+      });
+    });
+  });
+});
