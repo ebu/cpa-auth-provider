@@ -521,34 +521,87 @@ describe('GET /associate', function() {
         jsonPData = data;
       };
 
-      it('should be a JSON object', function() {
+      it('should be JavaScript code', function() {
         // jshint evil:true
         eval(this.res.text);
       });
 
-      it('should include the device code', function() {
-        expect(jsonPData).to.have.property('device_code');
-        expect(jsonPData.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
+      describe('the returned data', function() {
+        it('should include the device code', function() {
+          expect(jsonPData).to.have.property('device_code');
+          expect(jsonPData.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
+        });
+
+        it('should include the user code', function() {
+          expect(jsonPData).to.have.property('user_code');
+          expect(jsonPData.user_code).to.equal('DcTrYDLD');
+        });
+
+        it('should include the verification uri', function() {
+          expect(jsonPData).to.have.property('verification_uri');
+          expect(jsonPData.verification_uri).to.equal('http://example.com/verify');
+        });
+
+        it('should include the expiry (time to live) of the user code', function() {
+          expect(jsonPData).to.have.property('expires_in');
+          expect(jsonPData.expires_in).to.equal(3600); // duration in seconds
+        });
+
+        it('should include the minimum polling interval', function() {
+          expect(jsonPData).to.have.property('interval');
+          expect(jsonPData.interval).to.equal(5); // interval in seconds
+        });
+      });
+    });
+  });
+
+  context('with missing client_id', function() {
+    before(function(done) {
+      requestHelper.sendRequest(this, '/associate', {
+        method: 'get',
+        type:   'json',
+        query: {
+          domain: 'example-service.bbc.co.uk',
+          callback: 'jsonPCallback'
+        },
+        cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+          // client_id:     '3',
+          client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78'
+        }))
+      }, done);
+    });
+
+    it('should return status 400', function() {
+      expect(this.res.statusCode).to.equal(400);
+    });
+
+    it('should return JavaScript', function() {
+      expect(this.res.headers['content-type']).to.equal('text/javascript; charset=utf-8');
+    });
+
+    describe('the response body', function() {
+      var jsonPData = null;
+
+      var jsonPCallback = function(data) {
+        jsonPData = data;
+      };
+
+      it('should be JavaScript code', function() {
+        // jshint evil:true
+        eval(this.res.text);
       });
 
-      it('should include the user code', function() {
-        expect(jsonPData).to.have.property('user_code');
-        expect(jsonPData.user_code).to.equal('DcTrYDLD');
-      });
+      describe('the returned data', function() {
+        it('should include the error identifier', function() {
+          expect(jsonPData).to.have.property('error');
+          expect(jsonPData.error).to.equal('invalid_client');
+        });
 
-      it('should include the verification uri', function() {
-        expect(jsonPData).to.have.property('verification_uri');
-        expect(jsonPData.verification_uri).to.equal('http://example.com/verify');
-      });
-
-      it('should include the expiry (time to live) of the user code', function() {
-        expect(jsonPData).to.have.property('expires_in');
-        expect(jsonPData.expires_in).to.equal(3600); // duration in seconds
-      });
-
-      it('should include the minimum polling interval', function() {
-        expect(jsonPData).to.have.property('interval');
-        expect(jsonPData.interval).to.equal(5); // interval in seconds
+        // jshint expr: true
+        it('should include the user code', function() {
+          expect(jsonPData).to.have.property('error_description');
+          expect(jsonPData.error_description).to.not.be.empty;
+        });
       });
     });
   });
