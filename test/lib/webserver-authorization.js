@@ -91,13 +91,13 @@ describe('GET /authorize', function() {
 
       context('with valid parameters', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=code' +
-            '&client_id=100' +
-            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method:   'get',
+            query:    {
+              response_type: 'code',
+              client_id:     100,
+              redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie:   this.cookie,
             parseDOM: true
           }, done);
@@ -132,13 +132,13 @@ describe('GET /authorize', function() {
 
       context('with client_id of a client registered dynamically', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=code' +
-            '&client_id=101' +
-            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              response_type: 'code',
+              client_id:     101,
+              redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -150,12 +150,13 @@ describe('GET /authorize', function() {
 
       context('with missing client_id', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=code' +
-            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              response_type: 'code',
+              // client_id:     100,
+              redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -167,13 +168,13 @@ describe('GET /authorize', function() {
 
       context('with invalid client_id', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=code' +
-            '&client_id=in' +
-            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              response_type: 'code',
+              client_id:     'invalid',
+              redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -185,12 +186,13 @@ describe('GET /authorize', function() {
 
       context('with missing response_type', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'client_id=100' +
-            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              // response_type: 'code',
+              client_id:     100,
+              redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -202,13 +204,13 @@ describe('GET /authorize', function() {
 
       context('with invalid response_type', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=device' +
-            '&client_id=100' +
-            '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              response_type: 'device',
+              client_id:     100,
+              redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -220,12 +222,13 @@ describe('GET /authorize', function() {
 
       context('with missing redirect_uri', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=code' +
-            '&client_id=100';
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              response_type: 'code',
+              client_id:     100,
+              // redirect_uri:  'https://example-client.bbc.co.uk/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -237,13 +240,13 @@ describe('GET /authorize', function() {
 
       context('with a different redirect_uri than the client\'s one', function() {
         before(function(done) {
-          var path = '/authorize?' +
-            'response_type=code' +
-            '&client_id=100' +
-            '&redirect_uri=' + encodeURI('https://example-client.ebu.io/callback');
-
-          requestHelper.sendRequest(this, path, {
+          requestHelper.sendRequest(this, '/authorize', {
             method: 'get',
+            query:    {
+              response_type: 'code',
+              client_id:     100,
+              redirect_uri:  'https://example-client.ebu.io/callback'
+            },
             cookie: this.cookie
           }, done);
         });
@@ -252,25 +255,24 @@ describe('GET /authorize', function() {
           assertions.verifyError(this.res, 400, 'invalid_client');
         });
       });
-
     });
 
     context('when user is not authenticated', function() {
       before(function(done) {
-        var path = '/authorize?' +
-          'response_type=code' +
-          '&client_id=100' +
-          '&redirect_uri=' + encodeURI('https://example-client.bbc.co.uk/callback');
-
-        requestHelper.sendRequest(this, path, {
-          method: 'get'
+        requestHelper.sendRequest(this, '/authorize', {
+          method: 'get',
+          query:    {
+            response_type: 'code',
+            client_id:     100,
+            redirect_uri:  'https://example-client.bbc.co.uk/callback'
+          },
+          // cookie: this.cookie
         }, done);
       });
 
       it('should reply with a status code 302', function() {
         expect(this.res.statusCode).to.equal(302);
       });
-
     });
   });
 });

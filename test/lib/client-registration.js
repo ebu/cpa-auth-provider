@@ -8,6 +8,8 @@ var assertions    = require('../assertions');
 var requestHelper = require('../request-helper');
 var dbHelper      = require('../db-helper');
 
+var cookie = require('cookie');
+
 describe('POST /register', function() {
   context('When registering a client', function() {
     // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
@@ -225,6 +227,70 @@ describe('DELETE /register', function() {
 
     it('should reply 501 (Unimplemented)', function() {
       expect(this.res.statusCode).to.equal(501);
+    });
+  });
+});
+
+describe('GET /register', function() {
+  context('When registering a client', function() {
+    context('when providing a correct request', function() {
+      before(dbHelper.clearDatabase);
+
+      before(function(done) {
+        var data = {
+          client_name: 'Test client',
+          software_id: 'CPA AP Test',
+          software_version: '0.0.1'
+        };
+
+        requestHelper.sendRequest(this, '/register', {
+          method: 'get',
+          query:   data
+        }, done);
+      });
+
+      it('should return status 201', function() {
+        expect(this.res.statusCode).to.equal(201);
+      });
+
+      // jshint expr: true
+      it("should return an empty response body", function() {
+        expect(this.res.headers['content-type']).to.equal('text/plain');
+        expect(this.res.body).to.be.empty;
+      });
+
+      it("should include a cookie", function() {
+        var cookies = this.res.headers['set-cookie'];
+
+        this.cpaCookie = cookies.filter(function(cookie) {
+          return (/cpa=/).test(cookie);
+        }).shift();
+
+        expect(this.cpaCookie).to.be.ok;
+      });
+
+      describe("the cookie", function() {
+        before(function() {
+          // Parse the JSON encoded data from inside the cookie
+          var cookieData = cookie.parse(this.cpaCookie);
+          var match = cookieData.cpa.match(/^[^:]:(.*)$/);
+          this.cpaCookieData = JSON.parse(match[1]);
+        });
+
+        it("should be http only", function() {
+          expect(this.cpaCookie).to.match(/HttpOnly/);
+        });
+
+        it("should include the client id", function() {
+          expect(this.cpaCookieData).to.have.property('client_id');
+          expect(this.cpaCookieData.client_id).to.match(/^\d+$/);
+        });
+
+        it("should include the client secret", function() {
+          expect(this.cpaCookieData).to.have.property('client_secret');
+          expect(this.cpaCookieData.client_secret).to.match(/^[0-9a-f]{32}$/);
+        });
+      });
     });
   });
 });

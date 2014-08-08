@@ -2,6 +2,8 @@
 
 var cheerio = require('cheerio');
 
+var querystring = require('querystring');
+
 module.exports = {
 
   /**
@@ -18,6 +20,8 @@ module.exports = {
    * @param {String} opts.tokenType    If an accessToken is supplied, this option sets
    *                                   the associated token type (default: 'Bearer')
    * @param {Object} opts.data         A data object to be sent in the HTTP request.
+   * @param {Object} opts.query        Parameters to be added as a query string in
+   *                                   the HTTP request URL
    * @param {String} opts.type         The data encoding format to use, either 'json'
    *                                   (for application/json) or 'form' (for
    *                                   application/x-www-form-urlencoded).
@@ -35,6 +39,10 @@ module.exports = {
 
     if (method === 'delete') {
       method = 'del';
+    }
+
+    if (opts.query) {
+      path += '?' + querystring.stringify(opts.query);
     }
 
     var req = request[method](path);
