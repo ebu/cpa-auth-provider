@@ -484,12 +484,11 @@ describe('GET /associate', function() {
     before(function(done) {
       requestHelper.sendRequest(this, '/associate', {
         method: 'get',
-        type:   'json',
         query: {
           domain:   'example-service.bbc.co.uk',
           callback: 'jsonPCallback'
         },
-        cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+        cookie: 'cpa=' + encodeURIComponent("j:" + JSON.stringify({
           client_id:     '3',
           client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78'
         }))
@@ -527,6 +526,11 @@ describe('GET /associate', function() {
       });
 
       describe('the returned data', function() {
+        it('should include the HTTP status code', function() {
+          expect(jsonPData).to.have.property('http_status');
+          expect(jsonPData.http_status).to.equal(200);
+        });
+
         it('should include the device code', function() {
           expect(jsonPData).to.have.property('device_code');
           expect(jsonPData.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
@@ -592,6 +596,11 @@ describe('GET /associate', function() {
       });
 
       describe('the returned data', function() {
+        it('should include the HTTP status code', function() {
+          expect(jsonPData).to.have.property('http_status');
+          expect(jsonPData.http_status).to.equal(400);
+        });
+
         it('should include the error identifier', function() {
           expect(jsonPData).to.have.property('error');
           expect(jsonPData.error).to.equal('invalid_client');

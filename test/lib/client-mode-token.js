@@ -387,6 +387,11 @@ describe('GET /token', function() {
           eval(this.res.text);
         });
 
+        it("should include the HTTP status code", function() {
+          expect(jsonPData).to.have.property('http_status');
+          expect(jsonPData.http_status).to.equal(200);
+        });
+
         it("should not include a user name", function() {
           expect(jsonPData).to.not.have.property('user_name');
         });

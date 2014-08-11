@@ -831,7 +831,7 @@ describe("GET /token", function() {
                     domain:      'example-service.bbc.co.uk',
                     callback:    'jsonPCallback'
                   },
-                  cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+                  cookie: 'cpa=' + encodeURIComponent("j:" + JSON.stringify({
                     client_id:     '100',
                     client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
                   }))
@@ -859,7 +859,10 @@ describe("GET /token", function() {
                 });
 
                 it("should contain 'reason': 'authorization_pending'", function() {
-                  expect(jsonPData).to.deep.equal({ 'reason': 'authorization_pending' });
+                  expect(jsonPData).to.deep.equal({
+                    http_status: 202,
+                    reason:      'authorization_pending'
+                  });
                 });
               });
             });
@@ -894,7 +897,7 @@ describe("GET /token", function() {
                     domain:      'example-service.bbc.co.uk',
                     callback:    'jsonPCallback'
                   },
-                  cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+                  cookie: 'cpa=' + encodeURIComponent("j:" + JSON.stringify({
                     client_id:     '101', // client with verified pairing code
                     client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
                   }))
@@ -929,6 +932,11 @@ describe("GET /token", function() {
                 it('should be JavaScript code', function() {
                   // jshint evil:true
                   eval(this.res.text);
+                });
+
+                it("should include the HTTP status code", function() {
+                  expect(jsonPData).to.have.property('http_status');
+                  expect(jsonPData.http_status).to.equal(200);
                 });
 
                 it("should include the user name", function() {

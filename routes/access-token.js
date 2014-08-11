@@ -102,10 +102,14 @@ var routes = function(app) {
           res.status(err.statusCode);
 
           if (err.statusCode === 202) {
-            res.jsonp(202, { reason: "authorization_pending" });
+            res.jsonp(202, { http_status: 202, reason: "authorization_pending" });
           }
           else {
-            res.jsonp({ error: err.error, error_description: err.message });
+            res.jsonp({
+              http_status:       err.statusCode,
+              error:             err.error,
+              error_description: err.message
+            });
           }
         }
         else {

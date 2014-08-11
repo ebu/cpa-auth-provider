@@ -184,7 +184,11 @@ module.exports = function(app) {
       if (err) {
         if (err.statusCode) {
           res.status(err.statusCode);
-          res.jsonp({ error: err.error, error_description: err.message });
+          res.jsonp({
+            http_status:       err.statusCode,
+            error:             err.error,
+            error_description: err.message
+          });
         }
         else {
           next(err);
@@ -195,6 +199,8 @@ module.exports = function(app) {
 
       res.set('Cache-Control', 'no-store');
       res.set('Pragma', 'no-cache');
+
+      pairingInfo.http_status = 200;
 
       res.jsonp(200, pairingInfo);
     });

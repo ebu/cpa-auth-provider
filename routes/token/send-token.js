@@ -39,6 +39,7 @@ var sendAccessToken = function(res, jsonp, token, domain, user, scope) {
   }
 
   if (jsonp) {
+    response.http_status = 200;
     res.jsonp(response);
   }
   else {
