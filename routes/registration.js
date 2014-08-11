@@ -83,11 +83,7 @@ module.exports = function(app) {
 
               // TODO: report more specific error message, e.g, which field
               // is invalid.
-              err = new Error();
-              err.statusCode = 400;
-              err.error = "invalid_request";
-              err.description = "Invalid request";
-              done(err);
+              done(createError(400, "invalid_request", "Invalid request"));
             }
           });
         }
@@ -159,7 +155,7 @@ module.exports = function(app) {
           res.sendErrorResponse(
             err.statusCode,
             err.error,
-            err.description
+            err.message
           );
         }
         else {
