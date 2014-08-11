@@ -486,12 +486,12 @@ describe('GET /associate', function() {
         method: 'get',
         type:   'json',
         query: {
-          domain: 'example-service.bbc.co.uk',
+          domain:   'example-service.bbc.co.uk',
           callback: 'jsonPCallback'
         },
         cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
           client_id:     '3',
-          client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78' 
+          client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78'
         }))
       }, done);
     });
