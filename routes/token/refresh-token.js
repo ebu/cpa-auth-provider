@@ -43,17 +43,17 @@ var createError = function(status, error, description) {
   return err;
 };
 
-var refreshAccessToken = function(req, field, done) {
-  var error = validator.validate(req.body, schema);
+var refreshAccessToken = function(params, done) {
+  var error = validator.validate(params, schema);
 
   if (error) {
     done(createError(400, 'invalid_request', error));
     return;
   }
 
-  var clientId     = req.body.client_id;
-  var clientSecret = req.body.client_secret;
-  var refreshToken = req.body.refresh_token;
+  var clientId     = params.client_id;
+  var clientSecret = params.client_secret;
+  var refreshToken = params.refresh_token;
 
   db.AccessToken.find({
     include: [

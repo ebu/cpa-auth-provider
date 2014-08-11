@@ -7,7 +7,7 @@ var validator = require('../../lib/validate-json');
 
 var async = require('async');
 
-var postUserModeSchema = {
+var userModeSchema = {
   id: "/token/device_code/post",
   type: "object",
   required: true,
@@ -32,39 +32,10 @@ var postUserModeSchema = {
     domain: {
       type:     "string",
       required: true
-    }
-  }
-};
-
-var getUserModeSchema = {
-  id: "/token/device_code/get",
-  type: "object",
-  required: true,
-  additionalProperties: false,
-  properties: {
-    grant_type: {
-      type:     "string",
-      required: true
-    },
-    // client_id: {
-    //   type:     "string",
-    //   required: true
-    // },
-    // client_secret: {
-    //   type:     "string",
-    //   required: true
-    // },
-    device_code: {
-      type:     "string",
-      required: true
-    },
-    domain: {
-      type:     "string",
-      required: true
     },
     callback: {
       type:     "string",
-      required: true
+      required: false
     }
   }
 };
@@ -77,31 +48,18 @@ var createError = function(status, error, description) {
   return err;
 };
 
-module.exports = function(req, field, done) {
-  var schema = field === 'query' ? getUserModeSchema : postUserModeSchema;
-
-  var error = validator.validate(req[field], schema);
+module.exports = function(params, done) {
+  var error = validator.validate(params, userModeSchema);
 
   if (error) {
     done(createError(400, 'invalid_request', error));
     return;
   }
 
-  var clientId, clientSecret;
-
-  if (field === 'query') {
-    if (req.cookies && req.cookies.cpa) {
-      clientId     = req.cookies.cpa.client_id;
-      clientSecret = req.cookies.cpa.client_secret;
-    }
-  }
-  else {
-    clientId     = req[field].client_id;
-    clientSecret = req[field].client_secret;
-  }
-
-  var deviceCode = req[field].device_code;
-  var domainName = req[field].domain;
+  var clientId     = params.client_id;
+  var clientSecret = params.client_secret;
+  var deviceCode   = params.device_code;
+  var domainName   = params.domain;
 
   var findClient = function(callback) {
     db.Client

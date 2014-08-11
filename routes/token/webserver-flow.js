@@ -47,19 +47,19 @@ var createError = function(status, error, description) {
   return err;
 };
 
-module.exports = function(req, field, done) {
-  var error = validator.validate(req.body, webServerFlowSchema);
+module.exports = function(params, done) {
+  var error = validator.validate(params, webServerFlowSchema);
 
   if (error) {
     done(createError(400, 'invalid_request', error));
     return;
   }
 
-  var clientId    = req.body.client_id;
-  var code        = req.body.code;
-  var redirectUri = req.body.redirect_uri;
-  var domainName  = req.body.domain;
-  var scope       = req.body.scope;
+  var clientId    = params.client_id;
+  var code        = params.code;
+  var redirectUri = params.redirect_uri;
+  var domainName  = params.domain;
+  var scope       = params.scope;
 
   var findAuthorizationCode = function(callback) {
     db.AuthorizationCode

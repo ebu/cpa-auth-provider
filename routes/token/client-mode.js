@@ -6,8 +6,8 @@ var validator = require('../../lib/validate-json');
 
 var async = require('async');
 
-var postClientModeSchema = {
-  id: "/token/client_credentials/post",
+var clientModeSchema = {
+  id: "/token/client_credentials",
   type: "object",
   required: true,
   additionalProperties: false,
@@ -27,35 +27,10 @@ var postClientModeSchema = {
     domain: {
       type:     "string",
       required: true
-    }
-  }
-};
-
-var getClientModeSchema = {
-  id: "/token/client_credentials/get",
-  type: "object",
-  required: true,
-  additionalProperties: false,
-  properties: {
-    grant_type: {
-      type:     "string",
-      required: true
-    },
-    // client_id: {
-    //   type:     "string",
-    //   required: true
-    // },
-    // client_secret: {
-    //   type:     "string",
-    //   required: true
-    // },
-    domain: {
-      type:     "string",
-      required: true
     },
     callback: {
       type:     "string",
-      required: true
+      required: false
     }
   }
 };
@@ -68,30 +43,17 @@ var createError = function(status, error, description) {
   return err;
 };
 
-module.exports = function(req, field, done) {
-  var schema = field === 'query' ? getClientModeSchema : postClientModeSchema;
-
-  var error = validator.validate(req[field], schema);
+module.exports = function(params, done) {
+  var error = validator.validate(params, clientModeSchema);
 
   if (error) {
     done(createError(400, 'invalid_request', error));
     return;
   }
 
-  var clientId, clientSecret;
-
-  if (field === 'query') {
-    if (req.cookies && req.cookies.cpa) {
-      clientId     = req.cookies.cpa.client_id;
-      clientSecret = req.cookies.cpa.client_secret;
-    }
-  }
-  else {
-    clientId     = req[field].client_id;
-    clientSecret = req[field].client_secret;
-  }
-
-  var domainName = req[field].domain;
+  var clientId     = params.client_id;
+  var clientSecret = params.client_secret;
+  var domainName   = params.domain;
 
   var findClient = function(callback) {
     db.Client.find({

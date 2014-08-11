@@ -11,6 +11,7 @@ var refreshToken    = require('./token/refresh-token');
 var sendAccessToken = require('./token/send-token');
 
 var async = require('async');
+var _     = require('lodash');
 
 var routes = function(app) {
 
@@ -41,18 +42,17 @@ var routes = function(app) {
    * @param {String} field Either <code>"body"</code> or <code>"query"</code>
    */
 
-  var handleToken = function(req, field, handlers, callback) {
-    if (!req[field].hasOwnProperty('grant_type')) {
+  var handleToken = function(params, handlers, callback) {
+    if (!params.hasOwnProperty('grant_type')) {
       callback(createError(400, 'invalid_request', 'Missing grant type'));
       return;
     }
 
-    var grantType = req[field].grant_type;
-
+    var grantType = params.grant_type;
     var handler = handlers[grantType];
 
     if (handler) {
-      handler(req, field, callback);
+      handler(params, callback);
     }
     else {
       callback(createError(400, 'invalid_request', "Unsupported grant type: " + grantType));
@@ -70,7 +70,7 @@ var routes = function(app) {
       return;
     }
 
-    handleToken(req, 'body', postTokenHandlers, function(err, token, domain, user) {
+    handleToken(req.body, postTokenHandlers, function(err, token, domain, user) {
       if (err) {
         if (err.statusCode) {
           if (err.statusCode === 202) {
@@ -94,7 +94,9 @@ var routes = function(app) {
   });
 
   app.get('/token', function(req, res, next) {
-    handleToken(req, 'query', getTokenHandlers, function(err, token, domain, user) {
+    var params = _.merge(req.query, req.cookies.cpa);
+
+    handleToken(params, getTokenHandlers, function(err, token, domain, user) {
       if (err) {
         if (err.statusCode) {
           res.status(err.statusCode);
