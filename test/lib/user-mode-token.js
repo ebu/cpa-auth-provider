@@ -839,7 +839,6 @@ describe("GET /token", function() {
               });
 
               it("should return status 202", function() {
-                console.log(this.res.text);
                 expect(this.res.statusCode).to.equal(202);
               });
 

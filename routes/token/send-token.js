@@ -4,13 +4,15 @@
  * Sends an HTTP response with a JSON body containing an access token
  *
  * @param res HTTP response object
+ * @param {Boolean} jsonp If <code>true</code>, returns the response
+ *   as JSONP. If <code>false</code>, returns JSON
  * @param {AccessToken} token
  * @param {Domain} domain
  * @param {User?} user
  * @param {Scope?} scope
  */
 
-var sendAccessToken = function(res, token, domain, user, scope) {
+var sendAccessToken = function(res, jsonp, token, domain, user, scope) {
   res.set('Cache-Control', 'no-store');
   res.set('Pragma', 'no-cache');
 
@@ -36,7 +38,12 @@ var sendAccessToken = function(res, token, domain, user, scope) {
     response.user_name = user.display_name;
   }
 
-  res.send(response);
+  if (jsonp) {
+    res.jsonp(response);
+  }
+  else {
+    res.send(response);
+  }
 };
 
 module.exports = sendAccessToken;

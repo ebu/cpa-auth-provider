@@ -138,11 +138,7 @@ module.exports = function(app) {
     handleAssociate(params, function(err, pairingInfo) {
       if (err) {
         if (err.statusCode) {
-          res.sendErrorResponse(
-            err.statusCode,
-            err.error,
-            err.message
-          );
+          res.sendErrorResponse(err.statusCode, err.error, err.message);
         }
         else {
           next(err);

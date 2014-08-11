@@ -1,8 +1,8 @@
 "use strict";
 
-var db              = require('../../models');
-var generate        = require('../../lib/generate');
-var sendAccessToken = require('./send-token');
+var db        = require('../../models');
+var generate  = require('../../lib/generate');
+var validator = require('../../lib/validate-json');
 
 var async = require('async');
 
@@ -35,71 +35,77 @@ var schema = {
   }
 };
 
-var validateJson = require('../../lib/validate-json').middleware(schema);
+var createError = function(status, error, description) {
+  var err = new Error(description);
+  err.error = error;
+  err.statusCode = status;
 
-var refreshAccessToken = function(req, res, next) {
-  validateJson(req, res, function(err) {
+  return err;
+};
+
+var refreshAccessToken = function(req, field, done) {
+  var error = validator.validate(req.body, schema);
+
+  if (error) {
+    done(createError(400, 'invalid_request', error));
+    return;
+  }
+
+  var clientId     = req.body.client_id;
+  var clientSecret = req.body.client_secret;
+  var refreshToken = req.body.refresh_token;
+
+  db.AccessToken.find({
+    include: [
+      {
+        model: db.Client,
+        where: {
+          id:                clientId,
+          secret:            clientSecret,
+          registration_type: 'static'
+        },
+      },
+      {
+        model: db.Domain,
+        // where: { domain_name: domainName }
+      },
+      {
+        model: db.User
+      }
+    ],
+    where: {
+      refresh_token: refreshToken
+    }
+  })
+  .complete(function(err, accessToken) {
     if (err) {
-      next(err);
+      done(err);
       return;
     }
 
-    var clientId     = req.body.client_id;
-    var clientSecret = req.body.client_secret;
-    var refreshToken = req.body.refresh_token;
-
-    db.AccessToken.find({
-      include: [
-        {
-          model: db.Client,
-          where: {
-            id:                clientId,
-            secret:            clientSecret,
-            registration_type: 'static'
-          },
-        },
-        {
-          model: db.Domain,
-          // where: { domain_name: domainName }
-        },
-        {
-          model: db.User
+    if (accessToken) {
+      accessToken.updateAttributes({
+        token:         generate.accessToken(),
+        refresh_token: generate.refreshToken()
+      })
+      .complete(function(err) {
+        if (err) {
+          done(err);
+          return;
         }
-      ],
-      where: {
-        refresh_token: refreshToken
-      }
-    })
-    .complete(function(err, accessToken) {
-      if (err) {
-        next(err);
-        return;
-      }
 
-      if (accessToken) {
-        accessToken.updateAttributes({
-          token:         generate.accessToken(),
-          refresh_token: generate.refreshToken()
-        })
-        .complete(function(err) {
-          if (err) {
-            res.next(err);
-            return;
-          }
-
-          sendAccessToken(
-            res,
-            accessToken,
-            accessToken.domain,
-            accessToken.user
-          );
-        });
-      }
-      else {
-        res.sendUnauthorized("Invalid refresh token: " + refreshToken);
-        return;
-      }
-    });
+        done(
+          null,
+          accessToken,
+          accessToken.domain,
+          accessToken.user
+        );
+      });
+    }
+    else {
+      done(createError(401, "unauthorized", "Invalid refresh token: " + refreshToken));
+      return;
+    }
   });
 };
 
