@@ -785,3 +785,187 @@ describe("POST /token", function() {
     });
   });
 });
+
+describe("GET /token", function() {
+  before(function() {
+    sinon.stub(generate, 'accessToken').returns('aed201ffb3362de42700a293bdebf694');
+  });
+
+  after(function() {
+    generate.accessToken.restore();
+  });
+
+  [false, true].forEach(function(autoProvisionEnabled) {
+    context("with the server configured to auto-provision tokens: " + autoProvisionEnabled, function() {
+      before(function() {
+        this.auto_provision_tokens = config.auto_provision_tokens;
+        config.auto_provision_tokens = autoProvisionEnabled;
+      });
+
+      after(function() {
+        config.auto_provision_tokens = this.auto_provision_tokens;
+      });
+
+      context("with a client that is not associated with a user account", function() {
+        context("when the client polls to obtain an access token (user mode)", function() {
+          context("and the device code is pending user verification", function() {
+            context("and the client provides valid parameters", function() {
+              before(resetDatabase);
+
+              before(function() {
+                // Ensure pairing code has not expired
+                var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+                this.clock = sinon.useFakeTimers(time, "Date");
+              });
+
+              after(function() {
+                this.clock.restore();
+              });
+
+              before(function(done) {
+                requestHelper.sendRequest(this, '/token', {
+                  method: 'get',
+                  query: {
+                    grant_type:  'http://tech.ebu.ch/cpa/1.0/device_code',
+                    device_code: '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
+                    domain:      'example-service.bbc.co.uk',
+                    callback:    'jsonPCallback'
+                  },
+                  cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+                    client_id:     '100',
+                    client_secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+                  }))
+                }, done);
+              });
+
+              it("should return status 202", function() {
+                console.log(this.res.text);
+                expect(this.res.statusCode).to.equal(202);
+              });
+
+              it("should return JavaScript code", function() {
+                expect(this.res.headers['content-type']).to.equal('text/javascript; charset=utf-8');
+              });
+
+              describe("the response body", function() {
+                var jsonPData = null;
+
+                var jsonPCallback = function(data) {
+                  jsonPData = data;
+                };
+
+                it('should be JavaScript code', function() {
+                  // jshint evil:true
+                  eval(this.res.text);
+                });
+
+                it("should contain 'reason': 'authorization_pending'", function() {
+                  expect(jsonPData).to.deep.equal({ 'reason': 'authorization_pending' });
+                });
+              });
+            });
+
+            context("and the client polls too quickly", function() {
+              it("should return status 400");
+              it("should return slow_down error");
+              it("should return retry_in field");
+            });
+          });
+
+          context("and the user has approved access", function() {
+            context("and the client provides valid parameters", function() {
+              before(resetDatabase);
+
+              before(function() {
+                // Ensure pairing code has not expired
+                var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+                this.clock = sinon.useFakeTimers(time, "Date");
+              });
+
+              after(function() {
+                this.clock.restore();
+              });
+
+              before(function(done) {
+                requestHelper.sendRequest(this, '/token', {
+                  method: 'get',
+                  query: {
+                    grant_type:  'http://tech.ebu.ch/cpa/1.0/device_code',
+                    device_code: 'c691343f-0ac0-467d-8659-5041cfc3dc4a',
+                    domain:      'example-service.bbc.co.uk',
+                    callback:    'jsonPCallback'
+                  },
+                  cookie: "cpa=" + encodeURIComponent("j:" + JSON.stringify({
+                    client_id:     '101', // client with verified pairing code
+                    client_secret: '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
+                  }))
+                }, done);
+              });
+
+              it("should return status 200", function() {
+                expect(this.res.statusCode).to.equal(200);
+              });
+
+              it("should return a Cache-Control: no-store header", function() {
+                expect(this.res.headers).to.have.property('cache-control');
+                expect(this.res.headers['cache-control']).to.equal('no-store');
+              });
+
+              it("should return a Pragma: no-cache header", function() {
+                expect(this.res.headers).to.have.property('pragma');
+                expect(this.res.headers.pragma).to.equal('no-cache');
+              });
+
+              it("should return JavaScript code", function() {
+                expect(this.res.headers['content-type']).to.equal('text/javascript; charset=utf-8');
+              });
+
+              describe("the response body", function() {
+                var jsonPData = null;
+
+                var jsonPCallback = function(data) {
+                  jsonPData = data;
+                };
+
+                it('should be JavaScript code', function() {
+                  // jshint evil:true
+                  eval(this.res.text);
+                });
+
+                it("should include the user name", function() {
+                  expect(jsonPData).to.have.property('user_name');
+                  expect(jsonPData.user_name).to.equal('Test User');
+                });
+
+                it("should include a valid access token", function() {
+                  expect(jsonPData).to.have.property('access_token');
+                  expect(jsonPData.access_token).to.equal('aed201ffb3362de42700a293bdebf694');
+                });
+
+                it("should include the token type", function() {
+                  expect(jsonPData).to.have.property('token_type');
+                  expect(jsonPData.token_type).to.equal('bearer');
+                });
+
+                it("should include the domain", function() {
+                  expect(jsonPData).to.have.property('domain');
+                  expect(jsonPData.domain).to.equal('example-service.bbc.co.uk');
+                });
+
+                it("should include a display name for the domain", function() {
+                  expect(jsonPData).to.have.property('domain_display_name');
+                  expect(jsonPData.domain_display_name).to.equal('BBC Radio');
+                });
+
+                it("should include the lifetime of the access token", function() {
+                  expect(jsonPData).to.have.property('expires_in');
+                  expect(jsonPData.expires_in).to.equal(30 * 24 * 60 * 60);
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});
