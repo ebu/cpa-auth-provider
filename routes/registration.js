@@ -136,7 +136,8 @@ module.exports = function(app) {
 
         if (req.body.response_type && (req.body.response_type === 'cookie')) {
           res.cookie('cpa', clientInfo, { httpOnly: true });
-          res.send(201);
+          res.contentType('text/plain');
+          res.send(201, '');
         }
         else {
           res.send(201, clientInfo);
