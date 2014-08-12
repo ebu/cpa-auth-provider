@@ -1,8 +1,10 @@
 "use strict";
 
-var config   = require('../config');
-var db       = require('../models');
-var generate = require('../lib/generate');
+var config          = require('../config');
+var db              = require('../models');
+var generate        = require('../lib/generate');
+var requireEncoding = require('../lib/require-encoding');
+var validator       = require('../lib/validate-json-schema');
 
 var schema = {
   id: "/associate",
@@ -24,8 +26,6 @@ var schema = {
     }
   }
 };
-
-var validateJson = require('../lib/validate-json').middleware(schema);
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -128,30 +128,35 @@ module.exports = function(app) {
    * Client association endpoint
    */
 
-  app.post('/associate', validateJson, function(req, res, next) {
-    var params = {
-      clientId:     req.body.client_id,
-      clientSecret: req.body.client_secret,
-      domain:       req.body.domain
-    };
+  app.post(
+    '/associate',
+    requireEncoding('json'),
+    validator.middleware(schema),
+    function(req, res, next) {
+      var params = {
+        clientId:     req.body.client_id,
+        clientSecret: req.body.client_secret,
+        domain:       req.body.domain
+      };
 
-    handleAssociate(params, function(err, pairingInfo) {
-      if (err) {
-        if (err.statusCode) {
-          res.sendErrorResponse(err.statusCode, err.error, err.message);
+      handleAssociate(params, function(err, pairingInfo) {
+        if (err) {
+          if (err.statusCode) {
+            res.sendErrorResponse(err.statusCode, err.error, err.message);
+          }
+          else {
+            next(err);
+          }
+          return;
         }
-        else {
-          next(err);
-        }
-        return;
-      }
 
-      res.set('Cache-Control', 'no-store');
-      res.set('Pragma', 'no-cache');
+        res.set('Cache-Control', 'no-store');
+        res.set('Pragma', 'no-cache');
 
-      res.send(200, pairingInfo);
-    });
-  });
+        res.send(200, pairingInfo);
+      });
+    }
+  );
 
   /**
    * Client association endpoint

@@ -3,7 +3,7 @@
 var config    = require('../../config');
 var db        = require('../../models');
 var generate  = require('../../lib/generate');
-var validator = require('../../lib/validate-json');
+var validator = require('../../lib/validate-json-schema');
 
 var async = require('async');
 

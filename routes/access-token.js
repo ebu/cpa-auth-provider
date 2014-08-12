@@ -1,8 +1,10 @@
 "use strict";
 
-var db            = require('../models');
-var generate      = require('../lib/generate');
-var requestHelper = require('../lib/request-helper');
+var db              = require('../models');
+var generate        = require('../lib/generate');
+var requestHelper   = require('../lib/request-helper');
+var requireEncoding = require('../lib/require-encoding');
+var validator       = require('../lib/validate-json-schema');
 
 var clientMode      = require('./token/client-mode');
 var userMode        = require('./token/user-mode');
@@ -64,12 +66,7 @@ var routes = function(app) {
    * Access token endpoint
    */
 
-  app.post('/token', function(req, res, next) {
-    if (!requestHelper.isContentType(req, 'application/json')) {
-      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
-      return;
-    }
-
+  app.post('/token', requireEncoding('json'), function(req, res, next) {
     handleToken(req.body, postTokenHandlers, function(err, token, domain, user) {
       if (err) {
         if (err.statusCode) {

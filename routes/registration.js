@@ -1,8 +1,9 @@
 "use strict";
 
-var config   = require('../config');
-var db       = require('../models');
-var generate = require('../lib/generate');
+var config    = require('../config');
+var db        = require('../models');
+var generate  = require('../lib/generate');
+var validator = require('../lib/validate-json-schema');
 
 var async = require('async');
 
@@ -27,7 +28,13 @@ var schema = {
   }
 };
 
-var validateJson = require('../lib/validate-json').middleware(schema);
+var createError = function(status, error, description) {
+  var err = new Error(description);
+  err.error = error;
+  err.statusCode = status;
+
+  return err;
+};
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -100,32 +107,35 @@ module.exports = function(app) {
    * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
    */
 
-  app.post('/register', validateJson, function(req, res, next) {
-    var params = {
-      clientIpAddress: getClientIpAddress(req),
-      clientName:      req.body.client_name,
-      softwareId:      req.body.software_id,
-      softwareVersion: req.body.software_version
-    };
+  app.post(
+    '/register',
+    // requireEncoding('json'),
+    validator.middleware(schema),
+    function(req, res, next) {
+      var params = {
+        clientIpAddress: getClientIpAddress(req),
+        clientName:      req.body.client_name,
+        softwareId:      req.body.software_id,
+        softwareVersion: req.body.software_version
+      };
 
-    handleRegister(params, function(err, clientInfo) {
-      if (err) {
-        if (err.statusCode) {
-          res.sendErrorResponse(
-            err.statusCode,
-            err.error,
-            err.description
-          );
-        }
-        else {
-          next(err);
+      handleRegister(params, function(err, clientInfo) {
+        if (err) {
+          if (err.statusCode) {
+            res.sendErrorResponse(err.statusCode, err.error, err.message);
+          }
+          else {
+            next(err);
+          }
+
+          return;
         }
 
-        return;
+        res.cookie('cpa', clientInfo, { httpOnly: true });
+
+        res.send(201, clientInfo);
       }
-
-      res.send(201, clientInfo);
-    });
+    );
   });
 
   /**
