@@ -69,79 +69,96 @@ describe('POST /associate', function() {
 
   before(resetDatabase);
 
-  context('with a client not associated with a user account', function() {
-    before(function() {
-      var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-      this.clock = sinon.useFakeTimers(time, "Date");
-    });
+  [false, true].forEach(function(usingCORS) {
+    context("with the client " + (usingCORS ? "using" : "not using") + " CORS", function() {
+      context('with a client not associated with a user account', function() {
+        before(function() {
+          var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
+          this.clock = sinon.useFakeTimers(time, "Date");
+        });
 
-    after(function() {
-      this.clock.restore();
-    });
+        after(function() {
+          this.clock.restore();
+        });
 
-    before(function(done) {
-      var data = {
-        client_id:        '3',
-        client_secret:    'a0fe0231-0220-4d45-8431-1fd374998d78',
-        domain:           'example-service.bbc.co.uk',
-      };
+        before(function(done) {
+          var data = {
+            client_id:     '3',
+            client_secret: 'a0fe0231-0220-4d45-8431-1fd374998d78',
+            domain:        'example-service.bbc.co.uk'
+          };
 
-      requestHelper.sendRequest(this, '/associate', {
-        method: 'post',
-        type:   'json',
-        data:   data
-      }, done);
-    });
+          var cookie = null;
 
-    it('should return a status 200', function() {
-      expect(this.res.statusCode).to.equal(200);
-    });
+          if (usingCORS) {
+            cookie = 'cpa=' + encodeURIComponent("j:" + JSON.stringify({
+              client_id:     data.client_id,
+              client_secret: data.client_secret
+            }));
 
-    // See example request in
-    // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
+            delete data.client_id;
+            delete data.client_secret;
+          }
 
-    it("should return a Cache-Control: no-store header", function() {
-      expect(this.res.headers).to.have.property('cache-control');
-      expect(this.res.headers['cache-control']).to.equal('no-store');
-    });
+          requestHelper.sendRequest(this, '/associate', {
+            method: 'post',
+            type:   'json',
+            data:   data,
+            cookie: cookie
+          }, done);
+        });
 
-    it("should return a Pragma: no-cache header", function() {
-      expect(this.res.headers).to.have.property('pragma');
-      expect(this.res.headers.pragma).to.equal('no-cache');
-    });
+        it('should return a status 200', function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
 
-    it('should return JSON', function() {
-      expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
-    });
+        // See example request in
+        // http://tools.ietf.org/html/draft-recordon-oauth-v2-device-00#section-1.4
 
-    describe('the response body', function() {
-      it('should be a JSON object', function() {
-        expect(this.res.body).to.be.an('object');
-      });
+        it("should return a Cache-Control: no-store header", function() {
+          expect(this.res.headers).to.have.property('cache-control');
+          expect(this.res.headers['cache-control']).to.equal('no-store');
+        });
 
-      it('should include the device code', function() {
-        expect(this.res.body).to.have.property('device_code');
-        expect(this.res.body.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
-      });
+        it("should return a Pragma: no-cache header", function() {
+          expect(this.res.headers).to.have.property('pragma');
+          expect(this.res.headers.pragma).to.equal('no-cache');
+        });
 
-      it('should include the user code', function() {
-        expect(this.res.body).to.have.property('user_code');
-        expect(this.res.body.user_code).to.equal('DcTrYDLD');
-      });
+        it('should return JSON', function() {
+          expect(this.res.headers['content-type']).to.equal('application/json; charset=utf-8');
+        });
 
-      it('should include the verification uri', function() {
-        expect(this.res.body).to.have.property('verification_uri');
-        expect(this.res.body.verification_uri).to.equal('http://example.com/verify');
-      });
+        describe('the response body', function() {
+          it('should be a JSON object', function() {
+            expect(this.res.body).to.be.an('object');
+          });
 
-      it('should include the expiry (time to live) of the user code', function() {
-        expect(this.res.body).to.have.property('expires_in');
-        expect(this.res.body.expires_in).to.equal(3600); // duration in seconds
-      });
+          it('should include the device code', function() {
+            expect(this.res.body).to.have.property('device_code');
+            expect(this.res.body.device_code).to.equal('8ecf4b2a-0df2-df7f-d69d-f128e0ac4fcc');
+          });
 
-      it('should include the minimum polling interval', function() {
-        expect(this.res.body).to.have.property('interval');
-        expect(this.res.body.interval).to.equal(5); // interval in seconds
+          it('should include the user code', function() {
+            expect(this.res.body).to.have.property('user_code');
+            expect(this.res.body.user_code).to.equal('DcTrYDLD');
+          });
+
+          it('should include the verification uri', function() {
+            expect(this.res.body).to.have.property('verification_uri');
+            expect(this.res.body.verification_uri).to.equal('http://example.com/verify');
+          });
+
+          it('should include the expiry (time to live) of the user code', function() {
+            expect(this.res.body).to.have.property('expires_in');
+            expect(this.res.body.expires_in).to.equal(3600); // duration in seconds
+          });
+
+          it('should include the minimum polling interval', function() {
+            expect(this.res.body).to.have.property('interval');
+            expect(this.res.body.interval).to.equal(5); // interval in seconds
+          });
+        });
       });
     });
   });

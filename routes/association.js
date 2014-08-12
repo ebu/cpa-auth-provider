@@ -6,6 +6,8 @@ var generate        = require('../lib/generate');
 var requireEncoding = require('../lib/require-encoding');
 var validator       = require('../lib/validate-json-schema');
 
+var _ = require('lodash');
+
 var schema = {
   id: "/associate",
   type: "object",
@@ -39,8 +41,8 @@ module.exports = function(app) {
   };
 
   var handleAssociate = function(params, done) {
-    var clientId     = params.clientId;
-    var clientSecret = params.clientSecret;
+    var clientId     = params.client_id;
+    var clientSecret = params.client_secret;
     var domainName   = params.domain;
 
     db.Client.find({
@@ -131,13 +133,15 @@ module.exports = function(app) {
   app.post(
     '/associate',
     requireEncoding('json'),
-    validator.middleware(schema),
     function(req, res, next) {
-      var params = {
-        clientId:     req.body.client_id,
-        clientSecret: req.body.client_secret,
-        domain:       req.body.domain
-      };
+      var params = _.merge(req.body, req.cookies && req.cookies.cpa);
+
+      var error = validator.validate(params, schema);
+
+      if (error) {
+        res.sendInvalidRequest(error);
+        return;
+      }
 
       handleAssociate(params, function(err, pairingInfo) {
         if (err) {
@@ -172,18 +176,7 @@ module.exports = function(app) {
    */
 
   app.get('/associate', function(req, res, next) {
-    var clientId, clientSecret;
-
-    if (req.cookies && req.cookies.cpa) {
-      clientId     = req.cookies.cpa.client_id;
-      clientSecret = req.cookies.cpa.client_secret;
-    }
-
-    var params = {
-      clientId:     clientId,
-      clientSecret: clientSecret,
-      domain:       req.query.domain
-    };
+    var params = _.merge(req.query, req.cookies && req.cookies.cpa);
 
     handleAssociate(params, function(err, pairingInfo) {
       if (err) {

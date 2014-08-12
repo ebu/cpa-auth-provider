@@ -67,7 +67,9 @@ var routes = function(app) {
    */
 
   app.post('/token', requireEncoding('json'), function(req, res, next) {
-    handleToken(req.body, postTokenHandlers, function(err, token, domain, user) {
+    var params = _.merge(req.body, req.cookies && req.cookies.cpa);
+
+    handleToken(params, postTokenHandlers, function(err, token, domain, user) {
       if (err) {
         if (err.statusCode) {
           if (err.statusCode === 202) {
@@ -91,18 +93,16 @@ var routes = function(app) {
   });
 
   app.get('/token', function(req, res, next) {
-    var params = _.merge(req.query, req.cookies.cpa);
+    var params = _.merge(req.query, req.cookies && req.cookies.cpa);
 
     handleToken(params, getTokenHandlers, function(err, token, domain, user) {
       if (err) {
         if (err.statusCode) {
-          res.status(err.statusCode);
-
           if (err.statusCode === 202) {
             res.jsonp(202, { http_status: 202, reason: "authorization_pending" });
           }
           else {
-            res.jsonp({
+            res.jsonp(err.statusCode, {
               http_status:       err.statusCode,
               error:             err.error,
               error_description: err.message
