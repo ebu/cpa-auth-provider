@@ -24,6 +24,9 @@ var schema = {
     software_version: {
       type:     "string",
       required: true
+    },
+    response_type: {
+      type:     "string"
     }
   }
 };
@@ -131,59 +134,20 @@ module.exports = function(app) {
           return;
         }
 
-        res.cookie('cpa', clientInfo, { httpOnly: true });
-
-        res.send(201, clientInfo);
+        if (req.body.response_type && (req.body.response_type === 'cookie')) {
+          res.cookie('cpa', clientInfo, { httpOnly: true });
+          res.send(201);
+        }
+        else {
+          res.send(201, clientInfo);
+        }
       }
     );
   });
 
-  /**
-   * Client registration endpoint. On success, returns status 201, with the
-   * <code>client_id</code> and <code>client_secret</code> in the
-   * <code>cpa</code> cookie
-   *
-   * @example
-   * <code>GET /register?client_name=Test%20client&software_id=test_client&software_version=1.0</code>
-   *
-   * @param client_name
-   * @param software_id
-   * @param software_version
-   */
-
-  app.get('/register', function(req, res, next) {
-    var params = {
-      clientIpAddress: getClientIpAddress(req),
-      clientName:      req.query.client_name,
-      softwareId:      req.query.software_id,
-      softwareVersion: req.query.software_version
-    };
-
-    handleRegister(params, function(err, clientInfo) {
-      if (err) {
-        if (err.statusCode) {
-          res.sendErrorResponse(
-            err.statusCode,
-            err.error,
-            err.message
-          );
-        }
-        else {
-          next(err);
-        }
-
-        return;
-      }
-
-      res.cookie('cpa', clientInfo, { httpOnly: true });
-      res.send(201);
-    });
+  app.get('/register', function(req, res) {
+    res.send(501);
   });
-
-  // client_id is given as a GET Parameter
-  // app.get('/register', function(req, res) {
-  //   res.send(501);
-  // });
 
   app.put('/register', function(req, res) {
     res.send(501);

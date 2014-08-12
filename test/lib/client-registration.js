@@ -51,6 +51,17 @@ describe('POST /register', function() {
         });
       });
 
+      // jshint expr: true
+      it("should not set a cookie", function() {
+        var cookies = this.res.headers['set-cookie'];
+
+        this.cpaCookie = cookies.filter(function(cookie) {
+          return (/cpa=/).test(cookie);
+        }).shift();
+
+        expect(this.cpaCookie).to.not.be.ok;
+      });
+
       describe("the database", function() {
         before(function(done) {
           var self = this;
@@ -231,21 +242,22 @@ describe('DELETE /register', function() {
   });
 });
 
-describe('GET /register', function() {
+describe('POST /register', function() {
   context('When registering a client', function() {
-    context('when providing a correct request', function() {
+    context('when providing a correct request using the cookie response type', function() {
       before(dbHelper.clearDatabase);
 
       before(function(done) {
         var data = {
+          response_type: 'cookie',
           client_name: 'Test client',
           software_id: 'CPA AP Test',
           software_version: '0.0.1'
         };
 
         requestHelper.sendRequest(this, '/register', {
-          method: 'get',
-          query:   data
+          method: 'post',
+          data:   data
         }, done);
       });
 
