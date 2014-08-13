@@ -2,6 +2,7 @@
 
 var config    = require('../config');
 var db        = require('../models');
+var cors      = require('../lib/cors');
 var generate  = require('../lib/generate');
 var validator = require('../lib/validate-json-schema');
 
@@ -104,6 +105,11 @@ module.exports = function(app) {
     });
   };
 
+  // Enable pre-flight CORS request for POST /register
+  if (config.enableCORS) {
+    app.options('/register', cors());
+  }
+
   /**
    * Client registration endpoint
    *
@@ -112,6 +118,7 @@ module.exports = function(app) {
 
   app.post(
     '/register',
+    cors(),
     // requireEncoding('json'),
     validator.middleware(schema),
     function(req, res, next) {

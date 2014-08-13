@@ -1,6 +1,8 @@
 "use strict";
 
+var config          = require('../config');
 var db              = require('../models');
+var cors            = require('../lib/cors');
 var generate        = require('../lib/generate');
 var requestHelper   = require('../lib/request-helper');
 var requireEncoding = require('../lib/require-encoding');
@@ -62,11 +64,16 @@ var routes = function(app) {
     }
   };
 
+  // Enable pre-flight CORS request for POST /token
+  if (config.enableCORS) {
+    app.options('/token', cors());
+  }
+
   /**
    * Access token endpoint
    */
 
-  app.post('/token', requireEncoding('json'), function(req, res, next) {
+  app.post('/token', cors(), requireEncoding('json'), function(req, res, next) {
     var params = _.merge(req.body, req.cookies && req.cookies.cpa);
 
     handleToken(params, postTokenHandlers, function(err, token, domain, user) {

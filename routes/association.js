@@ -2,6 +2,7 @@
 
 var config          = require('../config');
 var db              = require('../models');
+var cors            = require('../lib/cors');
 var generate        = require('../lib/generate');
 var requireEncoding = require('../lib/require-encoding');
 var validator       = require('../lib/validate-json-schema');
@@ -126,12 +127,18 @@ module.exports = function(app) {
     });
   };
 
+  // Enable pre-flight CORS request for POST /associate
+  if (config.enableCORS) {
+    app.options('/associate', cors());
+  }
+
   /**
    * Client association endpoint
    */
 
   app.post(
     '/associate',
+    cors(),
     requireEncoding('json'),
     function(req, res, next) {
       var params = _.merge(req.body, req.cookies && req.cookies.cpa);
