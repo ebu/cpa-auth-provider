@@ -30,7 +30,12 @@ module.exports = {
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
 
-  enableCORS: true,
+  cors: {
+    enabled: true,
+    allowed_domains: [
+      // "http://cpa-client.example.com",
+    ]
+  },
 
   // The end-user verification URI on the authorization server. The URI should
   // be short and easy to remember as end-users will be asked to manually type

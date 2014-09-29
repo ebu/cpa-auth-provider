@@ -106,7 +106,7 @@ module.exports = function(app) {
   };
 
   // Enable pre-flight CORS request for POST /register
-  if (config.enableCORS) {
+  if (config.cors && config.cors.enabled) {
     app.options('/register', cors());
   }
 

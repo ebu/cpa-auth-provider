@@ -65,7 +65,7 @@ var routes = function(app) {
   };
 
   // Enable pre-flight CORS request for POST /token
-  if (config.enableCORS) {
+  if (config.cors && config.cors.enabled) {
     app.options('/token', cors());
   }
 
