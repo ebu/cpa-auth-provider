@@ -1,5 +1,7 @@
 "use strict";
 
+var config   = require('../config');
+var cors     = require('../lib/cors');
 var db       = require('../models');
 var generate = require('../lib/generate');
 
@@ -16,7 +18,7 @@ var routes = function(app) {
    * Access token endpoint
    */
 
-  app.post('/token', function(req, res, next) {
+  var handler = function(req, res, next) {
     if (!req.body.hasOwnProperty('grant_type')) {
       res.sendErrorResponse(400, 'invalid_request', 'Missing grant type');
       return;
@@ -44,7 +46,17 @@ var routes = function(app) {
           "Unsupported grant type: " + grantType
         );
     }
-  });
+  };
+
+  if (config.cors && config.cors.enabled) {
+    // Enable pre-flight CORS request for POST /token
+    app.options('/token', cors);
+    app.post('/token', cors, handler);
+  }
+  else {
+    app.post('/token', handler);
+  }
+
 };
 
 module.exports = routes;

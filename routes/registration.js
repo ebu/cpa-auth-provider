@@ -1,6 +1,7 @@
 "use strict";
 
 var config   = require('../config');
+var cors     = require('../lib/cors');
 var db       = require('../models');
 var generate = require('../lib/generate');
 
@@ -46,7 +47,7 @@ module.exports = function(app) {
    * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
    */
 
-  app.post('/register', validateJson, function(req, res, next) {
+  var handler = function(req, res, next) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
@@ -98,7 +99,16 @@ module.exports = function(app) {
         }
       });
     });
-  });
+  };
+
+  if (config.cors && config.cors.enabled) {
+    // Enable pre-flight CORS request for POST /register
+    app.options('/register', cors);
+    app.post('/register', cors, validateJson, handler);
+  }
+  else {
+    app.post('/register', validateJson, handler);
+  }
 
   // client_id is given in the path
   app.get('/register/:client_id', function(req, res) {

@@ -1,6 +1,7 @@
 "use strict";
 
 var config   = require('../config');
+var cors     = require('../lib/cors');
 var db       = require('../models');
 var generate = require('../lib/generate');
 
@@ -34,7 +35,7 @@ module.exports = function(app) {
    * Client association endpoint
    */
 
-  app.post('/associate', validateJson, function(req, res, next) {
+  var handler = function(req, res, next) {
     var clientId     = req.body.client_id;
     var clientSecret = req.body.client_secret;
     var domainName   = req.body.domain;
@@ -119,5 +120,14 @@ module.exports = function(app) {
           });
         });
     });
-  });
+  };
+
+  if (config.cors && config.cors.enabled) {
+    // Enable pre-flight CORS request for POST /token
+    app.options('/associate', cors);
+    app.post('/associate', cors, validateJson, handler);
+  }
+  else {
+    app.post('/associate', validateJson, handler);
+  }
 };
