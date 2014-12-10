@@ -44,7 +44,7 @@ module.exports = function(app) {
   /**
    * Client registration endpoint
    *
-   * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
+   * @see EBU Tech 3366, section 8.1
    */
 
   var handler = function(req, res, next) {

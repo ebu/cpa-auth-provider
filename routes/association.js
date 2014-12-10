@@ -33,6 +33,8 @@ module.exports = function(app) {
 
   /**
    * Client association endpoint
+   *
+   * @see EBU Tech 3366, section 8.2
    */
 
   var handler = function(req, res, next) {
