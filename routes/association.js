@@ -129,16 +129,18 @@ module.exports = function(app) {
 
   // Enable pre-flight CORS request for POST /associate
   if (config.cors && config.cors.enabled) {
-    app.options('/associate', cors());
+    app.options('/associate', cors);
   }
 
   /**
    * Client association endpoint
+   *
+   * @see EBU Tech 3366, section 8.2
    */
 
   app.post(
     '/associate',
-    cors(),
+    cors,
     requireEncoding('json'),
     function(req, res, next) {
       var params = _.merge(req.body, req.cookies && req.cookies.cpa);

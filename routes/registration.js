@@ -51,6 +51,12 @@ module.exports = function(app) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   };
 
+  /**
+   * Client registration endpoint
+   *
+   * @see EBU Tech 3366, section 8.1
+   */
+
   var handleRegister = function(params, done) {
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
@@ -107,7 +113,7 @@ module.exports = function(app) {
 
   // Enable pre-flight CORS request for POST /register
   if (config.cors && config.cors.enabled) {
-    app.options('/register', cors());
+    app.options('/register', cors);
   }
 
   /**
@@ -118,7 +124,7 @@ module.exports = function(app) {
 
   app.post(
     '/register',
-    cors(),
+    cors,
     // requireEncoding('json'),
     validator.middleware(schema),
     function(req, res, next) {

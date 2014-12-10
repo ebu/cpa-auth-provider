@@ -30,6 +30,8 @@ module.exports = function(app, options) {
 
   /**
    * Access token authorization endpoint
+   *
+   * @see EBU Tech 3366, section 9.2
    */
 
   app.post(

@@ -3,6 +3,8 @@
 This project contains a reference implementation of the Cross-Platform
 Authentication Authorization Provider.
 
+This software implements version 1.0 of the Cross-Platform Authentication Protocol ([EBU Tech 3366](https://tech.ebu.ch/docs/tech/tech3366.pdf))
+
 More information on the [EBU Cross-Platform Authentication project](http://tech.ebu.ch/cpa)
 
 ## Prerequisites
@@ -27,8 +29,12 @@ An example config for reference is in `config.dist.js`.
 
     $ cp config.dist.js config.local.js
 
-Edit `config.local.js` to set any necessary configuration options, for
-example, database connection and identity provider settings.
+Edit `config.local.js` to set the necessary configuration options:
+
+* Identity provider OAuth 2 client ID, client secret, and callback URL. GitHub and Facebook are supported as identity providers
+* Database connection settings
+* Verification URL at the Authorization Provider, to be displayed to the user
+* Service provider domain names and access tokens
 
 ## Initialise the database
 
@@ -73,14 +79,12 @@ To generate a test coverage report (in the `coverage` directory);
 * [CPA Service Provider](https://github.com/ebu/cpa-service-provider)
 * [CPA Client](https://github.com/ebu/cpa-client)
 
-
 ## Contributors
 
 * [Chris Needham](https://github.com/chrisn) (BBC)
 * [Michael Barroco](https://github.com/barroco) (EBU)
 * [Andy Buckingham](https://github.com/andybee) (togglebit)
 * [Matthew Glubb](https://github.com/mglubb) (Kite Development & Consulting)
-
 
 ## Copyright & license
 

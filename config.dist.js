@@ -43,6 +43,7 @@ module.exports = {
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
 
+  // Cross-origin resource sharing
   cors: {
     enabled: true,
     allowed_domains: [

@@ -66,14 +66,16 @@ var routes = function(app) {
 
   // Enable pre-flight CORS request for POST /token
   if (config.cors && config.cors.enabled) {
-    app.options('/token', cors());
+    app.options('/token', cors);
   }
 
   /**
    * Access token endpoint
+   *
+   * @see EBU Tech 3366, section 8.3
    */
 
-  app.post('/token', cors(), requireEncoding('json'), function(req, res, next) {
+  app.post('/token', cors, requireEncoding('json'), function(req, res, next) {
     var params = _.merge(req.body, req.cookies && req.cookies.cpa);
 
     handleToken(params, postTokenHandlers, function(err, token, domain, user) {
