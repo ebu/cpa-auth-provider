@@ -6,21 +6,20 @@
   <div class="panel-heading">Authorization</div>
 
   <div class="panel-body">
-    <form method="POST" action="/authorize">
+    <form method="POST" action="<%= link('/authorize') %>">
       <div class="form-group has-success">
         Would you like to authorize <%= client_name %> to
         act on your behalf ?
       </div>
 
-      <input type="hidden" name="client_id" value="<%=client_id%>">
-      <input type="hidden" name="redirect_uri" value="<%=redirect_uri%>">
-      <input type="hidden" name="domain" value="<%=domain%>">
+      <input type="hidden" name="client_id" value="<%= client_id %>">
+      <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
+      <input type="hidden" name="domain" value="<%= domain %>">
       <% if (state) { %>
-      <input type="hidden" name="state" value="<%=state%>">
+        <input type="hidden" name="state" value="<%= state %>">
       <% } %>
       <input type="submit" class="btn btn-success" name="authorization" value="Allow">
       <input type="submit" class="btn btn-danger" name="authorization" value="Deny">
-
     </form>
   </div>
 </div>

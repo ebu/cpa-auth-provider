@@ -6,6 +6,8 @@ var querystring = require('querystring');
 
 module.exports = {
 
+  namespace: '',
+
   /**
    * Helper function for making HTTP requests and handling responses.
    *
@@ -34,6 +36,8 @@ module.exports = {
 
   sendRequest: function(context, path, opts, done) {
     opts = opts || {};
+
+    path = this.namespace + path;
 
     var method = opts.method || 'get';
 
@@ -74,5 +78,18 @@ module.exports = {
 
       done(err);
     });
+  },
+
+  login: function(context, done) {
+    var loginUrl = this.namespace + '/login';
+
+    request
+      .post(loginUrl)
+      .type('form')
+      .send({ username: 'testuser', password: 'testpassword' })
+      .end(function(err, res) {
+        context.cookie = res.headers['set-cookie'];
+        done(err);
+      });
   }
 };

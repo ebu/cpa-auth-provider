@@ -7,13 +7,13 @@
     <div class="panel-title">Device Association</div>
   </div>
 
-  <form method="POST" action="/verify">
+  <form method="POST" action="<%= link('/verify') %>">
   <div class="panel-body">
     <div class="form-group <% if (error) { %>has-error<% } else { %>has-success<% } %>">
       <label class="control-label" for="inputUserCode">User Code</label>
       <input type="text" class="form-control" id="inputUserCode" placeholder="Enter your user code" name="user_code" <% if (user_code) { %>value="<%= user_code %>"<% } %>>
       <% if (error) { %>
-      <span class="text-danger"><%= error %></span>
+        <span class="text-danger"><%= error %></span>
       <% } %>
     </div>
     <input type="submit" class="btn btn-default" name="submit" value="Verify">
