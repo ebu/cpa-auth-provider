@@ -1,12 +1,14 @@
 "use strict";
 
-var config    = require('../config');
-var db        = require('../models');
-var cors      = require('../lib/cors');
-var generate  = require('../lib/generate');
-var validator = require('../lib/validate-json-schema');
+var config          = require('../config');
+var db              = require('../models');
+var cors            = require('../lib/cors');
+var generate        = require('../lib/generate');
+var requireEncoding = require('../lib/require-encoding');
+var validator       = require('../lib/validate-json-schema');
 
 var async = require('async');
+var _     = require('lodash');
 
 var schema = {
   id: "/register",
@@ -25,9 +27,6 @@ var schema = {
     software_version: {
       type:     "string",
       required: true
-    },
-    response_type: {
-      type:     "string"
     }
   }
 };
@@ -51,26 +50,25 @@ module.exports = function(app) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   };
 
-  /**
-   * Client registration endpoint
-   *
-   * @see EBU Tech 3366, section 8.1
-   */
-
   var handleRegister = function(params, done) {
+    var clientIpAddress = params.client_ip_address;
+    var clientName      = params.client_name;
+    var softwareId      = params.software_id;
+    var softwareVersion = params.software_version;
+
     db.sequelize.transaction(function(transaction) {
       async.waterfall([
         function(callback) {
-          var clientSecret = generate.clientSecret(params.clientIpAddress);
+          var clientSecret = generate.clientSecret(clientIpAddress);
 
           // TODO: Check mandatory fields.
           db.Client.create({
             id:               null,
             secret:           clientSecret,
-            name:             params.clientName,
-            software_id:      params.softwareId,
-            software_version: params.softwareVersion,
-            ip:               params.clientIpAddress
+            name:             clientName,
+            software_id:      softwareId,
+            software_version: softwareVersion,
+            ip:               clientIpAddress
           })
           .complete(function(err, client) {
             callback(err, client);
@@ -119,21 +117,17 @@ module.exports = function(app) {
   /**
    * Client registration endpoint
    *
-   * @see http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-3
+   * @see EBU Tech 3366, section 8.1
    */
 
   app.post(
     '/register',
     cors,
-    // requireEncoding('json'),
+    requireEncoding('json'),
     validator.middleware(schema),
     function(req, res, next) {
-      var params = {
-        clientIpAddress: getClientIpAddress(req),
-        clientName:      req.body.client_name,
-        softwareId:      req.body.software_id,
-        softwareVersion: req.body.software_version
-      };
+      var params = _.merge(req.body, req.cookies && req.cookies.cpa);
+      params.client_ip_address = getClientIpAddress(req);
 
       handleRegister(params, function(err, clientInfo) {
         if (err) {
@@ -147,20 +141,37 @@ module.exports = function(app) {
           return;
         }
 
-        if (req.body.response_type && (req.body.response_type === 'cookie')) {
-          res.cookie('cpa', clientInfo, { httpOnly: true });
-          res.contentType('text/plain');
-          res.send(201, '');
+        res.send(201, clientInfo);
+      });
+    }
+  );
+
+  app.get('/register', function(req, res, next) {
+    var params = _.merge(req.query, req.cookies && req.cookies.cpa);
+    params.client_ip_address = getClientIpAddress(req);
+
+    handleRegister(params, function(err, clientInfo) {
+      if (err) {
+        if (err.statusCode) {
+          res.status(err.statusCode);
+          res.jsonp({
+            http_status:       err.statusCode,
+            error:             err.error,
+            error_description: err.message
+          });
         }
         else {
-          res.send(201, clientInfo);
+          next(err);
         }
       }
-    );
-  });
 
-  app.get('/register', function(req, res) {
-    res.send(501);
+      res.cookie('cpa', clientInfo, { httpOnly: true });
+
+      res.jsonp(201, {
+        http_status: 201,
+        client_id:   clientInfo.client_id
+      });
+    });
   });
 
   app.put('/register', function(req, res) {

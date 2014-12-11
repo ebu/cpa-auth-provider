@@ -10,11 +10,11 @@ var dbHelper      = require('../db-helper');
 
 var cookie = require('cookie');
 
+// See EBU Tech 3366, section 8.1
+
 describe('POST /register', function() {
   context('When registering a client', function() {
-    // Reference : http://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-14#section-5.1
-
-    context('when providing a correct request', function() {
+    context('with valid parameters', function() {
       before(dbHelper.clearDatabase);
 
       before(function(done) {
@@ -242,22 +242,20 @@ describe('DELETE /register', function() {
   });
 });
 
-describe('POST /register', function() {
+describe('GET /register', function() {
   context('When registering a client', function() {
-    context('when providing a correct request using the cookie response type', function() {
+    context('with valid parameters', function() {
       before(dbHelper.clearDatabase);
 
       before(function(done) {
-        var data = {
-          response_type: 'cookie',
-          client_name: 'Test client',
-          software_id: 'CPA AP Test',
-          software_version: '0.0.1'
-        };
-
         requestHelper.sendRequest(this, '/register', {
-          method: 'post',
-          data:   data
+          method: 'get',
+          query:  {
+            client_name: 'Test client',
+            software_id: 'CPA AP Test',
+            software_version: '0.0.1',
+            callback: 'jsonPCallback'
+          }
         }, done);
       });
 
@@ -265,19 +263,47 @@ describe('POST /register', function() {
         expect(this.res.statusCode).to.equal(201);
       });
 
-      // jshint expr: true
-      it("should return an empty response body", function() {
-        expect(this.res.headers['content-type']).to.equal('text/plain');
-        expect(this.res.body).to.be.empty;
+      it('should return JavaScript', function() {
+        expect(this.res.headers['content-type']).to.equal('text/javascript; charset=utf-8');
       });
 
-      it("should include a cookie", function() {
+      describe('the response body', function() {
+        var jsonPData = null;
+
+        var jsonPCallback = function(data) {
+          jsonPData = data;
+        };
+
+        it('should be JavaScript code', function() {
+          // jshint evil:true
+          eval(this.res.text);
+        });
+
+        describe('the returned data', function() {
+          it('should include the HTTP status code', function() {
+            expect(jsonPData).to.have.property('http_status');
+            expect(jsonPData.http_status).to.equal(201);
+          });
+
+          it("should include the client id", function() {
+            expect(jsonPData).to.have.property('client_id');
+            expect(jsonPData.client_id).to.match(/^\d+$/);
+          });
+
+          it("should not include the client secret", function() {
+            expect(jsonPData).to.not.have.property('client_secret');
+          });
+        });
+      });
+
+      it("should return a cookie", function() {
         var cookies = this.res.headers['set-cookie'];
 
         this.cpaCookie = cookies.filter(function(cookie) {
           return (/cpa=/).test(cookie);
         }).shift();
 
+        // jshint expr:true
         expect(this.cpaCookie).to.be.ok;
       });
 
