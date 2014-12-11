@@ -102,7 +102,7 @@ var routes = function(app) {
 
     var userCode = req.body.user_code;
     if (!userCode) {
-      res.sendInvalidRequest("Missing user_code");
+      renderVerificationPage(req, res, messages.INVALID_USERCODE);
       return;
     }
 
