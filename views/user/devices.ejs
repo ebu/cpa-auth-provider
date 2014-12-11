@@ -1,0 +1,23 @@
+<% include ../layout/head %>
+
+<h1>Devices <small>(<%= devices.length %>)</small></h1>
+<div class="table-responsive">
+  <table class="table">
+    <tr>
+      <th>Uid</th>
+      <th>Name</th>
+      <th>Owner</th>
+      <!--<th>Authorizations</th>-->
+    </tr>
+
+    <% devices.forEach(function(el, i) { %>
+    <tr>
+      <td><%= el.client.id %></td>
+      <td><%= el.client.name %></td>
+      <td><%= el.user.display_name %></td>
+    </tr>
+
+    <% }); %>
+  </table>
+</div>
+<% include ../layout/foot %>
