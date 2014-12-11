@@ -8,14 +8,23 @@ var requestHelper = require('../request-helper');
 var dbHelper      = require('../db-helper');
 
 var initDatabase = function(opts, done) {
-  db.Client
+  db.User
     .create({
-      id:               100,
-      secret:           'e2412cd1-f010-4514-acab-c8af59e5501a',
-      name:             'Test client 1',
-      software_id:      'CPA AP Test',
-      software_version: '0.0.1',
-      ip:               '127.0.0.1'
+      id:           3,
+      provider_uid: 'testuser',
+      display_name: 'Test User',
+      password:     'testpassword'
+    })
+    .then(function() {
+      return db.Client.create({
+        id:               100,
+        secret:           'e2412cd1-f010-4514-acab-c8af59e5501a',
+        name:             'Test client 1',
+        software_id:      'CPA AP Test',
+        software_version: '0.0.1',
+        ip:               '127.0.0.1',
+        user_id:          3
+      });
     })
     .then(function() {
       return db.Client.create({
@@ -24,7 +33,8 @@ var initDatabase = function(opts, done) {
         name:             'Test client 2',
         software_id:      'CPA AP Test',
         software_version: '0.0.1',
-        ip:               '127.0.0.1'
+        ip:               '127.0.0.1',
+        user_id:          3
       });
     })
     .then(function() {
@@ -39,74 +49,39 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
-      return db.User.create({
-        id:           3,
-        provider_uid: 'testuser',
-        display_name: 'Test User',
-        password:     'testpassword'
+      return db.Domain.create({
+        id:           1,
+        name:         'example-service.ebu.io',
+        access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
       });
     })
     .then(function() {
-      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
-      return db.PairingCode.create({
-        id:               50,
-        client_id:        100,
-        domain_id:        5,
-        device_code:      '65ec63a2-df53-4ceb-a938-f94e43b16a5e',
-        user_code:        '1234',
-        verification_uri: 'http://example.com',
-        state:            'pending', // authorization_pending
-        created_at:       date,
-        updated_at:       date
+      return db.Domain.create({
+        id:           2,
+        name:         'another-example-service.com',
+        access_token: '831ba433eeaf49dabc5c3089b306d10f'
       });
     })
     .then(function() {
-      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
-      return db.PairingCode.create({
-        id:               51,
-        client_id:        101,
-        domain_id:        5,
-        device_code:      'c691343f-0ac0-467d-8659-5041cfc3dc4a',
-        user_code:        '5678',
-        verification_uri: 'http://example.com',
-        state:            'verified',
-        user_id:          3,
-        created_at:       date,
-        updated_at:       date
+      return db.AccessToken.create({
+        token:     'aed201ffb3362de42700a293bdebf694',
+        domain_id: 1,
+        client_id: 101,
+        user_id:   3
       });
     })
     .then(function() {
-      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
-      return db.PairingCode.create({
-        id:               52,
-        client_id:        102,
-        domain_id:        5,
-        device_code:      '320b4ce5-24cd-4e8e-a845-3ee0e5cc927b',
-        user_code:        'RYBkEpqE',
-        verification_uri: 'http://example.com',
-        state:            'pending',
-        user_id:          3,
-        created_at:       date,
-        updated_at:       date
+      return db.AccessToken.create({
+        token:     'af03736940844fccb0147f12a9d188fb',
+        domain_id: 1,
+        client_id: 4
       });
     })
     .then(function() {
-      var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
-
-      return db.PairingCode.create({
-        id:               53,
-        client_id:        101,
-        domain_id:        5,
-        device_code:      '3860fa73-f98f-4c99-a34c-29e0b5c79b84',
-        user_code:        'dfydN789',
-        verification_uri: 'http://example.com',
-        state:            'denied',
-        user_id:          3,
-        created_at:       date,
-        updated_at:       date
+      return db.AccessToken.create({
+        token:     '8a7be6ef96a946b6993b1c79a39702b0',
+        domain_id: 1,
+        client_id: 5
       });
     })
     .then(function() {
@@ -186,6 +161,10 @@ describe('GET /user/devices', function() {
 
           it('should belong to the correct user', function() {
             expect(this.$('tr').eq(2).children('td').eq(2).text()).to.equal('Test User');
+          });
+
+          it('should be authorized on the correct domain', function() {
+            expect(this.$('tr').eq(2).children('td').eq(3).text()).to.contain('example-service.ebu.io');
           });
         });
       });
