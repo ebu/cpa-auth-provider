@@ -4,17 +4,24 @@
 <div class="table-responsive">
   <table class="table">
     <tr>
-      <th>Uid</th>
+      <th>Client Id</th>
       <th>Name</th>
       <th>Owner</th>
-      <!--<th>Authorizations</th>-->
+      <th>Authorizations</th>
     </tr>
 
     <% devices.forEach(function(el, i) { %>
     <tr>
-      <td><%= el.client.id %></td>
-      <td><%= el.client.name %></td>
+      <td><%= el.id %></td>
+      <td><%= el.name %></td>
       <td><%= el.user.display_name %></td>
+      <td>
+        <ul>
+        <% el.accessTokens.forEach(function(token, j) { %>
+          <li><%= token.domain.name %></li>
+        <% }); %>
+        </ul>
+      </td>
     </tr>
 
     <% }); %>

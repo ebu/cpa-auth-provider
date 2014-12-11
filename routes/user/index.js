@@ -8,11 +8,11 @@ var authHelper = require('../../lib/auth-helper');
 var routes = function(app) {
 
   app.get('/user/devices', authHelper.ensureAuthenticated, function(req, res, next) {
-    db.PairingCode
+    db.Client
       .findAll({
         where: { user_id: req.user.id },
-        include: [ db.User, db.Client ],
-        order: [ [ db.Client, 'name' ] ]
+        include: [ db.User, { model: db.AccessToken, include: [db.Domain] } ],
+        order: [ [ 'id' ] ]
       }).complete(function(err, codes){
         if (err) {
           next(err);
