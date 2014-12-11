@@ -64,7 +64,7 @@ module.exports = {
   // The length of time that user (pairing) codes are valid, in seconds.
   pairing_code_lifetime: 60 * 60, // 1 hour
 
-  // The length of time that a access tokens are valid, in seconds.
+  // The length of time that access tokens are valid, in seconds.
   access_token_lifetime: 30 * 24 * 60 * 60, // 30 days
 
   // The length of time that an authorization code is valid, in seconds.
