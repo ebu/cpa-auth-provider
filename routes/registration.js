@@ -27,6 +27,9 @@ var schema = {
     software_version: {
       type:     "string",
       required: true
+    },
+    response_type: {
+      type:     "string"
     }
   }
 };
@@ -141,7 +144,16 @@ module.exports = function(app) {
           return;
         }
 
-        res.send(201, clientInfo);
+        if (params.response_type && (params.response_type === 'cookie')) {
+          // To prevent service providers having visibility of the
+          // client_secret, send only the client_id in the response body,
+          // and return the client_secret in a cookie.
+          res.cookie('cpa', clientInfo, { httpOnly: true });
+          res.send(201, { client_id: clientInfo.client_id });
+        }
+        else {
+          res.send(201, clientInfo);
+        }
       });
     }
   );
@@ -167,6 +179,9 @@ module.exports = function(app) {
         return;
       }
 
+      // To prevent service providers having visibility of the client_secret,
+      // send only the client_id in the response body, and return the
+      // client_secret in a cookie.
       res.cookie('cpa', clientInfo, { httpOnly: true });
 
       res.jsonp(201, {
