@@ -163,6 +163,8 @@ module.exports = function(app) {
         else {
           next(err);
         }
+
+        return;
       }
 
       res.cookie('cpa', clientInfo, { httpOnly: true });
