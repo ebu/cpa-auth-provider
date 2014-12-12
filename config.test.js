@@ -37,7 +37,7 @@ module.exports = {
     ]
   },
 
-  // URL path namespace prefix
+  // URL path namespace prefix, e.g., '/myapp'
   namespace: '/ap',
 
   // The end-user verification URI on the authorization server. The URI should
