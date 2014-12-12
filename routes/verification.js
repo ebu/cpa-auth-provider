@@ -86,8 +86,8 @@ var routes = function(app) {
     function(req, res, next) {
       var codes = [];
       for (var k in req.body) {
-        if(k.indexOf('pairing_code_') === 0) {
-          codes.push({id:k.substr('pairing_code_'.length), value:req.body[k]});
+        if (k.indexOf('pairing_code_') === 0) {
+          codes.push({ id: k.substr('pairing_code_'.length), value: req.body[k] });
         }
       }
 
