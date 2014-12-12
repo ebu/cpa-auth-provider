@@ -49,6 +49,17 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function() {
+      return db.Client.create({
+        id:               103,
+        secret:           '21cced5a-3574-444c-98e9-5f1ba06995da',
+        name:             'Test client 3',
+        software_id:      'CPA AP Test',
+        software_version: '0.0.1',
+        ip:               '127.0.0.1',
+        user_id:          2
+      });
+    })
+    .then(function() {
       return db.Domain.create({
         id:           1,
         name:         'example-service.ebu.io',
@@ -64,6 +75,7 @@ var initDatabase = function(opts, done) {
     })
     .then(function() {
       return db.AccessToken.create({
+        id:        1001,
         token:     'aed201ffb3362de42700a293bdebf694',
         domain_id: 1,
         client_id: 101,
@@ -72,13 +84,15 @@ var initDatabase = function(opts, done) {
     })
     .then(function() {
       return db.AccessToken.create({
+        id:        1002,
         token:     'af03736940844fccb0147f12a9d188fb',
         domain_id: 1,
-        client_id: 4
+        client_id: 102
       });
     })
     .then(function() {
       return db.AccessToken.create({
+        id:        1003,
         token:     '8a7be6ef96a946b6993b1c79a39702b0',
         domain_id: 1,
         client_id: 5
@@ -143,7 +157,7 @@ describe('GET /user/devices', function() {
       describe('the response body', function() {
         it('should display a title containing the number of devices', function() {
           expect(this.$('h1').length).to.equal(1);
-          expect(this.$('h1').text()).to.equal('Devices (' + 3 + ')')
+          expect(this.$('h1').text()).to.equal('Devices (' + 3 + ')');
         });
 
         it('should contain a table with 3 elements (+ header)', function() {
@@ -182,3 +196,122 @@ describe('GET /user/devices', function() {
   });
 });
 
+
+
+describe('DELETE /user/client/:id', function() {
+
+  context('When revoking a client', function() {
+    context('and the user is authenticated', function() {
+      before(resetDatabase);
+
+      before(function(done) {
+        var self = this;
+
+        request
+          .post('/login')
+          .type('form')
+          .send({ username: 'testuser', password: 'testpassword' })
+          .end(function(err, res) {
+            self.cookie = res.headers['set-cookie'];
+            done(err);
+          });
+      });
+
+      context('using a valid client id', function() {
+        context('and the user is the owner of the client', function() {
+
+          before(function(done) {
+            requestHelper.sendRequest(this, '/user/client/102', {
+              method: 'delete',
+              cookie: this.cookie,
+            }, done);
+          });
+
+          it('should return a status 200', function() {
+            expect(this.res.statusCode).to.equal(200);
+          });
+
+          describe('the database', function() {
+            before(function(done) {
+              var self = this;
+
+              db.Client.findAll()
+                .success(function(clients) {
+                  self.clients = clients;
+
+                  db.AccessToken.findAll()
+                    .success(function(accessTokens) {
+                      self.accessTokens = accessTokens;
+
+                      done();
+                    })
+                    .error(function(error) {
+                      done(error);
+                    });
+                })
+                .error(function(error) {
+                  done(error);
+                });
+            });
+
+            it('should have three clients', function() {
+              expect(this.clients).to.be.an('array');
+              expect(this.clients.length).to.equal(3);
+            });
+
+            it('should have two access tokens', function() {
+              expect(this.accessTokens).to.be.an('array');
+              expect(this.accessTokens.length).to.equal(2);
+            });
+          });
+        });
+
+        context('and the user is not the owner of the token', function() {
+          before(resetDatabase);
+
+          before(function(done) {
+            requestHelper.sendRequest(this, '/user/client/103', {
+              method: 'delete',
+              cookie: this.cookie,
+            }, done);
+          });
+
+          it('should return a status 400', function() {
+            expect(this.res.statusCode).to.equal(400);
+          });
+        });
+      });
+
+      context('using a invalid client id', function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/user/client/1203214', {
+            method: 'delete',
+            cookie: this.cookie,
+          }, done);
+        });
+
+        it('should return a status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+      });
+    });
+
+    context('and the user is not authenticated', function() {
+      before(resetDatabase);
+
+      before(function(done) {
+        requestHelper.sendRequest(this, '/verify', {
+          method: 'post',
+          type:   'form',
+          data:   { user_code: '1234' }
+        }, done);
+      });
+
+      it('should return a status 401', function() {
+        expect(this.res.statusCode).to.equal(401);
+      });
+    });
+  });
+});
