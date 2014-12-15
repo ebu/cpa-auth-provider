@@ -32,7 +32,7 @@ describe('GET /', function() {
     });
 
     it('should redirect to /verify', function() {
-      var urlPrefix = requestHelper.namespace;
+      var urlPrefix = requestHelper.urlPrefix;
       expect(this.res.statusCode).to.equal(302);
       expect(this.res.headers).to.have.property('location');
       expect(this.res.headers.location).to.equal(urlPrefix + '/verify');
@@ -45,7 +45,7 @@ describe('GET /', function() {
     });
 
     it('should redirect to /auth', function() {
-      var urlPrefix = requestHelper.namespace;
+      var urlPrefix = requestHelper.urlPrefix;
       expect(this.res.statusCode).to.equal(302);
       expect(this.res.headers).to.have.property('location');
       expect(this.res.headers.location).to.equal(urlPrefix + '/auth');

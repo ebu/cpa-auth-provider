@@ -6,7 +6,7 @@ var querystring = require('querystring');
 
 module.exports = {
 
-  namespace: '',
+  urlPrefix: '',
 
   /**
    * Helper function for making HTTP requests and handling responses.
@@ -37,7 +37,7 @@ module.exports = {
   sendRequest: function(context, path, opts, done) {
     opts = opts || {};
 
-    path = this.namespace + path;
+    path = this.urlPrefix + path;
 
     var method = opts.method || 'get';
 
@@ -81,7 +81,7 @@ module.exports = {
   },
 
   login: function(context, done) {
-    var loginUrl = this.namespace + '/login';
+    var loginUrl = this.urlPrefix + '/login';
 
     request
       .post(loginUrl)

@@ -11,7 +11,7 @@ var config = require('../../config');
  */
 
 before(function(done) {
-  requestHelper.namespace = config.namespace;
+  requestHelper.urlPrefix = config.urlPrefix;
 
   db.sequelize.sync({ force: true }).complete(function(err) {
     done(err);
