@@ -3,7 +3,7 @@
 var config     = require('../../config');
 var db         = require('../../models/index');
 var authHelper = require('../../lib/auth-helper');
-var async      = require('async')
+var async      = require('async');
 
 
 var routes = function(app) {
