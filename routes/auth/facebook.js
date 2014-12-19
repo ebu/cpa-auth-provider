@@ -1,11 +1,11 @@
 "use strict";
 
-var db = require('../../models');
-var config = require('../../config');
+var db            = require('../../models');
+var config        = require('../../config');
+var requestHelper = require('../../lib/request-helper');
 
-var passport = require('passport');
+var passport         = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
-
 
 passport.use(new FacebookStrategy({
     clientID: config.identity_providers.facebook.client_id,
@@ -23,8 +23,6 @@ passport.use(new FacebookStrategy({
   }
 ));
 
-
-
 module.exports = function(app, options) {
   app.get('/auth/facebook', passport.authenticate('facebook'));
 
@@ -39,6 +37,6 @@ module.exports = function(app, options) {
       return res.redirect(redirectUri);
     }
 
-    res.redirect('/');
+    requestHelper.redirect(res, '/');
   });
 };

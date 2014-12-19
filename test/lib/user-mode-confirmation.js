@@ -121,16 +121,7 @@ describe('GET /verify', function() {
   context('When requesting the form to validate a domain', function() {
     context('and the user is authenticated', function() {
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       before(function(done) {
@@ -172,16 +163,7 @@ describe('POST /verify', function() {
   context('When validating a domain', function() {
     context('and the user is authenticated', function() {
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       context('and the user allows the domain', function() {

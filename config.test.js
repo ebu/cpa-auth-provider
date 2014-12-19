@@ -32,6 +32,9 @@ module.exports = {
 
   enableCORS: true,
 
+  // URL path prefix, e.g., '/myapp'
+  urlPrefix: '/ap',
+
   // The end-user verification URI on the authorization server. The URI should
   // be short and easy to remember as end-users will be asked to manually type
   // it into their user-agent.

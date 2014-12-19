@@ -28,7 +28,7 @@ describe('GET /auth', function() {
     requestHelper.sendRequest(this, '/auth', { parseDOM: true }, done);
   });
 
-  context('When requesting the list of identity provider', function() {
+  context('When requesting the list of identity providers', function() {
     it('should return a status 200', function() {
       expect(this.res.statusCode).to.equal(200);
     });
@@ -73,16 +73,7 @@ describe('GET /protected', function() {
 
   context('When the user is authenticated', function() {
     before(function(done) {
-      var self = this;
-
-      request
-        .post('/login')
-        .type('form')
-        .send({ username: 'testuser', password: 'testpassword' })
-        .end(function(err, res) {
-          self.cookie = res.headers['set-cookie'];
-          done(err);
-        });
+      requestHelper.login(this, done);
     });
 
     before(function(done) {

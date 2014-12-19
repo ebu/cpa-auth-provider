@@ -24,16 +24,7 @@ describe('GET /', function() {
 
   context('with a signed in user', function() {
     before(function(done) {
-      var self = this;
-
-      request
-        .post('/login')
-        .type('form')
-        .send({ username: 'testuser', password: 'testpassword' })
-        .end(function(err, res) {
-          self.cookie = res.headers['set-cookie'];
-          done(err);
-        });
+      requestHelper.login(this, done);
     });
 
     before(function(done) {
@@ -41,9 +32,10 @@ describe('GET /', function() {
     });
 
     it('should redirect to /verify', function() {
+      var urlPrefix = requestHelper.urlPrefix;
       expect(this.res.statusCode).to.equal(302);
       expect(this.res.headers).to.have.property('location');
-      expect(this.res.headers.location).to.equal('/verify');
+      expect(this.res.headers.location).to.equal(urlPrefix + '/verify');
     });
   });
 
@@ -53,9 +45,10 @@ describe('GET /', function() {
     });
 
     it('should redirect to /auth', function() {
+      var urlPrefix = requestHelper.urlPrefix;
       expect(this.res.statusCode).to.equal(302);
       expect(this.res.headers).to.have.property('location');
-      expect(this.res.headers.location).to.equal('/auth');
+      expect(this.res.headers.location).to.equal(urlPrefix + '/auth');
     });
   });
 });

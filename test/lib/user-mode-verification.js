@@ -82,16 +82,7 @@ describe('GET /verify', function() {
     context('and the user is authenticated', function() {
       before(resetDatabase);
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       before(function(done) {
@@ -122,8 +113,9 @@ describe('GET /verify', function() {
       });
 
       it('should redirect to the login page', function() {
+        var urlPrefix = requestHelper.urlPrefix;
         expect(this.res.statusCode).to.equal(302);
-        expect(this.res.headers.location).to.equal("/auth");
+        expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
         // TODO: check redirect location and page to return to after login
       });
     });
@@ -145,16 +137,7 @@ describe('POST /verify', function() {
   context('When validating a user_code', function() {
     context('and the user is authenticated', function() {
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       context('using a valid user_code', function() {
