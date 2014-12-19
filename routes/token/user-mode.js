@@ -133,10 +133,6 @@ module.exports = function(req, res, next) {
           })
           .then(function(token) {
             accessToken = token;
-
-            // Associate this client with the user
-            client.user_id = user.id;
-            return client.save();
           })
           .then(function(token) {
             return pairingCode.destroy();

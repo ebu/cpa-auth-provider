@@ -31,7 +31,8 @@ var initDatabase = function(done) {
         name:             'Test client',
         software_id:      'CPA AP Test',
         software_version: '0.0.1',
-        ip:               '127.0.0.1'
+        ip:               '127.0.0.1',
+        user_id:          3
       });
     })
     .then(function() {

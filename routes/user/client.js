@@ -26,11 +26,20 @@ var routes = function(app) {
           return;
         }
 
-        return client.destroy().then(function() {
+        // TODO: transaction
+        return client
+          .destroy()
+          .then(function() {
             return db.AccessToken.destroy({
               client_id: client.id
             });
-          }).then(function() {
+          })
+          .then(function() {
+            return db.PairingCode.destroy({
+              client_id: client.id
+            });
+          })
+          .then(function() {
             res.send(200);
           }).catch(function(err) {
             res.sendInvalidRequest("Invalid request");

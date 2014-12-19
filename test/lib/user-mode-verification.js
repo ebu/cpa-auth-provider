@@ -198,7 +198,15 @@ describe('POST /verify', function() {
             db.PairingCode.findAll()
               .success(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
-                done();
+
+                db.Client.findAll()
+                  .success(function(clients) {
+                    self.clients = clients;
+                    done();
+                  })
+                  .error(function(error) {
+                    done(error);
+                  });
               })
               .error(function(error) {
                 done(error);
@@ -233,6 +241,16 @@ describe('POST /verify', function() {
 
             it('should be associated with the correct domain', function() {
               expect(this.pairingCode.domain_id).to.equal(5);
+            });
+          });
+
+          describe('the client', function() {
+            before(function() {
+              this.clients = this.clients[0];
+            });
+
+            it('should be associated with the correct user id', function() {
+              expect(this.clients.user_id).to.equal(5);
             });
           });
         });

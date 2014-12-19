@@ -13,13 +13,11 @@ var routes = function(app) {
         where: { user_id: req.user.id },
         include: [ db.User, { model: db.AccessToken, include: [db.Domain] } ],
         order: [ [ 'id' ] ]
-      }).complete(function(err, codes){
-        if (err) {
-          next(err);
-          return;
-        }
-
-        res.render('./user/devices.ejs', { devices: codes });
+      })
+      .then(function(clients) {
+        return res.render('./user/devices.ejs', { devices: clients });
+      }, function(err) {
+        next(err);
       });
   });
 };

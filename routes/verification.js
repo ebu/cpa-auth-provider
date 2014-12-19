@@ -107,7 +107,7 @@ var routes = function(app) {
     }
 
     db.PairingCode
-      .find({ where: { 'user_code': userCode }})
+      .find({ where: { 'user_code': userCode }, include: [ db.Client ] })
       .complete(function(err, pairingCode) {
         if (err) {
           next(err);
@@ -131,12 +131,17 @@ var routes = function(app) {
           return;
         }
 
-        pairingCode
-          .updateAttributes({ user_id: req.user.id, state: 'verified' })
-          .success(function() {
-            renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
+        // TODO: check transaction
+        return pairingCode
+          .updateAttributes({user_id: req.user.id, state: 'verified'})
+          .then(function () {
+            pairingCode.client.user_id = req.user.id;
+            pairingCode.client.save();
           })
-          .error(function(err) {
+          .then(function () {
+            renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
+          },
+          function (err) {
             next(err);
           });
       });
