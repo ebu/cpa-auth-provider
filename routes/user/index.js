@@ -4,18 +4,22 @@ var config     = require('../../config');
 var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
-module.exports = function (app, options) {
-  app.get('/user/tokens', authHelper.ensureAuthenticated, function(req, res, next) {
-    db.ServiceAccessToken
-      .findAll({ include: [db.ServiceProvider] })
-      .complete(function(err, tokens) {
-        if (err) {
-          next(err);
-          return;
-        }
 
-        res.render('./user/token_list.ejs', { tokens: tokens });
+var routes = function(app) {
+
+  app.get('/user/devices', authHelper.ensureAuthenticated, function(req, res, next) {
+    db.Client
+      .findAll({
+        where: { user_id: req.user.id },
+        include: [ db.User, { model: db.AccessToken, include: [db.Domain] } ],
+        order: [ [ 'id' ] ]
+      })
+      .then(function(clients) {
+        return res.render('./user/devices.ejs', { devices: clients });
+      }, function(err) {
+        next(err);
       });
-    });
+  });
 };
 
+module.exports = routes;

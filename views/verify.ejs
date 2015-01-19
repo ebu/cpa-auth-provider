@@ -9,7 +9,7 @@
 
   <form method="POST" action="/verify">
   <div class="panel-body">
-    <div class="form-group <% if (error) { %>has-error<% } else { %>has-success<% } %>">
+    <div class="form-group <% if (error) { %>has-error<% } else { %><% } %>">
       <label class="control-label" for="inputUserCode">User Code</label>
       <input type="text" class="form-control" id="inputUserCode" placeholder="Enter your user code" name="user_code" <% if (user_code) { %>value="<%= user_code %>"<% } %>>
       <% if (error) { %>

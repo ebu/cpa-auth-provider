@@ -103,7 +103,7 @@ module.exports = function(req, res, next) {
           }
           else {
             if (config.auto_provision_tokens) {
-              if (pairingCode.user_id == null) {
+              if (pairingCode.user_id === null) {
                 res.send(202, { "reason": "authorization_pending" });
                 return;
               }
@@ -133,10 +133,6 @@ module.exports = function(req, res, next) {
           })
           .then(function(token) {
             accessToken = token;
-
-            // Associate this client with the user
-            client.user_id = user.id;
-            return client.save();
           })
           .then(function(token) {
             return pairingCode.destroy();

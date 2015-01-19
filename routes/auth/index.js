@@ -7,6 +7,7 @@ var authHelper = require('../../lib/auth-helper');
 module.exports = function(app) {
   var logger = app.get('logger');
 
+
   app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
@@ -17,13 +18,15 @@ module.exports = function(app) {
   });
 
   app.get('/auth', function(req, res) {
+    var autoIdpRedirect = config.auto_idp_redirect;
+
+    if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
+        res.redirect('/auth/' + autoIdpRedirect);
+        return;
+    }
+
     res.render('./auth/provider_list.ejs');
   });
 
-  for (var idp in config.identity_providers) {
-    if (config.identity_providers[idp].enabled) {
-      logger.info(idp + ' authentication enabled');
-      require('./'+idp)(app);
-    }
-  }
+  authHelper.loadIdentityProviders(app, config.identity_providers);
 };

@@ -198,7 +198,15 @@ describe('POST /verify', function() {
             db.PairingCode.findAll()
               .success(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
-                done();
+
+                db.Client.findAll()
+                  .success(function(clients) {
+                    self.clients = clients;
+                    done();
+                  })
+                  .error(function(error) {
+                    done(error);
+                  });
               })
               .error(function(error) {
                 done(error);
@@ -235,6 +243,16 @@ describe('POST /verify', function() {
               expect(this.pairingCode.domain_id).to.equal(5);
             });
           });
+
+          describe('the client', function() {
+            before(function() {
+              this.client = this.clients[0];
+            });
+
+            it('should be associated with the correct user id', function() {
+              expect(this.client.user_id).to.equal(5);
+            });
+          });
         });
       });
 
@@ -252,6 +270,16 @@ describe('POST /verify', function() {
 
         it('should return a status 400', function() {
           expect(this.res.statusCode).to.equal(400);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function() {
+            expect(this.res.text).to.contain(messages.INVALID_USERCODE);
+          });
         });
       });
 
