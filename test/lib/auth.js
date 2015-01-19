@@ -1,5 +1,6 @@
 "use strict";
 
+var config     = require('../../config');
 var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
@@ -24,35 +25,64 @@ var resetDatabase = function(done) {
 };
 
 describe('GET /auth', function() {
-  before(function(done) {
-    requestHelper.sendRequest(this, '/auth', { parseDOM: true }, done);
+  before(function() {
+    this.auto_idp_redirect = config.auto_idp_redirect;
+  });
+
+  after(function() {
+    config.auto_idp_redirect = this.auto_idp_redirect;
   });
 
   context('When requesting the list of identity providers', function() {
-    it('should return a status 200', function() {
-      expect(this.res.statusCode).to.equal(200);
-    });
-
-    it('should return HTML', function() {
-      expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      expect(this.res.text).to.match(/^<!DOCTYPE html>/);
-    });
-
-    describe('the response body', function() {
-      it('should display links for every enabled identity provider', function() {
-        var enabledIdentityProviders = authHelper.getEnabledIdentityProviders();
-
-        for (var label in enabledIdentityProviders) {
-          var link = this.$('a.identity_provider.' + label);
-          expect(link.length).to.not.equal(0);
-
-          // Clean class in order to identify disabled identity provider
-          link.removeClass('identity_provider').addClass(label);
-        }
+    context('with config.auto_idp_redirect corresponds to a correct identity provider', function() {
+      before(function(done) {
+        config.auto_idp_redirect = 'local';
+        requestHelper.sendRequest(this, '/auth', {}, done);
       });
 
-      it('should display only enabled identity providers', function() {
-        expect(this.$('a.identity_provider').length).to.equal(0);
+      it('should return a status 302', function() {
+        expect(this.res.statusCode).to.equal(302);
+      });
+
+      it('should redirect to the idp endpoint', function() {
+        expect(this.res.statusCode).to.equal(302);
+        expect(this.res.headers.location).to.equal("/auth/local");
+      });
+    });
+
+    ['github', 'wrong', null].forEach(function(autoIdpRedirect) {
+      context('When config.auto_idp_redirect is set to a ' + autoIdpRedirect + ' identity provider', function () {
+        before(function (done) {
+          config.auto_idp_redirect = autoIdpRedirect;
+          requestHelper.sendRequest(this, '/auth', {parseDOM: true}, done);
+        });
+
+        it('should return a status 200', function () {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function () {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+          expect(this.res.text).to.match(/^<!DOCTYPE html>/);
+        });
+
+        describe('the response body', function () {
+          it('should display links for every enabled identity provider', function () {
+            var enabledIdentityProviders = authHelper.getEnabledIdentityProviders();
+
+            for (var label in enabledIdentityProviders) {
+              var link = this.$('a.identity_provider.' + label);
+              expect(link.length).to.equal(1);
+
+              // Clean class in order to identify disabled identity provider
+              link.removeClass('identity_provider').addClass(label);
+            }
+          });
+
+          it('should display only enabled identity providers', function () {
+            expect(this.$('a.identity_provider').length).to.equal(0);
+          });
+        });
       });
     });
   });

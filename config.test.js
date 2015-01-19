@@ -16,6 +16,8 @@ module.exports = {
     }
   },
 
+  auto_idp_redirect: 'local',
+
   db: {
     // The database type, 'mysql', 'sqlite', etc.
     type: 'sqlite',

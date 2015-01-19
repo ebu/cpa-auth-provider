@@ -1,0 +1,52 @@
+<% include ../layout/head %>
+
+<h1>Devices <small>(<%= devices.length %>)</small></h1>
+<div class="table-responsive">
+  <table class="table">
+    <tr>
+      <th>Client Id</th>
+      <th>Name</th>
+      <th>Owner</th>
+      <th>Authorizations</th>
+      <th></th>
+    </tr>
+
+    <% devices.forEach(function(client, i) { %>
+    <tr data-id="<%= client.id %>">
+      <td><%= client.id %></td>
+      <td><%= client.name %></td>
+      <td><%= client.user.display_name %></td>
+      <td>
+        <ul>
+        <% client.accessTokens.forEach(function(token, j) { %>
+          <li>
+              <%= token.domain.name %>
+          </li>
+        <% }); %>
+        </ul>
+      </td>
+      <td>
+        <input type="submit" class="btn btn-danger btn-xs revoke-btn" data-id="<%= client.id %>" value="Revoke">
+      </td>
+    </tr>
+    <% }); %>
+  </table>
+  <a href="<%= link('/verify') %>" class="pull-right text"><i class='glyphicon glyphicon-plus small'></i> Associate a device</a>
+</div>
+
+<script>
+  $('.revoke-btn').click(function() {
+    if (confirm("Are you sure you want to revoke this device?")) {
+      var accessTokenId = $(this).data('id');
+      $.ajax({
+        url: "<%= link('/user/client/') %>" + accessTokenId,
+        type: 'DELETE',
+        success: function(result) {
+          $('tr[data-id="' + accessTokenId + '"]').remove();
+        }
+      });
+    }
+  });
+</script>
+
+<% include ../layout/foot %>
