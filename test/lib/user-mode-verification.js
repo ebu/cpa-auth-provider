@@ -246,11 +246,11 @@ describe('POST /verify', function() {
 
           describe('the client', function() {
             before(function() {
-              this.clients = this.clients[0];
+              this.client = this.clients[0];
             });
 
             it('should be associated with the correct user id', function() {
-              expect(this.clients.user_id).to.equal(5);
+              expect(this.client.user_id).to.equal(5);
             });
           });
         });

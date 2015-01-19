@@ -75,6 +75,14 @@ var initDatabase = function(opts, done) {
     })
     .then(function() {
       return db.AccessToken.create({
+        id:        1000,
+        token:     '4afebe6ef96a946b6993ffffe39702b0',
+        domain_id: 2,
+        client_id: 100
+      });
+    })
+    .then(function() {
+      return db.AccessToken.create({
         id:        1001,
         token:     'aed201ffb3362de42700a293bdebf694',
         domain_id: 1,
@@ -164,21 +172,29 @@ describe('GET /user/devices', function() {
           expect(this.$('tr').length).to.equal(4);
         });
 
-        describe('the second device in the table', function() {
-          it('should have the correct id number', function() {
+        describe('the devices in the table', function() {
+          it('should have the correct id numbers', function() {
+            expect(this.$('tr').eq(1).children('td').eq(0).text()).to.equal('100');
             expect(this.$('tr').eq(2).children('td').eq(0).text()).to.equal('101');
+            expect(this.$('tr').eq(3).children('td').eq(0).text()).to.equal('102');
           });
 
-          it('should have the correct name', function() {
+          it('should have the correct names', function() {
+            expect(this.$('tr').eq(1).children('td').eq(1).text()).to.equal('Test client 1');
             expect(this.$('tr').eq(2).children('td').eq(1).text()).to.equal('Test client 2');
+            expect(this.$('tr').eq(3).children('td').eq(1).text()).to.equal('Test client 3');
           });
 
           it('should belong to the correct user', function() {
+            expect(this.$('tr').eq(1).children('td').eq(2).text()).to.equal('Test User');
             expect(this.$('tr').eq(2).children('td').eq(2).text()).to.equal('Test User');
+            expect(this.$('tr').eq(3).children('td').eq(2).text()).to.equal('Test User');
           });
 
           it('should be authorized on the correct domain', function() {
+            expect(this.$('tr').eq(1).children('td').eq(3).text()).to.contain('another-example-service.com');
             expect(this.$('tr').eq(2).children('td').eq(3).text()).to.contain('example-service.ebu.io');
+            expect(this.$('tr').eq(3).children('td').eq(3).text()).to.contain('example-service.ebu.io');
           });
         });
       });
@@ -259,9 +275,9 @@ describe('DELETE /user/client/:id', function() {
               expect(this.clients.length).to.equal(3);
             });
 
-            it('should have two access tokens', function() {
+            it('should have three access tokens', function() {
               expect(this.accessTokens).to.be.an('array');
-              expect(this.accessTokens.length).to.equal(2);
+              expect(this.accessTokens.length).to.equal(3);
             });
           });
         });
@@ -276,8 +292,8 @@ describe('DELETE /user/client/:id', function() {
             }, done);
           });
 
-          it('should return a status 400', function() {
-            expect(this.res.statusCode).to.equal(400);
+          it('should return a status 404', function() {
+            expect(this.res.statusCode).to.equal(404);
           });
         });
       });
@@ -292,8 +308,8 @@ describe('DELETE /user/client/:id', function() {
           }, done);
         });
 
-        it('should return a status 400', function() {
-          expect(this.res.statusCode).to.equal(400);
+        it('should return a status 404', function() {
+          expect(this.res.statusCode).to.equal(404);
         });
       });
     });

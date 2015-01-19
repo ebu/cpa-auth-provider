@@ -1,6 +1,6 @@
 "use strict";
 
-var config   = require('../../config');
+var config     = require('../../config');
 var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
@@ -37,7 +37,7 @@ describe('GET /auth', function() {
     context('with config.auto_idp_redirect corresponds to a correct identity provider', function() {
       before(function(done) {
         config.auto_idp_redirect = 'local';
-        requestHelper.sendRequest(this, '/auth', { parseDOM: false }, done);
+        requestHelper.sendRequest(this, '/auth', {}, done);
       });
 
       it('should return a status 302', function() {
@@ -72,7 +72,7 @@ describe('GET /auth', function() {
 
             for (var label in enabledIdentityProviders) {
               var link = this.$('a.identity_provider.' + label);
-              expect(link.length).to.not.equal(0);
+              expect(link.length).to.equal(1);
 
               // Clean class in order to identify disabled identity provider
               link.removeClass('identity_provider').addClass(label);

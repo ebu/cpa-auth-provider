@@ -22,7 +22,7 @@ var routes = function(app) {
         }
 
         if (!client) {
-          res.sendInvalidRequest("Invalid request");
+          res.sendErrorResponse(404, "not_found", "Unknown client");
           return;
         }
 
@@ -42,7 +42,7 @@ var routes = function(app) {
           .then(function() {
             res.send(200);
           }).catch(function(err) {
-            res.sendInvalidRequest("Invalid request");
+            next(err);
           });
 
       });
