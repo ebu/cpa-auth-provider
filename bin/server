@@ -2,10 +2,10 @@
 
 "use strict";
 
-var app = require('../lib/app');
-var http = require('http');
+var http  = require('http');
 var yargs = require('yargs');
-var version  = require('../package.json').version;
+
+var version = require('../package.json').version;
 
 var DEFAULT_PORT = 3000;
 
@@ -22,6 +22,11 @@ var argv = yargs
       alias: "p",
       description: "<number> HTTP server port (default: " + DEFAULT_PORT + ")",
       requiresArg: true
+    },
+    "config-file": { // yargs doesn't allow us to have an option named 'config'.
+      alias: "c",
+      description: "<filename> Config file name",
+      requiresArg: true
     }
   })
   .strict()
@@ -33,9 +38,16 @@ var argv = yargs
   })
   .argv;
 
-app.set('port', argv.port || process.env.PORT || DEFAULT_PORT);
+var configFilename = require('../lib/config-filename');
+
+if (argv["config-file"]) {
+  configFilename.configFilename = argv["config-file"];
+}
 
 // Start the server
+var app = require('../lib/app');
+
+app.set('port', argv.port || process.env.PORT || DEFAULT_PORT);
 
 var server = http.createServer(app);
 

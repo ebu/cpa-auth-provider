@@ -1,8 +1,9 @@
 "use strict";
 
-var db = require('../../models');
-var config = require('../../config');
-var authHelper = require('../../lib/auth-helper');
+var db            = require('../../models');
+var config        = require('../../config');
+var authHelper    = require('../../lib/auth-helper');
+var requestHelper = require('../../lib/request-helper');
 
 module.exports = function(app) {
   var logger = app.get('logger');
@@ -10,7 +11,7 @@ module.exports = function(app) {
 
   app.get('/logout', function(req, res) {
     req.logout();
-    res.redirect('/');
+    requestHelper.redirect(res, '/');
   });
 
   app.get('/protected', authHelper.ensureAuthenticated, function(req, res) {

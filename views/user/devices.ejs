@@ -31,7 +31,7 @@
     </tr>
     <% }); %>
   </table>
-  <a href="/verify" class="pull-right text"><i class='glyphicon glyphicon-plus small'></i> Associate a device</a>
+  <a href="<%= link('/verify') %>" class="pull-right text"><i class='glyphicon glyphicon-plus small'></i> Associate a device</a>
 </div>
 
 <script>
@@ -39,7 +39,7 @@
     if (confirm("Are you sure you want to revoke this device?")) {
       var accessTokenId = $(this).data('id');
       $.ajax({
-        url: '/user/client/' + accessTokenId,
+        url: "<%= link('/user/client/') %>" + accessTokenId,
         type: 'DELETE',
         success: function(result) {
           $('tr[data-id="' + accessTokenId + '"]').remove();

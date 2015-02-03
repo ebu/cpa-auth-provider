@@ -1,7 +1,8 @@
 "use strict";
 
-var db     = require('../../models');
-var config = require('../../config');
+var db            = require('../../models');
+var config        = require('../../config');
+var requestHelper = require('../../lib/request-helper');
 
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -31,6 +32,6 @@ module.exports = function(app, options) {
       return res.redirect(redirectUri);
     }
 
-    res.redirect('/');
+    requestHelper.redirect(res, '/');
   });
 };

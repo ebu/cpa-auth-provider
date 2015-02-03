@@ -1,6 +1,7 @@
 "use strict";
 
-var db = require('../models');
+var db            = require('../models');
+var requestHelper = require('../lib/request-helper');
 
 /*
  * GET home page.
@@ -9,10 +10,10 @@ var db = require('../models');
 module.exports = function(app) {
   app.get('/', function(req, res) {
     if (req.isAuthenticated()) {
-      res.redirect('/verify');
+      requestHelper.redirect(res, '/verify');
     }
     else {
-      res.redirect('/auth');
+      requestHelper.redirect(res, '/auth');
     }
   });
 };

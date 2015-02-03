@@ -2,7 +2,7 @@
 
 <h1>CPA - Authentication Provider</h1>
 
-<form method="GET" action="/">
+<form method="GET" action="<%= link('/') %>">
   <table>
     <tr><td>Username:</td><td><input type="text" name="user"></td></tr>
     <tr><td>Password:</td><td><input type="password" name="pass"></td></tr>
@@ -10,6 +10,6 @@
   </table>
 </form>
 
-<a href="/auth">Other Identity Provider</a>
+<a href="<%= link('/auth') %>">Other Identity Provider</a>
 
 <% include layout/foot %>

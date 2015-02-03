@@ -77,16 +77,7 @@ describe('GET /authorize', function() {
 
     context('when user is authenticated', function() {
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       context('with valid parameters', function() {

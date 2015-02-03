@@ -33,7 +33,7 @@ describe('GET /auth', function() {
     config.auto_idp_redirect = this.auto_idp_redirect;
   });
 
-  context('When requesting the list of identity provider', function() {
+  context('When requesting the list of identity providers', function() {
     context('with config.auto_idp_redirect corresponds to a correct identity provider', function() {
       before(function(done) {
         config.auto_idp_redirect = 'local';
@@ -103,16 +103,7 @@ describe('GET /protected', function() {
 
   context('When the user is authenticated', function() {
     before(function(done) {
-      var self = this;
-
-      request
-        .post('/login')
-        .type('form')
-        .send({ username: 'testuser', password: 'testpassword' })
-        .end(function(err, res) {
-          self.cookie = res.headers['set-cookie'];
-          done(err);
-        });
+      requestHelper.login(this, done);
     });
 
     before(function(done) {

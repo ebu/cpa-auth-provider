@@ -1,11 +1,11 @@
 "use strict";
 
-var db = require('../../models');
-var config = require('../../config');
+var db            = require('../../models');
+var config        = require('../../config');
+var requestHelper = require('../../lib/request-helper');
 
-var passport = require('passport');
+var passport       = require('passport');
 var GithubStrategy = require('passport-github').Strategy;
-
 
 passport.use(new GithubStrategy({
     clientID: config.identity_providers.github.client_id,
@@ -21,9 +21,7 @@ passport.use(new GithubStrategy({
   }
 ));
 
-
 module.exports = function(app, options) {
-
   app.get('/auth/github',
     passport.authenticate('github'));
 
@@ -38,6 +36,6 @@ module.exports = function(app, options) {
         return res.redirect(redirectUri);
       }
 
-      res.redirect('/');
+      requestHelper.redirect(res, '/');
     });
 };

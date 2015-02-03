@@ -135,16 +135,7 @@ describe('GET /user/devices', function() {
     context('and the user is authenticated', function() {
       before(resetDatabase);
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       before(function(done) {
@@ -212,25 +203,13 @@ describe('GET /user/devices', function() {
   });
 });
 
-
-
 describe('DELETE /user/client/:id', function() {
-
   context('When revoking a client', function() {
     context('and the user is authenticated', function() {
       before(resetDatabase);
 
       before(function(done) {
-        var self = this;
-
-        request
-          .post('/login')
-          .type('form')
-          .send({ username: 'testuser', password: 'testpassword' })
-          .end(function(err, res) {
-            self.cookie = res.headers['set-cookie'];
-            done(err);
-          });
+        requestHelper.login(this, done);
       });
 
       context('using a valid client id', function() {
