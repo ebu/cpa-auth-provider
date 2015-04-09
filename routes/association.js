@@ -79,6 +79,10 @@ module.exports = function(app) {
 
           if (client.user) {
             pairingCode.user_id = client.user.id;
+
+            if (config.auto_provision_tokens) {
+              pairingCode.state = 'verified';
+            }
           }
 
           db.PairingCode.create(pairingCode)

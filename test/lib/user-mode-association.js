@@ -144,10 +144,36 @@ describe('POST /associate', function() {
         expect(this.res.body.interval).to.equal(5); // interval in seconds
       });
     });
+
+    describe('the database', function() {
+      before(function(done) {
+        var self = this;
+
+        db.PairingCode.findAll()
+          .then(function(pairingCodes) {
+            self.pairingCodes = pairingCodes;
+            done();
+          },
+          function(error) {
+            done(error);
+          });
+      });
+
+      it("should contain a pending pairing code", function() {
+        // jshint expr: true
+        expect(this.pairingCodes).to.be.ok;
+        expect(this.pairingCodes).to.be.an('array');
+        expect(this.pairingCodes.length).to.equal(1);
+        expect(this.pairingCodes[0].state).to.equal('pending');
+      });
+    });
   });
 
   context('with a client that is associated with a user account', function() {
     context('and server is configured not to auto-provision tokens', function() {
+
+      before(resetDatabase);
+
       before(function() {
         this.auto_provision_tokens = config.auto_provision_tokens;
         config.auto_provision_tokens = false;
@@ -230,9 +256,35 @@ describe('POST /associate', function() {
           expect(this.res.body.interval).to.equal(5); // interval in seconds
         });
       });
+
+      describe('the database', function() {
+        before(function(done) {
+          var self = this;
+
+          db.PairingCode.findAll()
+            .then(function(pairingCodes) {
+              self.pairingCodes = pairingCodes;
+              done();
+            },
+            function(error) {
+              done(error);
+            });
+        });
+
+        it("should contain a pending pairing code", function() {
+          // jshint expr: true
+          expect(this.pairingCodes).to.be.ok;
+          expect(this.pairingCodes).to.be.an('array');
+          expect(this.pairingCodes.length).to.equal(1);
+          expect(this.pairingCodes[0].state).to.equal('pending');
+        });
+      });
     });
 
     context('and server is configured to auto-provision tokens', function() {
+
+      before(resetDatabase);
+
       before(function() {
         this.auto_provision_tokens = config.auto_provision_tokens;
         config.auto_provision_tokens = true;
@@ -311,6 +363,29 @@ describe('POST /associate', function() {
 
         it('should not include a minimum polling interval', function() {
           expect(this.res.body).to.not.have.property('interval');
+        });
+      });
+
+      describe('the database', function() {
+        before(function(done) {
+          var self = this;
+
+          db.PairingCode.findAll()
+            .then(function(pairingCodes) {
+              self.pairingCodes = pairingCodes;
+              done();
+            },
+            function(error) {
+              done(error);
+            });
+        });
+
+        it("should contain a validated pairing code", function() {
+          // jshint expr: true
+          expect(this.pairingCodes).to.be.ok;
+          expect(this.pairingCodes).to.be.an('array');
+          expect(this.pairingCodes.length).to.equal(1);
+          expect(this.pairingCodes[0].state).to.equal('verified');
         });
       });
     });
