@@ -79,44 +79,102 @@ var resetDatabase = function(opts, done) {
 
 describe('GET /verify', function() {
   context('When requesting the form to validate a user code', function() {
-    context('and the user is authenticated', function() {
-      before(resetDatabase);
-      before(function(done) {
-        requestHelper.login(this, done);
+    context('while providing the user_code and a redirect_uri as GET parameter', function() {
+      context('and the user is authenticated', function() {
+        before(resetDatabase);
+        before(function(done) {
+          requestHelper.login(this, done);
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify?user_code=1234&redirect_uri=' + encodeURI('example://cpa_callback'), {
+            cookie:   this.cookie,
+            parseDOM: true
+          }, done);
+        });
+
+        it('should return a status 200', function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain a hidden input with user_code', function() {
+            expect(this.$('input[name="user_code"]').length).to.equal(1);
+            expect(this.$('input[name="user_code"]')[0].attribs['type']).to.equal('hidden');
+            expect(this.$('input[name="user_code"]')[0].attribs['value']).to.equal('1234');
+          });
+
+          it('should contain a hidden input with redirect_uri', function() {
+            expect(this.$('input[name="redirect_uri"]').length).to.equal(1);
+            expect(this.$('input[name="redirect_uri"]')[0].attribs['type']).to.equal('hidden');
+            expect(this.$('input[name="redirect_uri"]')[0].attribs['value']).to.equal('example://cpa_callback');
+          });
+
+          it('should contain a submit button with value "Allow"', function() {
+            expect(this.$('input[name="authorization"][value="Allow"]').length).to.equal(1);
+            expect(this.$('input[name="authorization"][value="Allow"]')[0].attribs['type']).to.equal('submit');
+          });
+        });
       });
 
-      before(function(done) {
-        requestHelper.sendRequest(this, '/verify', {
-          cookie:   this.cookie,
-          parseDOM: true
-        }, done);
-      });
+      context('and the user is not authenticated', function() {
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify?user_code=1234&redirect_uri=' + encodeURI('example://cpa_callback'), null, done);
+        });
 
-      it('should return a status 200', function() {
-        expect(this.res.statusCode).to.equal(200);
-      });
-
-      it('should return HTML', function() {
-        expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      });
-
-      describe('the response body', function() {
-        it('should display an input with name', function() {
-          expect(this.$('input[name="user_code"]').length).to.equal(1);
+        it('should redirect to the login page', function() {
+          var urlPrefix = requestHelper.urlPrefix;
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
+          // TODO: check redirect location and page to return to after login
         });
       });
     });
 
-    context('and the user is not authenticated', function() {
-      before(function(done) {
-        requestHelper.sendRequest(this, '/verify', null, done);
+    context('without providing the user_code as parameter', function() {
+      context('and the user is authenticated', function() {
+        before(resetDatabase);
+        before(function(done) {
+          requestHelper.login(this, done);
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            cookie:   this.cookie,
+            parseDOM: true
+          }, done);
+        });
+
+        it('should return a status 200', function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should display an input with name', function() {
+            expect(this.$('input[name="user_code"]').length).to.equal(1);
+          });
+        });
       });
 
-      it('should redirect to the login page', function() {
-        var urlPrefix = requestHelper.urlPrefix;
-        expect(this.res.statusCode).to.equal(302);
-        expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
-        // TODO: check redirect location and page to return to after login
+      context('and the user is not authenticated', function() {
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', null, done);
+        });
+
+        it('should redirect to the login page', function() {
+          var urlPrefix = requestHelper.urlPrefix;
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
+          // TODO: check redirect location and page to return to after login
+        });
       });
     });
   });
@@ -132,108 +190,221 @@ describe('POST /verify', function() {
     this.clock.restore();
   });
 
-  before(resetDatabase);
 
   context('When validating a user_code', function() {
-    context('and the user is authenticated', function() {
-      before(function(done) {
-        requestHelper.login(this, done);
+
+    // Mobile flow
+    context('and a redirect_uri parameter has been provided', function() {
+
+      before(resetDatabase);
+
+      context('and the user is authenticated', function() {
+        before(function (done) {
+          requestHelper.login(this, done);
+        });
+
+        context('using a valid user_code', function () {
+          before(function () {
+            // Ensure pairing code has not expired
+            var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+            this.clock = sinon.useFakeTimers(time, "Date");
+          });
+
+          after(function () {
+            this.clock.restore();
+          });
+
+          before(function (done) {
+            requestHelper.sendRequest(this, '/verify', {
+              method: 'post',
+              cookie: this.cookie,
+              type: 'form',
+              data: { 'user_code': '1234', 'redirect_uri': 'example://cpa_callback', 'authorization': 'Allow' }
+            }, done);
+          });
+
+          it('should return a status 302', function () {
+            expect(this.res.statusCode).to.equal(302);
+          });
+
+          describe('the response header', function () {
+            it('should contain Location: ', function () {
+              expect(this.res.headers['location']).to.equal('example://cpa_callback');
+            });
+          });
+
+          describe('the database', function () {
+            before(function (done) {
+              var self = this;
+
+              db.PairingCode.findAll()
+                .success(function (pairingCodes) {
+                  self.pairingCodes = pairingCodes;
+
+                  db.Client.findAll()
+                    .success(function (clients) {
+                      self.clients = clients;
+                      done();
+                    })
+                    .error(function (error) {
+                      done(error);
+                    });
+                })
+                .error(function (error) {
+                  done(error);
+                });
+            });
+
+            it('should have one pairing code', function () {
+              expect(this.pairingCodes).to.be.an('array');
+              expect(this.pairingCodes.length).to.equal(1);
+            });
+
+            describe('the pairing code', function () {
+              before(function () {
+                this.pairingCode = this.pairingCodes[0];
+              });
+
+              it('should contain the correct user code', function () {
+                expect(this.pairingCode.user_code).to.equal('1234');
+              });
+
+              it('should be marked as verified', function () {
+                expect(this.pairingCode.state).to.equal('verified');
+              });
+
+              it('should be associated with the correct client', function () {
+                expect(this.pairingCode.client_id).to.equal(3);
+              });
+
+              it('should be associated with the signed-in user', function () {
+                expect(this.pairingCode.user_id).to.equal(5);
+              });
+
+              it('should be associated with the correct domain', function () {
+                expect(this.pairingCode.domain_id).to.equal(5);
+              });
+            });
+
+            describe('the client', function () {
+              before(function () {
+                this.client = this.clients[0];
+              });
+
+              it('should be associated with the correct user id', function () {
+                expect(this.client.user_id).to.equal(5);
+              });
+            });
+          });
+        });
       });
 
-      context('using a valid user_code', function() {
-        before(function() {
-          // Ensure pairing code has not expired
-          var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
-          this.clock = sinon.useFakeTimers(time, "Date");
-        });
+      // Device flow
+      context('without providing a redirect_uri as parameter', function() {
 
-        after(function() {
-          this.clock.restore();
-        });
+        before(resetDatabase);
 
-        before(function(done) {
-          requestHelper.sendRequest(this, '/verify', {
-            method: 'post',
-            cookie: this.cookie,
-            type:   'form',
-            data:   { user_code: '1234' }
-          }, done);
-        });
-
-        it('should return a status 200', function() {
-          expect(this.res.statusCode).to.equal(200);
-        });
-
-        it('should return HTML', function() {
-          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-        });
-
-        describe('the response body', function() {
-          it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function() {
-            expect(this.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
+        context('and the user is authenticated', function() {
+          before(function (done) {
+            requestHelper.login(this, done);
           });
-        });
 
-        describe('the database', function() {
-          before(function(done) {
-            var self = this;
+          context('using a valid user_code', function () {
+            before(function () {
+              // Ensure pairing code has not expired
+              var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
+              this.clock = sinon.useFakeTimers(time, "Date");
+            });
 
-            db.PairingCode.findAll()
-              .success(function(pairingCodes) {
-                self.pairingCodes = pairingCodes;
+            after(function () {
+              this.clock.restore();
+            });
 
-                db.Client.findAll()
-                  .success(function(clients) {
-                    self.clients = clients;
-                    done();
+            before(function (done) {
+              requestHelper.sendRequest(this, '/verify', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {user_code: '1234'}
+              }, done);
+            });
+
+            it('should return a status 200', function () {
+              expect(this.res.statusCode).to.equal(200);
+            });
+
+            it('should return HTML', function () {
+              expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+            });
+
+            describe('the response body', function () {
+              it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function () {
+                expect(this.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
+              });
+            });
+
+            describe('the database', function () {
+              before(function (done) {
+                var self = this;
+
+                db.PairingCode.findAll()
+                  .success(function (pairingCodes) {
+                    self.pairingCodes = pairingCodes;
+
+                    db.Client.findAll()
+                      .success(function (clients) {
+                        self.clients = clients;
+                        done();
+                      })
+                      .error(function (error) {
+                        done(error);
+                      });
                   })
-                  .error(function(error) {
+                  .error(function (error) {
                     done(error);
                   });
-              })
-              .error(function(error) {
-                done(error);
               });
-          });
 
-          it('should have one pairing code', function() {
-            expect(this.pairingCodes).to.be.an('array');
-            expect(this.pairingCodes.length).to.equal(1);
-          });
+              it('should have one pairing code', function () {
+                expect(this.pairingCodes).to.be.an('array');
+                expect(this.pairingCodes.length).to.equal(1);
+              });
 
-          describe('the pairing code', function() {
-            before(function() {
-              this.pairingCode = this.pairingCodes[0];
-            });
+              describe('the pairing code', function () {
+                before(function () {
+                  this.pairingCode = this.pairingCodes[0];
+                });
 
-            it('should contain the correct user code', function() {
-              expect(this.pairingCode.user_code).to.equal('1234');
-            });
+                it('should contain the correct user code', function () {
+                  expect(this.pairingCode.user_code).to.equal('1234');
+                });
 
-            it('should be marked as verified', function() {
-              expect(this.pairingCode.state).to.equal('verified');
-            });
+                it('should be marked as verified', function () {
+                  expect(this.pairingCode.state).to.equal('verified');
+                });
 
-            it('should be associated with the correct client', function() {
-              expect(this.pairingCode.client_id).to.equal(3);
-            });
+                it('should be associated with the correct client', function () {
+                  expect(this.pairingCode.client_id).to.equal(3);
+                });
 
-            it('should be associated with the signed-in user', function() {
-              expect(this.pairingCode.user_id).to.equal(5);
-            });
+                it('should be associated with the signed-in user', function () {
+                  expect(this.pairingCode.user_id).to.equal(5);
+                });
 
-            it('should be associated with the correct domain', function() {
-              expect(this.pairingCode.domain_id).to.equal(5);
-            });
-          });
+                it('should be associated with the correct domain', function () {
+                  expect(this.pairingCode.domain_id).to.equal(5);
+                });
+              });
 
-          describe('the client', function() {
-            before(function() {
-              this.client = this.clients[0];
-            });
+              describe('the client', function () {
+                before(function () {
+                  this.client = this.clients[0];
+                });
 
-            it('should be associated with the correct user id', function() {
-              expect(this.client.user_id).to.equal(5);
+                it('should be associated with the correct user id', function () {
+                  expect(this.client.user_id).to.equal(5);
+                });
+              });
             });
           });
         });
