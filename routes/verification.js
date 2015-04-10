@@ -93,6 +93,10 @@ var routes = function(app) {
    * User code verification and confirmation endpoint
    */
 
+  /*
+    Associate each pending pairing codes in formCodes with the userId and set the sate to
+    verify if the value is yes. Otherwise, it is set to denied.
+   */
   var validatePairingCodes = function(userId, formCodes, done) {
     async.each(formCodes, function(code, callback) {
       db.PairingCode.find({
@@ -123,6 +127,21 @@ var routes = function(app) {
       done(err);
     });
   };
+
+  /*
+
+
+   */
+
+  /**
+   * Set the state of a Pairing Code identified by userCode to denied. And it associates the user who denies the Pairing Code.
+   * @param userCode
+   * @param userId
+   * @param done = function(err, errorMessage, uriInfo)
+   *               err is the error object
+   *               errorMessage is the message displayed to the user
+   *               uriInfo is included when redirecting after an user_code prefilled process.
+   */
 
   var denyUserCode = function(userCode, userId, done) {
     db.PairingCode
@@ -164,7 +183,17 @@ var routes = function(app) {
       });
   };
 
-  var validateUserCode = function(userCode, userId, done) {
+
+  /**
+   * Associate a pairing code with a user. It sets the state to verified.
+   * @param userCode
+   * @param userId
+   * @param done = function(err, errorMessage, uriInfo)
+   *               err is the error object
+   *               errorMessage is the message displayed to the user
+   *               uriInfo is included when redirecting after an user_code prefilled process.
+   */
+  var associateUserCodeWithUser = function(userCode, userId, done) {
     db.PairingCode
       .find({ where: { 'user_code': userCode }, include: [ db.Client ] })
       .complete(function(err, pairingCode) {
@@ -204,14 +233,16 @@ var routes = function(app) {
       });
   };
 
-
-
-  app.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
-    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
-      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
-      return;
-    }
-
+  /**
+   * authorizeDomains
+   * handles the process of authorizing domain when the automatic provisioning is not enabled.
+   * The pairing code (without user_code) is used as a request to authorize the device to act on a specific domain.
+   * @param req
+   * @param res
+   * @param next
+   */
+  var authorizeDomains = function(req, res, next) {
+    // Extract fields starting with 'pairing_code_'
     var codes = [];
     for (var k in req.body) {
       if(k.indexOf('pairing_code_') === 0) {
@@ -220,60 +251,122 @@ var routes = function(app) {
     }
 
     if (codes.length > 0) {
-      return validatePairingCodes(req.user.id, codes, function(err) {
+      validatePairingCodes(req.user.id, codes, function(err) {
         if (err) {
           next(err);
           return;
         }
-
         requestHelper.redirect(res, '/verify');
       });
+      return;
     }
 
+    res.sendInvalidRequest('Missing pairing_code_* to validate');
+  };
+
+  /**
+   * verifyUserCode
+   * handles the process of associating a user with a device.
+   * In this case, the user enters manually the code into the field.
+   *
+   * @param req
+   * @param res
+   * @param next
+   */
+  var verifyUserCode = function(req, res, next) {
     var userCode = req.body.user_code;
     if (!userCode) {
       renderVerificationPage(req, res, messages.INVALID_USERCODE);
       return;
     }
 
-    var sendVerificationCallback = function(err, errorMessage, uriInfo) {
-      if (err) {
-        next(err);
-        return;
-      }
+    associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, uriInfo) {
+        if (err) {
+          next(err);
+          return;
+        }
 
-      if (errorMessage) {
-        res.status(400);
-        renderVerificationInfo(res, errorMessage, 'warning');
-        return;
-      }
+        if (errorMessage) {
+          res.status(400);
+          renderVerificationInfo(res, errorMessage, 'warning');
+          return;
+        }
 
-
-      var redirectUri = req.body.redirect_uri;
-      if (uriInfo) {
-        var u = url.parse(redirectUri, true);
-        u.query['info'] = uriInfo;
-        redirectUri = url.format(u);
-        console.log('asdasd', redirectUri);
-      }
-
-      if (redirectUri) {
-        res.redirect(redirectUri);
-        return;
-      }
-
-      renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
-    };
+        renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
+    });
+  };
 
 
-    var denied = ('authorization' in req.body && req.body.authorization === 'Deny');
-    if (denied) {
-      denyUserCode(userCode, req.user.id, sendVerificationCallback);
+  var buildRedirectUri = function(redirectUri, uriInfo) {
+    var redirectUri = redirectUri;
+    if (uriInfo) {
+      var u = url.parse(redirectUri, true);
+      u.query['info'] = uriInfo;
+      redirectUri = url.format(u);
+    }
+
+    return redirectUri;
+  }
+
+  /**
+   * verifyPrefilledUserCode
+   * handles the process of associating a user with a device without entering manually the code.
+   * This case covers when the browser is running on the same device as the device/app being paired.
+   *
+   * @param req
+   * @param res
+   * @param next
+   */
+
+  var verifyPrefilledUserCode = function(req, res, next) {
+    var userCode = req.body.user_code;
+    if (!userCode) {
+      renderVerificationPage(req, res, messages.INVALID_USERCODE);
       return;
     }
 
-    validateUserCode(userCode, req.user.id, sendVerificationCallback);
+    var denied = ('authorization' in req.body && req.body.authorization === 'Deny');
+    if (denied) {
+      denyUserCode(userCode, req.user.id, function(err, errorMessage, uriInfo) {
+        var redirectUri = buildRedirectUri(req.body.redirectUri, uriInfo);
+        res.redirect(redirectUri);
+      });
+      return;
+    }
 
+    associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, uriInfo) {
+      var redirectUri = buildRedirectUri(req.body.redirect_uri, uriInfo);
+      res.redirect(redirectUri);
+    });
+  };
+
+
+  app.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
+    if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
+      res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
+      return;
+    }
+
+    var verificationType = req.body.verification_type;
+
+    switch (verificationType) {
+      case 'domain_list': // Domain authorization (No automatic provisioning)
+        authorizeDomains(req, res, next);
+        return;
+
+      case 'user_code':
+        verifyUserCode(req, res, next);
+        return;
+
+      case 'prefilled_user_code':
+        verifyPrefilledUserCode(req, res, next);
+        return;
+
+      default:
+        res.statusCode = 400;
+        renderVerificationInfo(res, messages.UNKNOWN_VERIFICATION_TYPE, 'danger');
+        return;
+    }
   });
 };
 

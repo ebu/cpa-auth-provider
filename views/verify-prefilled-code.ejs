@@ -12,6 +12,7 @@
         on your behalf on <%= domain %>. Do you accept?
       </div>
 
+      <input type="hidden" name="verification_type" value="prefilled_user_code">
       <input type="hidden" name="user_code" value="<%= user_code %>">
       <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
       <input type="submit" class="btn btn-success" name="authorization" value="Allow">

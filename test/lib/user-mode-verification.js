@@ -219,7 +219,12 @@ describe('POST /verify', function() {
               method: 'post',
               cookie: this.cookie,
               type: 'form',
-              data: { 'user_code': '1234', 'redirect_uri': 'example://cpa_callback', 'authorization': 'Allow' }
+              data: {
+                'user_code': '1234',
+                'redirect_uri': 'example://cpa_callback',
+                'verification_type': 'prefilled_user_code',
+                'authorization': 'Allow'
+              }
             }, done);
           });
 
@@ -325,7 +330,7 @@ describe('POST /verify', function() {
                 method: 'post',
                 cookie: this.cookie,
                 type: 'form',
-                data: {user_code: '1234'}
+                data: { 'user_code': '1234', 'verification_type': 'user_code'}
               }, done);
             });
 
@@ -410,6 +415,58 @@ describe('POST /verify', function() {
         });
       });
 
+      context('without verification_type', function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { }
+          }, done);
+        });
+
+        it('should return a status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the message ###: ');
+        });
+      });
+
+      context('with a missing verification_type and with user_code', function() {
+        before(resetDatabase);
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            method: 'post',
+            cookie: this.cookie,
+            type:   'form',
+            data:   { 'user_code': '1234' }
+          }, done);
+        });
+
+        it('should return a status 400', function() {
+          expect(this.res.statusCode).to.equal(400);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain the message UNKNOWN_VERIFICATION_TYPE: ' + messages.UNKNOWN_VERIFICATION_TYPE, function() {
+            expect(this.res.text).to.contain(messages.UNKNOWN_VERIFICATION_TYPE);
+          });
+        });
+      });
+
       context('with a missing user_code', function() {
         before(resetDatabase);
 
@@ -418,7 +475,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   {}
+            data:   { 'verification_type': 'user_code' }
           }, done);
         });
 
@@ -445,7 +502,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { user_code: '5678' }
+            data:   { user_code: '5678', 'verification_type': 'user_code' }
           }, done);
         });
 
@@ -474,7 +531,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { user_code: '1234' }
+            data:   { user_code: '1234', 'verification_type': 'user_code' }
           }, done);
         });
 
@@ -520,7 +577,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { user_code: '1234' }
+            data:   { user_code: '1234', 'verification_type': 'user_code' }
           }, done);
         });
 
@@ -547,7 +604,7 @@ describe('POST /verify', function() {
         requestHelper.sendRequest(this, '/verify', {
           method: 'post',
           type:   'form',
-          data:   { user_code: '1234' }
+          data:   { user_code: '1234', 'verification_type': 'user_code' }
         }, done);
       });
 
