@@ -96,7 +96,7 @@ var routes = function(app) {
           next(err);
           return;
         }
-        res.redirect('/verify');
+        requestHelper.redirect(res, '/verify');
       });
     }
 

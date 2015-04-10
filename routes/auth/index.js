@@ -8,7 +8,6 @@ var requestHelper = require('../../lib/request-helper');
 module.exports = function(app) {
   var logger = app.get('logger');
 
-
   app.get('/logout', function(req, res) {
     req.logout();
     requestHelper.redirect(res, '/');
@@ -22,8 +21,8 @@ module.exports = function(app) {
     var autoIdpRedirect = config.auto_idp_redirect;
 
     if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
-        res.redirect('/auth/' + autoIdpRedirect);
-        return;
+      requestHelper.redirect(res, '/auth/' + autoIdpRedirect);
+      return;
     }
 
     res.render('./auth/provider_list.ejs');
