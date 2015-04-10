@@ -2,18 +2,21 @@
 
 var db            = require('../models');
 var requestHelper = require('../lib/request-helper');
+var authHelper    = require('../lib/auth-helper');
+var querystring   = require('querystring');
 
 /*
  * GET home page.
  */
 
 module.exports = function(app) {
-  app.get('/', function(req, res) {
-    if (req.isAuthenticated()) {
-      requestHelper.redirect(res, '/verify');
+  app.get('/', authHelper.authenticateFirst, function(req, res) {
+    // Required by mobile flow
+    var query = "";
+    if (req.query.redirect_uri && req.query.user_code) {
+      query = '?' + querystring.stringify(req.query);
     }
-    else {
-      requestHelper.redirect(res, '/auth');
-    }
+
+    requestHelper.redirect(res, '/verify' + query);
   });
 };
