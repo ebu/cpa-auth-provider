@@ -40,13 +40,10 @@ describe('GET /auth', function() {
         requestHelper.sendRequest(this, '/auth', {}, done);
       });
 
-      it('should return a status 302', function() {
-        expect(this.res.statusCode).to.equal(302);
-      });
-
       it('should redirect to the idp endpoint', function() {
+        var urlPrefix = requestHelper.urlPrefix;
         expect(this.res.statusCode).to.equal(302);
-        expect(this.res.headers.location).to.equal("/auth/local");
+        expect(this.res.headers.location).to.equal(urlPrefix + "/auth/local");
       });
     });
 
