@@ -23,6 +23,7 @@ var initDatabase = function(done) {
   .then(function() {
     return db.User.create({
       id:           3,
+      provider_uid: "3",
       display_name: 'Joe Bloggs',
       photo_url:    'http://static.bbci.co.uk/frameworks/barlesque/2.59.12/orb/4/img/bbc-blocks-dark.png'
     });
@@ -95,7 +96,7 @@ describe("POST /authorized", function() {
     describe("the returned data", function() {
       it("should include the user id", function() {
         expect(this.res.body).to.have.property('user_id');
-        expect(this.res.body.user_id).to.equal(3);
+        expect(this.res.body.user_id).to.equal("3");
       });
 
       it("should include the client id", function() {
