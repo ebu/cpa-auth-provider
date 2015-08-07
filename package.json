@@ -3,6 +3,12 @@
   "description": "CPA Authorization Server",
   "version": "0.0.1",
   "private": true,
+  "contributors": [
+    "Chris Needham (https://github.com/chrisn)",
+    "Michael Barroco (https://github.com/barroco)",
+    "Andy Buckingham (https://github.com/andybee)",
+    "Matthew Glubb (https://github.com/mglubb)"
+  ],
   "scripts": {
     "start": "bin/server",
     "test": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib"
@@ -35,5 +41,6 @@
     "sinon": "~1.7.3",
     "cheerio": "~0.13.1",
     "sqlite3": "~2.2.0"
-  }
+  },
+  "license": "BSD 3"
 }
