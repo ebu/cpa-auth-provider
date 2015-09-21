@@ -237,7 +237,6 @@ describe('POST /admin/domains', function() {
         before(function() { this.domain = this.domains[1]; });
 
         it("should have the correct attributes", function() {
-          expect(this.domain).to.be.ok;
           expect(this.domain.display_name).to.equal('Test');
           expect(this.domain.name).to.equal('example.com');
           expect(this.domain.access_token).to.equal('51f6ceb51ac44ea3899bb9f07dd120e4');

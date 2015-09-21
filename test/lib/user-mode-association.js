@@ -40,6 +40,7 @@ var initDatabase = function(done) {
     .then(function() {
       return db.Domain.create({
         id:           1,
+        display_name: 'Example',
         name:         'example-service.bbc.co.uk',
         access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
       });

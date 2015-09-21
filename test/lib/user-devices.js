@@ -62,6 +62,7 @@ var initDatabase = function(opts, done) {
     .then(function() {
       return db.Domain.create({
         id:           1,
+        display_name: 'Example',
         name:         'example-service.ebu.io',
         access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
       });
@@ -69,6 +70,7 @@ var initDatabase = function(opts, done) {
     .then(function() {
       return db.Domain.create({
         id:           2,
+        display_name: 'Another Example',
         name:         'another-example-service.com',
         access_token: '831ba433eeaf49dabc5c3089b306d10f'
       });
