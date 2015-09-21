@@ -88,6 +88,6 @@ To generate a test coverage report (in the `coverage` directory);
 
 ## Copyright & license
 
-Copyright (c) 2014, EBU-UER Technology & Innovation
+Copyright (c) 2014-2015, EBU-UER Technology & Innovation
 
 The code is under BSD (3-Clause) License. (see LICENSE.txt)
