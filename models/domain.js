@@ -9,10 +9,18 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement: true
     },
     name: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
     },
     display_name: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
     },
 
     // Access token used by the service provider when making requests to

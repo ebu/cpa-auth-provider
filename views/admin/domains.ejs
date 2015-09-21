@@ -1,0 +1,26 @@
+<% include ../layout/head %>
+
+<h1>Service Providers</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Domain</th>
+      <th>Access Token</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (var i = 0; i < domains.length; i++) { %>
+      <tr>
+        <td><%= domains[i].display_name %></td>
+        <td><%= domains[i].name %></td>
+        <td><%= domains[i].access_token %></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<p><a href="<%= link('/admin/domains/add') %>">Add a Service Provider</a></p>
+
+<% include ../layout/foot %>
