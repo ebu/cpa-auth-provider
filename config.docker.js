@@ -44,13 +44,8 @@ module.exports = {
   // it into their user-agent.
   verification_uri: process.env.CPA_VERIFICATION_URL,
 
-  domains: [
-    {
-      name:         process.env.CPA_SERVICE_PROVIDER_DOMAIN,
-      display_name: 'Example Service Provider',
-      access_token: 'b4949eba147f4cf88985b43c039cd05b'
-    }
-  ],
+  // Use the Admin UI to register service provider domains.
+  domains: [],
 
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:
