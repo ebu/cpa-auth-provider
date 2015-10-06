@@ -1,35 +1,30 @@
-FROM ubuntu
+FROM node:0.10-slim
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-  git \
-  libsqlite3-dev \
-  nodejs \
-  npm
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends libsqlite3-dev 
 
-RUN ln -s /usr/bin/nodejs /usr/local/bin/node
-
-ADD bin /src/bin
-ADD lib /src/lib
-ADD models /src/models
-ADD public /src/public
-ADD routes /src/routes
-ADD views /src/views
-ADD package.json /src/package.json
-ADD config.js /src/config.js
+WORKDIR /src
 
 # Install Node.js dependencies
-WORKDIR /src
+COPY package.json ./package.json
 RUN npm install
 
+COPY bin ./bin
+COPY lib ./lib
+COPY models ./models
+COPY public ./public
+COPY routes ./routes
+COPY views ./views
+COPY config.js ./config.js
+
 # Configure
-ADD config.docker.js /src/config.local.js
+COPY config.docker.js ./config.local.js
 
 ENV NODE_ENV development
 
 # Create the sqlite database
-RUN mkdir data
-RUN bin/init-db
+RUN mkdir data && bin/init-db
 
 # By default, the application listens for HTTP on port 3000
 EXPOSE 3000
