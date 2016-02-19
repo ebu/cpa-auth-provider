@@ -1,5 +1,7 @@
 # Cross-Platform Authentication - Authorization Provider
 
+[![Build Status](https://travis-ci.org/ebu/cpa-auth-provider.svg?branch=develop)](https://travis-ci.org/ebu/cpa-auth-provider)
+
 This project contains a reference implementation of the Cross-Platform
 Authentication Authorization Provider.
 
