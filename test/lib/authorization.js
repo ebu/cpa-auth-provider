@@ -250,6 +250,50 @@ describe("POST /authorized", function() {
     });
   });
 
+  context("with invalid access token", function() {
+    before(resetDatabase);
+
+    before(function(done) {
+      var data = {
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain: 'example-service.bbc.co.uk'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: ' '
+      }, done);
+    });
+
+    it("should return an 'unauthorized' error", function() {
+      assertions.verifyError(this.res, 401, 'unauthorized');
+    });
+  });
+
+  context("with missing access token", function() {
+    before(resetDatabase);
+
+    before(function(done) {
+      var data = {
+        access_token: 'aed201ffb3362de42700a293bdebf694',
+        domain: 'example-service.bbc.co.uk'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method:      'post',
+        type:        'json',
+        data:        data
+        // accessToken: ' '
+      }, done);
+    });
+
+    it("should return an 'unauthorized' error", function() {
+      assertions.verifyError(this.res, 401, 'unauthorized');
+    });
+  });
+
   context("with missing client access token", function() {
     before(resetDatabase);
 
@@ -269,6 +313,28 @@ describe("POST /authorized", function() {
 
     it("should return an 'invalid_request' error", function() {
       assertions.verifyError(this.res, 400, 'invalid_request');
+    });
+  });
+
+  context("with an invalid client access token", function() {
+    before(resetDatabase);
+
+    before(function(done) {
+      var data = {
+        access_token: 'invalid',
+        domain:       'example-service.bbc.co.uk'
+      };
+
+      requestHelper.sendRequest(this, '/authorized', {
+        method:      'post',
+        type:        'json',
+        data:        data,
+        accessToken: '70fc2cbe54a749c38da34b6a02e8dfbd'
+      }, done);
+    });
+
+    it("should return a 'not_found' error", function() {
+      assertions.verifyError(this.res, 404, 'not_found');
     });
   });
 
