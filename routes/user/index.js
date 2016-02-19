@@ -11,7 +11,11 @@ var routes = function(app) {
     db.Client
       .findAll({
         where: { user_id: req.user.id },
-        include: [ db.User, { model: db.AccessToken, include: [db.Domain] } ],
+        include: [
+          db.User,
+          { model: db.AccessToken, include: [db.Domain] },
+          { model: db.PairingCode, include: [db.Domain] }
+        ],
         order: [ [ 'id' ] ]
       })
       .then(function(clients) {

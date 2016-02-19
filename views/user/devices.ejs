@@ -7,7 +7,7 @@
       <th>Client Id</th>
       <th>Name</th>
       <th>Owner</th>
-      <th>Authorizations</th>
+      <th>Authorized domains</th>
       <th></th>
     </tr>
 
@@ -16,11 +16,26 @@
       <td><%= client.id %></td>
       <td><%= client.name %></td>
       <td><%= client.user.display_name %></td>
-      <td>
+      <td class="small">
         <ul>
         <% client.accessTokens.forEach(function(token, j) { %>
           <li>
-              <%= token.domain.name %>
+            <%= token.domain.name %>
+            <span class="label label-success">token</span>
+          </li>
+        <% }); %>
+        <% client.pairingCodes.forEach(function(code, j) { %>
+          <li>
+            <%= code.domain.name %>
+            <% if (code.state === 'verified') { %>
+              <span class="label label-info"><%= code.state %></span>
+            <% } %>
+            <% if (code.state === 'pending') { %>
+            <span class="label label-warning"><%= code.state %></span>
+            <% } %>
+            <% if (code.state === 'denied') { %>
+            <span class="label label-danger"><%= code.state %></span>
+            <% } %>
           </li>
         <% }); %>
         </ul>

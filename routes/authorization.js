@@ -79,7 +79,7 @@ module.exports = function(app, options) {
             };
 
             if (accessToken.user) {
-              responseData.user_id      = accessToken.user_id;
+              responseData.user_id      = accessToken.user.provider_uid;
               responseData.display_name = accessToken.user.display_name;
               responseData.photo_url    = accessToken.user.photo_url;
             }

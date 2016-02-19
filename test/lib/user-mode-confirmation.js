@@ -145,6 +145,11 @@ describe('GET /verify', function() {
           expect(this.$('input[name="pairing_code_12"]').length).to.equal(2);
           expect(this.$('input[name="pairing_code_12"]')[0].attribs.value).to.equal('yes');
         });
+
+        it('should display the verification_type input', function() {
+          expect(this.$('input[name="verification_type"]').length).to.equal(1);
+          expect(this.$('input[name="verification_type"]')[0].attribs.value).to.equal('domain_list');
+        });
       });
     });
 
@@ -186,7 +191,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { pairing_code_12: 'yes' }
+            data:   { 'pairing_code_12': 'yes', 'verification_type': 'domain_list'  }
           }, done);
         });
 
@@ -283,7 +288,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { pairing_code_12: 'no' }
+            data:   { pairing_code_12: 'no', 'verification_type': 'domain_list' }
           }, done);
         });
 
@@ -380,7 +385,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { pairing_code_12: 'yes' }
+            data:   { pairing_code_12: 'yes', 'verification_type': 'domain_list' }
           }, done);
         });
 
@@ -453,7 +458,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { pairing_code_16: 'yes' }
+            data:   { pairing_code_16: 'yes', 'verification_type': 'domain_list' }
           }, done);
         });
 
@@ -513,7 +518,7 @@ describe('POST /verify', function() {
             method: 'post',
             cookie: this.cookie,
             type:   'form',
-            data:   { pairing_code_17: 'yes' }
+            data:   { pairing_code_17: 'yes', 'verification_type': 'domain_list' }
           }, done);
         });
 

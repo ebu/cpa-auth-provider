@@ -1,0 +1,24 @@
+<% include layout/head %>
+
+<div></div>
+
+<div class="panel panel-info">
+  <div class="panel-heading">Authorization</div>
+
+  <div class="panel-body">
+    <form method="POST" action="<%= link('/verify') %>">
+      <div class="form-group has-success">
+        <%= client_name %> is requesting your authorization to act
+        on your behalf on <%= domain %>. Do you accept?
+      </div>
+
+      <input type="hidden" name="verification_type" value="prefilled_user_code">
+      <input type="hidden" name="user_code" value="<%= user_code %>">
+      <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
+      <input type="submit" class="btn btn-success" name="authorization" value="Allow">
+      <input type="submit" class="btn btn-danger" name="authorization" value="Deny">
+    </form>
+  </div>
+</div>
+
+<% include layout/foot %>
