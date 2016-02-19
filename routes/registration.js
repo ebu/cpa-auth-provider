@@ -44,7 +44,7 @@ module.exports = function(app) {
   /**
    * Client registration endpoint
    *
-   * @see EBU Tech 3366, section 8.1
+   * @see ETSI TS 103 407, section 8.2
    */
 
   var handler = function(req, res, next) {

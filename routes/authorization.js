@@ -31,7 +31,7 @@ module.exports = function(app, options) {
   /**
    * Access token authorization endpoint
    *
-   * @see EBU Tech 3366, section 9.2
+   * @see ETSI TS 103 407, section 9.3
    */
 
   app.post('/authorized', protectedResourceHandler, validateJson, function(req, res, next) {
