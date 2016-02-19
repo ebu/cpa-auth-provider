@@ -104,19 +104,19 @@ describe('GET /verify', function() {
         describe('the response body', function() {
           it('should contain a hidden input with user_code', function() {
             expect(this.$('input[name="user_code"]').length).to.equal(1);
-            expect(this.$('input[name="user_code"]')[0].attribs['type']).to.equal('hidden');
-            expect(this.$('input[name="user_code"]')[0].attribs['value']).to.equal('1234');
+            expect(this.$('input[name="user_code"]')[0].attribs.type).to.equal('hidden');
+            expect(this.$('input[name="user_code"]')[0].attribs.value).to.equal('1234');
           });
 
           it('should contain a hidden input with redirect_uri', function() {
             expect(this.$('input[name="redirect_uri"]').length).to.equal(1);
-            expect(this.$('input[name="redirect_uri"]')[0].attribs['type']).to.equal('hidden');
-            expect(this.$('input[name="redirect_uri"]')[0].attribs['value']).to.equal('example://cpa_callback');
+            expect(this.$('input[name="redirect_uri"]')[0].attribs.type).to.equal('hidden');
+            expect(this.$('input[name="redirect_uri"]')[0].attribs.value).to.equal('example://cpa_callback');
           });
 
           it('should contain a submit button with value "Allow"', function() {
             expect(this.$('input[name="authorization"][value="Allow"]').length).to.equal(1);
-            expect(this.$('input[name="authorization"][value="Allow"]')[0].attribs['type']).to.equal('submit');
+            expect(this.$('input[name="authorization"][value="Allow"]')[0].attribs.type).to.equal('submit');
           });
         });
       });
@@ -234,7 +234,7 @@ describe('POST /verify', function() {
 
           describe('the response header', function () {
             it('should contain Location: ', function () {
-              expect(this.res.headers['location']).to.equal('example://cpa_callback');
+              expect(this.res.headers.location).to.equal('example://cpa_callback');
             });
           });
 

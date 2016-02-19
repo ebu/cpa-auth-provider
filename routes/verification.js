@@ -51,7 +51,7 @@ var routes = function(app) {
         .find({ where: { 'user_code': userCode }, include: [ db.Client, db.Domain ] })
         .complete(function(err, pairingCode) {
           if (err) {
-            next(err);
+            res.send(500);
             return;
           }
 
@@ -72,7 +72,7 @@ var routes = function(app) {
             return;
           }
 
-          var domain = (config.auto_provision_tokens)? 'every domain' : pairingCode.domain.name
+          var domain = (config.auto_provision_tokens)? 'every domain' : pairingCode.domain.name;
           var templateVariables = {
             'client_name': pairingCode.client.name,
             'user_code': userCode,
@@ -298,15 +298,14 @@ var routes = function(app) {
 
 
   var buildRedirectUri = function(redirectUri, uriInfo) {
-    var redirectUri = redirectUri;
     if (uriInfo) {
       var u = url.parse(redirectUri, true);
-      u.query['info'] = uriInfo;
+      u.query.info = uriInfo;
       redirectUri = url.format(u);
     }
 
     return redirectUri;
-  }
+  };
 
   /**
    * verifyPrefilledUserCode
