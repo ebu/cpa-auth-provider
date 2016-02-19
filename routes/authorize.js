@@ -1,11 +1,10 @@
 "use strict";
 
 var async = require('async');
-var url = require('url');
-
 var db = require('../models');
 var authHelper = require('../lib/auth-helper');
 var generate = require('../lib/generate');
+var urlHelper = require('../lib/url-helper');
 
 var schemaGet = {
   id: "/authorize",
@@ -180,14 +179,12 @@ module.exports = function(app, options) {
         return;
       }
 
-      var urlObj = url.parse(redirectUri);
-      if (!urlObj.query) {
-        urlObj.query = {};
-      }
-      urlObj.query.code = result.authorization_code;
-      urlObj.query.state = state;
+      var url = urlHelper.addQueryParameter(redirectUri, {
+        'code': result.authorization_code,
+        'state': state
+      });
 
-      res.redirect(url.format(urlObj));
+      res.redirect(url);
     });
 
   });
