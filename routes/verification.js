@@ -317,14 +317,14 @@ var routes = function(app) {
     var denied = ('authorization' in req.body && req.body.authorization === 'Deny');
     if (denied) {
       denyUserCode(userCode, req.user.id, function(err, errorMessage, result) {
-        var redirectUri = urlHelper.addQueryParameter(req.body.redirect_uri, 'result', result);
+        var redirectUri = urlHelper.addQueryParameter(req.body.redirect_uri, {result: result});
         res.redirect(redirectUri);
       });
       return;
     }
 
     associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, result) {
-      var redirectUri = urlHelper.addQueryParameter(req.body.redirect_uri, 'result', result);
+      var redirectUri = urlHelper.addQueryParameter(req.body.redirect_uri, {result: result});
       res.redirect(redirectUri);
     });
   };
