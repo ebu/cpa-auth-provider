@@ -5,7 +5,7 @@ var config        = require('../config');
 var authHelper    = require('../lib/auth-helper');
 var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
-var url           = require('url');
+var urlHelper     = require('../lib/url-helper');
 
 var async = require('async');
 
@@ -297,18 +297,6 @@ var routes = function(app) {
   };
 
 
-  var buildRedirectUri = function(redirectUri, result) {  
-    var u = url.parse(redirectUri, true);
-    if (!u.query) {
-      u.query = {};
-    }
-    u.query.result = result;
-    u.search = null;
-    redirectUri = url.format(u);
-  
-    return redirectUri;
-  };
-
   /**
    * verifyPrefilledUserCode
    * handles the process of associating a user with a device without entering manually the code.
@@ -329,14 +317,14 @@ var routes = function(app) {
     var denied = ('authorization' in req.body && req.body.authorization === 'Deny');
     if (denied) {
       denyUserCode(userCode, req.user.id, function(err, errorMessage, result) {
-        var redirectUri = buildRedirectUri(req.body.redirect_uri, result);
+        var redirectUri = urlHelper.addQueryParameter(req.body.redirect_uri, 'result', result);
         res.redirect(redirectUri);
       });
       return;
     }
 
     associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, result) {
-      var redirectUri = buildRedirectUri(req.body.redirect_uri, result);
+      var redirectUri = urlHelper.addQueryParameter(req.body.redirect_uri, 'result', result);
       res.redirect(redirectUri);
     });
   };
