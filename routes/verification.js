@@ -137,10 +137,10 @@ var routes = function(app) {
    * Set the state of a Pairing Code identified by userCode to denied. And it associates the user who denies the Pairing Code.
    * @param userCode
    * @param userId
-   * @param done = function(err, errorMessage, uriInfo)
+   * @param done = function(err, errorMessage, result)
    *               err is the error object
    *               errorMessage is the message displayed to the user
-   *               uriInfo is included when redirecting after an user_code prefilled process.
+   *               result is included when redirecting after an user_code prefilled process.
    */
 
   var denyUserCode = function(userCode, userId, done) {
@@ -153,17 +153,17 @@ var routes = function(app) {
         }
 
         if (!pairingCode) {
-          done(null, messages.INVALID_USERCODE);
+          done(null, messages.INVALID_USERCODE, 'cancelled');
           return;
         }
 
         if (pairingCode.state === 'verified') {
-          done(null, messages.OBSOLETE_USERCODE);
+          done(null, messages.OBSOLETE_USERCODE, 'cancelled');
           return;
         }
 
         if (pairingCode.hasExpired()) {
-          done(null, messages.EXPIRED_USERCODE);
+          done(null, messages.EXPIRED_USERCODE, 'cancelled');
           return;
         }
 
@@ -175,7 +175,7 @@ var routes = function(app) {
             pairingCode.client.save();
           })
           .then(function () {
-            done(null, null, 'user_code:denied');
+            done(null, null, 'cancelled');
           },
           function (err) {
             done(err);
@@ -188,10 +188,10 @@ var routes = function(app) {
    * Associate a pairing code with a user. It sets the state to verified.
    * @param userCode
    * @param userId
-   * @param done = function(err, errorMessage, uriInfo)
+   * @param done = function(err, errorMessage, result)
    *               err is the error object
    *               errorMessage is the message displayed to the user
-   *               uriInfo is included when redirecting after an user_code prefilled process.
+   *               result is included when redirecting after an user_code prefilled process.
    */
   var associateUserCodeWithUser = function(userCode, userId, done) {
     db.PairingCode
@@ -203,17 +203,17 @@ var routes = function(app) {
         }
 
         if (!pairingCode) {
-          done(null, messages.INVALID_USERCODE);
+          done(null, messages.INVALID_USERCODE, 'cancelled');
           return;
         }
 
         if (pairingCode.state === 'verified') {
-          done(null, messages.OBSOLETE_USERCODE);
+          done(null, messages.OBSOLETE_USERCODE, 'cancelled');
           return;
         }
 
         if (pairingCode.hasExpired()) {
-          done(null, messages.EXPIRED_USERCODE);
+          done(null, messages.EXPIRED_USERCODE, 'cancelled');
           return;
         }
 
@@ -225,7 +225,7 @@ var routes = function(app) {
             pairingCode.client.save();
           })
           .then(function () {
-            done();
+            done(null, null, 'success');
           },
           function (err) {
             done(err);
@@ -280,30 +280,32 @@ var routes = function(app) {
       return;
     }
 
-    associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, uriInfo) {
-        if (err) {
-          next(err);
-          return;
-        }
+    associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, result) {
+      if (err) {
+        next(err);
+        return;
+      }
 
-        if (errorMessage) {
-          res.status(400);
-          renderVerificationInfo(res, errorMessage, 'warning');
-          return;
-        }
+      if (errorMessage) {
+        res.status(400);
+        renderVerificationInfo(res, errorMessage, 'warning');
+        return;
+      }
 
-        renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
+      renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
     });
   };
 
 
-  var buildRedirectUri = function(redirectUri, uriInfo) {
-    if (uriInfo) {
-      var u = url.parse(redirectUri, true);
-      u.query.info = uriInfo;
-      redirectUri = url.format(u);
+  var buildRedirectUri = function(redirectUri, result) {  
+    var u = url.parse(redirectUri, true);
+    if (!u.query) {
+      u.query = {};
     }
-
+    u.query.result = result;
+    u.search = null;
+    redirectUri = url.format(u);
+  
     return redirectUri;
   };
 
@@ -326,15 +328,15 @@ var routes = function(app) {
 
     var denied = ('authorization' in req.body && req.body.authorization === 'Deny');
     if (denied) {
-      denyUserCode(userCode, req.user.id, function(err, errorMessage, uriInfo) {
-        var redirectUri = buildRedirectUri(req.body.redirectUri, uriInfo);
+      denyUserCode(userCode, req.user.id, function(err, errorMessage, result) {
+        var redirectUri = buildRedirectUri(req.body.redirect_uri, result);
         res.redirect(redirectUri);
       });
       return;
     }
 
-    associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, uriInfo) {
-      var redirectUri = buildRedirectUri(req.body.redirect_uri, uriInfo);
+    associateUserCodeWithUser(userCode, req.user.id, function(err, errorMessage, result) {
+      var redirectUri = buildRedirectUri(req.body.redirect_uri, result);
       res.redirect(redirectUri);
     });
   };
