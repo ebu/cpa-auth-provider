@@ -17,9 +17,6 @@ module.exports = function(sequelize, DataTypes) {
         notNull: true,
         notEmpty: true
       }
-    },
-    refresh_token: {
-      type: DataTypes.STRING
     }
   }, {
     underscored: true,

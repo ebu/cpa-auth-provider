@@ -24,10 +24,6 @@ var sendAccessToken = function(res, token, domain, user, scope) {
     domain_display_name: domain.display_name
   };
 
-  if (token.refresh_token !== null) {
-    response.refresh_token = token.refresh_token;
-  }
-
   if (scope) {
     response.scope = scope.name;
   }
