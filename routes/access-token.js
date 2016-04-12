@@ -15,7 +15,7 @@ var routes = function(app) {
   /**
    * Access token endpoint
    *
-   * @see EBU Tech 3366, section 8.3
+   * @see ETSI TS 103 407, section 8.4
    */
 
   var handler = function(req, res, next) {
@@ -27,11 +27,11 @@ var routes = function(app) {
     var grantType = req.body.grant_type;
 
     switch (grantType) {
-      // see EBU Tech 3366, section 8.3.1.1 and 8.3.1.3
+      // see ETSI TS 103 407, section 8.4.1.1 and 8.4.1.3
       case 'http://tech.ebu.ch/cpa/1.0/client_credentials':
         return clientMode(req, res, next);
 
-      // see EBU Tech 3366, section 8.3.1.2
+      // see ETSI TS 103 407, section 8.4.1.2
       case 'http://tech.ebu.ch/cpa/1.0/device_code':
         return userMode(req, res, next);
 

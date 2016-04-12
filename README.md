@@ -5,7 +5,7 @@
 This project contains a reference implementation of the Cross-Platform
 Authentication Authorization Provider.
 
-This software implements version 1.0 of the Cross-Platform Authentication Protocol ([EBU Tech 3366](https://tech.ebu.ch/docs/tech/tech3366.pdf)).
+This software implements version 1.0 of the Cross-Platform Authentication Protocol ([ETSI TS 103 407](https://portal.etsi.org/webapp/WorkProgram/Report_WorkItem.asp?WKI_ID=47970)).
 
 More information on the [EBU Cross-Platform Authentication project](http://tech.ebu.ch/cpa).
 

@@ -34,7 +34,7 @@ module.exports = function(app) {
   /**
    * Client association endpoint
    *
-   * @see EBU Tech 3366, section 8.2
+   * @see ETSI TS 103 407, section 8.3
    */
 
   var handler = function(req, res, next) {
