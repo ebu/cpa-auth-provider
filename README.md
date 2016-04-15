@@ -78,8 +78,17 @@ To generate a test coverage report (in the `coverage` directory);
 
 ## Related projects
 
+
+## Related projects
+
+* *Clients*
+  * [cpa-ios](https://github.com/ebu/cpa-ios)
+  * [cpa-android](https://github.com/ebu/cpa-android)
+  * [cpa.js](https://github.com/ebu/cpa.js)
+  * [demonstrator](https://github.com/ebu/cpa-client)
+  
 * [CPA Service Provider](https://github.com/ebu/cpa-service-provider)
-* [CPA Client](https://github.com/ebu/cpa-client)
+* [CPA Demo](https://github.com/ebu/cpa-client)
 
 ## Contributors
 
@@ -90,6 +99,6 @@ To generate a test coverage report (in the `coverage` directory);
 
 ## Copyright & license
 
-Copyright (c) 2014-2015, EBU-UER Technology & Innovation
+Copyright (c) 2014-2016, EBU-UER Technology & Innovation
 
 The code is under BSD (3-Clause) License. (see LICENSE.txt)
