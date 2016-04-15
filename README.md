@@ -81,14 +81,14 @@ To generate a test coverage report (in the `coverage` directory);
 
 ## Related projects
 
+* [CPA Service Provider](https://github.com/ebu/cpa-service-provider)
+
 * *Clients*
   * [cpa-ios](https://github.com/ebu/cpa-ios)
   * [cpa-android](https://github.com/ebu/cpa-android)
   * [cpa.js](https://github.com/ebu/cpa.js)
   * [demonstrator](https://github.com/ebu/cpa-client)
   
-* [CPA Service Provider](https://github.com/ebu/cpa-service-provider)
-* [CPA Demo](https://github.com/ebu/cpa-client)
 
 ## Contributors
 
