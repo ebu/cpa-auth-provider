@@ -78,9 +78,6 @@ To generate a test coverage report (in the `coverage` directory);
 
 ## Related projects
 
-
-## Related projects
-
 * [CPA Service Provider](https://github.com/ebu/cpa-service-provider)
 
 * *Clients*
