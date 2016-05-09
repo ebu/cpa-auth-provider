@@ -63,34 +63,13 @@ module.exports = {
   // it into their user-agent.
   verification_uri: 'http://vagrant.ebu.io:3000/',
 
-  domains: [
-    {
-      name:         'bbc1-cpa.ebu.io',
-      display_name: 'BBC1',
-      access_token: 'b4949eba147f4cf88985b43c039cd05b'
-    },
-    {
-      name:         'bbc2-cpa.ebu.io',
-      display_name: 'BBC2',
-      access_token: 'b3dd734356524ef9b9ab3d03f1b1558e'
-    }
-  ],
+  domains: [],
 
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:
   // - false: The user must authenticate and confirm access to the new domain
   // - true: The user is automatically granted access without confirmation
   auto_provision_tokens: false,
-
-  server_clients : [{
-    name: '',
-    software_id: '',
-    software_version: '',
-    ip: '127.0.0.1',
-    secret: '',
-    registration_type: 'static',
-    redirect_uri: ''
-  }],
 
   // The length of time that user (pairing) codes are valid, in seconds.
   pairing_code_lifetime: 60 * 60, // 1 hour
