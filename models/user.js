@@ -1,5 +1,8 @@
 "use strict";
 
+var Promise = require('bluebird');
+var bcrypt = Promise.promisifyAll(require('bcrypt'));
+
 module.exports = function(sequelize, DataTypes) {
 
   var User = sequelize.define('User', {
@@ -13,19 +16,17 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     underscored: true,
     instanceMethods: {
-      setPassword: function(password, done) {
-        return bcrypt.genSalt(10, function(err, salt) {
-          return bcrypt.hash(password, salt, function(error, encrypted) {
-            this.password = encrypted;
-            this.salt = salt;
-            return done();
-          });
+      setPassword: function(password) {
+        var self = this;
+        return bcrypt.genSaltAsync(10).then(function(salt) {
+          return bcrypt.hashAsync(password, salt);
+        })
+        .then(function(encrypted, salt) {
+          return self.updateAttributes({ password: encrypted });
         });
       },
-      verifyPassword: function(password, done) {
-        return bcrypt.compare(password, this.password, function(err, res) {
-          return done(err, res);
-        });
+      verifyPassword: function(password) {
+        return bcrypt.compareAsync(password, this.password);
       }
     },
     associate: function(models) {

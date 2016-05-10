@@ -12,9 +12,11 @@ var initDatabase = function(opts, done) {
     .create({
       id:           3,
       provider_uid: 'testuser',
-      display_name: 'Test User',
-      password:     'testpassword'
+      display_name: 'Test User'
     })
+    .then(function(user) {
+      return user.setPassword('testpassword');
+    })    
     .then(function() {
       return db.Client.create({
         id:               100,
