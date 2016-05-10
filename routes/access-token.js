@@ -10,7 +10,7 @@ var userMode      = require('./token/user-mode');
 
 var async = require('async');
 
-var routes = function(app) {
+var routes = function(router) {
 
   /**
    * Access token endpoint
@@ -46,13 +46,12 @@ var routes = function(app) {
 
   if (config.cors && config.cors.enabled) {
     // Enable pre-flight CORS request for POST /token
-    app.options('/token', cors);
-    app.post('/token', cors, handler);
+    router.options('/token', cors);
+    router.post('/token', cors, handler);
   }
   else {
-    app.post('/token', handler);
+    router.post('/token', handler);
   }
-
 };
 
 module.exports = routes;

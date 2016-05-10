@@ -4,7 +4,6 @@ var db            = require('../../models');
 var config        = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
-
 var bcrypt        = require('bcrypt');
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;

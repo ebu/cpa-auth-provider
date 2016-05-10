@@ -4,6 +4,7 @@ var config   = require('../config');
 var cors     = require('../lib/cors');
 var db       = require('../models');
 var generate = require('../lib/generate');
+var logger   = require('../lib/logger');
 
 var async = require('async');
 
@@ -30,8 +31,7 @@ var schema = {
 
 var validateJson = require('../lib/validate-json').middleware(schema);
 
-module.exports = function(app) {
-  var logger = app.get('logger');
+module.exports = function(router) {
 
   /**
    * Returns the client's IP address from the given HTTP request.
@@ -73,7 +73,7 @@ module.exports = function(app) {
           });
         },
         function(client, callback) {
-          res.send(201, {
+          res.status(201).send({
             client_id:     client.id.toString(),
             client_secret: client.secret
           });
@@ -103,29 +103,29 @@ module.exports = function(app) {
 
   if (config.cors && config.cors.enabled) {
     // Enable pre-flight CORS request for POST /register
-    app.options('/register', cors);
-    app.post('/register', cors, validateJson, handler);
+    router.options('/register', cors);
+    router.post('/register', cors, validateJson, handler);
   }
   else {
-    app.post('/register', validateJson, handler);
+    router.post('/register', validateJson, handler);
   }
 
   // client_id is given in the path
-  app.get('/register/:client_id', function(req, res) {
+  router.get('/register/:client_id', function(req, res) {
     var clientId = req.params.client_id;
-    res.send(501);
+    res.sendStatus(501);
   });
 
   // client_id is given as a GET Parameter
-  app.get('/register', function(req, res) {
-    res.send(501);
+  router.get('/register', function(req, res) {
+    res.sendStatus(501);
   });
 
-  app.put('/register', function(req, res) {
-    res.send(501);
+  router.put('/register', function(req, res) {
+    res.sendStatus(501);
   });
 
-  app.delete('/register', function(req, res) {
-    res.send(501);
+  router.delete('/register', function(req, res) {
+    res.sendStatus(501);
   });
 };

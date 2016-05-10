@@ -4,10 +4,8 @@ var config     = require('../../config');
 var db         = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
-
-var routes = function(app) {
-
-  app.get('/user/devices', authHelper.ensureAuthenticated, function(req, res, next) {
+var routes = function(router) {
+  router.get('/user/devices', authHelper.ensureAuthenticated, function(req, res, next) {
     db.Client
       .findAll({
         where: { user_id: req.user.id },
