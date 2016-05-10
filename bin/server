@@ -7,6 +7,8 @@ var yargs = require('yargs');
 
 var version = require('../package.json').version;
 
+var logger = require('../lib/logger');
+
 var DEFAULT_PORT = 3000;
 
 // Parse command line arguments
@@ -52,5 +54,5 @@ app.set('port', argv.port || process.env.PORT || DEFAULT_PORT);
 var server = http.createServer(app);
 
 server.listen(app.get('port'), function() {
-  app.get('logger').info('Server listening on port ' + app.get('port'));
+  logger.info('Server listening on port ' + app.get('port'));
 });

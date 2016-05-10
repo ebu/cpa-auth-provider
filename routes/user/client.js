@@ -5,10 +5,8 @@ var db         = require('../../models/index');
 var authHelper = require('../../lib/auth-helper');
 var async      = require('async');
 
-
-var routes = function(app) {
-
-  app.del('/user/client/:client_id', authHelper.ensureAuthenticated, function(req, res, next) {
+var routes = function(router) {
+  router.delete('/user/client/:client_id', authHelper.ensureAuthenticated, function(req, res, next) {
     var clientId = req.params.client_id;
 
     db.Client
@@ -40,7 +38,7 @@ var routes = function(app) {
             });
           })
           .then(function() {
-            res.send(200);
+            res.sendStatus(200);
           }).catch(function(err) {
             next(err);
           });
