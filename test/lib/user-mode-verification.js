@@ -27,10 +27,12 @@ var initDatabase = function(opts, done) {
     .then(function() {
       return db.User.create({
         id:           5,
-        provider_uid: 'testuser',
-        password:     'testpassword'
+        provider_uid: 'testuser'
       });
     })
+    .then(function(user) {
+      return user.setPassword('testpassword');
+    })  
     .then(function() {
       return db.Domain.create({
         id:           5,

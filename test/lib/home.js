@@ -7,9 +7,11 @@ var requestHelper = require('../request-helper');
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM Users').then(function() {
     return db.User.create({
-      provider_uid: 'testuser',
-      password: 'testpassword'
+      provider_uid: 'testuser'
     });
+  })
+  .then(function(user) {
+    return user.setPassword('testpassword');
   })
   .then(function() {
     done();
