@@ -5,12 +5,13 @@ var requestHelper = require('../lib/request-helper');
 var authHelper    = require('../lib/auth-helper');
 var querystring   = require('querystring');
 
-/*
- * GET home page.
- */
+module.exports = function(router) {
 
-module.exports = function(app) {
-  app.get('/', authHelper.authenticateFirst, function(req, res) {
+  /*
+   * GET home page.
+   */
+
+  router.get('/', authHelper.authenticateFirst, function(req, res) {
     // Required by mobile flow
     var query = "";
     if (req.query.redirect_uri && req.query.user_code) {

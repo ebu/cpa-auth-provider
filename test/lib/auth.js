@@ -9,14 +9,16 @@ var dbHelper      = require('../db-helper');
 
 var initDatabase = function(done) {
   db.User.create({
-    provider_uid: 'testuser',
-    password: 'testpassword'
+    provider_uid: 'testuser'
+  })
+  .then(function(user) {
+    return user.setPassword('testpassword');
   })
   .then(function() {
     done();
   },
-  function(error) {
-    done(error);
+  function(err) {
+    done(new Error(err));
   });
 };
 

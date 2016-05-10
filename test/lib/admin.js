@@ -10,21 +10,24 @@ var dbHelper      = require('../db-helper');
 var initDatabase = function(done) {
   db.User.create({
       id:           5,
-      provider_uid: 'testuser',
-      password:     'testpassword'
+      provider_uid: 'testuser'
     })
-    .then(function() {
+    .then(function(user) {
+      return user.setPassword('testpassword');
+    })
+    .then(function(user) {
       return db.Domain.create({
         id:           5,
         name:         'example-service.bbc.co.uk',
         display_name: 'BBC',
         access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
       });
-    }).then(function() {
+    })
+    .then(function() {
       done();
     },
     function(error) {
-      done(new Error(JSON.stringify(error)));
+      done(new Error(error));
     });
 };
 

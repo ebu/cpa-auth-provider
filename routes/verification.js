@@ -9,9 +9,7 @@ var urlHelper     = require('../lib/url-helper');
 
 var async = require('async');
 
-var routes = function(app) {
-  var logger = app.get('logger');
-
+var routes = function(router) {
   var renderVerificationPage = function(req, res, errorMessage) {
     db.PairingCode.findAll({
       where: { user_id: req.user.id, state: 'pending' },
@@ -42,7 +40,7 @@ var routes = function(app) {
     res.render('verify-info.ejs', { message: message, status: status });
   };
 
-  app.get('/verify', authHelper.authenticateFirst, function(req, res, errorMessage) {
+  router.get('/verify', authHelper.authenticateFirst, function(req, res, errorMessage) {
     var userCode = req.query.user_code;
     var redirectUri = req.query.redirect_uri;
 
@@ -88,7 +86,6 @@ var routes = function(app) {
     renderVerificationPage(req, res, errorMessage);
   });
 
-
   /**
    * User code verification and confirmation endpoint
    */
@@ -128,11 +125,6 @@ var routes = function(app) {
     });
   };
 
-  /*
-
-
-   */
-
   /**
    * Set the state of a Pairing Code identified by userCode to denied. And it associates the user who denies the Pairing Code.
    * @param userCode
@@ -142,7 +134,6 @@ var routes = function(app) {
    *               errorMessage is the message displayed to the user
    *               result is included when redirecting after an user_code prefilled process.
    */
-
   var denyUserCode = function(userCode, userId, done) {
     db.PairingCode
       .find({where: {'user_code': userCode}, include: [db.Client]})
@@ -182,7 +173,6 @@ var routes = function(app) {
           });
       });
   };
-
 
   /**
    * Associate a pairing code with a user. It sets the state to verified.
@@ -329,8 +319,7 @@ var routes = function(app) {
     });
   };
 
-
-  app.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
+  router.post('/verify', authHelper.ensureAuthenticated, function(req, res, next) {
     if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
       res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
       return;

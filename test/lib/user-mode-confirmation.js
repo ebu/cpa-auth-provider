@@ -37,9 +37,11 @@ var initDatabase = function(done) {
     .then(function() {
       return db.User.create({
         id:           4,
-        provider_uid: 'testuser',
-        password:     'testpassword'
+        provider_uid: 'testuser'
       });
+    })
+    .then(function(user) {
+      return user.setPassword('testpassword');
     })
     .then(function() {
       return db.Domain.create({

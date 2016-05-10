@@ -1,5 +1,7 @@
 "use strict";
 
+var logger = require('../lib/logger');
+
 var db = require('../models');
 
 var schema = {
@@ -21,10 +23,7 @@ var schema = {
 
 var validateJson = require('../lib/validate-json').middleware(schema);
 
-module.exports = function(app, options) {
-  var logger = app.get('logger');
-  var config = app.get('config');
-
+module.exports = function(router, config) {
   var protectedResourceHandler =
     require('../lib/protected-resource-handler')(config, db, logger);
 
@@ -34,7 +33,7 @@ module.exports = function(app, options) {
    * @see ETSI TS 103 407, section 9.3
    */
 
-  app.post('/authorized', protectedResourceHandler, validateJson, function(req, res, next) {
+  router.post('/authorized', protectedResourceHandler, validateJson, function(req, res, next) {
     var accessToken = req.body.access_token;
     var domainName  = req.body.domain;
 
