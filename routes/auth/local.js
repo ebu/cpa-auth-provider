@@ -8,9 +8,16 @@ var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 var localStrategyCallback = function(username, password, done) {
-  db.User.find({ where: { provider_uid: username, password: password } })
+  db.User.find({ where: { provider_uid: username} })
     .then(function(user) {
-      done(null, user);
+      this.verifyPassword(password, , function (err, isMatch) {
+        if (isMatch && !err) {
+          done(null, user);
+        } else {
+          done(err);
+        }
+      });
+      
     },
     function(error) {
       done(error);
