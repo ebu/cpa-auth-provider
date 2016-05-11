@@ -19,7 +19,7 @@ test:
 lint: lint-src lint-test
 
 lint-src:
-	@$(JSHINT) bin/* lib/*.js routes/*.js routes/**/*.js
+	@$(JSHINT) bin/* lib/*.js routes/*
 
 lint-test:
 	@$(JSHINT) --config .jshintrc-test test/*.js test/lib/*.js
