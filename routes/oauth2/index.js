@@ -10,6 +10,7 @@ var passport = require('passport');
 var ClientPasswordStrategy = require('./strategy/client-password').client_password_strategy;
 var BearerStrategy = require('./strategy/bearer').bearer;
 var AuthorizationCodeGrant = require('./grant/authorization-code').authorization_code;
+var TokenGrant = require('./grant/token').token;
 var AuthorizationCodeExchange = require('./exchange/authorization-code').authorization_code;
 
 
@@ -70,6 +71,8 @@ module.exports = function (router) {
     // values, and will be exchanged for an access token.
 
     server.grant(oauth2orize.grant.code(AuthorizationCodeGrant));
+
+    server.grant(oauth2orize.grant.token(TokenGrant));
 
     server.exchange(oauth2orize.exchange.code(AuthorizationCodeExchange));
 
