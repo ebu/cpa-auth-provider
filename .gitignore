@@ -11,3 +11,5 @@ coverage
 docs
 
 sessions.db
+
+data/cpa-auth-provider.sqlite

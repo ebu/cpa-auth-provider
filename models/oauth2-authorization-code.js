@@ -5,7 +5,7 @@ var expiresMixin = require('../lib/expires-mixin');
 
 module.exports = function(sequelize, DataTypes) {
 
-  var AuthorizationCode = sequelize.define('AuthorizationCode', {
+  var OAuth2AuthorizationCode = sequelize.define('OAuth2AuthorizationCode', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     authorization_code: DataTypes.STRING,
     redirect_uri: DataTypes.STRING,
@@ -16,11 +16,10 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: expiresMixin(config.authorization_code_lifetime),
 
     associate: function(models) {
-      AuthorizationCode.belongsTo(models.Client);
-      AuthorizationCode.belongsTo(models.User);
-      AuthorizationCode.belongsTo(models.Domain);
+      OAuth2AuthorizationCode.belongsTo(models.OAuth2Client);
+      OAuth2AuthorizationCode.belongsTo(models.User);
     }
   });
 
-  return AuthorizationCode;
+  return OAuth2AuthorizationCode;
 };
