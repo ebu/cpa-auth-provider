@@ -17,6 +17,9 @@ exports.authorization_code = function (client, code, redirectURI, done) {
             authorization_code: code
         }
     }).then(function (authorizationCode) {
+        if (!authorizationCode) {
+            return done(null, false);
+        }
         if (!client || client.id !== authorizationCode.oauth2_client_id) {
             return done(null, false);
         }
