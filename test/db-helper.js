@@ -8,7 +8,7 @@ module.exports = {
   clearDatabase: function(done) {
     var tables = [
       'AccessTokens',
-      'AuthorizationCodes',
+      'OAuth2AuthorizationCodes',
       'Clients',
       'Domains',
       'IdentityProviders',
