@@ -14,6 +14,6 @@ var user_info = [
         });
     }];
 
-module.exports = function (app) {
-    app.get('/oauth2/user_info', user_info);
+module.exports = function (router) {
+    router.get('/oauth2/user_info', user_info);
 };

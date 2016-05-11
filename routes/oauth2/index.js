@@ -13,9 +13,9 @@ var AuthorizationCodeGrant = require('./grant/authorization-code').authorization
 var AuthorizationCodeExchange = require('./exchange/authorization-code').authorization_code;
 
 
-module.exports = function (app) {
+module.exports = function (router) {
 
-    var logger = app.get('logger');
+    var logger = router.get('logger');
 
     // create OAuth 2.0 server
     var server = oauth2orize.createServer();
@@ -137,7 +137,7 @@ module.exports = function (app) {
         server.errorHandler()
     ];
 
-    app.get('/oauth2/dialog/authorize', authorization);
-    app.post('/oauth2/dialog/authorize/decision', decision);
-    app.post('/oauth2/token', token);
+    router.get('/oauth2/dialog/authorize', authorization);
+    router.post('/oauth2/dialog/authorize/decision', decision);
+    router.post('/oauth2/token', token);
 };

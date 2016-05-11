@@ -30,8 +30,8 @@ exports.authorization_code = function (client, code, redirectURI, done) {
             user_id: authorizationCode.user_id,
             oauth2_client_id: authorizationCode.oauth2_client_id
 
-        }).then(function () {
-            done(null, token);
+        }).then(function (token) {
+            done(null, token.token);
         }).catch(done);
     }).catch(done);
 };
