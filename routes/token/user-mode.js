@@ -104,13 +104,13 @@ module.exports = function(req, res, next) {
           else {
             if (config.auto_provision_tokens) {
               if (pairingCode.user_id === null) {
-                res.send(202, { "reason": "authorization_pending" });
+                res.status(202).send({ "reason": "authorization_pending" });
                 return;
               }
             }
             else {
               if (pairingCode.state === 'pending') {
-                res.send(202, { "reason": "authorization_pending" });
+                res.status(202).send({ "reason": "authorization_pending" });
                 return;
               }
             }

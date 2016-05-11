@@ -4,6 +4,7 @@ var config   = require('../config');
 var cors     = require('../lib/cors');
 var db       = require('../models');
 var generate = require('../lib/generate');
+var logger   = require('../lib/logger');
 
 var schema = {
   id: "/associate",
@@ -28,8 +29,7 @@ var schema = {
 
 var validateJson = require('../lib/validate-json').middleware(schema);
 
-module.exports = function(app) {
-  var logger = app.get('logger');
+module.exports = function(router) {
 
   /**
    * Client association endpoint
@@ -98,14 +98,14 @@ module.exports = function(app) {
               if (client.user) {
                 if (config.auto_provision_tokens) {
                   // Automatically grant access
-                  res.send(200, {
+                  res.status(200).send({
                     device_code:      pairingCode.device_code,
                     expires_in:       Math.floor(pairingCode.getTimeToLive())
                   });
                 }
                 else {
                   // Ask user's permission to grant access
-                  res.send(200, {
+                  res.status(200).send({
                     device_code:      pairingCode.device_code,
                     verification_uri: pairingCode.verification_uri,
                     interval:         config.max_poll_interval,
@@ -115,7 +115,7 @@ module.exports = function(app) {
               }
               else {
                 // Must pair with user account
-                res.send(200, {
+                res.status(200).send({
                   device_code:      pairingCode.device_code,
                   user_code:        pairingCode.user_code,
                   verification_uri: pairingCode.verification_uri,
@@ -130,10 +130,10 @@ module.exports = function(app) {
 
   if (config.cors && config.cors.enabled) {
     // Enable pre-flight CORS request for POST /token
-    app.options('/associate', cors);
-    app.post('/associate', cors, validateJson, handler);
+    router.options('/associate', cors);
+    router.post('/associate', cors, validateJson, handler);
   }
   else {
-    app.post('/associate', validateJson, handler);
+    router.post('/associate', validateJson, handler);
   }
 };
