@@ -50,7 +50,7 @@ module.exports = function(app, options) {
   });
 
   app.get('/signup', function(req, res) {
-      res.render('signup.ejs', {email: req.query.email});
+      res.render('signup.ejs', {email: req.query.email, recaptcha_key: config.recaptcha.site_key});
   });
 
   app.get('/logout', function(req, res) {
@@ -76,7 +76,7 @@ module.exports = function(app, options) {
   app.post('/signup', recaptcha.middleware.verify , function(req, res) {
 
     if (req.recaptcha.error) {
-      requestHelper.redirect(res, '/signup?error='+ req.recaptcha.error);
+      requestHelper.redirect(res, '/signup?error='+ req.recaptcha.error+'&email='+req.body.email);
       return;
     }
 
