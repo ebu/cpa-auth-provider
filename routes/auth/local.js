@@ -50,7 +50,7 @@ module.exports = function(app, options) {
   });
 
   app.get('/signup', function(req, res) {
-      res.render('signup.ejs', {email: req.query.email, recaptcha_key: config.recaptcha.site_key});
+      res.render('signup.ejs', {email: req.query.email});
   });
 
   app.get('/logout', function(req, res) {
