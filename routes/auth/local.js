@@ -9,7 +9,7 @@ var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 var localStrategyCallback = function(req, username, password, done) {
-  db.User.find({ where: { provider_uid: username} })
+  db.User.find({ where: { email: username} })
     .then(function(user) {
       if (!user) {
         done('user not found');
