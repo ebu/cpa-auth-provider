@@ -7,6 +7,7 @@ var requestHelper = require('../../lib/request-helper');
 var bcrypt        = require('bcrypt');
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var recaptcha     = require('express-recaptcha');
 
 var localStrategyCallback = function(req, username, password, done) {
   db.User.find({ where: { email: username} })
@@ -31,6 +32,9 @@ var localStrategyCallback = function(req, username, password, done) {
       done(error);
     });
 };
+
+// Google reCAPTCHA
+recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
 passport.use('local',new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
@@ -69,12 +73,16 @@ module.exports = function(app, options) {
   });
   
       // process the signup form
-  app.post('/signup', function(req, res) {
+  app.post('/signup', recaptcha.middleware.verify , function(req, res) {
+
+    if (req.recaptcha.error) {
+      requestHelper.redirect(res, '/signup?error='+ req.recaptcha.error);
+      return;
+    }
 
     if (req.body.password != req.body.password2){
       
         requestHelper.redirect(res, '/signup?error=passords_dont_match');
-        return;
 
     } else {
 

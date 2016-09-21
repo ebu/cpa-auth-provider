@@ -23,6 +23,11 @@ module.exports = {
     }
   },
 
+  recaptcha: {
+    site_key: '',
+    secret_key: ''
+  },
+
   // When accessing the home page, if defined, users are automatically
   // redirected to the specified identity_providers (ie: 'github')
   auto_idp_redirect: '',
