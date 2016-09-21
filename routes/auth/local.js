@@ -81,27 +81,31 @@ module.exports = function(app, options) {
     }
 
     if (req.body.password != req.body.password2){
+      requestHelper.redirect(res, '/signup?error=passords_dont_match&email='+req.body.email);
+      return;
+    } 
 
-        requestHelper.redirect(res, '/signup?error=passords_dont_match&email='+req.body.email);
+    if (!req.body.password){
+      requestHelper.redirect(res, '/signup?error=passord_empty&email='+req.body.email);
+      return;
+    } 
 
-    } else {
-
-      db.User.find({ where: { email: req.body.email} }).then (function (user){
-        if (user){
-          console.log('login found : ' + user.get('email'));
-          requestHelper.redirect(res, '/signup?error=login_already_exists&email='+req.body.email);
-        } else {
-          db.sequelize.sync().then(function() {
-          var user = db.User.create({
-              email: req.body.email,
-            }).then(function (user) {
-              return user.setPassword(req.body.password);
-            });
-          })
-          requestHelper.redirect(res, '/auth/local');
-        }
-      });
-    }
+    db.User.find({ where: { email: req.body.email} }).then (function (user){
+      if (user){
+        console.log('login found : ' + user.get('email'));
+        requestHelper.redirect(res, '/signup?error=login_already_exists&email='+req.body.email);
+      } else {
+        db.sequelize.sync().then(function() {
+        var user = db.User.create({
+            email: req.body.email,
+          }).then(function (user) {
+            return user.setPassword(req.body.password);
+          });
+        })
+        requestHelper.redirect(res, '/auth/local');
+      }
+    });
+    
 
   });
 };
