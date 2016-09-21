@@ -42,7 +42,6 @@ passport.use('local',new LocalStrategy({
 module.exports = function(app, options) {
 
   app.get('/auth/local', function(req, res) {
-      console.log('toto');
       res.render('login.ejs');
   });
 
@@ -67,5 +66,22 @@ module.exports = function(app, options) {
     }
 
     requestHelper.redirect(res, '/');
+  });
+  
+      // process the signup form
+  app.post('/signup', function(req, res) {
+
+
+    db.sequelize.sync().then(function() {
+      var user = db.User.create({
+        email: req.body.email,
+      }).then(function (user) {
+        return user.setPassword(req.body.password);
+      } );
+    })
+    requestHelper.redirect(res, '/');
+
+
+
   });
 };
