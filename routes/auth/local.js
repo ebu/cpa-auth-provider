@@ -81,12 +81,7 @@ module.exports = function(app, options) {
     }
 
     if (req.body.password != req.body.password2){
-      requestHelper.redirect(res, '/signup?error=passords_dont_match&email='+req.body.email);
-      return;
-    } 
-
-    if (!req.body.password){
-      requestHelper.redirect(res, '/signup?error=passord_empty&email='+req.body.email);
+      requestHelper.redirect(res, '/signup?error=passwords_dont_match&email='+req.body.email);
       return;
     } 
 
