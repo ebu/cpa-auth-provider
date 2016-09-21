@@ -46,7 +46,7 @@ module.exports = function(app, options) {
   });
 
   app.get('/signup', function(req, res) {
-      res.render('signup.ejs');
+      res.render('signup.ejs', {email: req.query.email});
   });
 
   app.get('/logout', function(req, res) {
@@ -72,8 +72,8 @@ module.exports = function(app, options) {
   app.post('/signup', function(req, res) {
 
     if (req.body.password != req.body.password2){
-      
-        requestHelper.redirect(res, '/signup?error=passords_dont_match');
+
+        requestHelper.redirect(res, '/signup?error=passords_dont_match&email='+req.body.email);
         return;
 
     } else {
@@ -81,14 +81,14 @@ module.exports = function(app, options) {
       db.User.find({ where: { email: req.body.email} }).then (function (user){
         if (user){
           console.log('login found : ' + user.get('email'));
-          requestHelper.redirect(res, '/signup?error=login_already_exists');
+          requestHelper.redirect(res, '/signup?error=login_already_exists&email='+req.body.email);
         } else {
           db.sequelize.sync().then(function() {
           var user = db.User.create({
               email: req.body.email,
             }).then(function (user) {
               return user.setPassword(req.body.password);
-            } );
+            });
           })
           requestHelper.redirect(res, '/auth/local');
         }
