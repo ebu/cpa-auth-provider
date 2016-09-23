@@ -36,12 +36,19 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            $('#info_box').hide();
+
+
             var authenticate = function (email, password) {
                 $.post("/api/local/authenticate", {email: email, password: password},
                         function (data, status, code) {
                             console.log(JSON.stringify(data) + " with status '" + status + "' and code  : " + code.status);
                             if (code.status === 200) {
                                 $('#myModal').modal('hide');
+                                $('#login_link').hide();
+                                $('#info_box').show();
+                                console.log("token :" + data.token);
+                                getUserInfo(data.token);
                             } else {
                                 //TODO
                             }
@@ -58,6 +65,18 @@
                                 //TODO
                             }
                         });
+            }
+
+            var getUserInfo = function (header) {
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/local/info",
+                    headers: {
+                        "authorization":header
+                    }
+                }).done(function(data) {
+                    console.log("infos :" + JSON.stringify(data));
+                });
             }
 
             $("#login").click(function () {
@@ -77,9 +96,16 @@
 </head>
 <body>
 <!-- Large modal -->
-<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-    Login modal
-</button>
+<div id="login_link">
+    <a href="#" data-toggle="modal" data-target="#myModal">login</a>
+</div>
+<div id="info_box">
+    <p>info :
+
+
+    </p>
+</div>
+
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -103,7 +129,7 @@
                             <div class="tab-pane active" id="Login">
                                 <form role="form" class="form-horizontal" action="#">
                                     <div class="form-group">
-                                        <label for="email" class="col-sm-2 control-label">
+                                        <label for="login_email" class="col-sm-2 control-label">
                                             Email</label>
                                         <div class="col-sm-10">
                                             <input type="email" class="form-control" id="login_email" name="login_email"
@@ -111,7 +137,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="exampleInputPassword1" class="col-sm-2 control-label">
+                                        <label for="login_password" class="col-sm-2 control-label">
                                             Password</label>
                                         <div class="col-sm-10">
                                             <input type="password" class="form-control" id="login_password"
@@ -133,7 +159,7 @@
                             <div class="tab-pane" id="Registration">
                                 <form role="form" class="form-horizontal" action="/signup">
                                     <div class="form-group">
-                                        <label for="email" class="col-sm-2 control-label">
+                                        <label for="signup_email" class="col-sm-2 control-label">
                                             Email</label>
                                         <div class="col-sm-10">
                                             <input type="email" class="form-control" id="signup_email"
@@ -141,7 +167,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="password" class="col-sm-2 control-label">
+                                        <label for="signup_password" class="col-sm-2 control-label">
                                             Password</label>
                                         <div class="col-sm-10">
                                             <input type="password" class="form-control" id="signup_password"
@@ -149,11 +175,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="password" class="col-sm-2 control-label">
+                                        <label for="signup_password2" class="col-sm-2 control-label">
                                             Confirm</label>
                                         <div class="col-sm-10">
-                                            <input type="password" class="form-control" id="password2"
-                                                   placeholder="Password" required>
+                                            <input type="password" class="form-control" id="signup_password2"
+                                                   name="signup_password2" placeholder="Password" required>
                                         </div>
                                     </div>
                                     <div class="row">
