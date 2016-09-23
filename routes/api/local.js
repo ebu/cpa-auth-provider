@@ -33,12 +33,13 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
 
 module.exports = function(app, options) {
   app.post('/api/local/signup', recaptcha.middleware.verify, function(req,res) {
+
       if (req.recaptcha.error) {
           res.json({success: false, msg: 'Something went wrong with the reCAPTCHA'});
           return;
       }
 
-      if (!req.body.name || !req.body.password) {
+      if (!req.body.email || !req.body.password) {
           res.json({success: false, msg: 'Please pass email and password.'});
       } else {
 
