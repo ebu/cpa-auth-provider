@@ -53,11 +53,10 @@ module.exports = function(app, options) {
       if (!req.body.email || !req.body.password) {
           res.json({success: false, msg: 'Please pass email and password.'});
       } else {
-
           db.User.find({ where: { email: req.body.email} })
               .then (function (user){
                   if (user){
-                      return res.json({success: false, msg: 'email already exists.'});
+                      return res.status(400).json({success: false, msg: 'email already exists.'});
                   } else {
                       db.sequelize.sync().then(function() {
                           var user = db.User.create({
@@ -68,12 +67,12 @@ module.exports = function(app, options) {
                                   });
                                   },
                               function(err){
-                                  res.json({success: false, msg: 'Oops, something went wrong :' + err});
+                                  res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
                               });
                       });
                   }
               }, function(error) {
-                  res.json({success: false, msg: 'Oops, something went wrong :' + error});
+                  res.status(500).json({success: false, msg: 'Oops, something went wrong :' + error});
               });
       }
   });
@@ -83,7 +82,7 @@ module.exports = function(app, options) {
       db.User.find({ where: { email: req.body.email} })
           .then(function(user) {
                   if (!user) {
-                      res.json({success: false, msg: 'User not found'});
+                      res.status(401).json({success: false, msg: 'User not found'});
                       return;
                   }
 
@@ -94,16 +93,16 @@ module.exports = function(app, options) {
                               // return the information including token as JSON
                               res.json({success: true, token: 'JWT ' + token});
                           } else {
-                              res.json({success: false, msg: 'Wrong password'});
+                              res.status(401).json({success: false, msg: 'Wrong password'});
                               return;
                           }
                       },
                       function(err) {
-                          res.json({success: false, msg: 'Oops, something went wrong :' + err});
+                          res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
                       });
               },
               function(error) {
-                  res.json({success: false, msg: 'Oops, something went wrong :' + error});
+                  res.status(500).json({success: false, msg: 'Oops, something went wrong :' + error});
               });
   });
 
