@@ -7,10 +7,10 @@ var requestHelper = require('../../lib/request-helper');
 var bcrypt        = require('bcrypt');
 var passport      = require('passport');
 var Q             = require('q');
-
+var request          = require('request');
 var jwt              = require('jwt-simple');
-var JwtStrategy      = require('passport-jwt').Strategy;
 
+var JwtStrategy      = require('passport-jwt').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 
@@ -93,7 +93,7 @@ function performFacebookLogin(appName, profile, fbAccessToken) {
 }
 
 module.exports = function(app, options) {
-    app.post('api/facebook/signup', function(req, res) {
+    app.post('/api/facebook/signup', function(req, res) {
         var facebookAccessToken = req.body.fbToken;
         var applicationName = req.body.appName;
         if (facebookAccessToken && facebookAccessToken.length > 0 && applicationName && applicationName.length > 0) {
