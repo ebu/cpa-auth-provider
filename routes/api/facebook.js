@@ -66,50 +66,28 @@ function verifyFacebookUserAccessToken(token) {
 
 function performFacebookLogin(appName, profile, fbAccessToken) {
     var deferred = Q.defer();
+    var photo_url = (data.photos.length > 0) ? data.photos[0].value : null;
     if (appName && profile && fbAccessToken) {
-
-
-
-
-
-
-
-        /*
-        *
-        * var accountRepository = new AccountRepository();
-         accountRepository.findOrCreateAccount(userProfile.username, userProfile.facebookUserId, userProfile.email,
-         userProfile.firstName, userProfile.lastName)
-         .then(function(account) {
-         if (account.facebookUserId != userProfile.facebookUserId) {
-         deferred.reject(new Error("Invalid token"));
-         }
-         else {
-         var accountRepository = new AccountRepository();
-         // Update the account name, lastname and email, if they are changed since last login
-         if (account.hasChanged(userProfile.firstName, userProfile.lastName, userProfile.email)) {
-         accountRepository.updateAccount({
-         firstName: userProfile.firstName,
-         lastName: userProfile.lastName,
-         email: userProfile.email
-         });
-         }
-         var apiAccessToken = new ApiAccessToken(account._id, appName);
-         var securityToken = SecurityToken.createFromApiAndFacebookToken(apiAccessToken, fbAccessToken);
-         SecurityToken.saveSecurityToken(securityToken)
-         .then(function(savedSecurityToken){
-         var loginViewModel = new LoginViewModel(account._id, account.username, account.firstName, account.lastName,
-         apiAccessToken.accessToken);
-         accountRepository.updateLastLoginDate(account, Date.now());
-         deferred.resolve(loginViewModel);
-         });
-         }
-         }, function(error) {
-         deferred.reject(error);
-         }).fail(function(err) {
-         deferred.reject(err);
-         });
-        *
-        */
+        db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName, photo_url: photo_url }).success(function(user){
+            if (user.hasChanged(profile.displayName, photo_url)){
+                user.updateAttributes({
+                   display_name: profile.displayName,
+                   photo_url: photo_url
+                }).success(function(){
+                    var token = jwt.encode(user, config.jwtSecret);
+                    var response = {
+                      success: true,
+                      user: user,
+                      token: 'JWT ' + token
+                    };
+                    deferred.resolve(response);
+                }).error(function(error){
+                    deferred.reject(error);
+                });
+            }
+        }).error(function(err) {
+           deferred.reject(err);
+        });
     }
     return deferred.promise;
 }

@@ -28,6 +28,9 @@ module.exports = function(sequelize, DataTypes) {
       },
       verifyPassword: function(password) {
         return bcrypt.compareAsync(password, this.password);
+      },
+      hasChanged: function (displayName, photoUrl) {
+        return (this.display_name !== displayName || this.photo_url !== photoUrl);
       }
     },
     associate: function(models) {
