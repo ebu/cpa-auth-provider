@@ -11,7 +11,6 @@ var recaptcha     = require('express-recaptcha');
 
 var jwt              = require('jwt-simple');
 var JwtStrategy      = require('passport-jwt').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
 
 // Google reCAPTCHA
 recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
@@ -55,34 +54,32 @@ module.exports = function(app, options) {
           res.json({success: false, msg: 'Please pass email and password.'});
       } else {
 
-          process.nextTick(function() {
-
-              db.User.find({where: {email: req.body.email}})
-                  .then (function (user) {
-                      if (user) {
-                          return res.json({success: false, msg: 'email already exists.'});
-                      } else {
-                          db.sequelize.sync().then(function () {
-                              var user = db.User.create({
-                                  email: req.body.email,
-                              }).then(function (user) {
-                                      user.setPassword(req.body.password);
+          db.User.find({ where: { email: req.body.email} })
+              .then (function (user){
+                  if (user){
+                      return res.json({success: false, msg: 'email already exists.'});
+                  } else {
+                      db.sequelize.sync().then(function() {
+                          var user = db.User.create({
+                              email: req.body.email,
+                          }).then(function (user) {
+                                  user.setPassword(req.body.password).done(function(err, result) {
                                       res.json({success: true, msg: 'Successfully created new user.'});
-                                  },
-                                  function (err) {
-                                      res.json({success: false, msg: 'Oops, something went wrong :' + err});
                                   });
-                          });
-                      }
-                  }, function (error) {
-                      res.json({success: false, msg: 'Oops, something went wrong :' + error});
-                  });
-
-          });
+                                  },
+                              function(err){
+                                  res.json({success: false, msg: 'Oops, something went wrong :' + err});
+                              });
+                      });
+                  }
+              }, function(error) {
+                  res.json({success: false, msg: 'Oops, something went wrong :' + error});
+              });
       }
   });
 
   app.post('/api/local/authenticate', function (req, res) {
+      console.log(req.body);
       db.User.find({ where: { email: req.body.email} })
           .then(function(user) {
                   if (!user) {
