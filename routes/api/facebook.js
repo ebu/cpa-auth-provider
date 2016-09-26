@@ -6,7 +6,6 @@ var requestHelper = require('../../lib/request-helper');
 
 var bcrypt        = require('bcrypt');
 var passport      = require('passport');
-var Q             = require('q');
 var request          = require('request');
 var jwt              = require('jwt-simple');
 
@@ -15,9 +14,8 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 
 
-function verifyFacebookUserAccessToken(token) {
-    var deferred = Q.defer();
-    var path = 'https://graph.facebook.com/me?access_token=' + token;
+function verifyFacebookUserAccessToken(token, done) {
+    var path = 'https://graph.facebook.com/me?fields=id,name,picture&access_token=' + token;
     request(path, function (error, response, body) {
         /* blob example
          {
@@ -37,13 +35,13 @@ function verifyFacebookUserAccessToken(token) {
          */
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode == 200) {
-            var photo_url = (data.photos.length > 0) ? data.photos[0].value : null;
+            var photo_url = (data.picture) ? data.picture.data.url : null;
             var user = {
                 provider_uid: data.id,
                 display_name: data.name,
                 photo_url: photo_url
             };
-            deferred.resolve(user);
+            done(null, user);
         }
         else {
             /*
@@ -58,38 +56,41 @@ function verifyFacebookUserAccessToken(token) {
              */
             console.log(data.error);
             //console.log(response);
-            deferred.reject({code: response.statusCode, message: data.error.message});
+            done({code: response.statusCode, message: data.error.message}, null);
         }
     });
-    return deferred.promise;
 }
 
-function performFacebookLogin(appName, profile, fbAccessToken) {
-    var deferred = Q.defer();
-    var photo_url = (data.photos.length > 0) ? data.photos[0].value : null;
+function buildResponse(user) {
+    var token = jwt.encode(user, config.jwtSecret);
+    var response = {
+        success: true,
+        user: user,
+        token: 'JWT ' + token
+    };
+    return response;
+}
+
+function performFacebookLogin(appName, profile, fbAccessToken, done) {
+
     if (appName && profile && fbAccessToken) {
-        db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName, photo_url: photo_url }).success(function(user){
-            if (user.hasChanged(profile.displayName, photo_url)){
+        db.User.findOrCreate({provider_uid: profile.provider_uid, display_name: profile.display_name, photo_url: profile.photo_url }).success(function(user){
+            if (user.hasChanged(profile.display_name, profile.photo_url)){
                 user.updateAttributes({
-                   display_name: profile.displayName,
-                   photo_url: photo_url
+                   display_name: profile.display_name,
+                   photo_url: profile.photo_url
                 }).success(function(){
-                    var token = jwt.encode(user, config.jwtSecret);
-                    var response = {
-                      success: true,
-                      user: user,
-                      token: 'JWT ' + token
-                    };
-                    deferred.resolve(response);
+                    return done(null, buildResponse(user));
                 }).error(function(error){
-                    deferred.reject(error);
+                    return done(error, null);
                 });
+            } else {
+                return done(null, buildResponse(user));
             }
         }).error(function(err) {
-           deferred.reject(err);
+           return done(err, null);
         });
     }
-    return deferred.promise;
 }
 
 module.exports = function(app, options) {
@@ -98,36 +99,28 @@ module.exports = function(app, options) {
         var applicationName = req.body.appName;
         if (facebookAccessToken && facebookAccessToken.length > 0 && applicationName && applicationName.length > 0) {
             // Get back user object from Facebook
-            verifyFacebookUserAccessToken(facebookAccessToken).
-            then(function(user) {
-                    // Invoke wrapper function performLogin and return on deferred resolved
-                    performFacebookLogin(applicationName, user, facebookAccessToken).
-                    then(function(loginViewModel) {
-                        // Return the login view model to the client
-                        logger.log('info', 'User ' + loginViewModel.userId + ' successfully logged in using application' +
-                            ' ' + applicationName + ' from: ' + req.connection.remoteAddress + '.');
-                        res.json(200, loginViewModel);
+            verifyFacebookUserAccessToken(facebookAccessToken, function(err, user){
+                if(user){
+                    performFacebookLogin(applicationName, user, facebookAccessToken, function(error, response){
+                        if(response){
+                            res.status(200).json(response);
+                        } else {
+                            console.log(error);
+                            res.status(500).json({error: error.message});
+                        }
                     });
-                }, function(error) {
-                    logger.log('error', 'Login unsuccessful: ' + error.message +
-                        ' . Request from address ' + req.connection.remoteAddress + ' .');
-                    res.json(401, {
-                        error: error.message
-                    });
+                } else {
+                    console.log(err);
+                    res.status(500).json({error: err.message});
                 }
-            ).fail(function(error){
-                logger.log('error', 'An error has occurred while attempting to login mobile user using Facebook OAuth' +
-                    ' from address ' + req.connection.remoteAddress + '. Stack trace: ' + error.stack);
-                res.json(500, {
-                    error: error.message
-                });
+
             });
         }
         else {
             // 400 BAD REQUEST
-            logger.log('error', 'Bad login request from ' +
+            console.log('error', 'Bad login request from ' +
                 req.connection.remoteAddress + '. Reason: facebook access token and application name are required.');
-            res.json(400);
+            res.status(400);
         }
     });
 };
