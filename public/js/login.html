@@ -33,10 +33,9 @@
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script type="text/javascript">$('#myModal').modal('show');</script>
     <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="/js/jquery.cookie.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-
-            $('#info_box').hide();
 
 
             var authenticate = function (email, password) {
@@ -67,16 +66,43 @@
                         });
             }
 
-            var getUserInfo = function (header) {
+            var getUserInfo = function (token) {
                 $.ajax({
                     type: 'GET',
                     url: "/api/local/info",
                     headers: {
-                        "authorization":header
+                        "authorization":token
                     }
                 }).done(function(data) {
                     console.log("infos :" + JSON.stringify(data));
+                    var name = data.user.email;
+                    if (data.user.display_name){
+                        name = data.user.display_name;
+                    }
+                    var pictUrl = "/img/default_profile.png";
+                    if (data.user.photo_url){
+                        pictUrl = data.user.photo_url;
+                    }
+
+                    console.log("name :"+name);
+
+                    displayUserInfo(name, pictUrl);
+
+                    var cookieVal = JSON.stringify({token:token,  name:name, pictUrl:pictUrl});
+
+                    $.cookie("cpa",
+                            cookieVal, // Value
+                            {
+                                expires : 20*365           //expires in 20 years
+                                // TODO domain  : 'jquery.com',  //The value of the domain attribute of the cookie
+                            });
+
                 });
+            }
+
+            var displayUserInfo = function (name, pictUrl){
+                $("#info_box span").text(name);
+                $("#userPicture").attr("src",pictUrl);
             }
 
             $("#login").click(function () {
@@ -91,19 +117,55 @@
                 register(email, password, grecaptcha.getResponse());
             });
 
+            $("#disconnect").click(function () {
+                $.removeCookie("cpa"); // TODO
+                $('#login_link').show();
+                $('#info_box').hide();
+
+            });
+
+            ////////////////////
+
+            if($.cookie("cpa")){ // TODO Use constant !!!
+                var c = JSON.parse($.cookie("cpa")); // TODO Use constant !!!
+                //console.log("cookie : " + c.name + " / " + c.pictUrl + " / " + c.token)
+                displayUserInfo(c.name, c.pictUrl);
+                $('#myModal').modal('hide');
+                $('#login_link').hide();
+                getUserInfo(c.token);
+
+            } else {
+                $('#info_box').hide();
+            }
+
+
         });
     </script>
 </head>
 <body>
+
+<!-- FB Login -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.7&appId=533187713537471";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- end of FB Login -->
+
 <!-- Large modal -->
 <div id="login_link">
     <a href="#" data-toggle="modal" data-target="#myModal">login</a>
 </div>
 <div id="info_box">
-    <p>info :
-
-
+    <p>info :<br/>
+        Name: <span id="display_name"></span>
     </p>
+    <img id="userPicture" src="/img/default_profile.png" width="150px"/>
+    <br/>
+    <a href="#" id="disconnect">disconnect</a>
 </div>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -127,7 +189,7 @@
                         <!-- Tab panes -->
                         <div class="tab-content">
                             <div class="tab-pane active" id="Login">
-                                <form role="form" class="form-horizontal" action="#">
+                                <form name="login_form" id="login_form" role="form" class="form-horizontal" action="#" method="post">
                                     <div class="form-group">
                                         <label for="login_email" class="col-sm-2 control-label">
                                             Email</label>
@@ -152,12 +214,14 @@
                                                     value="Login">
                                                 Submit
                                             </button>
+                                            <!-- hidden submit: allow user to submit just by pressing enter-->
+                                            <input type="submit" style="display: none">
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="tab-pane" id="Registration">
-                                <form role="form" class="form-horizontal" action="/signup">
+                                <form name="signup_form" id="signup_form" role="form" class="form-horizontal" method="post">
                                     <div class="form-group">
                                         <label for="signup_email" class="col-sm-2 control-label">
                                             Email</label>
@@ -188,7 +252,7 @@
                                         <div class="col-sm-10">
                                             <div class="g-recaptcha"
                                                  data-sitekey="6Ld_UQcUAAAAAP-uEX-JVnu_kLpf17WQvIB-pXIX"></div>
-                                            <!--<%= config.recaptcha.site_key %>-->
+                                            <!-- // TODO : <%= config.recaptcha.site_key %>-->
 
                                         </div>
                                     </div>
@@ -200,6 +264,8 @@
                                                     id="signup" value="signup">
                                                 Save &amp; Continue
                                             </button>
+                                            <!-- hidden submit: allow user to submit just by pressing enter-->
+                                            <input type="submit" style="display: none">
                                         </div>
                                     </div>
 
@@ -217,10 +283,7 @@
                                     Sign in with</h3>
                             </div>
                             <div class="col-md-12">
-                                <div class="btn-group btn-group-justified">
-                                    <a href="#" class="btn btn-primary">Facebook</a> <a href="#" class="btn btn-danger">
-                                    Google</a>
-                                </div>
+                                <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>
                             </div>
                         </div>
                     </div>
