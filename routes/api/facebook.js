@@ -3,36 +3,16 @@
 var db            = require('../../models');
 var config        = require('../../config');
 var requestHelper = require('../../lib/request-helper');
-
-var bcrypt        = require('bcrypt');
-var passport      = require('passport');
 var request          = require('request');
 var jwt              = require('jwt-simple');
-
-var JwtStrategy      = require('passport-jwt').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
+var cors             = require('../../lib/cors');
 
 
 
 function verifyFacebookUserAccessToken(token, done) {
     var path = 'https://graph.facebook.com/me?fields=id,name,picture&access_token=' + token;
     request(path, function (error, response, body) {
-        /* blob example
-         {
-         "id": "xxxxxx",
-         "name": "Valerio Gheri",
-         "first_name": "Valerio",
-         "last_name": "Gheri",
-         "link": "https://www.facebook.com/valerio.gheri",
-         "username": "valerio.gheri",
-         "gender": "male",
-         "email": "valerio.gheri@gmail.com",
-         "timezone": 2,
-         "locale": "en_US",
-         "verified": true,
-         "updated_time": "2013-08-14T09:16:58+0000"
-         }
-         */
+
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode == 200) {
             var photo_url = (data.picture) ? data.picture.data.url : null;
@@ -44,18 +24,7 @@ function verifyFacebookUserAccessToken(token, done) {
             done(null, user);
         }
         else {
-            /*
-             {
-             "error": {
-             "message": "Error validating access token: Session has expired at unix time 1378054800. The current unix time is 1378489482.",
-             "type": "OAuthException",
-             "code": 190,
-             "error_subcode": 463
-             }
-             }
-             */
             console.log(data.error);
-            //console.log(response);
             done({code: response.statusCode, message: data.error.message}, null);
         }
     });
@@ -63,12 +32,11 @@ function verifyFacebookUserAccessToken(token, done) {
 
 function buildResponse(user) {
     var token = jwt.encode(user, config.jwtSecret);
-    var response = {
+    return {
         success: true,
         user: user,
         token: 'JWT ' + token
     };
-    return response;
 }
 
 function performFacebookLogin(appName, profile, fbAccessToken, done) {
@@ -94,7 +62,7 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
 }
 
 module.exports = function(app, options) {
-    app.post('/api/facebook/signup', function(req, res) {
+    app.post('/api/facebook/signup', cors, function(req, res) {
         var facebookAccessToken = req.body.fbToken;
         var applicationName = req.body.appName;
         if (facebookAccessToken && facebookAccessToken.length > 0 && applicationName && applicationName.length > 0) {

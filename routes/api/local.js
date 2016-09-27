@@ -11,6 +11,7 @@ var recaptcha     = require('express-recaptcha');
 
 var jwt              = require('jwt-simple');
 var JwtStrategy      = require('passport-jwt').Strategy;
+var cors             = require('../../lib/cors');
 
 // Google reCAPTCHA
 recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
@@ -43,7 +44,7 @@ var getToken = function (headers) {
 
 
 module.exports = function(app, options) {
-  app.post('/api/local/signup', recaptcha.middleware.verify, function(req,res) {
+  app.post('/api/local/signup', cors, recaptcha.middleware.verify, function(req,res) {
 
       if (req.recaptcha.error) {
           res.json({success: false, msg: 'Something went wrong with the reCAPTCHA'});
@@ -77,7 +78,7 @@ module.exports = function(app, options) {
       }
   });
 
-  app.post('/api/local/authenticate', function (req, res) {
+  app.post('/api/local/authenticate', cors , function (req, res) {
       console.log(req.body);
       db.User.find({ where: { email: req.body.email} })
           .then(function(user) {
