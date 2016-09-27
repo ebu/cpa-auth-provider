@@ -107,12 +107,12 @@ module.exports = function(app, options) {
               });
   });
 
-  app.get('/api/local/info', passport.authenticate('jwt', { session: false}), function(req, res) {
+  app.get('/api/local/info', cors, passport.authenticate('jwt', { session: false}), function(req, res) {
       var token = getToken(req.headers);
       if (token) {
           var decoded = jwt.decode(token, config.jwtSecret);
           db.User.find({ where: {
-              email: decoded.email
+              id: decoded.id
           }}).then(function(user) {
               if (!user) {
                   return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
@@ -125,7 +125,7 @@ module.exports = function(app, options) {
                           photo_url:    user.photo_url,
                           admin:        user.admin
                       },
-                      token: token
+                      token: 'JWT ' + token
 
                   });
               }
