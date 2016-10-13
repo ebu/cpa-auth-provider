@@ -16,6 +16,10 @@ module.exports = {
     }
   },
 
+  trackingCookie: {
+    enabled: true
+  },
+
   auto_idp_redirect: 'local',
 
   db: {
