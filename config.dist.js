@@ -23,6 +23,13 @@ module.exports = {
     }
   },
 
+  trackingCookie: {
+    enabled: false,
+    secret: 'secret phrase',
+    // name: 'TrackingId',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
   // When accessing the home page, if defined, users are automatically
   // redirected to the specified identity_providers (ie: 'github')
   auto_idp_redirect: '',

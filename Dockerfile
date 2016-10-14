@@ -17,6 +17,9 @@ ADD routes /src/routes
 ADD views /src/views
 ADD package.json /src/package.json
 ADD config.js /src/config.js
+# TODO find better way to run tests without adding test file to the image
+ADD test /src/test
+ADD config.test.js /src/config.test.js
 
 # Install Node.js dependencies
 WORKDIR /src
