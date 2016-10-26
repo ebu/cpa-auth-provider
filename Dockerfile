@@ -1,13 +1,8 @@
-FROM ubuntu
+FROM node:6.2.0
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-  git \
-  libsqlite3-dev \
-  nodejs \
-  npm
-
-RUN ln -s /usr/bin/nodejs /usr/local/bin/node
+  libsqlite3-dev
 
 ADD bin /src/bin
 ADD lib /src/lib

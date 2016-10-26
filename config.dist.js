@@ -35,6 +35,8 @@ module.exports = {
     secret_key: ''
   },
 
+  jwtSecret: '',
+
   // When accessing the home page, if defined, users are automatically
   // redirected to the specified identity_providers (ie: 'github')
   auto_idp_redirect: '',
