@@ -71,8 +71,10 @@ var localStrategyConf = {
     passReqToCallback : true // allows us to pass back the entire request to the callback
 };
 
-// Google reCAPTCHA
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
+if (config.recaptcha.enabled) {
+    // Google reCAPTCHA
+    recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
+}
 
 passport.use('local',new LocalStrategy(localStrategyConf,localStrategyCallback));
 
@@ -108,9 +110,18 @@ module.exports = function(app, options) {
     requestHelper.redirect(res, '/');
   });
 
-  app.post('/signup', recaptcha.middleware.verify , passport.authenticate('local-signup', {
+  app.post('/signup', captchaVerify, passport.authenticate('local-signup', {
       failureRedirect: '/signup',
       successRedirect: '/auth/local',
       failureFlash : true
   }));
 };
+
+function captchaVerify(req, res, next) {
+    if (config.recaptcha.enabled) {
+        recaptcha.middleware.verify(req, res, next);
+    } else {
+        req.recaptcha = {};
+        next();
+    }
+}

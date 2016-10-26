@@ -13,8 +13,10 @@ var jwt              = require('jwt-simple');
 var JwtStrategy      = require('passport-jwt').Strategy;
 var cors             = require('../../lib/cors');
 
-// Google reCAPTCHA
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
+if (config.recaptcha.enabled) {
+    // Google reCAPTCHA
+    recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
+}
 
 var opts = {};
 opts.secretOrKey = config.jwtSecret;
@@ -42,11 +44,19 @@ var getToken = function (headers) {
     }
 };
 
+function captchaVerify(req, res, next) {
+    if (config.recaptcha.enabled) {
+        recaptcha.middleware.verify(req, res, next);
+    } else {
+        req.recaptcha = {};
+        next();
+    }
+}
 
 module.exports = function(app, options) {
-  app.post('/api/local/signup', cors, recaptcha.middleware.verify, function(req,res) {
+  app.post('/api/local/signup', cors,  captchaVerify, function(req,res) {
 
-      if (req.recaptcha.error) {
+      if (config.recaptcha.enabled && req.recaptcha.error) {
           res.json({success: false, msg: 'Something went wrong with the reCAPTCHA'});
           return;
       }
