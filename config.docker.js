@@ -2,17 +2,22 @@
 
 module.exports = {
   identity_providers: {
-    github: {
-      enabled: true,
-      client_id: process.env.CPA_GITHUB_CLIENT_ID,
-      client_secret: process.env.CPA_GITHUB_CLIENT_SECRET,
-      callback_url: '/auth/github/callback'
+    local: {
+      enabled: true
     }
   },
 
+  trackingCookie: {
+    enabled: true,
+    secret: 'HighWaterTurnsOff',
+    // name: 'TrackingId',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
   recaptcha: {
-    site_key: process.env.CPA_RECAPCHA_SITEKEY,
-    secret_key: process.env.CPA_RECAPCHA_SECRETKEY
+    enabled: false,
+    site_key: '',
+    secret_key: ''
   },
 
   // When accessing the home page, if defined, users are automatically
