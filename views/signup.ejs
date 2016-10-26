@@ -27,9 +27,11 @@
             <input id="password2" type="password" class="form-control" name="password2" required>
         </div>
 
+        <% if(config.recaptcha.enabled) { %>
         <div class="form-group">
             <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
         </div>
+        <% } %>
 
         <button type="submit" class="btn btn-warning btn-lg">Signup</button>
     </form>
