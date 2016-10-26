@@ -7,6 +7,7 @@ module.exports = function(sequelize, DataTypes) {
 
   var User = sequelize.define('User', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    tracking_uid: DataTypes.STRING,
     provider_uid: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,

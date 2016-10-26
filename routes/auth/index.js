@@ -4,6 +4,7 @@ var db            = require('../../models');
 var config        = require('../../config');
 var authHelper    = require('../../lib/auth-helper');
 var requestHelper = require('../../lib/request-helper');
+var trackingCookie= require('../../lib/tracking-cookie');
 
 module.exports = function(router) {
   router.get('/logout', function(req, res) {
@@ -15,7 +16,7 @@ module.exports = function(router) {
     res.send('protected');
   });
 
-  router.get('/auth', function(req, res) {
+  router.get('/auth', trackingCookie.middleware, function(req, res) {
     var autoIdpRedirect = config.auto_idp_redirect;
 
     if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {

@@ -23,6 +23,13 @@ module.exports = {
     }
   },
 
+  trackingCookie: {
+    enabled: false,
+    secret: 'secret phrase',
+    // name: 'TrackingId',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
   recaptcha: {
     site_key: '',
     secret_key: ''
