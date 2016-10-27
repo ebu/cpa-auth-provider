@@ -12,6 +12,7 @@ var recaptcha     = require('express-recaptcha');
 var jwt              = require('jwt-simple');
 var JwtStrategy      = require('passport-jwt').Strategy;
 var cors             = require('../../lib/cors');
+var generate = require('../../lib/generate');
 
 if (config.recaptcha.enabled) {
     // Google reCAPTCHA
@@ -72,6 +73,7 @@ module.exports = function(app, options) {
                       db.sequelize.sync().then(function() {
                           var user = db.User.create({
                               email: req.body.email,
+                              account_id: generate.accountId()
                           }).then(function (user) {
                                   user.setPassword(req.body.password).done(function(err, result) {
                                       res.json({success: true, msg: 'Successfully created new user.'});
@@ -100,7 +102,11 @@ module.exports = function(app, options) {
                   user.verifyPassword(req.body.password).then(function(isMatch) {
                           if (isMatch) {
                               // if user is found and password is right create a token
-                              var token = jwt.encode(user, config.jwtSecret);
+                              var data = {
+                                  id: user.id,
+                                  account_id: user.account_id
+                              };
+                              var token = jwt.encode(data, config.jwtSecret);
                               // return the information including token as JSON
                               res.json({success: true, token: 'JWT ' + token});
                           } else {

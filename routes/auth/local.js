@@ -9,6 +9,8 @@ var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha     = require('express-recaptcha');
 
+var generate = require('../../lib/generate');
+
 var localStrategyCallback = function(req, username, password, done) {
 
   db.User.find({ where: { email: username} })
@@ -49,6 +51,7 @@ var localSignupStrategyCallback = function(req, username, password, done) {
                 db.sequelize.sync().then(function() {
                     var user = db.User.create({
                         email: req.body.email,
+                        account_id: generate.accountId(),
                     }).then(function (user) {
                         user.setPassword(req.body.password);
                         done(null, user);
