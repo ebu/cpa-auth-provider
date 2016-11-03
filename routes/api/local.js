@@ -73,7 +73,7 @@ module.exports = function(app, options) {
                       db.sequelize.sync().then(function() {
                           var user = db.User.create({
                               email: req.body.email,
-                              account_id: generate.accountId()
+                              account_uid: generate.accountId()
                           }).then(function (user) {
                                   user.setPassword(req.body.password).done(function(err, result) {
                                       res.json({success: true, msg: 'Successfully created new user.'});
@@ -104,7 +104,7 @@ module.exports = function(app, options) {
                               // if user is found and password is right create a token
                               var data = {
                                   id: user.id,
-                                  account_id: user.account_id
+                                  account_uid: user.account_uid
                               };
                               var token = jwt.encode(data, config.jwtSecret);
                               // return the information including token as JSON

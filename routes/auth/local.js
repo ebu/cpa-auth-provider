@@ -51,7 +51,7 @@ var localSignupStrategyCallback = function(req, username, password, done) {
                 db.sequelize.sync().then(function() {
                     var user = db.User.create({
                         email: req.body.email,
-                        account_id: generate.accountId(),
+                        account_uid: generate.accountId(),
                     }).then(function (user) {
                         user.setPassword(req.body.password);
                         done(null, user);
