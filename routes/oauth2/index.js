@@ -12,6 +12,7 @@ var BearerStrategy = require('./strategy/bearer').bearer;
 var AuthorizationCodeGrant = require('./grant/authorization-code').authorization_code;
 var TokenGrant = require('./grant/token').token;
 var AuthorizationCodeExchange = require('./exchange/authorization-code').authorization_code;
+var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-password').token;
 
 
 module.exports = function (router) {
@@ -21,7 +22,7 @@ module.exports = function (router) {
     // create OAuth 2.0 server
     var server = oauth2orize.createServer();
 
-    // Register serialialization and deserialization functions.
+    // Register serialization and deserialization functions.
     //
     // When a client redirects a user to user authorization endpoint, an
     // authorization transaction is initiated.  To complete the transaction, the
@@ -75,6 +76,8 @@ module.exports = function (router) {
     server.grant(oauth2orize.grant.token(TokenGrant));
 
     server.exchange(oauth2orize.exchange.code(AuthorizationCodeExchange));
+
+    server.exchange(oauth2orize.exchange.password(ResourceOwnerPasswordCredentials));
 
     // user authorization endpoint
     //
