@@ -25,6 +25,10 @@ ADD config.docker.js /src/config.local.js
 
 ENV NODE_ENV development
 
+ENV DB_TYPE sqlite
+ENV DB_FILENAME "data/cpa-auth-provider.sqlite"
+
+
 # Create the sqlite database
 RUN mkdir data
 RUN bin/init-db

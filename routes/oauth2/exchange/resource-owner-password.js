@@ -9,20 +9,13 @@ var generate = require('../../../lib/generate');
 // The application issues a token, which is bound to these values.
 
 exports.token = function (client, username, password, scope, done) {
-	// TODO confirm this particular client actually may use this validation strategy!
-	db.OAuth2Client.find(
-		{where: {client_id: id}}
-	).then(
-		function (client) {
-			return confirmUser(client, username, password, scope, done);
-		}
-	).catch(done);
-
+	// TODO confirm this particular client actually may use this validation strategy?!
+	return confirmUser(client, username, password, scope, done);
 };
 
 function confirmUser(client, username, password, scope, done) {
 	db.User.find(
-		{ where: { provider_uid: username} }
+		{ where: { email: username} }
 	).then(
 		function(user) {
 			if (!user) {
@@ -58,10 +51,13 @@ function provideAccessToken(client, user, done) {
 	var token = generate.accessToken();
 
 	db.AccessToken.create(
-		{ token: token, user_id: user.id, oauth2_client_id: client.id }
+		{ token: token, user_id: user.id, oauth2_client_id: client ? client.id : 0 }
 	).then(
 		function() {
 			done(null, token);
+		},
+		function(err) {
+			done(err);
 		}
 	).catch(
 		function(err) {

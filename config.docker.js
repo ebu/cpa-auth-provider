@@ -27,11 +27,17 @@ module.exports = {
   auto_idp_redirect: '',
 
   db: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+
     // The database type, 'mysql', 'sqlite', etc.
-    type: 'sqlite',
+    type: process.env.DB_TYPE,//'sqlite',
+    database: process.env.DB_DATABASE,
 
     // Database filename for SQLite.
-    filename: 'data/cpa-auth-provider.sqlite',
+    filename: process.env.DB_FILENAME,//'data/cpa-auth-provider.sqlite',
 
     // If true, SQL statements are logged to the console.
     debug: true
