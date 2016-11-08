@@ -10,6 +10,11 @@ module.exports = {
     }
   },
 
+  recaptcha: {
+    site_key: process.env.CPA_RECAPCHA_SITEKEY,
+    secret_key: process.env.CPA_RECAPCHA_SECRETKEY
+  },
+
   // When accessing the home page, if defined, users are automatically
   // redirected to the specified identity_providers (ie: 'github')
   auto_idp_redirect: '',
