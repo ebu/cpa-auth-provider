@@ -1,13 +1,10 @@
-FROM ubuntu:trusty
+FROM node:7
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-  git \
-  libsqlite3-dev \
-  nodejs \
-  npm
+  libsqlite3-dev
 
-RUN ln -s /usr/bin/nodejs /usr/local/bin/node
+RUN npm install --global yarn
 
 ADD bin /src/bin
 ADD lib /src/lib
@@ -20,12 +17,20 @@ ADD config.js /src/config.js
 
 # Install Node.js dependencies
 WORKDIR /src
-RUN npm install
+RUN yarn install
 
 # Configure
 ADD config.docker.js /src/config.local.js
 
 ENV NODE_ENV development
+
+ENV CPA_RECAPCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+ENV CPA_RECAPCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+ENV JWT_SECRET AlteredCarbonFly
+
+# default settings for database
+ENV DB_TYPE sqlite
+ENV DB_FILENAME "data/cpa-auth-provider.sqlite"
 
 # Create the sqlite database
 RUN mkdir data
