@@ -141,6 +141,7 @@ module.exports = function (router) {
     var cors_header = cors(corsOptionsDelegate);
     var token = [
         passport.authenticate(['oauth2-client-password'], {session: false}),
+        cors_header,
         server.token(),
         server.errorHandler()
     ];

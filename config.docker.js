@@ -10,6 +10,18 @@ module.exports = {
     }
   },
 
+  jwtSecret: process.env.JWT_SECRET,
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
+  },
+
+  trackingCookie: {
+    enabled: true,
+    secret: 'HighWaterTurnsOff',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
   recaptcha: {
     site_key: process.env.CPA_RECAPCHA_SITEKEY,
     secret_key: process.env.CPA_RECAPCHA_SECRETKEY
