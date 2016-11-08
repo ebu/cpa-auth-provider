@@ -1,5 +1,6 @@
 FROM node:7
 
+RUN npm install --global yarn
 # Install dependencies
 #RUN apt-get update && apt-get install -y \
 #  git \
@@ -13,7 +14,7 @@ COPY package.json /src/package.json
 
 # Install Node.js dependencies
 WORKDIR /src
-RUN npm install
+RUN yarn install
 
 # Configure
 ADD config.docker.js /src/config.local.js

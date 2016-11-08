@@ -17,6 +17,7 @@
     "ejs": "~0.8.5",
     "lodash": "~2.4.1",
     "winston": "~2.3.0",
+    "request": "~2.31.0",
     "async": "~0.2.10",
     "jsonschema": "~0.4.0",
     "connect-sqlite3": "~0.9.2",
