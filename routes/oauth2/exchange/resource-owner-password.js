@@ -5,6 +5,8 @@ var generate = require('../../../lib/generate');
 
 var jwtHelper = require('../../../lib/jwt-helper');
 
+var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+
 // Grant authorization by resource owner (user) and password credentials.
 // The user is authenticated and checked for validity - this strategy should
 // only be available to a select few, highly trusted clients!
@@ -21,7 +23,7 @@ function confirmUser(client, username, password, scope, done) {
 	).then(
 		function(user) {
 			if (!user) {
-				done('user not found');
+				done(INCORRECT_LOGIN_OR_PASS);
 				return;
 			}
 
@@ -29,7 +31,7 @@ function confirmUser(client, username, password, scope, done) {
 					if (isMatch) {
 						provideAccessToken(client, user, done);
 					} else {
-						done('password does not match');
+						done(INCORRECT_LOGIN_OR_PASS);
 					}
 				},
 				function(err) {

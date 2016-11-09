@@ -13,6 +13,9 @@ var resetDatabase = function (done) {
     });
 };
 
+var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+
+
 // Test signup
 
 describe('POST /api/local/signup', function () {
@@ -199,7 +202,6 @@ describe('POST /api/local/authenticate', function () {
             console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            //expect(this.res.body.msg).to.equal("email already exists.");
         });
     });
 
@@ -236,6 +238,7 @@ describe('POST /api/local/authenticate', function () {
             console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(401);
             expect(this.res.body.success).to.equal(false);
+            expect(this.res.body.msg).to.equal(INCORRECT_LOGIN_OR_PASS);
         });
     });
 

@@ -13,6 +13,8 @@ var jwt              = require('jwt-simple');
 var JwtStrategy      = require('passport-jwt').Strategy;
 var cors             = require('../../lib/cors');
 
+var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+
 // Google reCAPTCHA
 recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
@@ -83,7 +85,7 @@ module.exports = function(app, options) {
       db.User.find({ where: { email: req.body.email} })
           .then(function(user) {
                   if (!user) {
-                      res.status(401).json({success: false, msg: 'User not found'});
+                      res.status(401).json({success: false, msg: INCORRECT_LOGIN_OR_PASS});
                       return;
                   }
 
@@ -94,7 +96,7 @@ module.exports = function(app, options) {
                               // return the information including token as JSON
                               res.json({success: true, token: 'JWT ' + token});
                           } else {
-                              res.status(401).json({success: false, msg: 'Wrong password'});
+                              res.status(401).json({success: false, msg: INCORRECT_LOGIN_OR_PASS});
                               return;
                           }
                       },
@@ -115,7 +117,7 @@ module.exports = function(app, options) {
               id: decoded.id
           }}).then(function(user) {
               if (!user) {
-                  return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+                  return res.status(403).send({success: false, msg: INCORRECT_LOGIN_OR_PASS});
               } else {
                   res.json({
                       success: true,
