@@ -3,6 +3,8 @@
 var db = require('../../../models');
 var generate = require('../../../lib/generate');
 
+var jwtHelper = require('../../../lib/jwt-helper');
+
 // Grant authorization by resource owner (user) and password credentials.
 // The user is authenticated and checked for validity - this strategy should
 // only be available to a select few, highly trusted clients!
@@ -48,20 +50,26 @@ function confirmUser(client, username, password, scope, done) {
  * @param done function(err, token)
  */
 function provideAccessToken(client, user, done) {
-	var token = generate.accessToken();
-
-	db.AccessToken.create(
-		{ token: token, user_id: user.id, oauth2_client_id: client ? client.id : 0 }
-	).then(
-		function() {
-			done(null, token);
-		},
-		function(err) {
-			done(err);
-		}
-	).catch(
-		function(err) {
-			return done(err);
-		}
-	);
+	try {
+		var token = jwtHelper.generate(user.id, 10 * 60 * 60, {cli: client ? client.id : 0});
+		return done(null, token);
+	} catch(e) {
+		return done(e);
+	}
+	// var token = generate.accessToken();
+	//
+	// db.AccessToken.create(
+	// 	{ token: token, user_id: user.id, oauth2_client_id: client ? client.id : 0}
+	// ).then(
+	// 	function(accessToken) {
+	// 		done(null, token);
+	// 	},
+	// 	function(err) {
+	// 		done(err);
+	// 	}
+	// ).catch(
+	// 	function(err) {
+	// 		return done(err);
+	// 	}
+	// );
 }

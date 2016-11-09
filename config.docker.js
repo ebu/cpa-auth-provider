@@ -2,15 +2,35 @@
 
 module.exports = {
   identity_providers: {
+    github: {
+      enabled: false,
+      client_id: process.env.CPA_GITHUB_CLIENT_ID,
+      client_secret: process.env.CPA_GITHUB_CLIENT_SECRET,
+      callback_url: '/auth/github/callback'
+    },
     local: {
       enabled: true
     }
+
+  },
+
+  jwtSecret: process.env.JWT_SECRET,
+
+  trackingCookie: {
+    enabled: true,
+    secret: 'HighWaterTurnsOff',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
+  jwtSecret: process.env.JWT_SECRET,
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
   },
 
   trackingCookie: {
     enabled: true,
     secret: 'HighWaterTurnsOff',
-    // name: 'TrackingId',
     duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
   },
 

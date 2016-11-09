@@ -9,7 +9,7 @@ var user_info = [
         res.json({
             user: {
                 id: req.user.id,
-                name: req.user.display_name
+                name: req.user.display_name || req.user.email
             },
             scope: req.authInfo.scope
         });

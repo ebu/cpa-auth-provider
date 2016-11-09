@@ -13,6 +13,7 @@ var AuthorizationCodeGrant = require('./grant/authorization-code').authorization
 var TokenGrant = require('./grant/token').token;
 var AuthorizationCodeExchange = require('./exchange/authorization-code').authorization_code;
 var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-password').token;
+var cors = require('cors');
 
 
 module.exports = function (router) {
@@ -141,8 +142,10 @@ module.exports = function (router) {
     // exchange middleware will be invoked to handle the request.  Clients must
     // authenticate when making requests to this endpoint.
 
+    var cors_header = cors(corsOptionsDelegate);
     var token = [
         passport.authenticate(['oauth2-client-password'], {session: false}),
+        cors_header,
         server.token(),
         server.errorHandler()
     ];
@@ -150,6 +153,18 @@ module.exports = function (router) {
     router.get('/oauth2/dialog/authorize', authorization);
     router.post('/oauth2/dialog/authorize/decision', decision);
     router.post('/oauth2/token', token);
+    router.options('/oauth2/token', cors_header);
 
-    require('./confirm')(router);
+    function corsOptionsDelegate(req, callback) {
+        var options;
+        var origin = req.get('origin');
+        // TODO only allow a selected group of pages to use this with CORS!
+        // MUST also require https!
+        if (origin == 'http://localhost:3001') {
+            options = { origin: true };
+        } else {
+            options = { origin: true };
+        }
+        return callback(null, options);
+    }
 };

@@ -2,6 +2,7 @@
 
 var db = require('../../../models');
 var generate = require('../../../lib/generate');
+var jwtHelper = require('../../../lib/jwt-helper');
 
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the
@@ -26,15 +27,17 @@ exports.authorization_code = function (client, code, redirectURI, done) {
         if (redirectURI !== authorizationCode.redirect_uri) {
             return done(null, false);
         }
-        var token = generate.accessToken();
-        db.AccessToken.create({
-
-            token: token,
-            user_id: authorizationCode.user_id,
-            oauth2_client_id: authorizationCode.oauth2_client_id
-
-        }).then(function (token) {
-            done(null, token.token);
-        }).catch(done);
+        var token = jwtHelper.generate(authorizationCode.user_id, 10 * 60 * 60, { cli: authorizationCode.oauth2_client_id });
+        return done(null, token);
+        // var token = generate.accessToken();
+        // db.AccessToken.create({
+		//
+        //     token: token,
+        //     user_id: authorizationCode.user_id,
+        //     oauth2_client_id: authorizationCode.oauth2_client_id
+		//
+        // }).then(function (token) {
+        //     done(null, token.token);
+        // }).catch(done);
     }).catch(done);
 };
