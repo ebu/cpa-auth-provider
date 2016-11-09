@@ -1,0 +1,168 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>test login</title>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">$('#myModal').modal('show');</script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="/js/local.js"></script>
+    <script type="text/javascript" src="/js/fb.login.js"></script>
+
+
+</head>
+<body>
+
+<!-- Large modal -->
+<div id="login_link">
+    <a href="#" data-toggle="modal" data-target="#myModal">login</a>
+</div>
+<div id="info_box">
+    <p>info :<br/>
+        Name: <span id="display_name"></span>
+    </p>
+    <img id="userPicture" src="/img/default_profile.png" width="150px"/>
+    <br/>
+    <a href="#" id="disconnect">disconnect</a>
+
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    ×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Login/Registration </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8" style="border-right: 1px dotted #C2C2C2;padding-right: 30px;">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#Login" data-toggle="tab">Login</a></li>
+                            <li><a href="#Registration" data-toggle="tab">Registration</a></li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="Login">
+                                <form name="login_form" id="login_form" role="form" class="form-horizontal" action="#"
+                                      method="post">
+                                    <div class="form-group">
+                                        <label for="login_email" class="col-sm-2 control-label">
+                                            Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="login_email" name="login_email"
+                                                   placeholder="Email" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="login_password" class="col-sm-2 control-label">
+                                            Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="login_password"
+                                                   name="login_password" placeholder="Password" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <button type="button" class="btn btn-primary btn-sm" name="login" id="login"
+                                                    value="Login">
+                                                Submit
+                                            </button>
+                                            <!-- hidden submit: allow user to submit just by pressing enter-->
+                                            <input type="submit" style="display: none">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane" id="Registration">
+                                <form name="signup_form" id="signup_form" role="form" class="form-horizontal"
+                                      method="post">
+                                    <div class="form-group">
+                                        <label for="signup_email" class="col-sm-2 control-label">
+                                            Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="signup_email"
+                                                   name="signup_email" placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="signup_password" class="col-sm-2 control-label">
+                                            Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="signup_password"
+                                                   name="signup_password" placeholder="Password" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="signup_password2" class="col-sm-2 control-label">
+                                            Confirm</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="signup_password2"
+                                                   name="signup_password2" placeholder="Password" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <div class="g-recaptcha"
+                                                 data-sitekey="6Ld_UQcUAAAAAP-uEX-JVnu_kLpf17WQvIB-pXIX"></div>
+                                            <!-- // TODO : <%= config.recaptcha.site_key %>-->
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <button type="button" class="btn btn-primary btn-sm" name="signup"
+                                                    id="signup" value="signup">
+                                                Save &amp; Continue
+                                            </button>
+                                            <!-- hidden submit: allow user to submit just by pressing enter-->
+                                            <input type="submit" style="display: none">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                        <div id="OR" class="hidden-xs">
+                            OR
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row text-center sign-with">
+                            <div class="col-md-12">
+                                <h3>
+                                    Sign in with</h3>
+                            </div>
+                            <div class="col-md-12">
+
+                                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();" size="large">
+                                </fb:login-button>
+
+                                <div id="status">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

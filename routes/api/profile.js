@@ -16,21 +16,23 @@ module.exports = function (app, options) {
             var token = getToken(req.headers);
             if (token) {
                 var decoded = jwt.decode(token, config.jwtSecret);
-                db.User.find({where: {email: req.body.email}})
+                db.user.find({where: {email: req.body.email}})
                     .then(function (user) {
-                        if (user) {
-                            db.sequelize.sync().then(function () {
-                                user.firstName = req.body.firstName;
-                                user.lastName = req.body.lastName;
-                                user.mail = req.body.mail;
-                                user.gender = req.body.gender;
-                                user.date_of_birth = req.body.date_of_birth;
-                            }).then(function () {
-                                res.json({msg: 'Successfully updated user.'});
-                            });
-                        } else {
-                            return res.status(404).json({msg: 'user not found.'});
-                        }
+                        db.user_profile.findOrCreate({where: {user_id: user.id}}).then(function (user_profile) {
+                            if (user_profile) {
+                                db.sequelize.sync().then(function () {
+                                    user_profile.firstName = req.body.firstName;
+                                    user_profile.lastName = req.body.lastName;
+                                    user_profile.mail = req.body.mail;
+                                    user_profile.gender = req.body.gender;
+                                    user_profile.date_of_birth = req.body.date_of_birth;
+                                }).then(function () {
+                                    res.json({msg: 'Successfully updated user_profile.'});
+                                });
+                            } else {
+                                return res.status(404).json({msg: 'user_profile not found.'});
+                            }
+                        });
                     });
             } else {
                 return res.status(403).send({msg: 'No token provided.'});
@@ -44,22 +46,22 @@ module.exports = function (app, options) {
         var token = getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.jwtSecret);
-            db.User.find({
+            db.user_profile.find({
                 where: {
                     id: decoded.id
                 }
-            }).then(function (user) {
-                if (!user) {
-                    return res.status(403).send({msg: 'Authentication failed. User not found.'});
+            }).then(function (user_profile) {
+                if (!user_profile) {
+                    return res.status(403).send({msg: 'Authentication failed. user profile not found.'});
                 } else {
                     res.json({
                         success: true,
-                        user: {
-                            email: user.mail,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            gender: user.gender,
-                            date_of_birth: user.date_of_birth
+                        user_profile: {
+                            email: user_profile.mail,
+                            firstName: user_profile.firstName,
+                            lastName: user_profile.lastName,
+                            gender: user_profile.gender,
+                            date_of_birth: user_profile.date_of_birth
                         }
                     });
                 }
