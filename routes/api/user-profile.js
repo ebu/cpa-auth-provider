@@ -2,7 +2,6 @@
 
 var db = require('../../models');
 var config = require('../../config');
-var requestHelper = require('../../lib/request-helper');
 var passport = require('passport');
 var cors = require('../../lib/cors');
 
