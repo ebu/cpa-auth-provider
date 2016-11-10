@@ -23,10 +23,10 @@ module.exports = function (app, options) {
                     res.json({
                         success: true,
                         user_profile: {
-                            firstName: user_profile.firstName,
-                            lastName: user_profile.lastName,
+                            firstname: user_profile.firstname,
+                            lastname: user_profile.lastname,
                             gender: user_profile.gender,
-                            date_of_birth: user_profile.date_of_birth
+                            birthdate: user_profile.birthdate
                         }
                     });
                 }
