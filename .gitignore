@@ -1,6 +1,5 @@
 node_modules/*
 .nodemonignore
-.idea
 
 npm-debug.log
 

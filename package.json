@@ -11,8 +11,6 @@
   ],
   "scripts": {
     "start": "bin/server",
-    "dev": "bin/server",
-    "docker-dev": "yarn install && nodemon --watch package.json --exec \"yarn install && yarn run dev\"",
     "test": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib"
   },
   "dependencies": {
@@ -44,13 +42,11 @@
     "passport-jwt": "^1.2.1",
     "passport-local": "~0.1.6",
     "passport-twitter": "~1.0.2",
-    "pg": "6.1.0",
-    "pg-hstore": "2.3.2",
     "request": "^2.75.0",
     "sequelize": "2.0.0-dev4",
     "serve-favicon": "~2.3.0",
     "serve-static": "~1.10.2",
-    "winston": "2.3.0",
+    "winston": "~0.7.2",
     "yargs": "~1.3.1",
     "express-namespace": "~0.1.1",
     "oauth2orize": "~1.2.2",

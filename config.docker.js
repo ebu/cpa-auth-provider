@@ -3,23 +3,11 @@
 module.exports = {
   identity_providers: {
     github: {
-      enabled: false,
+      enabled: true,
       client_id: process.env.CPA_GITHUB_CLIENT_ID,
       client_secret: process.env.CPA_GITHUB_CLIENT_SECRET,
       callback_url: '/auth/github/callback'
-    },
-    local: {
-      enabled: true
     }
-
-  },
-
-  jwtSecret: process.env.JWT_SECRET,
-
-  trackingCookie: {
-    enabled: true,
-    secret: 'HighWaterTurnsOff',
-    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
   },
 
   jwtSecret: process.env.JWT_SECRET,
@@ -44,17 +32,11 @@ module.exports = {
   auto_idp_redirect: '',
 
   db: {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-
     // The database type, 'mysql', 'sqlite', etc.
-    type: process.env.DB_TYPE,//'sqlite',
-    database: process.env.DB_DATABASE,
+    type: 'sqlite',
 
     // Database filename for SQLite.
-    filename: process.env.DB_FILENAME,//'data/cpa-auth-provider.sqlite',
+    filename: 'data/cpa-auth-provider.sqlite',
 
     // If true, SQL statements are logged to the console.
     debug: true
