@@ -38,6 +38,7 @@ module.exports = function(sequelize, DataTypes) {
       User.hasMany(models.Client);
       User.hasMany(models.AccessToken);
       User.belongsTo(models.IdentityProvider);
+      User.hasOne(models.UserProfile);
     }
   });
 
