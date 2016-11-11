@@ -58,15 +58,18 @@ passport.deserializeUser(function(id, done) {
 });
 
 var server = process.env.OAUTH2_SERVER || 'http://192.168.99.100:3000';
+var serverInternal = process.env.OAUTH2_INTERNAL_SERVER;
 var callbackServer = process.env.OAUTH2_CALLBACK || 'http://192.168.99.100:3001';
 
 oauth2_config = {
-    requestTokenURL: server + '/oauth2/request_token',
-    tokenURL: server + '/oauth2/token',
+    requestTokenURL: serverInternal + '/oauth2/request_token',
+    publicTokenUrl: server + '/oauth2/token',
+    tokenURL: serverInternal + '/oauth2/token',
     authorizationURL: server + '/oauth2/dialog/authorize',
     clientID: process.env.OAUTH2_CLIENT_ID,
     clientSecret: process.env.OAUTH2_CLIENT_SECRET,
-    profileURL: server + '/oauth2/user_info',
+    publicProfileUrl: server + '/oauth2/user_info',
+    profileURL: serverInternal + '/oauth2/user_info',
     callbackURL: callbackServer + '/auth/oauth/callback'
 };
 
@@ -114,14 +117,14 @@ app.get('/', function (req, res) {
 app.get('/implicit', function (req, res) {
     redirect_uri = callbackServer + '/implicit';
     loginUrl = oauth2_config.authorizationURL + '?response_type=token&client_id=' + oauth2_config.clientID + '&redirect_uri=' + encodeURIComponent(redirect_uri);
-    res.render('implicit', { loginUrl: loginUrl, profileUrl: oauth2_config.profileURL });
+    res.render('implicit', { loginUrl: loginUrl, profileUrl: oauth2_config.publicProfileUrl });
 });
 
 app.get(
     '/rop',
     function (req, res) {
-        var ropUrl = oauth2_config.tokenURL;
-        res.render('rop', { ropUrl: ropUrl, profileUrl: oauth2_config.profileURL });
+        var ropUrl = oauth2_config.publicTokenUrl;
+        res.render('rop', { ropUrl: ropUrl, profileUrl: oauth2_config.publicProfileUrl });
     }
 );
 
