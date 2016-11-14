@@ -74,8 +74,6 @@ module.exports = function (app, options) {
     });
 
     app.post('/api/local/authenticate', cors, function (req, res) {
-        console.log(req.body);
-        console.log('qsdqsqsqssdqsdqfq');
         db.User.find({where: {email: req.body.email}})
             .then(function (user) {
                     if (!user) {
