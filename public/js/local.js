@@ -1,23 +1,19 @@
 var displayUserInfo;
 
-$(document).ready(function () {
+var CPA_COOKIE_NAME = 'cpa';
+var FB_APP_ID = '533187713537471';
 
-    //$.get("/config", function (data, status, code) {
-    //    config = data;
-    //    console.log('config');
-    //    console.log(config);
-    //    console.log('config');
-    //});
+$(document).ready(function () {
 
     var authenticate = function (email, password) {
         $.post("/api/local/authenticate", {email: email, password: password},
             function (data, status, code) {
-                console.log(JSON.stringify(data) + " with status '" + status + "' and code  : " + code.status);
+                //console.log(JSON.stringify(data) + " with status '" + status + "' and code  : " + code.status);
                 if (code.status === 200) {
                     $('#myModal').modal('hide');
                     $('#login_link').hide();
                     $('#info_box').show();
-                    console.log("token :" + data.token);
+                    //console.log("token :" + data.token);
                     getUserInfo(data.token);
                 } else {
                     //TODO
@@ -28,7 +24,7 @@ $(document).ready(function () {
     var register = function (email, password, captcha) {
         $.post("/api/local/signup", {email: email, password: password, "g-recaptcha-response": captcha},
             function (data, status, code) {
-                console.log(JSON.stringify(data));
+                //console.log(JSON.stringify(data));
                 if (code.status === 200) {
                     authenticate(email, password);
                 } else {
@@ -45,7 +41,7 @@ $(document).ready(function () {
                 "authorization": token
             }
         }).done(function (data) {
-            console.log("infos :" + JSON.stringify(data));
+            //console.log("infos :" + JSON.stringify(data));
             var name = data.user.email;
             if (data.user.display_name) {
                 name = data.user.display_name;
@@ -55,13 +51,13 @@ $(document).ready(function () {
                 pictUrl = data.user.photo_url;
             }
 
-            console.log("name :" + name);
+            //console.log("name :" + name);
 
             displayUserInfo(name, pictUrl);
 
             var cookieVal = JSON.stringify({token: token, name: name, pictUrl: pictUrl});
 
-            $.cookie("cpa",
+            $.cookie(CPA_COOKIE_NAME,
                 cookieVal, // Value
                 {
                     expires: 20 * 365           //expires in 20 years
@@ -89,7 +85,7 @@ $(document).ready(function () {
     });
 
     $("#disconnect").click(function () {
-        $.removeCookie("cpa"); // TODO
+        $.removeCookie(CPA_COOKIE_NAME); // TODO
         $('#login_link').show();
         $('#info_box').hide();
 
@@ -106,9 +102,9 @@ $(document).ready(function () {
 
     ////////////////////
 
-    if ($.cookie("cpa")) { // TODO Use constant !!!
-        var c = JSON.parse($.cookie("cpa")); // TODO Use constant !!!
-        //console.log("cookie : " + c.name + " / " + c.pictUrl + " / " + c.token)
+    if ($.cookie(CPA_COOKIE_NAME)) {
+        var c = JSON.parse($.cookie(CPA_COOKIE_NAME));
+        ////console.log("cookie : " + c.name + " / " + c.pictUrl + " / " + c.token)
         displayUserInfo(c.name, c.pictUrl);
         $('#myModal').modal('hide');
         $('#login_link').hide();
@@ -133,17 +129,17 @@ $(document).ready(function () {
 
 // This is called with the results from from FB.getLoginStatus().
 function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
+    //console.log('statusChangeCallback');
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
         // Logged into your app and Facebook.
-        console.log("response");
-        console.log('token: ' + response.authResponse.accessToken);
+        //console.log("response");
+        //console.log('token: ' + response.authResponse.accessToken);
 
-        register('533187713537471', response.authResponse.accessToken);
+        register(FB_APP_ID, response.authResponse.accessToken);
     } else if (response.status === 'not_authorized') {
         // The person is logged into Facebook, but not your app.
         document.getElementById('status').innerHTML = 'Please log ' +
@@ -167,7 +163,7 @@ function checkLoginState() {
 
 window.fbAsyncInit = function () {
     FB.init({
-        appId: '533187713537471', //TODO use constant
+        appId: FB_APP_ID,
         cookie: true,  // enable cookies to allow the server to access
         // the session
         xfbml: true,  // parse social plugins on this page
@@ -206,16 +202,16 @@ window.fbAsyncInit = function () {
 
 ///////////
 function register(appName, token) {
-    console.log('coucou');
+    //console.log('coucou');
 
     $.post("/api/facebook/signup", {fbToken: token, appName: appName},
         function (data, status, code) {
-            console.log(JSON.stringify(data) + " with status '" + status + "' and code  : " + code.status);
+            //console.log(JSON.stringify(data) + " with status '" + status + "' and code  : " + code.status);
             if (code.status === 200) {
                 $('#myModal').modal('hide');
                 $('#login_link').hide();
                 $('#info_box').show();
-                console.log("data.user.display_name:" + data.user.display_name);
+                //console.log("data.user.display_name:" + data.user.display_name);
                 displayUserInfo(data.user.display_name, data.user.photo_url);
             }
         });
