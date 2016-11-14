@@ -107,10 +107,12 @@ module.exports = function (router) {
                 //          redirectURI provided by the client matches one registered with
                 //          the server.  For simplicity, this example does not.  You have
                 //          been warned.
-                if (redirectURI.startsWith(client.redirect_uri)) {
+                if (!client.redirect_uri || redirectURI.startsWith(client.redirect_uri)) {
                     return done(null, client, redirectURI);
                 }
-                logger.error('client', client.id, 'not allowed with redirection', redirectURI);
+                if (logger) {
+                    logger.error('client', client.id, 'not allowed with redirection', redirectURI);
+                }
                 return done(new Error('bad redirection'));
             });
         }),
@@ -149,6 +151,7 @@ module.exports = function (router) {
         server.token(),
         server.errorHandler()
     ];
+
 
     router.get('/oauth2/dialog/authorize', authorization);
     router.post('/oauth2/dialog/authorize/decision', decision);

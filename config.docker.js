@@ -14,8 +14,6 @@ module.exports = {
 
   },
 
-  jwtSecret: process.env.JWT_SECRET,
-
   trackingCookie: {
     enabled: true,
     secret: 'HighWaterTurnsOff',
@@ -28,19 +26,11 @@ module.exports = {
     issuer: 'cpa'
   },
 
-  trackingCookie: {
-    enabled: true,
-    secret: 'HighWaterTurnsOff',
-    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
-  },
-
   recaptcha: {
     enabled: false,
     site_key: '',
     secret_key: ''
   },
-
-  jwtSecret: 'AlteredCarbonFly',
 
   // When accessing the home page, if defined, users are automatically
   // redirected to the specified identity_providers (ie: 'github')
