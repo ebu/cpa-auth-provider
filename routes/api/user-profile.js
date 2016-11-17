@@ -9,6 +9,13 @@ var jwtHelpers = require('../../lib/jwt-helper');
 
 module.exports = function (app, options) {
 
+    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // That following line avoid cross domain error like
+    // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
+    // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    // Origin 'http://localhost.rts.ch:8090' is therefore not allowed access.
+    app.options('/api/local/profile', cors);
+
     app.get('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
         var token = jwtHelpers.getToken(req.headers);
         if (token) {
