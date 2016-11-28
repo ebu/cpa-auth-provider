@@ -64,6 +64,10 @@ module.exports = {
     ]
   },
 
+  quality_check: {
+    enabled: true
+  },
+
   // URL path prefix, e.g., '/myapp'
   urlPrefix: '',
 
