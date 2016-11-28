@@ -15,14 +15,6 @@ module.exports = {
   },
 
   jwtSecret: process.env.JWT_SECRET,
-
-  trackingCookie: {
-    enabled: true,
-    secret: 'HighWaterTurnsOff',
-    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
-  },
-
-  jwtSecret: process.env.JWT_SECRET,
   jwt: {
     audience: 'cpa',
     issuer: 'cpa'
