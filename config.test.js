@@ -46,7 +46,12 @@ module.exports = {
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
 
-  enableCORS: true,
+  quality_check: {
+    enabled: true
+  },
+
+
+	enableCORS: true,
 
   // URL path prefix, e.g., '/myapp'
   urlPrefix: '/ap',
