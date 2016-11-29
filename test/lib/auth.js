@@ -9,6 +9,7 @@ var dbHelper      = require('../db-helper');
 
 var initDatabase = function(done) {
   db.User.create({
+    email: 'testuser',
     provider_uid: 'testuser'
   })
   .then(function(user) {
