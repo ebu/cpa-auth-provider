@@ -27,6 +27,7 @@ var initDatabase = function(opts, done) {
     .then(function() {
       return db.User.create({
         id:           5,
+        email:        'testuser',
         provider_uid: 'testuser'
       });
     })
