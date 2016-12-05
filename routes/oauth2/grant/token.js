@@ -11,7 +11,8 @@ var jwtHelper = require('../../../lib/jwt-helper');
 // values.
 
 exports.token = function (client, user, ares, done) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60, { cli: client.id });
+    var duration = 10 * 60 * 60 * 1000;
+    var token = jwtHelper.generate(user.id, duration, { cli: client.id });
     return done(null, token);
 
     // var token = generate.accessToken();

@@ -13,6 +13,7 @@ var AuthorizationCodeGrant = require('./grant/authorization-code').authorization
 var TokenGrant = require('./grant/token').token;
 var AuthorizationCodeExchange = require('./exchange/authorization-code').authorization_code;
 var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-password').token;
+var RefreshToken = require('./exchange/refresh-token').issueToken;
 var cors = require('cors');
 
 
@@ -79,6 +80,8 @@ module.exports = function (router) {
     server.exchange(oauth2orize.exchange.code(AuthorizationCodeExchange));
 
     server.exchange(oauth2orize.exchange.password(ResourceOwnerPasswordCredentials));
+
+    server.exchange(oauth2orize.exchange.refreshToken(RefreshToken));
 
     // user authorization endpoint
     //

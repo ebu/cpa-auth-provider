@@ -53,7 +53,8 @@ function confirmUser(client, username, password, scope, done) {
  */
 function provideAccessToken(client, user, done) {
 	try {
-		var token = jwtHelper.generate(user.id, 10 * 60 * 60, {cli: client ? client.id : 0});
+		var duration = 10 * 60 * 60 * 1000;
+		var token = jwtHelper.generate(user.id, duration, {cli: client ? client.id : 0});
 		return done(null, token);
 	} catch(e) {
 		return done(e);

@@ -27,7 +27,8 @@ exports.authorization_code = function (client, code, redirectURI, done) {
         if (redirectURI !== authorizationCode.redirect_uri) {
             return done(null, false);
         }
-        var token = jwtHelper.generate(authorizationCode.user_id, 10 * 60 * 60, { cli: authorizationCode.oauth2_client_id });
+        var duration = 10 * 60 * 60 * 1000;
+        var token = jwtHelper.generate(authorizationCode.user_id, duration, { cli: authorizationCode.oauth2_client_id });
         return done(null, token);
         // var token = generate.accessToken();
         // db.AccessToken.create({
