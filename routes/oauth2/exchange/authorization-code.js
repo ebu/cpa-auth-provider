@@ -3,6 +3,7 @@
 var db = require('../../../models');
 var generate = require('../../../lib/generate');
 var jwtHelper = require('../../../lib/jwt-helper');
+var oauthToken = require('../../../lib/oauth2-token');
 
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the
@@ -27,9 +28,25 @@ exports.authorization_code = function (client, code, redirectURI, done) {
         if (redirectURI !== authorizationCode.redirect_uri) {
             return done(null, false);
         }
-        var duration = 10 * 60 * 60 * 1000;
-        var token = jwtHelper.generate(authorizationCode.user_id, duration, { cli: authorizationCode.oauth2_client_id });
-        return done(null, token);
+
+        db.User.find({ where: {id: authorizationCode.user_id }}).then(
+            function(user) {
+                if (user) {
+					var accessToken = oauthToken.generateAccessToken(client, user);
+					var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
+					if (refreshToken) {
+						return done(null, accessToken, refreshToken);
+					} else {
+						return done(null, accessToken);
+					}
+				} else {
+                    return done('user not found');
+                }
+            },
+            function(e) {
+                return done(e);
+            }
+        ).catch(done);
         // var token = generate.accessToken();
         // db.AccessToken.create({
 		//

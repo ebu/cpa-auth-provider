@@ -1,9 +1,7 @@
 "use strict";
 
 var db = require('../../../models');
-var generate = require('../../../lib/generate');
-
-var jwtHelper = require('../../../lib/jwt-helper');
+var oauthToken = require('../../../lib/oauth2-token');
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
 
@@ -19,60 +17,42 @@ exports.token = function (client, username, password, scope, done) {
 
 function confirmUser(client, username, password, scope, done) {
 	db.User.find(
-		{ where: { email: username} }
+		{where: {email: username}}
 	).then(
-		function(user) {
+		function (user) {
 			if (!user) {
 				done(INCORRECT_LOGIN_OR_PASS);
 				return;
 			}
 
-			user.verifyPassword(password).then(function(isMatch) {
+			user.verifyPassword(password).then(function (isMatch) {
 					if (isMatch) {
-						provideAccessToken(client, user, done);
+						return provideTokens(client, user, done);
 					} else {
-						done(INCORRECT_LOGIN_OR_PASS);
+						return done(INCORRECT_LOGIN_OR_PASS);
 					}
 				},
-				function(err) {
+				function (err) {
 					done(err);
 				});
 		},
-		function(error) {
+		function (error) {
 			done(error);
 		}
 	);
 }
 
-/**
- * provides an access token for user/client combination
- *
- * @param client
- * @param user
- * @param done function(err, token)
- */
-function provideAccessToken(client, user, done) {
+function provideTokens(client, user, done) {
 	try {
-		var duration = 10 * 60 * 60 * 1000;
-		var token = jwtHelper.generate(user.id, duration, {cli: client ? client.id : 0});
-		return done(null, token);
-	} catch(e) {
+		var accessToken = oauthToken.generateAccessToken(client, user);
+		var refreshToken = oauthToken.generateRefreshToken(client, user, undefined);
+		if (refreshToken) {
+
+			return done(null, accessToken, refreshToken);
+		} else {
+			return done(null, accessToken);
+		}
+	} catch (e) {
 		return done(e);
 	}
-	// var token = generate.accessToken();
-	//
-	// db.AccessToken.create(
-	// 	{ token: token, user_id: user.id, oauth2_client_id: client ? client.id : 0}
-	// ).then(
-	// 	function(accessToken) {
-	// 		done(null, token);
-	// 	},
-	// 	function(err) {
-	// 		done(err);
-	// 	}
-	// ).catch(
-	// 	function(err) {
-	// 		return done(err);
-	// 	}
-	// );
 }

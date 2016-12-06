@@ -1,8 +1,9 @@
 "use strict";
 
-var db = require('../../../models');
-var generate = require('../../../lib/generate');
-var jwtHelper = require('../../../lib/jwt-helper');
+// var db = require('../../../models');
+// var generate = require('../../../lib/generate');
+// var jwtHelper = require('../../../lib/jwt-helper');
+var oauthToken = require('../../../lib/oauth2-token');
 
 // Grant implicit authorization.  The callback takes the `client` requesting
 // authorization, the authenticated `user` granting access, and
@@ -11,9 +12,13 @@ var jwtHelper = require('../../../lib/jwt-helper');
 // values.
 
 exports.token = function (client, user, ares, done) {
-    var duration = 10 * 60 * 60 * 1000;
-    var token = jwtHelper.generate(user.id, duration, { cli: client.id });
-    return done(null, token);
+    var accessToken = oauthToken.generateAccessToken(client, user);
+    var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
+    if (refreshToken) {
+		return done(null, accessToken, refreshToken);
+	} else {
+        return done(null, accessToken);
+    }
 
     // var token = generate.accessToken();
 	//
