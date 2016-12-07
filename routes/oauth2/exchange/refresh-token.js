@@ -12,7 +12,8 @@ function issueToken(client, token, scope, done) {
 					try {
 						var accessToken = oauthTokenHelper.generateAccessToken(client, user);
 						var refreshToken = oauthTokenHelper.generateRefreshToken(client, user, scope);
-						return done(null, accessToken, refreshToken);
+						var extras = oauthTokenHelper.generateTokenExtras(client, user);
+						return done(null, accessToken, refreshToken, extras);
 					} catch(e) {
 						return done(e);
 					}

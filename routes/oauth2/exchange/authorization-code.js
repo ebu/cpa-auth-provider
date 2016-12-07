@@ -34,11 +34,8 @@ exports.authorization_code = function (client, code, redirectURI, done) {
                 if (user) {
 					var accessToken = oauthToken.generateAccessToken(client, user);
 					var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
-					if (refreshToken) {
-						return done(null, accessToken, refreshToken);
-					} else {
-						return done(null, accessToken);
-					}
+					var extras = oauthToken.generateTokenExtras(client, user);
+					return done(null, accessToken, refreshToken, extras);
 				} else {
                     return done('user not found');
                 }

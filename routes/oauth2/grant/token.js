@@ -12,13 +12,14 @@ var oauthToken = require('../../../lib/oauth2-token');
 // values.
 
 exports.token = function (client, user, ares, done) {
-    var accessToken = oauthToken.generateAccessToken(client, user);
-    var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
-    if (refreshToken) {
-		return done(null, accessToken, refreshToken);
-	} else {
-        return done(null, accessToken);
-    }
+	try {
+		var accessToken = oauthToken.generateAccessToken(client, user);
+		var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
+		var extras = oauthToken.generateTokenExtras(client, user);
+		return done(null, accessToken, refreshToken, extras);
+	} catch(e) {
+		return done(e);
+	}
 
     // var token = generate.accessToken();
 	//

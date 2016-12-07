@@ -46,12 +46,8 @@ function provideTokens(client, user, done) {
 	try {
 		var accessToken = oauthToken.generateAccessToken(client, user);
 		var refreshToken = oauthToken.generateRefreshToken(client, user, undefined);
-		if (refreshToken) {
-
-			return done(null, accessToken, refreshToken);
-		} else {
-			return done(null, accessToken);
-		}
+		var extras = oauthToken.generateTokenExtras(client, user);
+		return done(null, accessToken, refreshToken, extras);
 	} catch (e) {
 		return done(e);
 	}
