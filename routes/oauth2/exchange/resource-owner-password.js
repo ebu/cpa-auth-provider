@@ -3,7 +3,8 @@
 var db = require('../../../models');
 var oauthToken = require('../../../lib/oauth2-token');
 
-var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+var USER_NOT_FOUND = { name: 'USER_NOT_FOUND', message: 'USER_NOT_FOUND' };
+var WRONG_PASSWORD = { name: 'WRONG_PASSWORD', message: 'WRONG_PASSWORD' };
 
 // Grant authorization by resource owner (user) and password credentials.
 // The user is authenticated and checked for validity - this strategy should
@@ -21,7 +22,7 @@ function confirmUser(client, username, password, scope, done) {
 	).then(
 		function (user) {
 			if (!user) {
-				done(INCORRECT_LOGIN_OR_PASS);
+				done(USER_NOT_FOUND);
 				return;
 			}
 
@@ -29,7 +30,7 @@ function confirmUser(client, username, password, scope, done) {
 					if (isMatch) {
 						return provideTokens(client, user, done);
 					} else {
-						return done(INCORRECT_LOGIN_OR_PASS);
+						return done(WRONG_PASSWORD);
 					}
 				},
 				function (err) {
