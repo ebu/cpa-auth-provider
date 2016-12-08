@@ -15,6 +15,7 @@ var AuthorizationCodeExchange = require('./exchange/authorization-code').authori
 var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-password').token;
 var RefreshToken = require('./exchange/refresh-token').issueToken;
 var cors = require('cors');
+var CreateUser = require('./create-user').createUser;
 
 
 module.exports = function (router) {
@@ -155,10 +156,17 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
+    var createUser = [
+        passport.authenticate(['oauth2-client-password'], { session: false }),
+        cors_header,
+        CreateUser
+    ];
+
 
     router.get('/oauth2/dialog/authorize', authorization);
     router.post('/oauth2/dialog/authorize/decision', decision);
     router.post('/oauth2/token', token);
+    router.post('/oauth2/create', createUser);
     router.options('/oauth2/token', cors_header);
 
     function corsOptionsDelegate(req, callback) {
