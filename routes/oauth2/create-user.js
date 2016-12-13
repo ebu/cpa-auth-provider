@@ -4,8 +4,7 @@ var config = require('../../config');
 var db = require('../../models');
 var oauth2Token = require('../../lib/oauth2-token');
 var generate = require('../../lib/generate');
-var uuid = require('node-uuid');
-var sendEmail = require('../../lib/send-email');
+var emailUtil = require('../../lib/email-util');
 
 exports.createUser = createUser;
 
@@ -50,11 +49,16 @@ function sendSuccess(user, req, res) {
 	db.OAuth2Client.find({where: {client_id: req.body.client_id}})
 		.then(
 			function (client) {
+				emailUtil.sendVerifyEmail(user, req.host, client).then(
+					function() {
+					},
+					function(e) {
+					}
+				);
+
 				var access_token = oauth2Token.generateAccessToken(client, user);
 				var refresh_token = oauth2Token.generateRefreshToken(client, user);
 				var extras = oauth2Token.generateTokenExtras(client, user);
-
-				sendVerifyEmail(user, req.host);
 
 				return res.status(201).json(
 					{
@@ -70,27 +74,4 @@ function sendSuccess(user, req, res) {
 		.catch(function(e) {
 			return res.status(500).json({ error: 'Internal Error', error_description: e.message });
 		});
-}
-
-function sendVerifyEmail(user, host) {
-	db.sequelize.sync().then(function () {
-		var baseUid= uuid.v4();
-		var key = new Buffer(uuid.parse(baseUid)).toString('base64');
-
-		db.UserVerifyTokens.create({
-			key: key,
-			type: 'verify',
-			user_id: user.id
-		}).then(
-			function(verifyToken) {
-				var confirmLink = host + '/email/verify/' + encodeURIComponent(key);
-				var deleteLink = host + '/email/delete/' + encodeURIComponent(key);
-				console.log('send email', confirmLink);
-				sendEmail.sendConfirmEmail(user.email, confirmLink, deleteLink);
-			},
-			function(err) {
-				console.log(err);
-			}
-		)
-	})
 }

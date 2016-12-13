@@ -30,11 +30,34 @@ module.exports = function(sequelize, DataTypes) {
     },
     redirect_uri: { // TODO: Use its own table (RedirectURIWhiteList)
       type: DataTypes.STRING
-    }
+    },
+    /**
+     * Data structure to contain multiple versions of the email redirect
+     * addresses. May contain a 'default' to use. Will then attempt to
+     * substitute {{SUB}} with the subset to use.
+     */
+    email_redirects: DataTypes.STRING
   }, {
     underscored: true,
 
-    associate: function(models) {
+    instanceMethods: {
+      getEmailRedirects: function() {
+        if (this.email_redirects == undefined) {
+          return undefined;
+        }
+        console.log(this.email_redirects);
+        return JSON.parse(this.email_redirects);
+      },
+      setEmailRedirects: function(emailRedirects) {
+        if (emailRedirects == undefined) {
+          return this.updateAttributes({email_redirects: undefined});
+        } else {
+          return this.updateAttributes({email_redirects: JSON.stringify(emailRedirects)})
+        }
+      }
+    },
+
+	associate: function(models) {
       OAuth2Client.hasMany(models.OAuth2AuthorizationCode);
       OAuth2Client.hasMany(models.AccessToken);
       OAuth2Client.belongsTo(models.User);

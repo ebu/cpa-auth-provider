@@ -2,7 +2,7 @@
 
 module.exports = function (sequelize, DataTypes) {
 	var UserVerifyToken = sequelize.define(
-		'UserVerifyTokens',
+		'UserVerifyToken',
 		{
 			key: {
 				type: DataTypes.STRING,
@@ -14,13 +14,15 @@ module.exports = function (sequelize, DataTypes) {
 					notNull: true,
 					notEmpty: true
 				}
-			}
+			},
+			sub: DataTypes.STRING
 		},
 		{
 			underscored: true,
 
 			associate: function (models) {
 				UserVerifyToken.belongsTo(models.User);
+				UserVerifyToken.belongsTo(models.OAuth2Client);
 			}
 		});
 
