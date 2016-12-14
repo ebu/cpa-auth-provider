@@ -85,6 +85,8 @@ module.exports = {
     },
   ],
 
+  email_from: process.env.EMAIL_FROM,
+
   oauth2: {
     access_token_duration: 10 * 60 * 60 * 1000,
     refresh_token_duration: 365 * 24 * 60 * 60 * 1000,
