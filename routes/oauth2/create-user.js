@@ -49,7 +49,7 @@ function sendSuccess(user, req, res) {
 	db.OAuth2Client.find({where: {client_id: req.body.client_id}})
 		.then(
 			function (client) {
-				emailUtil.sendVerifyEmail(user, req.host, client).then(
+				emailUtil.sendVerifyEmail(user, req.host, client, req.body.sub).then(
 					function() {
 					},
 					function(e) {
