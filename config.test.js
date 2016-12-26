@@ -48,6 +48,14 @@ module.exports = {
 
   enableCORS: true,
 
+  // Cross-origin resource sharing
+  cors: {
+    enabled: true,
+    allowed_domains: [
+      'http://localhost.rts.ch:8080'
+    ]
+  },
+
   // URL path prefix, e.g., '/myapp'
   urlPrefix: '/ap',
 

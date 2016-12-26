@@ -22,6 +22,10 @@ var routes = function(router) {
         next(err);
       });
   });
+
+  router.get('/user/profile', function(req, res) {
+    res.render('./user/profile.ejs');
+  })
 };
 
 module.exports = routes;
