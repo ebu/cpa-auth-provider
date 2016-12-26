@@ -46,6 +46,7 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class='glyphicon glyphicon-user'></i> <% if (user.display_name) { %><%= user.display_name %><% } else { %><%= user.email %><% } %> <b class="caret"></b> </a>
           <ul class="dropdown-menu">
             <li><a href="<%= link('/user/devices') %>">My Devices</a></li>
+            <li><a href="<%= link('/profile') %>">Edit Profile</a></li>
             <li><a href="<%= link('/admin') %>">Admin</a></li>
             <li><a href="<%= link('/logout') %>">Logout</a></li>
           </ul>

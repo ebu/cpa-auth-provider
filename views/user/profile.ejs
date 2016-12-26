@@ -1,0 +1,215 @@
+<% include ../layout/head %>
+
+  <!-- TODO move it to an appropriate file -->
+  <style>
+    .panel {
+      height: 90px;
+    }
+  </style>
+
+  <div data-rts-widget="rts-header"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-7">Bonjour <br> Carlos Maximus</div>
+      <div class="col-sm-4"><a class="btn btn-default pull-right" href="#">Déconnexion</a></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>Réglages</h2>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-sm-3">
+        <h4>Données personnelles</h4>
+        <a id="modify-data" href="#">Modifier</a>
+      </div>
+      <div class="col-sm-9">
+        <div id="personnal-data-read">
+          <div class="panel">
+            <h4>Nom</h4>
+            <span class="data-value">Carlos Maximus</span>
+            <input type="name" class="form-control personnal-data-input hide" placeholder="Nom" />
+          </div>
+          <div class="panel">
+            <h4>E-mail</h4>
+            <span class="data-value">Carlos.Maximus@rts.ch</span>
+            <input type="email" class="form-control personnal-data-input hide" placeholder="Email" />
+          </div>
+          <div class="panel">
+            <h4>Date de naissance</h4>
+            <span class="data-value">18 Septembre 1986</span>
+            <input type="birthday" class="form-control personnal-data-input hide" placeholder="Date de naissance" />
+          </div>
+          <div id="btn-container" class="hide">
+            <button id="btn-save-data" type="submit" class="btn btn-primary">Enregistrer</button>
+            <button id="btn-cancel-save" type="submit" class="btn btn-link">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-sm-3">
+        <h4>Sécurité</h4>
+      </div>
+      <div class="col-sm-9">
+        <h4>Mot de passe</h4>
+        <a id="btn-modify-password" href="#">Modifier votre mot de passe</a>
+        <form class="hide" id="form-modify-pass">
+          <div class="form-group">
+            <label for="old-password">Ancien mot de passe</label>
+            <input type="password" class="form-control" id="old-password" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label for="new-password">Nouveau mot de passe</label>
+            <input type="password" class="form-control" id="new-password" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirmer le mot de passe</label>
+            <input type="password" class="form-control" id="confirm-password" placeholder="Password">
+          </div>
+          <div>
+            <button id="btn-save-password" type="submit" class="btn btn-primary">Enregistrer</button>
+            <button id="btn-cancel-password" class="btn btn-link">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-sm-3">
+        <h4>Supprimer le compte</h4>
+      </div>
+      <div class="col-sm-9">
+        <p>Cliquer sur le bouton ci-dessous pour supprimer votre compte</p>
+        <a class="btn btn-danger">Supprimer le compte</a>
+      </div>
+    </div>
+  </div>
+  <div data-rts-widget="rts-footer"></div>
+
+  <!-- TODO move it to an appropriate file -->
+  <script type="text/javascript">
+
+  (function() {
+
+    /* class manipulation functions */
+
+    function hasClass(el, className) {
+      return el.classList ? el.classList.contains(className) : new RegExp('\\b'+ className+'\\b').test(el.className);
+    }
+
+    function addClass(el, className) {
+        if (el.classList) el.classList.add(className);
+        else if (!hasClass(el, className)) el.className += ' ' + className;
+    }
+
+    function removeClass(el, className) {
+        if (el.classList) el.classList.remove(className);
+        else el.className = el.className.replace(new RegExp('\\b'+ className+'\\b', 'g'), '');
+    }
+
+    /* display functions */
+
+    function showReadMode(elToDisplay, elToHide) {
+      addClass(elToHide, 'hide');
+
+      if(elToHide.nodeName == 'INPUT') {
+        elToDisplay.innerText = elToHide.value;
+        removeClass(elToDisplay, 'hide');
+      }
+    }
+
+    function showEditMode(elToDisplay, elToHide) {
+
+      removeClass(elToDisplay, 'hide');
+
+      if(elToDisplay.nodeName == 'INPUT') {
+        addClass(elToHide, 'hide');
+        elToDisplay.value = elToDisplay.previousElementSibling.innerText;
+      }
+    }
+
+    var $modifyDataBtn = document.getElementById('modify-data');
+    var $saveDataBtn = document.getElementById('btn-save-data');
+    var $cancelBtn = document.getElementById('btn-cancel-save');
+    var $savePasswordBtn = document.getElementById('btn-save-password');
+    var $cancelPasswordBtn = document.getElementById('btn-cancel-password');
+    var $modifyPassBtn = document.getElementById('btn-modify-password');
+    var $formModifyPass = document.getElementById('form-modify-pass');
+    var $values = document.querySelectorAll('.data-value');
+    var $inputs = document.querySelectorAll('.personnal-data-input, #btn-container');
+
+    $modifyDataBtn.addEventListener('click', function(e) {
+
+      addClass(this, 'hide');
+
+      e.preventDefault();
+
+      for(var i=0, len=$inputs.length; i<len; i++) {
+
+        if(hasClass($inputs[i], 'hide')) {
+          showEditMode($inputs[i], $values[i]);
+        }
+        else {
+          showReadMode($values[i], $inputs[i]);
+        }
+      }
+    });
+
+    $saveDataBtn.addEventListener('click', function(e) {
+
+      e.preventDefault();
+
+      for(var i=0, len=$inputs.length; i<len; i++) {
+        showReadMode($values[i], $inputs[i]);
+      }
+
+      removeClass($modifyDataBtn, 'hide');
+    })
+
+    $cancelBtn.addEventListener('click', function(e) {
+
+      e.preventDefault();
+
+      addClass($modifyDataBtn, 'hide');
+
+      for(var i=0, len=$inputs.length; i<len; i++) {
+        showReadMode($values[i], $inputs[i]);
+      }
+
+      removeClass($modifyDataBtn, 'hide');
+    });
+
+    $modifyPassBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      if(hasClass($formModifyPass, 'hide')) {
+        addClass(this, 'hide');
+        removeClass($formModifyPass, 'hide')
+      }
+      else {
+        removeClass(this, 'hide');
+        addClass($formModifyPass, 'hide');
+      }
+    });
+
+    $savePasswordBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      addClass($formModifyPass, 'hide');
+      removeClass($modifyPassBtn, 'hide');
+    });
+
+    $cancelPasswordBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      addClass($formModifyPass, 'hide');
+      removeClass($modifyPassBtn, 'hide');
+    });
+  })();
+
+
+
+  </script>
+<% include ../layout/foot %>
