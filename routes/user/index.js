@@ -25,7 +25,7 @@ var routes = function(router) {
 
   router.get('/user/profile', function(req, res) {
     res.render('./user/profile.ejs');
-  })
+  });
 };
 
 module.exports = routes;
