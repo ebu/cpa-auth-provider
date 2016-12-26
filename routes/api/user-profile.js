@@ -69,7 +69,7 @@ module.exports = function (app, options) {
                                 res.status(500).json({msg: 'Cannot update user_profile. Err:' + err});
                             });
                 }
-            )
+            );
 
 
         }
