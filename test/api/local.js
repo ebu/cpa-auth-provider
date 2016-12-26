@@ -34,8 +34,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("Something went wrong with the reCAPTCHA");
@@ -61,8 +61,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.msg).to.equal("Successfully created new user.");
@@ -87,8 +87,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("Please pass email and password.");
@@ -113,8 +113,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("Please pass email and password.");
@@ -153,8 +153,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(400);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("email already exists.");
@@ -199,7 +199,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('should return a success ', function () {
-            console.log('success:' + this.res.body.success);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
         });
@@ -235,7 +235,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('should return a success ', function () {
-            console.log('success:' + this.res.body.success);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(401);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal(INCORRECT_LOGIN_OR_PASS);
