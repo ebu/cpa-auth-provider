@@ -66,6 +66,7 @@ describe('POST /api/local/signup', function () {
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.msg).to.equal("Successfully created new user.");
+            expect(this.res.body.token).to.not.equal('');
         });
 
     });
@@ -199,7 +200,8 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('should return a success ', function () {
-            //console.log('success:' + this.res.body.success);
+            // console.log('success:' + this.res.body.success);
+            // console.log('token:' + this.res.body.token);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
         });
