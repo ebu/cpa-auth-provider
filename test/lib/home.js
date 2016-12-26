@@ -7,6 +7,7 @@ var requestHelper = require('../request-helper');
 var resetDatabase = function(done) {
   db.sequelize.query('DELETE FROM Users').then(function() {
     return db.User.create({
+      email: 'testuser',
       provider_uid: 'testuser'
     });
   })

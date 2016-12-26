@@ -24,7 +24,7 @@ module.exports = function (app, options) {
                 user_id: decoded.id
             }).then(function (user_profile) {
                 if (!user_profile) {
-                    return res.status(403).send({msg: 'Authentication failed. user profile not found.'}); //TODO change 401 UNAUTHORIZED
+                    return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
                 } else {
                     res.json({
                         success: true,
