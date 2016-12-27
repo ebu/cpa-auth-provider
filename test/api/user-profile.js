@@ -52,14 +52,16 @@ describe('GET /api/local/profile', function () {
 
         before(function (done) {
             var accessToken = this.res.body.token;
-            console.log("token !!!" + accessToken);
+            //console.log("token:" + accessToken);
             requestHelper.sendRequest(this, '/api/local/profile', {
                 method: 'get',
-                accessToken: accessToken
+                accessToken: accessToken.substring(4, accessToken.size),
+                tokenType: 'JWT'
             }, done);
         });
 
         it('should return a success ', function () {
+
             console.log('success:' + this.res.body.success);
             console.log('status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
@@ -81,7 +83,8 @@ describe('GET /api/local/profile', function () {
             var accessToken = this.res.body.token;
 
             var data = {
-                access_token: accessToken,
+                accessToken: accessToken.substring(4, accessToken.size),
+                tokenType: 'JWT',
                 firstname: 'example-service.bbc.co.uk',
                 lastname: 'example-service.bbc.co.uk',
                 gender: 'example-service.bbc.co.uk'
@@ -93,7 +96,8 @@ describe('GET /api/local/profile', function () {
                     method: 'post',
                     type: 'json',
                     data: data,
-                    accessToken: accessToken
+                    accessToken: accessToken,
+                    tokenType: 'JWT'
                 }, done
             )
             ;
@@ -103,7 +107,8 @@ describe('GET /api/local/profile', function () {
             var accessToken = this.res.body.token;
             requestHelper.sendRequest(this, '/api/local/profile', {
                 method: 'get',
-                accessToken: accessToken
+                accessToken: accessToken.substring(4, accessToken.size),
+                tokenType: 'JWT'
             }, done);
         });
 
