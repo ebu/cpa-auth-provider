@@ -52,7 +52,6 @@ describe('GET /api/local/profile', function () {
 
         before(function (done) {
             var accessToken = this.res.body.token;
-            //console.log("token:" + accessToken);
             requestHelper.sendRequest(this, '/api/local/profile', {
                 method: 'get',
                 accessToken: accessToken.substring(4, accessToken.size),
@@ -61,9 +60,8 @@ describe('GET /api/local/profile', function () {
         });
 
         it('should return a success ', function () {
-
-            console.log('success:' + this.res.body.success);
-            console.log('status:' + this.res.statusCode);
+            //console.log('success:' + this.res.body.success);
+            //console.log('status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user_profile.firstname).to.be.undefined;
@@ -81,23 +79,23 @@ describe('GET /api/local/profile', function () {
 
         before(function (done) {
             accessToken = this.res.body.token;
-            var data = {
-                accessToken: accessToken.substring(4, accessToken.size),
-                tokenType: 'JWT',
-                firstname: 'firstname',
-                lastname: 'lastname',
-                gender: 'gender',
-                birthdate: '12-12-2012'
-            };
             requestHelper.sendRequest(this, '/api/local/profile', {
                     method: 'post',
                     type: 'form',
-                    data: data,
-                    accessToken: accessToken,
+                    data: {
+                        accessToken: accessToken.substring(4, accessToken.size),
+                        tokenType: 'JWT',
+                        firstname: 'firstname',
+                        lastname: 'lastname',
+                        gender: 'gender',
+                        birthdate: '12-12-2012'
+                    },
+                    accessToken: accessToken.substring(4, accessToken.size),
                     tokenType: 'JWT'
                 }, done
             );
         });
+
 
         it('update profile should return a success ', function () {
             //console.log('update success:' + this.res.body.success);
@@ -119,14 +117,14 @@ describe('GET /api/local/profile', function () {
         });
 
         it('get profile should return a success ', function () {
-            console.log('get profile success:' + this.res.body.success);
-            console.log('get profile status:' + this.res.statusCode);
+            //console.log('get profile success:' + this.res.body.success);
+            //console.log('get profile status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user_profile.firstname).to.equal('firstname');
             expect(this.res.body.user_profile.lastname).to.equal('lastname');
             expect(this.res.body.user_profile.gender).to.equal('gender');
-            expect(this.res.body.user_profile.birthdate).to.equal('12-12-2012');
+            expect(this.res.body.user_profile.birthdate).to.not.be.undefined;
         });
 
     });

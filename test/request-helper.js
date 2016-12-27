@@ -56,7 +56,11 @@ module.exports = {
     if (opts.data) {
       // If 'form', sets Content-Type: application/x-www-form-urlencoded.
       var type = opts.type || 'json';
-      req.type(type);
+      //if (type === 'from') {
+      //  req.type('application/x-www-form-urlencoded');
+      //} else {
+        req.type(type);
+      //}
 
       req.send(opts.data);
     }

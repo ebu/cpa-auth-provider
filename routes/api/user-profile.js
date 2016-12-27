@@ -44,10 +44,8 @@ module.exports = function (app, options) {
 
     app.post('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
-        console.log(req.body);
-
-
         var token = jwtHelpers.getToken(req.headers);
+
         if (token) {
             var decoded = jwtHelpers.decode(token, config.jwtSecret);
             db.UserProfile.findOrCreate({
