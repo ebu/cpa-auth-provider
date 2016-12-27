@@ -205,6 +205,25 @@ describe('POST /api/local/authenticate', function () {
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
         });
+
+        // Test get user info
+        before(function (done) {
+            var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+            requestHelper.sendRequest(this, '/api/local/info', {
+                    method: 'get',
+                    accessToken: accessToken,
+                    tokenType: 'JWT'
+                }, done
+            );
+        });
+
+        it('/api/local/info should return a success ', function () {
+            expect(this.res.statusCode).to.equal(200);
+            expect(this.res.body.success).to.equal(true);
+            expect(this.res.body.user.email).to.equal('qsdf@qsdf.fr');
+            // expect(this.res.body.user.display_name).to.equal(true); // TODO waiting for specification in https://jira.ebu.ch/browse/PEACH-102
+
+        });
     });
 
     context('When unauthenticated user signup with bad credential', function () {
