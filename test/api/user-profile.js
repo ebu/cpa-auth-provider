@@ -78,19 +78,19 @@ describe('GET /api/local/profile', function () {
         cleanDbAndRegisterUser();
 
         before(function (done) {
-            accessToken = this.res.body.token;
+            accessToken = this.res.body.token.substring(4, this.res.body.token.size);
             requestHelper.sendRequest(this, '/api/local/profile', {
                     method: 'post',
                     type: 'form',
                     data: {
-                        accessToken: accessToken.substring(4, accessToken.size),
+                        accessToken: accessToken,
                         tokenType: 'JWT',
                         firstname: 'firstname',
                         lastname: 'lastname',
                         gender: 'gender',
                         birthdate: '12-12-2012'
                     },
-                    accessToken: accessToken.substring(4, accessToken.size),
+                    accessToken: accessToken,
                     tokenType: 'JWT'
                 }, done
             );
@@ -104,6 +104,26 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.success).to.equal(true);
         });
 
+
+        // Partial update :
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/profile', {
+                    method: 'post',
+                    type: 'form',
+                    data: {
+                        accessToken: accessToken,
+                        tokenType: 'JWT',
+                        firstname: 'firstname2',
+                        lastname: 'lastname',
+                        gender: 'M',
+                    },
+                    accessToken: accessToken,
+                    tokenType: 'JWT'
+                }, done
+            );
+        });
+
+
         before(function (done) {
             //var accessToken = this.res.body.token;
 
@@ -111,7 +131,7 @@ describe('GET /api/local/profile', function () {
 
             requestHelper.sendRequest(this, '/api/local/profile', {
                 method: 'get',
-                accessToken: accessToken.substring(4, accessToken.size),
+                accessToken: accessToken,
                 tokenType: 'JWT'
             }, done);
         });
@@ -121,16 +141,15 @@ describe('GET /api/local/profile', function () {
             //console.log('get profile status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            expect(this.res.body.user_profile.firstname).to.equal('firstname');
+            expect(this.res.body.user_profile.firstname).to.equal('firstname2');
             expect(this.res.body.user_profile.lastname).to.equal('lastname');
-            expect(this.res.body.user_profile.gender).to.equal('gender');
+            expect(this.res.body.user_profile.gender).to.equal('M');
             expect(this.res.body.user_profile.birthdate).to.not.be.undefined;
         });
 
     });
 
 
-    //TODO test partial update
 
 
 });
