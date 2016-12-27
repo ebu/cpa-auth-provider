@@ -22,7 +22,6 @@ recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 var opts = {};
 opts.secretOrKey = config.jwtSecret;
 passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-    console.log('jwt_payload : ' +jwt_payload);
     if (!jwt_payload) {
         done(null, false);
         return;

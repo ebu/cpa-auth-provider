@@ -66,7 +66,6 @@ describe('GET /api/local/profile', function () {
             console.log('status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            expect(this.res.body.user_profile).to.equal(true);
             expect(this.res.body.user_profile.firstname).to.be.undefined;
             expect(this.res.body.user_profile.lastname).to.be.undefined;
             expect(this.res.body.user_profile.gender).to.be.undefined;
@@ -76,35 +75,42 @@ describe('GET /api/local/profile', function () {
     });
 
     context('When user update his profile after account creation', function () {
+        var accessToken;
 
         cleanDbAndRegisterUser();
 
         before(function (done) {
-            var accessToken = this.res.body.token;
-
+            accessToken = this.res.body.token;
             var data = {
                 accessToken: accessToken.substring(4, accessToken.size),
                 tokenType: 'JWT',
-                firstname: 'example-service.bbc.co.uk',
-                lastname: 'example-service.bbc.co.uk',
-                gender: 'example-service.bbc.co.uk'
+                firstname: 'firstname',
+                lastname: 'lastname',
+                gender: 'gender',
+                birthdate: '12-12-2012'
             };
-
-            //TODO : birthdate: 'example-service.bbc.co.uk'
-
             requestHelper.sendRequest(this, '/api/local/profile', {
                     method: 'post',
-                    type: 'json',
+                    type: 'form',
                     data: data,
                     accessToken: accessToken,
                     tokenType: 'JWT'
                 }, done
-            )
-            ;
+            );
+        });
+
+        it('update profile should return a success ', function () {
+            //console.log('update success:' + this.res.body.success);
+            //console.log('update status:' + this.res.statusCode);
+            expect(this.res.statusCode).to.equal(200);
+            expect(this.res.body.success).to.equal(true);
         });
 
         before(function (done) {
-            var accessToken = this.res.body.token;
+            //var accessToken = this.res.body.token;
+
+            //console.log('accessToken : ' + accessToken);
+
             requestHelper.sendRequest(this, '/api/local/profile', {
                 method: 'get',
                 accessToken: accessToken.substring(4, accessToken.size),
@@ -112,16 +118,15 @@ describe('GET /api/local/profile', function () {
             }, done);
         });
 
-        it('should return a success ', function () {
-            console.log('success:' + this.res.body.success);
-            console.log('status:' + this.res.statusCode);
+        it('get profile should return a success ', function () {
+            console.log('get profile success:' + this.res.body.success);
+            console.log('get profile status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            expect(this.res.body.user_profile).to.equal(true);
             expect(this.res.body.user_profile.firstname).to.equal('firstname');
             expect(this.res.body.user_profile.lastname).to.equal('lastname');
             expect(this.res.body.user_profile.gender).to.equal('gender');
-            //expect(this.res.body.user_profile.birthdate).to.equal('todo');
+            expect(this.res.body.user_profile.birthdate).to.equal('12-12-2012');
         });
 
     });

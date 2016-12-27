@@ -56,7 +56,7 @@ module.exports = function (app, options) {
 
                     user_profile.updateAttributes(
                         {
-                            firstname: req.body.firstname ? req.body.firstname : user_profile.firstName,
+                            firstname: req.body.firstname ? req.body.firstname : user_profile.firstname,
                             lastname: req.body.lastname ? req.body.lastname : user_profile.lastname,
                             gender: req.body.gender ? req.body.gender : user_profile.gender,
                             birthdate: req.body.birthdate ? req.body.birthdate : user_profile.birthdate,
