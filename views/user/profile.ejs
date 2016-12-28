@@ -3,7 +3,7 @@
 <!-- TODO move it to an appropriate file -->
 <style>
     .panel {
-        height: 90px;
+        height: 75px;
     }
 </style>
 
@@ -42,7 +42,7 @@
                         <span class="data-value"></span>
                         <% } %>
                     </span>
-                    <input name="firstname" class="form-control personnal-data-input hide" placeholder="Nom"/>
+                    <input name="firstname" class="form-control personnal-data-input hide" placeholder="Prenom"/>
                 </div>
                 <div class="panel">
                     <h4>Date de naissance</h4>
@@ -53,8 +53,12 @@
                         <span class="data-value"></span>
                         <% } %>
                     </span>
-                    <input name="birthday" class="form-control personnal-data-input hide"
-                           placeholder="Date de naissance"/>
+                    <div class="input-group date personnal-data-input hide" data-provide="datepicker">
+                        <input type="text" name="birthday" class="form-control">
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="panel">
                     <h4>Sexe</h4>
@@ -129,6 +133,11 @@
 <!-- TODO move it to an appropriate file -->
 <script type="text/javascript">
     (function () {
+
+        $('.datepicker').datepicker({
+            format: 'mm/dd/yyyy',
+            startDate: '-3d'
+        });
 
         /* class manipulation functions */
 
