@@ -18,7 +18,7 @@ describe('Test user profile', function () {
                     id: 1,
                     user_id: 1
                 });
-                
+
                 expect(user_profile.getDisplayName(user, 'FIRSTNAME')).to.equal('user1@earth.com');
                 expect(user_profile.getDisplayName(user, 'LASTNAME')).to.equal('user1@earth.com');
                 expect(user_profile.getDisplayName(user, 'FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
