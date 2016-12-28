@@ -36,6 +36,14 @@ var routes = function (router) {
                 }).then(function (profile) {
                     console.log('profile :' + profile.firstname)
                     console.log('user :' + user.email)
+                    // FIXME : remove that => test only
+                    profile = {
+                        firstname: 'bod',
+                        lastname: 'l\'eponge',
+                        gender: 'M',
+                        birthdate: '01-01-2010',
+                    }
+
                     res.render('./user/profile.ejs', {profile: profile, user: user});
 
                 });
