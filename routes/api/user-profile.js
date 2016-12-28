@@ -20,25 +20,27 @@ module.exports = function (app, options) {
         var token = jwtHelpers.getToken(req.headers);
         if (token) {
             var decoded = jwtHelpers.decode(token, config.jwtSecret);
-            db.UserProfile.findOrCreate({
+            db.User.find({
                 user_id: decoded.id
-            }).then(function (user_profile) {
-                db.User.findOrCreate({
-                    id: decoded.id
-                }).then(function (user) {
-                    res.json({
-                        success: true,
-                        user_profile: {
-                            firstname: user_profile.firstname,
-                            lastname: user_profile.lastname,
-                            gender: user_profile.gender,
-                            birthdate: user_profile.birthdate,
-                            email: user.email
-                        }
+            }).then(function (user) {
+                if (!user) {
+                    return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
+                } else {
+                    db.UserProfile.findOrCreate({
+                        id: decoded.id
+                    }).then(function (user_profile) {
+                        res.json({
+                            success: true,
+                            user_profile: {
+                                firstname: user_profile.firstname,
+                                lastname: user_profile.lastname,
+                                gender: user_profile.gender,
+                                birthdate: user_profile.birthdate,
+                                email: user.email
+                            }
+                        });
                     });
-
-                });
-
+                }
             });
         } else {
             return res.status(403).send({msg: 'No token provided.'});
