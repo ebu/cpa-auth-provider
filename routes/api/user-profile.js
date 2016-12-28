@@ -23,19 +23,22 @@ module.exports = function (app, options) {
             db.UserProfile.findOrCreate({
                 user_id: decoded.id
             }).then(function (user_profile) {
-                if (!user_profile) {
-                    return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
-                } else {
+                db.User.findOrCreate({
+                    id: decoded.id
+                }).then(function (user) {
                     res.json({
                         success: true,
                         user_profile: {
                             firstname: user_profile.firstname,
                             lastname: user_profile.lastname,
                             gender: user_profile.gender,
-                            birthdate: user_profile.birthdate
+                            birthdate: user_profile.birthdate,
+                            email: user.email
                         }
                     });
-                }
+
+                });
+
             });
         } else {
             return res.status(403).send({msg: 'No token provided.'});
@@ -51,15 +54,13 @@ module.exports = function (app, options) {
             db.UserProfile.findOrCreate({
                 user_id: decoded.id
             }).then(function (user_profile) {
-
                     user_profile.updateAttributes(
                         {
                             firstname: req.body.firstname ? req.body.firstname : user_profile.firstname,
                             lastname: req.body.lastname ? req.body.lastname : user_profile.lastname,
                             gender: req.body.gender ? req.body.gender : user_profile.gender,
                             birthdate: req.body.birthdate ? req.body.birthdate : user_profile.birthdate,
-                        }
-                        )
+                        })
                         .then(function () {
                                 res.json({msg: 'Successfully updated user_profile.'});
                             },
@@ -68,10 +69,6 @@ module.exports = function (app, options) {
                             });
                 }
             );
-
-
         }
-
     });
-
 };

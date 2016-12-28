@@ -68,6 +68,7 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.user_profile.lastname).to.be.undefined;
             expect(this.res.body.user_profile.gender).to.be.undefined;
             expect(this.res.body.user_profile.birthdate).to.be.undefined;
+            expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
         });
 
     });
@@ -145,6 +146,7 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.user_profile.lastname).to.equal('lastname');
             expect(this.res.body.user_profile.gender).to.equal('M');
             expect(this.res.body.user_profile.birthdate).to.not.be.undefined;
+            expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
         });
 
     });
