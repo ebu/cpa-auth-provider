@@ -24,7 +24,6 @@ var routes = function (router) {
     });
 
     router.get('/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
-        console.log("req.user.id = " + req.user.id);
         db.User.find({
             id: req.user.id
         }).then(function (user) {
@@ -34,15 +33,13 @@ var routes = function (router) {
                 db.UserProfile.findOrCreate({
                     user_id: req.user.id
                 }).then(function (profile) {
-                    console.log('profile :' + profile.firstname)
-                    console.log('user :' + user.email)
                     // FIXME : remove that => test only
                     profile = {
-                        firstname: 'bod',
-                        lastname: 'l\'eponge',
+                        firstname: 'Bob',
+                        lastname: 'L\'eponge',
                         gender: 'M',
-                        birthdate: '01-01-2010',
-                    }
+                        birthdate: '01/01/2017'
+                    };
 
                     res.render('./user/profile.ejs', {profile: profile, user: user});
 
