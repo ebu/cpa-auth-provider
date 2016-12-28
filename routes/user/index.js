@@ -24,13 +24,21 @@ var routes = function (router) {
     });
 
     router.get('/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
+        console.log("req.user.id = " + req.user.id);
         db.User.find({
-            user_id: req.user.id
-        }).then(function (profile) {
-            if (!profile) {
+            id: req.user.id
+        }).then(function (user) {
+            if (!user) {
                 return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
             } else {
-                res.render('./user/profile.ejs', {profile: profile});
+                db.UserProfile.findOrCreate({
+                    user_id: req.user.id
+                }).then(function (profile) {
+                    console.log('profile :' + profile.firstname)
+                    console.log('user :' + user.email)
+                    res.render('./user/profile.ejs', {profile: profile, user: user});
+
+                });
             }
         }, function (err) {
             next(err);
