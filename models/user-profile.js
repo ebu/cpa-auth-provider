@@ -7,7 +7,7 @@ module.exports = function (sequelize, DataTypes) {
         firstname: DataTypes.STRING,
         lastname: DataTypes.STRING,
         gender: DataTypes.STRING,
-        birthdate: DataTypes.DATE
+        birthdate: DataTypes.STRING
 
     }, {
         underscored: true,

@@ -79,10 +79,13 @@ describe('GET /api/local/profile', function () {
 
         cleanDbAndRegisterUser();
 
+        var birth = new Date(Date.UTC(2012, 11, 31, 0, 0, 0)).getTime();
+
         before(function (done) {
             accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+
             requestHelper.sendRequest(this, '/api/local/profile', {
-                    method: 'post',
+                    method: 'put',
                     type: 'form',
                     data: {
                         accessToken: accessToken,
@@ -90,7 +93,7 @@ describe('GET /api/local/profile', function () {
                         firstname: 'firstname',
                         lastname: 'lastname',
                         gender: 'gender',
-                        birthdate: '12-12-2012'
+                        birthdate: birth
                     },
                     accessToken: accessToken,
                     tokenType: 'JWT'
@@ -110,7 +113,7 @@ describe('GET /api/local/profile', function () {
         // Partial update :
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/profile', {
-                    method: 'post',
+                    method: 'put',
                     type: 'form',
                     data: {
                         accessToken: accessToken,
@@ -146,7 +149,7 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.user_profile.firstname).to.equal('firstname2');
             expect(this.res.body.user_profile.lastname).to.equal('lastname');
             expect(this.res.body.user_profile.gender).to.equal('M');
-            expect(this.res.body.user_profile.birthdate).to.not.be.undefined;
+            expect(this.res.body.user_profile.birthdate).to.equals(birth);
             expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
             expect(this.res.body.user_profile.display_name).to.equals('firstname2 lastname');
         });

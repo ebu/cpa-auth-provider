@@ -29,13 +29,14 @@ module.exports = function (app, options) {
                     db.UserProfile.findOrCreate({
                         id: decoded.id
                     }).then(function (user_profile) {
-                        res.json({
+
+                         res.json({
                             success: true,
                             user_profile: {
                                 firstname: user_profile.firstname,
                                 lastname: user_profile.lastname,
                                 gender: user_profile.gender,
-                                birthdate: user_profile.birthdate,
+                                birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
                                 email: user.email,
                                 display_name: user_profile.getDisplayName(user, req.query.policy),
                             }
@@ -48,7 +49,7 @@ module.exports = function (app, options) {
         }
     });
 
-    app.post('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
+    app.put('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
         var token = jwtHelpers.getToken(req.headers);
 
@@ -62,7 +63,7 @@ module.exports = function (app, options) {
                             firstname: req.body.firstname ? req.body.firstname : user_profile.firstname,
                             lastname: req.body.lastname ? req.body.lastname : user_profile.lastname,
                             gender: req.body.gender ? req.body.gender : user_profile.gender,
-                            birthdate: req.body.birthdate ? req.body.birthdate : user_profile.birthdate,
+                            birthdate: req.body.birthdate ? req.body.birthdate + '' : user_profile.birthdate,
                         })
                         .then(function () {
                                 res.json({msg: 'Successfully updated user_profile.'});
