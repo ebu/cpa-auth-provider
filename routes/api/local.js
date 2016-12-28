@@ -119,17 +119,24 @@ module.exports = function (app, options) {
                 if (!user) {
                     return res.status(403).send({success: false, msg: INCORRECT_LOGIN_OR_PASS});
                 } else {
-                    res.json({
-                        success: true,
-                        user: {
-                            email: user.email,
-                            display_name: user.display_name,
-                            photo_url: user.photo_url,
-                            admin: user.admin
-                        },
-                        token: 'JWT ' + token
+
+                    db.UserProfile.findOrCreate({
+                        id: decoded.id
+                    }).then(function (user_profile) {
+                        res.json({
+                            success: true,
+                            user: {
+                                email: user.email,
+                                display_name: user_profile.getDisplayName(user, req.query.policy),
+                                admin: user.admin
+                            },
+                            token: 'JWT ' + token
+
+                        });
+
 
                     });
+
                 }
             });
         } else {

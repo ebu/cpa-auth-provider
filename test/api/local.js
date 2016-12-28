@@ -221,7 +221,7 @@ describe('POST /api/local/authenticate', function () {
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user.email).to.equal('qsdf@qsdf.fr');
-            // expect(this.res.body.user.display_name).to.equal(true); // TODO waiting for specification in https://jira.ebu.ch/browse/PEACH-102
+            expect(this.res.body.user.display_name).to.equal('qsdf@qsdf.fr');
 
         });
     });

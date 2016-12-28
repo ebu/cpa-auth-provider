@@ -36,7 +36,8 @@ module.exports = function (app, options) {
                                 lastname: user_profile.lastname,
                                 gender: user_profile.gender,
                                 birthdate: user_profile.birthdate,
-                                email: user.email
+                                email: user.email,
+                                display_name: user_profile.getDisplayName(user, req.query.policy),
                             }
                         });
                     });
