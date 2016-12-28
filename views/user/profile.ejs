@@ -26,7 +26,7 @@
                     <h4>Nom</h4>
                     <span class="data-value">
                         <% if (profile.lastname !== null) {%>
-                            <span class="data-value"><% profile.lastname %></span>
+                            <span class="data-value"><%= profile.lastname %></span>
                         <% } else { %>
                             <span class="data-value"></span>
                         <% } %>
@@ -37,7 +37,7 @@
                     <h4>Prenom</h4>
                     <span class="data-value">
                         <% if (profile.firstname !== null) {%>
-                        <span class="data-value"><% profile.firstname %></span>
+                        <span class="data-value"><%= profile.firstname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
@@ -48,7 +48,7 @@
                     <h4>Date de naissance</h4>
                     <span class="data-value">
                         <% if (profile.birthdate !== null) {%>
-                        <span class="data-value"><% profile.birthdate %></span>
+                        <span class="data-value"><%= profile.birthdate %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
@@ -60,7 +60,7 @@
                     <h4>Sexe</h4>
                     <span class="data-value">
                         <% if (profile.gender !== null) {%>
-                            <span class="data-value"><% profile.gender %></span>
+                            <span class="data-value"><%= profile.gender %></span>
                         <% } else { %>
                             <span class="data-value"></span>
                         <% } %>
@@ -73,7 +73,7 @@
                 <div class="panel">
                     <h4>E-mail</h4>
                     <% if (profile.email !== null) {%>
-                    <span class="data-value"><% user.email %></span>
+                    <span class="data-value"><%= user.email %></span>
                     <% } else { %>
                     <span class="data-value"></span>
                     <% } %>
