@@ -33,16 +33,15 @@ var routes = function (router) {
                 db.UserProfile.findOrCreate({
                     user_id: req.user.id
                 }).then(function (profile) {
-                    // FIXME : remove that => test only
-                    profile = {
-                        firstname: 'Bob',
-                        lastname: 'L\'eponge',
-                        gender: 'M',
-                        birthdate: '01/01/2017'
-                    };
-
-                    res.render('./user/profile.ejs', {profile: profile, user: user});
-
+                    res.render('./user/profile.ejs', {
+                        profile: {
+                            firstname: profile.firstname,
+                            lastname: profile.lastname,
+                            gender: profile.gender,
+                            birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
+                            email: user.email,
+                            display_name: profile.getDisplayName(user, req.query.policy)
+                    }});
                 });
             }
         }, function (err) {

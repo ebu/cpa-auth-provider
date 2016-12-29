@@ -4,11 +4,24 @@
 <style>
     .panel {
         height: 75px;
+        border-bottom: 1px solid #eee;
+        box-shadow: none;
+    }
+    #btn-container {
+        display: none;
+    }
+    .personnal-data-input {
+        visibility: hidden;
     }
 </style>
 
 <div data-rts-widget="rts-header"></div>
 <div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Bonjour <%= profile.display_name %></h1>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <h2>Réglages</h2>
@@ -21,71 +34,65 @@
             <a id="modify-data" href="#">Modifier</a>
         </div>
         <div class="col-sm-9">
-            <div id="personnal-data-read">
-                <div class="panel">
-                    <h4>Nom</h4>
-                    <span class="data-value">
-                        <% if (profile.lastname !== null) {%>
-                            <span class="data-value"><%= profile.lastname %></span>
-                        <% } else { %>
-                            <span class="data-value"></span>
-                        <% } %>
-                    </span>
-                    <input name="lastname" class="form-control personnal-data-input hide" placeholder="Nom"/>
-                </div>
-                <div class="panel">
-                    <h4>Prenom</h4>
-                    <span class="data-value">
-                        <% if (profile.firstname !== null) {%>
+            <div id="personnal-data">
+                <form id="form-personnal-data">
+                    <div class="panel">
+                        <h4>Prenom</h4>
+                        <% if (profile.firstname) { %>
                         <span class="data-value"><%= profile.firstname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
-                    </span>
-                    <input name="firstname" class="form-control personnal-data-input hide" placeholder="Prenom"/>
-                </div>
-                <div class="panel">
-                    <h4>Date de naissance</h4>
-                    <span class="data-value">
-                        <% if (profile.birthdate !== null) {%>
-                        <span class="data-value"><%= profile.birthdate %></span>
+                        <input id="firstname" name="firstname" class="form-control personnal-data-input" placeholder="Prenom"/>
+                    </div>
+                    <div class="panel">
+                        <h4>Nom</h4>
+                        <% if (profile.lastname) { %>
+                        <span class="data-value"><%= profile.lastname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
-                    </span>
-                    <div class="input-group date personnal-data-input hide" data-provide="datepicker">
-                        <input type="text" name="birthday" class="form-control">
-                        <div class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
+                        <input id="lastname" name="lastname" class="form-control personnal-data-input" placeholder="Nom"/>
+                    </div>
+                    <div class="panel">
+                        <h4>Date de naissance</h4>
+                        <span class="data-value"></span>
+                        <div class="input-group date personnal-data-input" data-provide="datepicker" data-language="fr">
+                            <input id="birthday" name="birthday" class="form-control" type="text">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel">
-                    <h4>Sexe</h4>
-                    <span class="data-value">
-                        <% if (profile.gender !== null) {%>
-                            <span class="data-value"><%= profile.gender %></span>
+                    <div class="panel">
+                        <h4>Sexe</h4>
+                        <% if (profile.gender) { %>
+                            <% if (profile.gender === "female") { %>
+                                <span class="data-value" data-selected="<%= profile.gender %>">Femme</span>
+                            <% } else { %>
+                                <span class="data-value" data-selected="<%= profile.gender %>">Homme</span>
+                            <% } %>
                         <% } else { %>
-                            <span class="data-value"></span>
+                        <span class="data-value" data-selected="male"></span>
                         <% } %>
-                    </span>
-                    <select name="gender" class="form-control personnal-data-input hide">
-                        <option value="male">Homme</option>
-                        <option value="female">Femme</option>
-                    </select>
-                </div>
-                <div class="panel">
-                    <h4>E-mail</h4>
-                    <% if (profile.email !== null) {%>
-                    <span class="data-value"><%= user.email %></span>
-                    <% } else { %>
-                    <span class="data-value"></span>
-                    <% } %>
-                </div>
-                <div id="btn-container" class="hide">
-                    <button id="btn-save-data" type="submit" class="btn btn-primary">Enregistrer</button>
-                    <button id="btn-cancel-save" type="submit" class="btn btn-link">Annuler</button>
-                </div>
+                        <select id="gender" name="gender" class="form-control personnal-data-input">
+                            <option value="male">Homme</option>
+                            <option value="female">Femme</option>
+                        </select>
+                    </div>
+                    <div class="panel">
+                        <h4>E-mail</h4>
+                        <% if (profile.email !== null) { %>
+                        <span><%= profile.email %></span>
+                        <% } else { %>
+                        <span></span>
+                        <% } %>
+                    </div>
+                    <div id="btn-container">
+                        <button id="btn-save-data" type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button id="btn-cancel-save" type="submit" class="btn btn-link">Annuler</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -134,100 +141,133 @@
 <script type="text/javascript">
     (function () {
 
-        $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy',
-            startDate: '-3d'
+        // VARIABLES AND INITIALIZATION
+        var $modifyDataBtn = $('#modify-data');
+        var $saveDataBtn = $('#btn-save-data');
+        var $cancelBtn = $('#btn-cancel-save');
+        var $savePasswordBtn = $('#btn-save-password');
+        var $cancelPasswordBtn = $('#btn-cancel-password');
+        var $modifyPassBtn = $('#btn-modify-password');
+        var $formModifyPass = $('#form-modify-pass');
+        var $btnContainer = $('#btn-container');
+
+        var $firstname = $("#firstname");
+        var $lastname = $("#lastname");
+        var $gender = $("#gender");
+        var $birthday = $("#birthday");
+        var $inputs = $('.personnal-data-input');
+        var $datepicker = $(".input-group.date");
+        var date = "";
+
+        //Little css trick so that date input render correctly but does not appear quickly at loading
+        $inputs.hide();
+        $inputs.css('visibility', 'visible');
+
+        // LOCAL FUNCTIONS
+        var closeEditMode = function() {
+            $("#personnal-data .panel").each(function(index, element) {
+                var $element = $(element);
+                var $dataField = $element.find(".data-value").first();
+                var $inputField = $element.find('.personnal-data-input').first();
+
+                //Show labels and hide fields
+                $inputField.hide();
+                $btnContainer.hide();
+                $dataField.show();
+                $modifyDataBtn.show();
+            });
+        };
+
+        var formatDate = function(date) {
+            var day = date.getDate() < 10 ? "0"+date.getDate() : date.getDate();
+            var month = date.getMonth()+1 < 10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+            var year = date.getFullYear();
+            return day+"/"+month+"/"+year;
+        };
+
+        var createDate = function(sDate) {
+            var date = sDate.substr(6, 4)+"/"+sDate.substr(3, 2)+"/"+sDate.substr(0, 2);
+            return new Date(date);
+        };
+
+        //Init date field and datepicker
+        if("<%= profile.birthdate %>" && "<%= profile.birthdate %>" != "null" && "<%= profile.birthdate %>" !== null && "<%= profile.birthdate %>" != "undefined") {
+            date = new Date(parseInt("<%= profile.birthdate %>"));
+            $datepicker.prev(".data-value").text(formatDate(date));
+        }
+        $datepicker.datepicker({
+            format: 'dd/mm/yyyy',
+            endDate: "0d"
         });
 
-        /* class manipulation functions */
-
-        function hasClass(el, className) {
-            return el.classList ? el.classList.contains(className) : new RegExp('\\b' + className + '\\b').test(el.className);
-        }
-
-        function addClass(el, className) {
-            if (el.classList) el.classList.add(className);
-            else if (!hasClass(el, className)) el.className += ' ' + className;
-        }
-
-        function removeClass(el, className) {
-            if (el.classList) el.classList.remove(className);
-            else el.className = el.className.replace(new RegExp('\\b' + className + '\\b', 'g'), '');
-        }
-
-        /* display functions */
-
-        function showReadMode(elToDisplay, elToHide) {
-            addClass(elToHide, 'hide');
-
-            if (elToHide.nodeName == 'INPUT') {
-                elToDisplay.innerText = elToHide.value;
-                removeClass(elToDisplay, 'hide');
-            }
-        }
-
-        function showEditMode(elToDisplay, elToHide) {
-
-            removeClass(elToDisplay, 'hide');
-
-            if (elToDisplay.nodeName == 'INPUT') {
-                addClass(elToHide, 'hide');
-                elToDisplay.value = elToDisplay.previousElementSibling.innerText;
-            }
-        }
-
-        var $modifyDataBtn = document.getElementById('modify-data');
-        var $saveDataBtn = document.getElementById('btn-save-data');
-        var $cancelBtn = document.getElementById('btn-cancel-save');
-        var $savePasswordBtn = document.getElementById('btn-save-password');
-        var $cancelPasswordBtn = document.getElementById('btn-cancel-password');
-        var $modifyPassBtn = document.getElementById('btn-modify-password');
-        var $formModifyPass = document.getElementById('form-modify-pass');
-        var $values = document.querySelectorAll('.data-value');
-        var $inputs = document.querySelectorAll('.personnal-data-input, #btn-container');
-
-        $modifyDataBtn.addEventListener('click', function (e) {
-
-            addClass(this, 'hide');
-
+        // EVENTS
+        $modifyDataBtn.on('click', function (e) {
             e.preventDefault();
 
-            for (var i = 0, len = $inputs.length; i < len; i++) {
+            var $this = $(this);
+            //Hide Modify button
+            $this.hide();
 
-                if (hasClass($inputs[i], 'hide')) {
-                    showEditMode($inputs[i], $values[i]);
+            $("#personnal-data .panel").each(function(index, element) {
+                var $element = $(element);
+                var $dataField = $element.find(".data-value").first();
+                var value = String($dataField.text());
+                var $inputField = $element.find('.personnal-data-input').first();
+
+                //If it is date field, update it correctly
+                if($inputField.hasClass("date")) {
+                    $inputField.find("input").first().val(value);
+                } else if($inputField.is("select")) {
+                    $inputField.val($dataField.attr("data-selected"));
+                } else {
+                    $inputField.val(value);
                 }
-                else {
-                    showReadMode($values[i], $inputs[i]);
+
+                //Show fields and hide labels with data values
+                $dataField.hide();
+                $inputField.show();
+            });
+
+            $btnContainer.show();
+        });
+
+        $saveDataBtn.on('click', function (e) {
+            e.preventDefault();
+
+            var userId = "<%= user.id %>";
+            var date = createDate($birthday.val()).getTime();
+
+            console.log(new Date(date));
+
+            $.ajax({
+                url: "<%= link('/user/profile/') %>" + userId,
+                data: {
+                    firstname: $firstname.val(),
+                    lastname: $lastname.val(),
+                    gender: $gender.val(),
+                    birthdate: date
+                },
+                type: 'PUT',
+                success: function() {
+                    $firstname.prev(".data-value").text($firstname.val());
+                    $lastname.prev(".data-value").text($lastname.val());
+                    $datepicker.prev(".data-value").text($birthday.val());
+
+                    $gender.prev(".data-value").text($gender.find("option:selected").text());
+                    $gender.prev(".data-value").attr("data-selected", $gender.val());
+
+                    closeEditMode();
                 }
-            }
+            });
+
         });
 
-        $saveDataBtn.addEventListener('click', function (e) {
-
+        $cancelBtn.on('click', function (e) {
             e.preventDefault();
-
-            for (var i = 0, len = $inputs.length; i < len; i++) {
-                showReadMode($values[i], $inputs[i]);
-            }
-
-            removeClass($modifyDataBtn, 'hide');
+            closeEditMode();
         });
 
-        $cancelBtn.addEventListener('click', function (e) {
-
-            e.preventDefault();
-
-            addClass($modifyDataBtn, 'hide');
-
-            for (var i = 0, len = $inputs.length; i < len; i++) {
-                showReadMode($values[i], $inputs[i]);
-            }
-
-            removeClass($modifyDataBtn, 'hide');
-        });
-
-        $modifyPassBtn.addEventListener('click', function (e) {
+        $modifyPassBtn.on('click', function (e) {
             e.preventDefault();
 
             if (hasClass($formModifyPass, 'hide')) {
@@ -240,17 +280,19 @@
             }
         });
 
-        $savePasswordBtn.addEventListener('click', function (e) {
+        $savePasswordBtn.on('click', function (e) {
             e.preventDefault();
             addClass($formModifyPass, 'hide');
             removeClass($modifyPassBtn, 'hide');
         });
 
-        $cancelPasswordBtn.addEventListener('click', function (e) {
+        $cancelPasswordBtn.on('click', function (e) {
             e.preventDefault();
             addClass($formModifyPass, 'hide');
             removeClass($modifyPassBtn, 'hide');
         });
+
     })();
 </script>
+
 <% include ../layout/foot %>
