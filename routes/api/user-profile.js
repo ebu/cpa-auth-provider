@@ -4,6 +4,8 @@ var db = require('../../models');
 var config = require('../../config');
 var passport = require('passport');
 var cors = require('../../lib/cors');
+var authHelper = require('../../lib/auth-helper');
+
 
 var jwtHelpers = require('../../lib/jwt-helper');
 
@@ -17,35 +19,28 @@ module.exports = function (app, options) {
     app.options('/api/local/profile', cors);
 
     app.get('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
-        var token = jwtHelpers.getToken(req.headers);
-        if (token) {
-            var decoded = jwtHelpers.decode(token, config.jwtSecret);
-            db.User.find({
-                user_id: decoded.id
-            }).then(function (user) {
-                if (!user) {
-                    return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
-                } else {
-                    db.UserProfile.findOrCreate({
-                        id: decoded.id
-                    }).then(function (user_profile) {
 
-                         res.json({
-                            success: true,
-                            user_profile: {
-                                firstname: user_profile.firstname,
-                                lastname: user_profile.lastname,
-                                gender: user_profile.gender,
-                                birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
-                                email: user.email,
-                                display_name: user_profile.getDisplayName(user, req.query.policy),
-                            }
-                        });
-                    });
-                }
-            });
+        var user = authHelper.getAuthenticatedUser(req);
+
+        if (!user) {
+            return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
         } else {
-            return res.status(403).send({msg: 'No token provided.'});
+            db.UserProfile.findOrCreate({
+                id: user.id
+            }).then(function (user_profile) {
+
+                res.json({
+                    success: true,
+                    user_profile: {
+                        firstname: user_profile.firstname,
+                        lastname: user_profile.lastname,
+                        gender: user_profile.gender,
+                        birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
+                        email: user.email,
+                        display_name: user_profile.getDisplayName(user, req.query.policy),
+                    }
+                });
+            });
         }
     });
 
