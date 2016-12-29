@@ -1,0 +1,305 @@
+"use strict";
+
+var generate = require('../../lib/generate');
+var messages = require('../../lib/messages');
+var db = require('../../models');
+var jwtHelper = require('../../lib/jwt-helper');
+
+var requestHelper = require('../request-helper');
+var dbHelper = require('../db-helper');
+
+var config = require('../../config');
+
+var CLIENT = {
+	id: 1,
+	client_id: "ClientA",
+	client_secret: "ClientSecret",
+	name: "OAuth 2.0 Client",
+	redirect_uri: 'http://localhost'
+};
+var USER = {
+	email: 'test@test.com',
+	account_uid: 'RandomUid',
+	password: 'a'
+};
+
+var URL_PREFIX = config.urlPrefix;
+
+function createOAuth2Client(done) {
+	db.OAuth2Client.create(CLIENT).then(
+		function () {
+			return done();
+		},
+		function (err) {
+			return done(err);
+		}
+	);
+}
+
+function createFakeUser(done) {
+	db.User.create(USER).then(
+		function (user) {
+			user.setPassword(USER.password).then(
+				function (user) {
+					return done();
+				},
+				done);
+		},
+		done
+	);
+}
+
+var resetDatabase = function (done) {
+	dbHelper.clearDatabase(function (err) {
+		if (err) {
+			return done(err);
+		} else {
+			createOAuth2Client(
+				function () {
+					done();
+				}
+			);
+		}
+	});
+};
+
+// test resource owner password
+describe('POST /oauth2/token', function () {
+	var url = '/oauth2/token';
+	context('without a client_id', function () {
+		before(resetDatabase);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {
+				method: 'post',
+				cookie: this.cookie,
+				type: 'form',
+				data: {grant_type: 'password', username: USER.email, password: USER.password}
+			}, done);
+		});
+
+		it('should reject the request', function () {
+			expect(this.res.statusCode).equal(401);
+		});
+	});
+
+	context(
+		'with a bad client_id/client_secret',
+		function () {
+			before(resetDatabase);
+			before(function (done) {
+				requestHelper.sendRequest(this, url, {
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						grant_type: 'password',
+						username: USER.email,
+						password: USER.password,
+						client_id: '_' + CLIENT.client_id,
+						client_secret: CLIENT.client_secret
+					}
+				}, done);
+			});
+
+			it('should reject the request', function () {
+				expect(this.res.statusCode).equal(401);
+			});
+		}
+	);
+
+	context('using grant_type: \'password\'', function () {
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {
+				method: 'post',
+				cookie: this.cookie,
+				type: 'form',
+				data: {
+					grant_type: 'password',
+					username: USER.email,
+					password: USER.password,
+					client_id: CLIENT.client_id,
+					client_secret: CLIENT.client_secret
+				}
+			}, done);
+		});
+
+		it('should return a success', function () {
+			expect(this.res.statusCode).equal(200);
+		});
+
+		it('should have proper access token', function () {
+			var decoded = jwtHelper.decode(this.res.body.access_token);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).equal(36000);
+			expect(decoded.cli).equal(1);
+		});
+
+		it('should have token type Bearer', function () {
+			expect(this.res.body.token_type).equal('Bearer');
+		});
+	});
+
+	context(
+		'using grant_type \'password\' with bad user login',
+		function () {
+			before(resetDatabase);
+			before(createFakeUser);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					url,
+					{
+						method: 'post',
+						cookie: this.cookie,
+						type: 'form',
+						data: {
+							grant_type: 'password',
+							username: 'abc+' + USER.email,
+							password: USER.password,
+							client_id: CLIENT.client_id,
+							client_secret: CLIENT.client_secret
+						}
+					},
+					done);
+			});
+
+			it('should reject with bad request', function () {
+				expect(this.res.statusCode).equal(500);
+			});
+		}
+	);
+});
+
+describe('GET /oauth2/dialog/authorize', function () {
+	context('using response_type \'code\'', function () {
+		var baseUrl = '/oauth2/dialog/authorize?response_type=code&state=a';
+		context('without a client_id', function () {
+			before(resetDatabase);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					baseUrl,
+					{
+						method: 'get',
+						cookie: this.cookie,
+						type: 'form',
+						data: {response_type: 'code', state: 'a'}
+					},
+					done
+				);
+			});
+
+			it('should reject the request', function () {
+				expect(this.res.statusCode).equal(400);
+			});
+		});
+
+		context('with wrong client_id', function () {
+			before(resetDatabase);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					baseUrl + '&client_id=' + encodeURIComponent('a' + CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent('http://localhost'),
+					{},
+					done
+				);
+			});
+
+			it('should reject the request', function () {
+				expect(this.res.statusCode).equal(403);
+			});
+		});
+
+		context('with proper client_id', function () {
+			before(resetDatabase);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri),
+					{},
+					done
+				);
+			});
+
+			it('should redirect to login page', function () {
+				expect(this.res.statusCode).equal(302);
+			});
+
+			it('should redirect to login page', function () {
+				expect(this.res.headers.location).equal(URL_PREFIX + '/auth');
+			});
+		});
+	});
+
+	context('using response_type \'token\'', function () {
+		var baseUrl = '/oauth2/dialog/authorize?response_type=token&state=a';
+		context('without a client_id', function () {
+			before(resetDatabase);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					baseUrl,
+					{
+						method: 'get',
+						cookie: this.cookie,
+						type: 'form',
+						data: {response_type: 'code', state: 'a'}
+					},
+					done
+				);
+			});
+
+			it('should reject the request', function () {
+				expect(this.res.statusCode).equal(400);
+			});
+		});
+
+		context('with wrong client_id', function () {
+			before(resetDatabase);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					baseUrl + '&client_id=' + encodeURIComponent('a' + CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent('http://localhost'),
+					{},
+					done
+				);
+			});
+
+			it('should reject the request', function () {
+				expect(this.res.statusCode).equal(403);
+			});
+		});
+
+		context('with proper client_id', function () {
+			before(resetDatabase);
+
+			before(function (done) {
+				requestHelper.sendRequest(
+					this,
+					baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri),
+					{},
+					done
+				);
+			});
+
+			it('should redirect to login page', function () {
+				expect(this.res.statusCode).equal(302);
+			});
+
+			it('should redirect to login page', function () {
+				expect(this.res.headers.location).equal(URL_PREFIX + '/auth');
+			});
+		});
+	});
+});

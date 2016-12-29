@@ -97,7 +97,6 @@ module.exports = function (router) {
     // first, and rendering the `dialog` view.
 
     var authorization = [
-        authHelper.authenticateFirst,
         server.authorization(function (clientID, redirectURI, done) {
             db.OAuth2Client.find({where: {client_id: clientID}}).complete(function (err, client) {
                 if (err) {
@@ -110,6 +109,7 @@ module.exports = function (router) {
                 return done(null, client, redirectURI);
             });
         }),
+		authHelper.authenticateFirst,
         function (req, res) {
             res.render('oauth2/dialog', {
                 transactionID: req.oauth2.transactionID,

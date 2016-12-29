@@ -13,7 +13,7 @@
     "start": "bin/server",
     "dev": "bin/server",
     "docker-dev": "yarn install && nodemon --watch package.json --exec \"yarn install && yarn run dev\"",
-    "test": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib"
+    "test": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib test/api"
   },
   "dependencies": {
     "async": "~0.2.10",

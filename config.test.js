@@ -3,13 +3,17 @@
 module.exports = {
 
   recaptcha: {
+    enabled: true,
     site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
   
   
   jwtSecret:'bigsecret',
-
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
+  },
 
   identity_providers: {
     facebook: {
@@ -41,6 +45,14 @@ module.exports = {
 
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
+
+  // Cross-origin resource sharing
+  cors: {
+    enabled: true,
+    allowed_domains: [
+      'http://localhost.rts.ch:8080'
+    ]
+  },
 
   enableCORS: true,
 
