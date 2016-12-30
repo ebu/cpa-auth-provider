@@ -7,7 +7,7 @@
         border-bottom: 1px solid #eee;
         box-shadow: none;
     }
-    #btn-container {
+    #btn-container, #form-modify-pass {
         display: none;
     }
     .personnal-data-input {
@@ -26,11 +26,6 @@
 
 <div data-rts-widget="rts-header"></div>
 <div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1>Bonjour <%= profile.display_name %></h1>
-        </div>
-    </div>
     <div class="row">
         <div class="col-sm-12">
             <h2>Réglages</h2>
@@ -121,7 +116,7 @@
         <div class="col-sm-9">
             <h4>Mot de passe</h4>
             <a id="btn-modify-password" href="#">Modifier votre mot de passe</a>
-            <form class="hide" id="form-modify-pass">
+            <form id="form-modify-pass">
                 <div class="form-group">
                     <label for="old-password">Ancien mot de passe</label>
                     <input type="password" class="form-control" id="old-password" placeholder="Password">
@@ -301,26 +296,20 @@
         $modifyPassBtn.on('click', function (e) {
             e.preventDefault();
 
-            if (hasClass($formModifyPass, 'hide')) {
-                addClass(this, 'hide');
-                removeClass($formModifyPass, 'hide')
-            }
-            else {
-                removeClass(this, 'hide');
-                addClass($formModifyPass, 'hide');
-            }
+            $formModifyPass.show();
+            $modifyPassBtn.hide();
         });
 
         $savePasswordBtn.on('click', function (e) {
             e.preventDefault();
-            addClass($formModifyPass, 'hide');
-            removeClass($modifyPassBtn, 'hide');
+            $formModifyPass.hide();
+            $modifyPassBtn.show();
         });
 
         $cancelPasswordBtn.on('click', function (e) {
             e.preventDefault();
-            addClass($formModifyPass, 'hide');
-            removeClass($modifyPassBtn, 'hide');
+            $formModifyPass.hide();
+            $modifyPassBtn.show();
         });
 
     })();
