@@ -107,7 +107,19 @@ module.exports = function (app, options) {
     app.post('/login', passport.authenticate('local', {
         failureRedirect: '/auth/local',
         failureFlash: true
-    }), function (req, res, next) {
+    }), redirectOnSuccess);
+
+    app.post(
+        '/signup',
+        recaptcha.middleware.verify,
+        passport.authenticate(
+            'local-signup',
+            { failureRedirect: '/signup', failureFlash: true }
+        ),
+        redirectOnSuccess
+    );
+
+    function redirectOnSuccess(req, res, next) {
         var redirectUri = req.session.auth_origin;
         delete req.session.auth_origin;
 
@@ -116,11 +128,5 @@ module.exports = function (app, options) {
         }
 
         requestHelper.redirect(res, '/');
-    });
-
-    app.post('/signup', recaptcha.middleware.verify, passport.authenticate('local-signup', {
-        failureRedirect: '/signup',
-        successRedirect: '/auth/local',
-        failureFlash: true
-    }));
+    }
 };
