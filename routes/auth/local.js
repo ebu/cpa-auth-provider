@@ -12,11 +12,11 @@ var util = require('util');
 
 
 var localStrategyCallback = function (req, username, password, done) {
-
+    var loginError = 'Wrong email or password.';
     db.User.find({where: {email: username}})
         .then(function (user) {
                 if (!user) {
-                    done(null, false, req.flash('loginMessage', 'No user found.'));
+                    done(null, false, req.flash('loginMessage', loginError));
                     return;
                 }
 
@@ -24,7 +24,7 @@ var localStrategyCallback = function (req, username, password, done) {
                         if (isMatch) {
                             done(null, user);
                         } else {
-                            done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
+                            done(null, false, req.flash('loginMessage', loginError));
                         }
                     },
                     function (err) {
@@ -38,10 +38,10 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
-    req.checkBody('email', 'Vous devez fournir un email valide').isEmail();
+    req.checkBody('email', 'Invalid email').isEmail();
     req.getValidationResult().then(function (result) {
         if (!result.isEmpty()) {
-            done(null, false, req.flash('signupMessage', 'Vous devez fournir un email valide'));
+            done(null, false, req.flash('signupMessage', 'Invalid email'));
             return;
         } else {
             if (req.recaptcha.error) {
