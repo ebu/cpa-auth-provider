@@ -88,7 +88,6 @@ describe('GET /api/local/profile', function () {
                     method: 'put',
                     type: 'form',
                     data: {
-                        accessToken: accessToken,
                         tokenType: 'JWT',
                         firstname: 'firstname',
                         lastname: 'lastname',
@@ -116,7 +115,6 @@ describe('GET /api/local/profile', function () {
                     method: 'put',
                     type: 'form',
                     data: {
-                        accessToken: accessToken,
                         tokenType: 'JWT',
                         firstname: 'firstname2',
                         lastname: 'lastname',
