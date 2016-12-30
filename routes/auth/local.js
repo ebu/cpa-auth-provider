@@ -54,7 +54,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));
                     } else {
                         db.sequelize.sync().then(function () {
-                            var user = db.User.create({
+                            db.User.create({
                                 email: req.body.email,
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
