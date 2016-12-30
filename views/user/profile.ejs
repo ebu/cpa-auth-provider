@@ -13,6 +13,15 @@
     .personnal-data-input {
         visibility: hidden;
     }
+    #form-personnal-data-errors {
+        display: none;
+    }
+    #form-personnal-data-errors .title {
+        font-weight: 500;
+    }
+    #form-personnal-data-errors .content p{
+        margin: 0;
+    }
 </style>
 
 <div data-rts-widget="rts-header"></div>
@@ -34,6 +43,13 @@
             <a id="modify-data" href="#">Modifier</a>
         </div>
         <div class="col-sm-9">
+
+            <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="title">Veuillez vérifier que les champs ci-dessous soient renseignés et valides avant de soumettre le formulaire</span>
+                <span id="personnal-data-errors" class="content"></span>
+            </div>
+
             <div id="personnal-data">
                 <form id="form-personnal-data">
                     <div class="panel">
@@ -94,6 +110,7 @@
                     </div>
                 </form>
             </div>
+
         </div>
     </div>
     <hr/>
@@ -190,6 +207,11 @@
             return new Date(date);
         };
 
+        var resetErrors = function (formClass, errorsClass) {
+            $("#"+formClass).hide("fast");
+            $("#"+errorsClass).empty();
+        };
+
         //Init date field and datepicker
         if("<%= profile.birthdate %>" && "<%= profile.birthdate %>" != "null" && "<%= profile.birthdate %>" !== null && "<%= profile.birthdate %>" != "undefined") {
             date = new Date(parseInt("<%= profile.birthdate %>"));
@@ -233,6 +255,7 @@
 
         $saveDataBtn.on('click', function (e) {
             e.preventDefault();
+            resetErrors("form-personnal-data-errors", "personnal-data-errors");
 
             var userId = "<%= user.id %>";
             var date = createDate($birthday.val()).getTime();
@@ -247,7 +270,6 @@
                 },
                 type: 'PUT',
                 success: function(result) {
-                    console.log(result);
                     $firstname.prev(".data-value").text($firstname.val());
                     $lastname.prev(".data-value").text($lastname.val());
                     $datepicker.prev(".data-value").text($birthday.val());
@@ -257,9 +279,14 @@
 
                     closeEditMode();
                 },
-                error: function(result, status) {
-                    console.log("xhr", result);
-                    console.log("status", status);
+                error: function(result) {
+                    $.each(result.responseJSON.errors, function(index, error){
+                        $("#personnal-data-errors").append($('<p>').text(error.msg));
+                    });
+                    $("#form-personnal-data-errors").show("fast");
+                    $('html, body').animate({
+                        scrollTop: $("#personnal-data-errors").offset().top
+                    }, 500);
                 }
             });
 
@@ -267,6 +294,7 @@
 
         $cancelBtn.on('click', function (e) {
             e.preventDefault();
+            resetErrors("form-personnal-data-errors", "personnal-data-errors");
             closeEditMode();
         });
 
