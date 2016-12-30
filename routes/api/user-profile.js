@@ -5,6 +5,7 @@ var config = require('../../config');
 var passport = require('passport');
 var cors = require('../../lib/cors');
 var authHelper = require('../../lib/auth-helper');
+var util = require('util');
 
 
 var jwtHelpers = require('../../lib/jwt-helper');
@@ -23,7 +24,7 @@ module.exports = function (app, options) {
         var user = authHelper.getAuthenticatedUser(req);
 
         if (!user) {
-            return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
+            return res.status(401).send({success: false, msg: 'Authentication failed. user profile not found.'});
         } else {
             db.UserProfile.findOrCreate({
                 id: user.id
@@ -46,28 +47,60 @@ module.exports = function (app, options) {
 
     app.put('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
-        var token = jwtHelpers.getToken(req.headers);
-
-        if (token) {
-            var decoded = jwtHelpers.decode(token, config.jwtSecret);
-            db.UserProfile.findOrCreate({
-                user_id: decoded.id
-            }).then(function (user_profile) {
-                    user_profile.updateAttributes(
-                        {
-                            firstname: req.body.firstname ? req.body.firstname : user_profile.firstname,
-                            lastname: req.body.lastname ? req.body.lastname : user_profile.lastname,
-                            gender: req.body.gender ? req.body.gender : user_profile.gender,
-                            birthdate: req.body.birthdate ? req.body.birthdate + '' : user_profile.birthdate,
-                        })
-                        .then(function () {
-                                res.json({msg: 'Successfully updated user_profile.'});
-                            },
-                            function (err) {
-                                res.status(500).json({msg: 'Cannot update user_profile. Err:' + err});
-                            });
-                }
-            );
+        // Data validation
+        if (req.body.firstname) {
+            req.checkBody('firstname', 'firstname,binvalide format. Must be a string').isString();
         }
+        if (req.body.lastname) {
+            req.checkBody('lastname', 'lastname,binvalide format. Must be a string').isString();
+        }
+        if (req.body.birthdate) {
+            req.checkBody('birthdate', 'birthdate, invalide format. Must be a timestamp').isInt();
+        }
+        if (req.body.gender) {
+            req.checkBody('gender', 'gender, invalide value. Must be a "male" or "female"').isHuman();
+        }
+
+        req.getValidationResult().then(function (result) {
+
+                if (!result.isEmpty()) {
+                    //console.log('There have been validation errors: ' + util.inspect(result.array()));
+                    res.status(400).json({
+                        success: false,
+                        msg: 'There have been validation errors: ' + util.inspect(result.array()),
+                    });
+                }
+
+                else {
+
+                    var token = jwtHelpers.getToken(req.headers);
+
+                    if (token) {
+                        var decoded = jwtHelpers.decode(token, config.jwtSecret);
+                        db.UserProfile.findOrCreate({
+                            user_id: decoded.id
+                        }).then(function (user_profile) {
+                                user_profile.updateAttributes(
+                                    {
+                                        firstname: req.body.firstname ? req.body.firstname : user_profile.firstname,
+                                        lastname: req.body.lastname ? req.body.lastname : user_profile.lastname,
+                                        gender: req.body.gender ? req.body.gender : user_profile.gender,
+                                        birthdate: req.body.birthdate ? req.body.birthdate + '' : user_profile.birthdate,
+                                    })
+                                    .then(function () {
+                                            res.json({success: true, msg: 'Successfully updated user_profile.'});
+                                        },
+                                        function (err) {
+                                            res.status(500).json({
+                                                success: false,
+                                                msg: 'Cannot update user_profile. Err:' + err
+                                            });
+                                        });
+                            }
+                        );
+                    }
+                }
+            }
+        );
     });
 };

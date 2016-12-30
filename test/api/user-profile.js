@@ -86,12 +86,11 @@ describe('GET /api/local/profile', function () {
 
             requestHelper.sendRequest(this, '/api/local/profile', {
                     method: 'put',
-                    type: 'form',
+                    type: 'json',
                     data: {
-                        tokenType: 'JWT',
                         firstname: 'firstname',
                         lastname: 'lastname',
-                        gender: 'gender',
+                        gender: 'female',
                         birthdate: birth
                     },
                     accessToken: accessToken,
@@ -113,12 +112,10 @@ describe('GET /api/local/profile', function () {
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/profile', {
                     method: 'put',
-                    type: 'form',
+                    type: 'json',
                     data: {
-                        tokenType: 'JWT',
                         firstname: 'firstname2',
-                        lastname: 'lastname',
-                        gender: 'M',
+                        gender: 'male',
                     },
                     accessToken: accessToken,
                     tokenType: 'JWT'
@@ -146,7 +143,7 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user_profile.firstname).to.equal('firstname2');
             expect(this.res.body.user_profile.lastname).to.equal('lastname');
-            expect(this.res.body.user_profile.gender).to.equal('M');
+            expect(this.res.body.user_profile.gender).to.equal('male');
             expect(this.res.body.user_profile.birthdate).to.equals(birth);
             expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
             expect(this.res.body.user_profile.display_name).to.equals('firstname2 lastname');
@@ -155,6 +152,98 @@ describe('GET /api/local/profile', function () {
     });
 
 
+    context('When user request tries to save a profile with bad parameter', function () {
+
+        context('Bad gender (not male or female)', function () {
+
+            cleanDbAndRegisterUser();
+
+            before(function (done) {
+                var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                requestHelper.sendRequest(this, '/api/local/profile', {
+                        method: 'put',
+                        type: 'json',
+                        data: {gender: 'bad gender'},
+                        accessToken: accessToken,
+                        tokenType: 'JWT'
+                    }, done
+                );
+            });
+
+            it('should return bad parameters ', function () {
+                expect(this.res.statusCode).to.equal(400);
+                expect(this.res.body.success).to.equal(false);
+            });
+        });
+
+        context('Bad birthdate (not a number)', function () {
+
+            cleanDbAndRegisterUser();
+
+            before(function (done) {
+                var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                requestHelper.sendRequest(this, '/api/local/profile', {
+                        method: 'put',
+                        type: 'json',
+                        data: {birthdate: 'not a number'},
+                        accessToken: accessToken,
+                        tokenType: 'JWT'
+                    }, done
+                );
+            });
+
+            it('should return bad parameters ', function () {
+                expect(this.res.statusCode).to.equal(400);
+                expect(this.res.body.success).to.equal(false);
+            });
+        });
+
+        context('Bad firstname (not a string)', function () {
+
+            cleanDbAndRegisterUser();
+
+            before(function (done) {
+                var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                requestHelper.sendRequest(this, '/api/local/profile', {
+                        method: 'put',
+                        type: 'json',
+                        data: {firstname: 42},
+                        accessToken: accessToken,
+                        tokenType: 'JWT'
+                    }, done
+                );
+            });
+
+            it('should return bad parameters ', function () {
+                expect(this.res.statusCode).to.equal(400);
+                expect(this.res.body.success).to.equal(false);
+            });
+        });
+
+
+        context('Bad lastname (not a string)', function () {
+
+            cleanDbAndRegisterUser();
+
+            before(function (done) {
+                var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                requestHelper.sendRequest(this, '/api/local/profile', {
+                        method: 'put',
+                        type: 'json',
+                        data: {lastname: 42},
+                        accessToken: accessToken,
+                        tokenType: 'JWT'
+                    }, done
+                );
+            });
+
+            it('should return bad parameters ', function () {
+                expect(this.res.statusCode).to.equal(400);
+                expect(this.res.body.success).to.equal(false);
+            });
+        });
+
+    });
 
 
 });
