@@ -8,6 +8,8 @@ var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
+var util = require('util');
+
 
 var localStrategyCallback = function (req, username, password, done) {
 
@@ -36,31 +38,39 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
-    if (req.recaptcha.error) {
-        done(null, false, req.flash('signupMessage', 'Something went wrong with the reCAPTCHA'));
-        return;
-    }
-
-    db.User.find({where: {email: req.body.email}})
-        .then(function (user) {
-            if (user) {
-                done(null, false, req.flash('signupMessage', 'That email is already taken'));
-            } else {
-                db.sequelize.sync().then(function () {
-                    var user = db.User.create({
-                        email: req.body.email,
-                    }).then(function (user) {
-                            user.setPassword(req.body.password);
-                            done(null, user);
-                        },
-                        function (err) {
-                            done(err);
-                        });
-                });
+    req.checkBody('email', 'Vous devez fournir un email valide').isEmail();
+    req.getValidationResult().then(function (result) {
+        if (!result.isEmpty()) {
+            done(null, false, req.flash('signupMessage', 'Vous devez fournir un email valide'));
+            return;
+        } else {
+            if (req.recaptcha.error) {
+                done(null, false, req.flash('signupMessage', 'Something went wrong with the reCAPTCHA'));
+                return;
             }
-        }, function (error) {
-            done(error);
-        });
+            db.User.find({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        done(null, false, req.flash('signupMessage', 'That email is already taken'));
+                    } else {
+                        db.sequelize.sync().then(function () {
+                            var user = db.User.create({
+                                email: req.body.email,
+                            }).then(function (user) {
+                                    user.setPassword(req.body.password);
+                                    done(null, user);
+                                },
+                                function (err) {
+                                    done(err);
+                                });
+                        });
+                    }
+                }, function (error) {
+                    done(error);
+                });
+        }
+    });
+
 
 };
 

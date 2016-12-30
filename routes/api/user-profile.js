@@ -49,10 +49,10 @@ module.exports = function (app, options) {
 
         // Data validation
         if (req.body.firstname) {
-            req.checkBody('firstname', 'firstname,binvalide format. Must be a string').isString();
+            req.checkBody('firstname', 'firstname, invalide format. Must be a string').isString();
         }
         if (req.body.lastname) {
-            req.checkBody('lastname', 'lastname,binvalide format. Must be a string').isString();
+            req.checkBody('lastname', 'lastname, invalide format. Must be a string').isString();
         }
         if (req.body.birthdate) {
             req.checkBody('birthdate', 'birthdate, invalide format. Must be a timestamp').isInt();
@@ -64,10 +64,10 @@ module.exports = function (app, options) {
         req.getValidationResult().then(function (result) {
 
                 if (!result.isEmpty()) {
-                    //console.log('There have been validation errors: ' + util.inspect(result.array()));
+                    // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
-                        msg: 'There have been validation errors: ' + util.inspect(result.array()),
+                        msg: 'There have been validation errors: ' + result.array,
                     });
                 }
 
