@@ -3,11 +3,32 @@
 module.exports = {
   identity_providers: {
     github: {
-      enabled: true,
+      enabled: false,
       client_id: process.env.CPA_GITHUB_CLIENT_ID,
       client_secret: process.env.CPA_GITHUB_CLIENT_SECRET,
       callback_url: '/auth/github/callback'
+    },
+    local: {
+      enabled: true
     }
+
+  },
+
+  jwtSecret: process.env.JWT_SECRET,
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
+  },
+
+  trackingCookie: {
+    enabled: true,
+    secret: 'HighWaterTurnsOff',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
+  recaptcha: {
+    site_key: process.env.CPA_RECAPCHA_SITEKEY,
+    secret_key: process.env.CPA_RECAPCHA_SECRETKEY
   },
 
   // When accessing the home page, if defined, users are automatically
@@ -15,11 +36,17 @@ module.exports = {
   auto_idp_redirect: '',
 
   db: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+
     // The database type, 'mysql', 'sqlite', etc.
-    type: 'sqlite',
+    type: process.env.DB_TYPE,//'sqlite',
+    database: process.env.DB_DATABASE,
 
     // Database filename for SQLite.
-    filename: 'data/cpa-auth-provider.sqlite',
+    filename: process.env.DB_FILENAME,//'data/cpa-auth-provider.sqlite',
 
     // If true, SQL statements are logged to the console.
     debug: true
@@ -53,6 +80,14 @@ module.exports = {
     },
   ],
 
+  oauth2_clients: [
+    {
+      id: 1,
+      client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+      client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
+      name: "OAuth 2.0 Client"
+    }
+  ],
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:
   // - false: The user must authenticate and confirm access to the new domain

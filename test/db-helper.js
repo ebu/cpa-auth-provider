@@ -8,12 +8,13 @@ module.exports = {
   clearDatabase: function(done) {
     var tables = [
       'AccessTokens',
-      'AuthorizationCodes',
+      'OAuth2AuthorizationCodes',
       'Clients',
       'Domains',
       'IdentityProviders',
       'PairingCodes',
-      'Users'
+      'Users',
+      'UserProfiles'
     ];
 
     var deleteData = function(table, done) {

@@ -1,6 +1,16 @@
 "use strict";
 
 module.exports = {
+
+  recaptcha: {
+    site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+    secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+  },
+  
+  
+  jwtSecret:'bigsecret',
+
+
   identity_providers: {
     facebook: {
       enabled: false
@@ -37,6 +47,14 @@ module.exports = {
   session_secret: 'LKASDMjnr234n90lasndfsadf',
 
   enableCORS: true,
+
+  // Cross-origin resource sharing
+  cors: {
+    enabled: true,
+    allowed_domains: [
+      'http://localhost.rts.ch:8080'
+    ]
+  },
 
   // URL path prefix, e.g., '/myapp'
   urlPrefix: '/ap',

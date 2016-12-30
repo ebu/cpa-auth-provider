@@ -1,0 +1,127 @@
+<% include layout/head %>
+
+<h1>CPA - OAuth2 Clients</h1>
+
+<div id="login-area" class="hide">
+    <div><label>Resource Owner: <input class="input-lg" id="login-username"></label></div>
+    <div><label>Password: <input class="input-lg" type="password" id="login-password"></label></div>
+    <a href="javascript:connectRop()" class="btn btn-info hide" id="login-btn">Login with Resource Owner Password</a>
+</div>
+<a href="#logout" class="btn btn-warning hide" id="logout-btn">Logout Resource Owner</a>
+
+<span id="user-widget"></span>
+
+<script>
+
+    var storeToken = function(token) {
+        if(typeof(Storage) !== "undefined") {
+            localStorage.setItem("cpa:rop-token", token);
+        } else {
+            // Cookie
+            throw "NotImplementedError"
+        }
+    }
+
+    var getToken = function() {
+        if(typeof(Storage) !== "undefined") {
+            return localStorage.getItem("cpa:rop-token");
+        } else {
+            // Cookie
+            throw "NotImplementedError"
+        }
+    };
+
+    var removeToken = function(token) {
+        if(typeof(Storage) !== "undefined") {
+            return localStorage.removeItem("cpa:rop-token");
+        } else {
+            // Cookie
+            throw "NotImplementedError"
+        }
+    };
+
+    var loadInterface = function (user) {
+        $('#user-widget').html('You are logged in as: ' + user.name);
+        $('#logout-btn').removeClass('hide').click(function() {
+            removeToken();
+            location.reload();
+        });
+    };
+
+    var loadProfile = function (done) {
+        var token = getToken();
+
+        if (token) {
+            jQuery.ajax({
+                        url: "<%= profileUrl %>",
+                        type: "GET",
+                        headers: {
+                            "Authorization": "Bearer "+ token,
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                    })
+                    .done(function(data, textStatus, jqXHR) {
+                        console.log("HTTP Request Succeeded: " + jqXHR.status);
+                        console.log(data);
+                        done(data.user);
+
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        console.log("HTTP Request Failed");
+                        done();
+                    });
+        }
+        else {
+            done();
+        }
+    };
+
+    function connectRop() {
+        var resourceOwner = $('#login-username').val();
+        var password = $('#login-password').val();
+
+        var data = {
+            grant_type: 'password',
+            username: resourceOwner,
+            password: password,
+            client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+            client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98"
+        };
+        jQuery.ajax(
+                {
+                    url: "<%= ropUrl %>",
+                    type: "POST",
+                    data: data,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                }
+        ).done(
+                function (data, textStatus, jqXhr){
+                    storeToken(data.access_token);
+                    location.reload();
+                }
+        ).fail(
+                function (jqXhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    // location.reload();
+                }
+        );
+
+    }
+
+
+    $(function() {
+        loadProfile(function(user) {
+            if (user) {
+                loadInterface(user);
+            }
+            else {
+                $('#login-btn').removeClass('hide');
+                $('#login-area').removeClass('hide');
+            }
+        });
+    });
+
+</script>
+
+
+<% include layout/foot %>

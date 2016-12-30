@@ -25,6 +25,7 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       AccessToken.belongsTo(models.Client);
+      AccessToken.belongsTo(models.OAuth2Client);
       AccessToken.belongsTo(models.Domain);
       AccessToken.belongsTo(models.User);
     }

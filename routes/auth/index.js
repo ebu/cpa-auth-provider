@@ -28,4 +28,5 @@ module.exports = function(router) {
   });
 
   authHelper.loadIdentityProviders(router, config.identity_providers);
+
 };
