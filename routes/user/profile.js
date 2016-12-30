@@ -8,10 +8,10 @@ var util       = require('util');
 var routes = function (router) {
     router.put('/user/profile/:user_id', authHelper.ensureAuthenticated, function (req, res) {
         var userId = req.params.user_id;
-        req.checkBody('firstname', 'Champ "Prenom" invalide').notEmpty().isString();
-        req.checkBody('lastname', 'Champ "Nom" invalide').notEmpty().isString();
-        req.checkBody('birthdate', 'Champ "Date de naissance" invalide').notEmpty().isInt();
-        req.checkBody('gender', 'Champ "Sexe" invalide').notEmpty().isHuman();
+        req.checkBody('firstname', '"Firstname" field is not valid').notEmpty().isString();
+        req.checkBody('lastname', '"Lastname" field is not valid').notEmpty().isString();
+        req.checkBody('birthdate', '"Birthdate" field is not valid').notEmpty().isInt();
+        req.checkBody('gender', '"Sex" field is not valid').notEmpty().isHuman();
 
         req.getValidationResult().then(function(result) {
             if (!result.isEmpty()) {

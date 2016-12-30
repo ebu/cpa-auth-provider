@@ -34,41 +34,41 @@
     <hr/>
     <div class="row">
         <div class="col-sm-3">
-            <h4>Données personnelles</h4>
-            <a id="modify-data" href="#">Modifier</a>
+            <h4>Personal data</h4>
+            <a id="modify-data" href="#">Edit</a>
         </div>
         <div class="col-sm-9">
 
             <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <span class="title">Veuillez vérifier que les champs ci-dessous soient renseignés et valides avant de soumettre le formulaire</span>
+                <span class="title">Please verify that the fields below are filled in and valid before submitting the form</span>
                 <span id="personnal-data-errors" class="content"></span>
             </div>
 
             <div id="personnal-data">
                 <form id="form-personnal-data">
                     <div class="panel">
-                        <h4>Prenom</h4>
+                        <h4>Firstname</h4>
                         <% if (profile.firstname) { %>
                         <span class="data-value"><%= profile.firstname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
-                        <input id="firstname" name="firstname" class="form-control personnal-data-input" placeholder="Prenom"/>
+                        <input id="firstname" name="firstname" class="form-control personnal-data-input" placeholder="Firstname"/>
                     </div>
                     <div class="panel">
-                        <h4>Nom</h4>
+                        <h4>Lastname</h4>
                         <% if (profile.lastname) { %>
                         <span class="data-value"><%= profile.lastname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
-                        <input id="lastname" name="lastname" class="form-control personnal-data-input" placeholder="Nom"/>
+                        <input id="lastname" name="lastname" class="form-control personnal-data-input" placeholder="Lastname"/>
                     </div>
                     <div class="panel">
-                        <h4>Date de naissance</h4>
+                        <h4>Birthdate</h4>
                         <span class="data-value"></span>
-                        <div class="input-group date personnal-data-input" data-provide="datepicker" data-language="fr">
+                        <div class="input-group date personnal-data-input" data-provide="datepicker" data-language="en">
                             <input id="birthday" name="birthday" class="form-control" type="text">
                             <div class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -79,20 +79,20 @@
                         <h4>Sexe</h4>
                         <% if (profile.gender) { %>
                             <% if (profile.gender === "female") { %>
-                                <span class="data-value" data-selected="<%= profile.gender %>">Femme</span>
+                                <span class="data-value" data-selected="<%= profile.gender %>">Woman</span>
                             <% } else { %>
-                                <span class="data-value" data-selected="<%= profile.gender %>">Homme</span>
+                                <span class="data-value" data-selected="<%= profile.gender %>">Man</span>
                             <% } %>
                         <% } else { %>
                         <span class="data-value" data-selected="male"></span>
                         <% } %>
                         <select id="gender" name="gender" class="form-control personnal-data-input">
-                            <option value="male">Homme</option>
-                            <option value="female">Femme</option>
+                            <option value="male">Man</option>
+                            <option value="female">Woman</option>
                         </select>
                     </div>
                     <div class="panel">
-                        <h4>E-mail</h4>
+                        <h4>Email</h4>
                         <% if (profile.email !== null) { %>
                         <span><%= profile.email %></span>
                         <% } else { %>
@@ -100,8 +100,8 @@
                         <% } %>
                     </div>
                     <div id="btn-container">
-                        <button id="btn-save-data" type="submit" class="btn btn-primary">Enregistrer</button>
-                        <button id="btn-cancel-save" type="submit" class="btn btn-link">Annuler</button>
+                        <button id="btn-save-data" type="submit" class="btn btn-primary">Save</button>
+                        <button id="btn-cancel-save" type="submit" class="btn btn-link">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -111,27 +111,27 @@
     <hr/>
     <div class="row">
         <div class="col-sm-3">
-            <h4>Sécurité</h4>
+            <h4>Security</h4>
         </div>
         <div class="col-sm-9">
             <h4>Mot de passe</h4>
-            <a id="btn-modify-password" href="#">Modifier votre mot de passe</a>
+            <a id="btn-modify-password" href="#">Edit your password</a>
             <form id="form-modify-pass">
                 <div class="form-group">
-                    <label for="old-password">Ancien mot de passe</label>
+                    <label for="old-password">Previous password</label>
                     <input type="password" class="form-control" id="old-password" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <label for="new-password">Nouveau mot de passe</label>
+                    <label for="new-password">New password</label>
                     <input type="password" class="form-control" id="new-password" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <label for="confirm-password">Confirmer le mot de passe</label>
+                    <label for="confirm-password">Confirm password</label>
                     <input type="password" class="form-control" id="confirm-password" placeholder="Password">
                 </div>
                 <div>
-                    <button id="btn-save-password" type="submit" class="btn btn-primary">Enregistrer</button>
-                    <button id="btn-cancel-password" class="btn btn-link">Annuler</button>
+                    <button id="btn-save-password" type="submit" class="btn btn-primary">Save</button>
+                    <button id="btn-cancel-password" class="btn btn-link">Cancel</button>
                 </div>
             </form>
         </div>
@@ -139,11 +139,11 @@
     <hr/>
     <div class="row">
         <div class="col-sm-3">
-            <h4>Supprimer le compte</h4>
+            <h4>Delete account</h4>
         </div>
         <div class="col-sm-9">
-            <p>Cliquer sur le bouton ci-dessous pour supprimer votre compte</p>
-            <a class="btn btn-danger">Supprimer le compte</a>
+            <p>Click the button below to delete your account</p>
+            <a class="btn btn-danger">Delete account</a>
         </div>
     </div>
 </div>
