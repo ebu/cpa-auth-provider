@@ -237,8 +237,6 @@
             var userId = "<%= user.id %>";
             var date = createDate($birthday.val()).getTime();
 
-            console.log(new Date(date));
-
             $.ajax({
                 url: "<%= link('/user/profile/') %>" + userId,
                 data: {
@@ -248,7 +246,8 @@
                     birthdate: date
                 },
                 type: 'PUT',
-                success: function() {
+                success: function(result) {
+                    console.log(result);
                     $firstname.prev(".data-value").text($firstname.val());
                     $lastname.prev(".data-value").text($lastname.val());
                     $datepicker.prev(".data-value").text($birthday.val());
@@ -257,6 +256,10 @@
                     $gender.prev(".data-value").attr("data-selected", $gender.val());
 
                     closeEditMode();
+                },
+                error: function(result, status) {
+                    console.log("xhr", result);
+                    console.log("status", status);
                 }
             });
 
