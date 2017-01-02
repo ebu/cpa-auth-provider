@@ -2,12 +2,14 @@
 
 module.exports = {
 
+  broadcaster: 'rts',
+
   recaptcha: {
     site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
-  
-  
+
+
   jwtSecret:'bigsecret',
 
 
