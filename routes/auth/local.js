@@ -109,15 +109,24 @@ module.exports = function (app, options) {
         failureFlash: true
     }), redirectOnSuccess);
 
-    app.post(
-        '/signup',
-        recaptcha.middleware.verify,
-        passport.authenticate(
-            'local-signup',
-            { failureRedirect: '/signup', failureFlash: true }
-        ),
-        redirectOnSuccess
-    );
+    app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
+        passport.authenticate('local-signup', function (err, user, info) {
+            if (err) {
+                return next(err);
+            }
+            // Redirect if it fails
+            if (!user) {
+                return res.redirect('/signup?email=' + req.body.email);
+            }
+            req.logIn(user, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                // Redirect if it succeeds
+                return redirectOnSuccess(req, res, next);
+            });
+        })(req, res, next);
+    });
 
     function redirectOnSuccess(req, res, next) {
         var redirectUri = req.session.auth_origin;
@@ -127,6 +136,6 @@ module.exports = function (app, options) {
             return res.redirect(redirectUri);
         }
 
-        requestHelper.redirect(res, '/');
+        return requestHelper.redirect(res, '/');
     }
 };
