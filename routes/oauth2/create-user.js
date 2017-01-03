@@ -10,21 +10,21 @@ exports.createUser = createUser;
 
 function createUser(req, res) {
 	if (req.body.grant_type != 'create_user') {
-		return res.status(400).json({ error: "Internal Error", error_description: oauth2Token.ERRORS.BAD_REQUEST.message });
+		return res.status(400).json({ error: oauth2Token.ERRORS.BAD_REQUEST.code, error_description: oauth2Token.ERRORS.BAD_REQUEST.message });
 	}
 
 	if (!req.body.client_id) {
-		return res.status(400).json({error: 'Internal Error', error_description: 'Missing fields. Please pass client_id.'});
+		return res.status(400).json({error: oauth2Token.ERRORS.BAD_REQUEST.code, error_description: 'Missing fields. Please pass client_id.'});
 	}
 
 	if (!req.body.username || !req.body.password) {
-		return res.status(400).json({error: 'Internal Error', error_description: 'Missing fields. Please pass username and password.'});
+		return res.status(400).json({error: oauth2Token.ERRORS.BAD_REQUEST.code, error_description: 'Missing fields. Please pass username and password.'});
 	}
 
 	db.User.find({ where: { email: req.body.username} })
 		.then (function (user){
 			if (user){
-				return res.status(400).json({error: 'Internal Error', error_description: oauth2Token.ERRORS.USER_UNAVAILABLE.message });
+				return res.status(400).json({error: oauth2Token.ERRORS.USER_UNAVAILABLE.code, error_description: oauth2Token.ERRORS.USER_UNAVAILABLE.message });
 			} else {
 				db.sequelize.sync().then(function() {
 					var user = db.User.create({

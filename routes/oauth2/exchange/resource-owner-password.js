@@ -2,9 +2,10 @@
 
 var db = require('../../../models');
 var oauthToken = require('../../../lib/oauth2-token');
+var TokenError = require('oauth2orize').TokenError;
 
-var USER_NOT_FOUND = { name: 'USER_NOT_FOUND', message: 'USER_NOT_FOUND' };
-var WRONG_PASSWORD = { name: 'WRONG_PASSWORD', message: 'WRONG_PASSWORD' };
+var USER_NOT_FOUND = oauthToken.ERRORS.USER_NOT_FOUND;
+var WRONG_PASSWORD = oauthToken.ERRORS.WRONG_PASSWORD;
 
 // Grant authorization by resource owner (user) and password credentials.
 // The user is authenticated and checked for validity - this strategy should
@@ -22,7 +23,7 @@ function confirmUser(client, username, password, scope, done) {
 	).then(
 		function (user) {
 			if (!user) {
-				done(USER_NOT_FOUND);
+				done(new TokenError(USER_NOT_FOUND.message, USER_NOT_FOUND.code));
 				return;
 			}
 
@@ -30,7 +31,7 @@ function confirmUser(client, username, password, scope, done) {
 					if (isMatch) {
 						return provideTokens(client, user, done);
 					} else {
-						return done(WRONG_PASSWORD);
+						return done(new TokenError(WRONG_PASSWORD.message, WRONG_PASSWORD.code));
 					}
 				},
 				function (err) {

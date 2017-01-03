@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-	var UserVerifyToken = sequelize.define(
-		'UserVerifyToken',
+	var UserEmailToken = sequelize.define(
+		'UserEmailToken',
 		{
 			key: {
 				type: DataTypes.STRING,
@@ -21,10 +21,10 @@ module.exports = function (sequelize, DataTypes) {
 			underscored: true,
 
 			associate: function (models) {
-				UserVerifyToken.belongsTo(models.User);
-				UserVerifyToken.belongsTo(models.OAuth2Client);
+				UserEmailToken.belongsTo(models.User);
+				UserEmailToken.belongsTo(models.OAuth2Client);
 			}
 		});
 
-	return UserVerifyToken;
+	return UserEmailToken;
 };

@@ -11,7 +11,7 @@ var initDatabase = function(opts, done) {
   db.User
     .create({
       id:           3,
-      email: 'testuser',
+      email:        'testuser',
       provider_uid: 'testuser',
       display_name: 'Test User'
     })

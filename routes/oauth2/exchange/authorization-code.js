@@ -4,6 +4,7 @@ var db = require('../../../models');
 var generate = require('../../../lib/generate');
 var jwtHelper = require('../../../lib/jwt-helper');
 var oauthToken = require('../../../lib/oauth2-token');
+var TokenError = require('oauth2orize').TokenError;
 
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the

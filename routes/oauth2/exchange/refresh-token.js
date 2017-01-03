@@ -1,6 +1,8 @@
 "use strict";
 
 var oauthTokenHelper = require('../../../lib/oauth2-token');
+var TokenError = require('oauth2orize').TokenError;
+var logger = require('../../../lib/logger');
 
 exports.issueToken = issueToken;
 
@@ -20,7 +22,10 @@ function issueToken(client, token, scope, done) {
 				}
 			},
 			function(error) {
-				return done(error);
+				if (logger && typeof(logger.error) == 'function') {
+					logger.error('[OAuth2][issueToken]', error);
+				}
+				return done(new TokenError(oauthTokenHelper.ERRORS.BAD_REQUEST.message, oauthTokenHelper.ERRORS.BAD_REQUEST.code));
 			}
 		)
 		.catch(

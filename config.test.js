@@ -3,13 +3,17 @@
 module.exports = {
 
   recaptcha: {
+    enabled: true,
     site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
   
   
   jwtSecret:'bigsecret',
-
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
+  },
 
   identity_providers: {
     facebook: {
@@ -46,10 +50,13 @@ module.exports = {
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
 
-  quality_check: {
-    enabled: true
+  // Cross-origin resource sharing
+  cors: {
+    enabled: true,
+    allowed_domains: [
+      'http://localhost.rts.ch:8080'
+    ]
   },
-
 
 	enableCORS: true,
 
@@ -73,6 +80,10 @@ module.exports = {
       access_token: 'b3dd734356524ef9b9ab3d03f1b1558e'
     }
   ],
+
+  oauth2: {
+    refresh_tokens_enabled: true
+  },
 
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:

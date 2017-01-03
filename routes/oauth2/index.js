@@ -101,25 +101,28 @@ module.exports = function (router) {
     // first, and rendering the `dialog` view.
 
     var authorization = [
-        authHelper.authenticateFirst,
         server.authorization(function (clientID, redirectURI, done) {
             db.OAuth2Client.find({where: {client_id: clientID}}).complete(function (err, client) {
                 if (err) {
                     return done(err);
                 }
+                if (!client) {
+                    return done(new Error('unknown client' + clientID));
+                }
                 // WARNING: For security purposes, it is highly advisable to check that
                 //          redirectURI provided by the client matches one registered with
                 //          the server.  For simplicity, this example does not.  You have
                 //          been warned.
-                if (!client.redirect_uri || redirectURI.startsWith(client.redirect_uri)) {
+                if (!client.redirect_uri || (redirectURI && redirectURI.startsWith(client.redirect_uri))) {
                     return done(null, client, redirectURI);
                 }
-                if (logger) {
+                if (logger && typeof(logger.error) == 'function') {
                     logger.error('client', client.id, 'not allowed with redirection', redirectURI);
                 }
                 return done(new Error('bad redirection'));
             });
         }),
+		authHelper.authenticateFirst,
         function (req, res) {
             res.render('oauth2/dialog', {
                 transactionID: req.oauth2.transactionID,
@@ -156,8 +159,15 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
+	var easyToken = [
+	    confirmOAuth2Client,
+        cors_header,
+        server.token(),
+        server.errorHandler()
+    ];
+
     var createUser = [
-        passport.authenticate(['oauth2-client-password'], { session: false }),
+        confirmOAuth2Client,
         cors_header,
         CreateUser
     ];
@@ -168,6 +178,9 @@ module.exports = function (router) {
     router.post('/oauth2/token', token);
     router.post('/oauth2/create', createUser);
     router.options('/oauth2/token', cors_header);
+
+    router.options('/oauth2/login', cors_header);
+	router.post('/oauth2/login', easyToken);
 
     function corsOptionsDelegate(req, callback) {
         var options;
@@ -181,4 +194,26 @@ module.exports = function (router) {
         }
         return callback(null, options);
     }
+
+	/**
+     * Most basic oauth2 confirmation of client_id. Merely confirm the client_id
+     * is known to the service. client_secret is not required.
+     */
+	function confirmOAuth2Client(req, res, next) {
+		var clientId = req.body.client_id;
+
+		db.OAuth2Client.find({where: {client_id: clientId}}).then(
+			function (client) {
+			    if (client) {
+			        req.user = client;
+			        return next();
+                } else {
+			        return res.status(400).json({error: 'invalid_client', error_description: 'client not found'});
+                }
+			},
+			function (err) {
+                return next(err);
+			}
+		);
+	}
 };

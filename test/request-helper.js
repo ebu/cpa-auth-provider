@@ -78,7 +78,7 @@ module.exports = {
     request
       .post(loginUrl)
       .type('form')
-      .send({ username: 'testuser', email: 'testuser', password: 'testpassword' })
+      .send({ email: 'testuser', username: 'testuser', password: 'testpassword' })
       .end(function(err, res) {
         context.cookie = res.headers['set-cookie'];
         done(err);

@@ -13,7 +13,7 @@
     "start": "bin/server",
     "dev": "bin/server",
     "docker-dev": "yarn install && nodemon --watch package.json --exec \"yarn install && yarn run dev\"",
-    "test": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib"
+    "test": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib test/api"
   },
   "dependencies": {
     "async": "~0.2.10",
@@ -33,6 +33,7 @@
     "express-session": "~1.13.0",
     "jade": "~0.35.0",
     "jsonschema": "~0.4.0",
+    "jsonwebtoken": "^7.2.1",
     "jwt-simple": "~0.5.0",
     "lodash": "~2.4.1",
     "method-override": "~2.3.5",

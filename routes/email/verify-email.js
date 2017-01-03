@@ -106,7 +106,7 @@ function getEmailRedirectUrl(verifyToken, client) {
 function getTokenAndClient(key) {
 	return new Promise(
 		function (resolve, reject) {
-			db.UserVerifyToken.find({where: {key: key}}).then(
+			db.UserEmailToken.find({where: {key: key}}).then(
 				function (verifyToken) {
 					if (!verifyToken) {
 						return reject(new Error('invalid token'));
