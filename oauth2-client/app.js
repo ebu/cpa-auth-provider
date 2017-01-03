@@ -60,6 +60,7 @@ passport.deserializeUser(function(id, done) {
 var server = process.env.OAUTH2_SERVER || 'http://192.168.99.100:3000';
 var serverInternal = process.env.OAUTH2_INTERNAL_SERVER;
 var callbackServer = process.env.OAUTH2_CALLBACK || 'http://192.168.99.100:3001';
+var httpPort = process.env.HTTP_PORT ? process.env.HTTP_PORT : 3000;
 
 oauth2_config = {
     requestTokenURL: serverInternal + '/oauth2/request_token',
@@ -128,6 +129,6 @@ app.get(
     }
 );
 
-app.listen(3000, function () {
-    console.log('Example app listening on port 3000!');
+app.listen(httpPort, function () {
+    console.log('Example app listening on port ' + httpPort + '!');
 });
