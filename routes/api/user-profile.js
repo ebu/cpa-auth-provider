@@ -27,7 +27,7 @@ module.exports = function (app, options) {
             return res.status(401).send({success: false, msg: 'Authentication failed. user profile not found.'});
         } else {
             db.UserProfile.findOrCreate({
-                id: user.id
+                user_id: user.id
             }).then(function (user_profile) {
 
                 res.json({
