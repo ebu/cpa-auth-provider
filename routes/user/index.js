@@ -24,9 +24,9 @@ var routes = function (router) {
     });
 
     router.get('/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
-        db.User.find({
+        db.User.find({where: {
             id: req.user.id
-        }).then(function (user) {
+        }}).then(function (user) {
             if (!user) {
                 return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
             } else {
