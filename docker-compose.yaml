@@ -10,13 +10,14 @@ services:
     - OAUTH2_SERVER=http://localhost:3000
     - OAUTH2_CALLBACK=http://localhost:3001
     - OAUTH2_INTERNAL_SERVER=http://cpa-auth-provider:3000
-    - EMAIL_FROM=no-reply@rts.ch
     links:
     - cpa-auth-provider:cpa-auth-provider
   cpa-auth-provider:
     build: .
     ports:
     - 3000:3000
+    environment:
+    - EMAIL_FROM=no-reply@rts.ch
 #    depends_on:
 #      - postgres
 #    links:
