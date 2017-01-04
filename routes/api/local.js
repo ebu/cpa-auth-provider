@@ -13,6 +13,7 @@ var jwt              = require('jwt-simple');
 var JwtStrategy      = require('passport-jwt').Strategy;
 var cors             = require('../../lib/cors');
 var generate = require('../../lib/generate');
+var emailUtil = require('../../lib/email-util');
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
 if (config.recaptcha.enabled) {
@@ -77,6 +78,7 @@ module.exports = function(app, options) {
                               account_uid: generate.accountId()
                           }).then(function (user) {
                                   user.setPassword(req.body.password).done(function(err, result) {
+                                  	emailUtil.sendVerifyEmail(user, req.host, undefined, undefined);
                                       res.json({success: true, msg: 'Successfully created new user.'});
                                   });
                                   },
