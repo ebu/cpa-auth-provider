@@ -38,7 +38,7 @@ module.exports = function (app, options) {
                         gender: user_profile.gender,
                         birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
                         email: user.email,
-                        display_name: user_profile.getDisplayName(user, req.query.policy),
+                        display_name: user_profile.getDisplayName(user, req.query.policy)
                     }
                 });
             });

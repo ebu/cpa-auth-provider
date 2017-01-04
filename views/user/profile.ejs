@@ -13,13 +13,13 @@
     .personnal-data-input {
         visibility: hidden;
     }
-    #form-personnal-data-errors {
+    .error-block {
         display: none;
     }
-    #form-personnal-data-errors .title {
+    .error-block .title {
         font-weight: 500;
     }
-    #form-personnal-data-errors .content p{
+    .error-block .content p{
         margin: 0;
     }
 </style>
@@ -28,7 +28,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h2>Réglages</h2>
+            <h2>Settings</h2>
         </div>
     </div>
     <hr/>
@@ -39,7 +39,7 @@
         </div>
         <div class="col-sm-9">
 
-            <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible" role="alert">
+            <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span class="title">Please verify that the fields below are filled in and valid before submitting the form</span>
                 <span id="personnal-data-errors" class="content"></span>
@@ -114,16 +114,22 @@
             <h4>Security</h4>
         </div>
         <div class="col-sm-9">
+
+            <div id="form-security-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span id="security-errors" class="content"></span>
+            </div>
+
             <h4>Password</h4>
             <a id="btn-modify-password" href="#">Edit your password</a>
             <form id="form-modify-pass">
                 <div class="form-group">
                     <label for="old-password">Previous password</label>
-                    <input type="password" class="form-control" id="old-password" placeholder="Password">
+                    <input type="password" class="form-control" id="previous-password" placeholder="Password">
                 </div>
                 <div class="form-group">
                     <label for="new-password">New password</label>
-                    <input type="password" class="form-control" id="new-password" placeholder="Password">
+                    <input type="password" class="form-control" id="password" placeholder="Password">
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">Confirm password</label>
@@ -143,7 +149,7 @@
         </div>
         <div class="col-sm-9">
             <p>Click the button below to delete your account</p>
-            <a class="btn btn-danger">Delete account</a>
+            <a class="btn btn-danger" disabled="disabled">Delete account</a>
         </div>
     </div>
 </div>
@@ -166,6 +172,9 @@
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
         var $gender = $("#gender");
+        var $previousPassword = $("#previous-password");
+        var $password = $("#password");
+        var $confirmPassword = $("#confirm-password");
         var $birthday = $("#birthday");
         var $inputs = $('.personnal-data-input');
         var $datepicker = $(".input-group.date");
@@ -295,19 +304,48 @@
 
         $modifyPassBtn.on('click', function (e) {
             e.preventDefault();
-
             $formModifyPass.show();
             $modifyPassBtn.hide();
         });
 
         $savePasswordBtn.on('click', function (e) {
             e.preventDefault();
-            $formModifyPass.hide();
-            $modifyPassBtn.show();
+
+            resetErrors("form-security-errors", "security-errors");
+
+            var userId = "<%= user.id %>";
+
+            $.ajax({
+                url: "<%= link('/user/') %>" + userId + "/password",
+                data: {
+                    previous_password: $previousPassword.val(),
+                    password: $password.val(),
+                    confirm_password: $confirmPassword.val()
+                },
+                type: 'POST',
+                success: function(result) {
+                    console.log("success", result);
+                    $previousPassword.val("");
+                    $password.val("");
+                    $confirmPassword.val("");
+                    $formModifyPass.hide();
+                    $modifyPassBtn.show();
+                },
+                error: function(result) {
+                    $.each(result.responseJSON.errors, function(index, error){
+                        $("#security-errors").append($('<p>').text(error.msg));
+                    });
+                    $("#form-security-errors").show("fast");
+                    $('html, body').animate({
+                        scrollTop: $("#security-errors").offset().top
+                    }, 500);
+                }
+            });
         });
 
         $cancelPasswordBtn.on('click', function (e) {
             e.preventDefault();
+            resetErrors("form-security-errors", "security-errors");
             $formModifyPass.hide();
             $modifyPassBtn.show();
         });
