@@ -16,6 +16,8 @@ services:
     build: .
     ports:
     - 3000:3000
+    environment:
+    - EMAIL_FROM=no-reply@rts.ch
 #    depends_on:
 #      - postgres
 #    links:

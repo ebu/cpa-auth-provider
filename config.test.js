@@ -1,13 +1,12 @@
 "use strict";
 
 module.exports = {
-
   recaptcha: {
     site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
-  
-  
+
+
   jwtSecret:'bigsecret',
 
 
@@ -96,5 +95,9 @@ module.exports = {
   // in seconds.
   max_poll_interval: 5,
 
-  server_clients: []
+  server_clients: [],
+
+  mail: {
+    from: 'no-reply@rts.ch',
+  }
 };
