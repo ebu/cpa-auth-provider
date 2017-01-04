@@ -23,7 +23,7 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET,
   jwt: {
     audience: 'cpa',
-    issuer: 'cpa'
+    issuer: process.env.JWT_ISSUER
   },
 
   recaptcha: {
