@@ -18,9 +18,17 @@ var CLIENT = {
 	redirect_uri: 'http://localhost'
 };
 var USER = {
+	id: 123,
 	email: 'test@test.com',
 	account_uid: 'RandomUid',
 	password: 'a'
+};
+
+var USER2 = {
+	id: 234,
+	email: 'some@one.else',
+	account_uid: 'AnotherUid',
+	password: 'b'
 };
 
 var URL_PREFIX = config.urlPrefix;
@@ -36,17 +44,27 @@ function createOAuth2Client(done) {
 	);
 }
 
-function createFakeUser(done) {
-	db.User.create(USER).then(
-		function (user) {
-			user.setPassword(USER.password).then(
+function createUser(userTemplate) {
+	return new Promise(
+		function(resolve, reject) {
+			db.User.create(userTemplate).then(
 				function (user) {
-					return done();
+					user.setPassword(userTemplate.password).then(resolve, reject);
 				},
-				done);
-		},
-		done
+				reject);
+		}
 	);
+}
+
+function createFakeUser(done) {
+	createUser(USER).then(
+		function() {
+			return createUser(USER2);
+		}).then(
+			function() {
+				return done();
+			}
+		).catch(done);
 }
 
 var resetDatabase = function (done) {
@@ -136,7 +154,45 @@ describe('POST /oauth2/token', function () {
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
 			expect(decoded.exp).equal(36000);
-			expect(decoded.cli).equal(1);
+			expect(decoded.cli).equal(CLIENT.id);
+			expect(decoded.sub).equal(USER.id);
+		});
+
+		it('should have token type Bearer', function () {
+			expect(this.res.body.token_type).equal('Bearer');
+		});
+	});
+
+	context('using grant_type: \'password\' with 2nd user' , function () {
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {
+				method: 'post',
+				cookie: this.cookie,
+				type: 'form',
+				data: {
+					grant_type: 'password',
+					username: USER2.email,
+					password: USER2.password,
+					client_id: CLIENT.client_id,
+					client_secret: CLIENT.client_secret
+				}
+			}, done);
+		});
+
+		it('should return a success', function () {
+			expect(this.res.statusCode).equal(200);
+		});
+
+		it('should have proper access token', function () {
+			var decoded = jwtHelper.decode(this.res.body.access_token);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).equal(36000);
+			expect(decoded.cli).equal(CLIENT.id);
+			expect(decoded.sub).equal(USER2.id);
 		});
 
 		it('should have token type Bearer', function () {
