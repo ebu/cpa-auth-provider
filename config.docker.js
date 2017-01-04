@@ -107,5 +107,9 @@ module.exports = {
 
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.
-  max_poll_interval: 5
+  max_poll_interval: 5,
+
+  mail: {
+    from: process.env.EMAIL_FROM
+  }
 };

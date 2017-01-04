@@ -98,5 +98,9 @@ module.exports = {
   // in seconds.
   max_poll_interval: 5,
 
-  server_clients: []
+  server_clients: [],
+
+  mail: {
+    from: 'no-reply@rts.ch',
+  }
 };

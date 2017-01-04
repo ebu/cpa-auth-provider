@@ -15,13 +15,4 @@ else {
     filename = './config.local';
 }
 
-var config = require(filename);
-
-// Append all broadcaster specific configuration to main config
-var broadcasterFilename = './config.broadcaster.' + config.broadcaster + '.js';
-var broadcasterConfig = require(broadcasterFilename);
-for (var attributeName in broadcasterConfig) {
-    config[attributeName] = broadcasterConfig[attributeName];
-}
-
-module.exports = config;
+module.exports = require(filename);

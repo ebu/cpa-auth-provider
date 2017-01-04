@@ -12,7 +12,7 @@ describe("send", function() {
 
 describe("broadcaster config", function() {
     it("should contains mail.form", function() {
-        expect(config.broadcaster.mail.from).to.be.defined;
+        expect(config.mail.from).defined;
     });
 });
 
