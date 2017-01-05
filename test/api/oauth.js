@@ -132,9 +132,9 @@ describe('POST /oauth2/token', function () {
 		});
 
 		it('should have proper access token', function () {
-			var data = jwtHelper.decode(this.res.body.access_token);
+			var data = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
 			expect(data.typ).equal('access');
-			expect(data.cli).equal(CLIENT.id);
+			expect(data.cli).equal(CLIENT.client_id);
 			expect(data.sub).not.equal(undefined);
 			expect(data.exp).not.equal(undefined);
 			// expect(this.res.body.access_token).equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjcGEiLCJhdWQiOiJjcGEiLCJleHAiOjEzOTcwNzcyMDAwMDAsInN1YiI6MzA3LCJ0eXAiOiJhY2Nlc3MiLCJjbGkiOjEsInZmeSI6IjEifQ.9L7uCyfNoV3kPaUl1JuJdwJuItYC70azIg9vhFri40s');
@@ -250,9 +250,9 @@ describe('POST /oauth2/login', function () {
 		});
 
 		it('should have proper access token', function () {
-			var data = jwtHelper.decode(this.res.body.access_token);
+			var data = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
 			expect(data.typ).equal('access');
-			expect(data.cli).equal(CLIENT.id);
+			expect(data.cli).equal(CLIENT.client_id);
 			expect(data.sub).not.equal(undefined);
 			expect(data.exp).not.equal(undefined);
 			// expect(this.res.body.access_token).equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjcGEiLCJhdWQiOiJjcGEiLCJleHAiOjEzOTcwNzcyMDAwMDAsInN1YiI6MzA5LCJ0eXAiOiJhY2Nlc3MiLCJjbGkiOjEsInZmeSI6IjEifQ.a2wd3w3pkh1TRIb3EFo0yH99n5GL6lNtVgHT0YR11lI');
@@ -383,9 +383,9 @@ describe('POST /oauth2/login', function () {
 				expect(this.res.statusCode).equal(200);
 			});
 			it('should provide access token', function () {
-				var data = jwtHelper.decode(this.res.body.access_token);
+				var data = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
 				expect(data.typ).equal('access');
-				expect(data.cli).equal(CLIENT.id);
+				expect(data.cli).equal(CLIENT.client_id);
 				expect(data.sub).not.equal(undefined);
 				expect(data.exp).not.equal(undefined);
 				// expect(this.res.body.access_token).equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjcGEiLCJhdWQiOiJjcGEiLCJleHAiOjEzOTcwNzcyMDAwMDAsInN1YiI6MzEyLCJ0eXAiOiJhY2Nlc3MiLCJjbGkiOjEsInZmeSI6IjEifQ.Kl6JhiyUdVB85aP3hivG_mCCRXin-gpwMbDzsSRcq5w');

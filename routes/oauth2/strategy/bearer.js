@@ -5,31 +5,33 @@ var BearerStrategy = require('passport-http-bearer').Strategy;
 var jwtHelper = require('../../../lib/jwt-helper');
 
 exports.bearer = new BearerStrategy(function (accessToken, done) {
-    var userId = jwtHelper.getUserId(accessToken);
-    if (userId) {
-        db.User.find({where: {id: userId}}).then(
-            function(user) {
-                if (!user) {
-                    return done(null, false);
-                }
+    var clientId = jwtHelper.read(accessToken).cli;
+	db.OAuth2Client.find({where: {id: clientId}}).then(
+		function(client) {
+			if (!client) {
+				return done(null, false);
+			}
+
+			var userId = jwtHelper.getUserId(accessToken, client.client_secret);
+			if (userId) {
+				db.User.find({where: {id: userId}}).then(
+					function(user) {
+						if (!user) {
+							return done(null, false);
+						}
+						// TODO: Define scope
+						var info = {scope: '*'};
+						return done(null, user, info);
+					}
+				).catch(done);
+			} else {
                 // TODO: Define scope
                 var info = {scope: '*'};
-                done(null, user, info);
-            }
-        ).catch(done);
-    } else {
-        var clientId = jwtHelper.decode(accessToken).cli;
-        db.OAuth2Client.find({where: {id: clientId}}).then(
-            function(client) {
-                if (!client) {
-                    return done(null, false);
-                }
-                // TODO: Define scope
-                var info = {scope: '*'};
-                done(null, client, info);
-            }
-        ).catch(done);
-    }
+                return done(null, client, info);
+			}
+		}
+	).catch(done);
+
     //
     // db.AccessToken.find({where: {token: accessToken}}).then(function (token) {
     //     if (!token) {

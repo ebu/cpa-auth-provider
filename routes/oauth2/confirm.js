@@ -11,6 +11,7 @@ module.exports = function(app, options) {
 		'/oauth2/confirm',
 		function(req, res) {
 			// TODO limit confirmation calls to certain origin hosts
+			var clientId = req.body.client_id;
 			var token = req.body.token;
 
 			if (!token) {
@@ -18,14 +19,33 @@ module.exports = function(app, options) {
 				return;
 			}
 
-			try {
-				var data = jwtHelper.decode(token);
-				// slightly slower solution: could check database here
-				res.status(200).json({ success: true, user_id: data.sub });
-			} catch(e) {
-				res.status(500).json({ success: false, msg: err });
-			}
+			getClient(clientId).then(
+				function(client) {
+					try {
+						var data = jwtHelper.decode(token, client.client_secret);
+						// slightly slower solution: could check database here
+						res.status(200).json({ success: true, user_id: data.sub });
+					} catch(e) {
+						res.status(500).json({ success: false, msg: err });
+					}
+				},
+				function(e) {
+					res.status(500).json({ success: false, msg: err });
+				}
+			);
 		}
 	);
 };
+
+function getClient(clientId) {
+	return new Promise(
+		function(resolve,reject) {
+			if (clientId) {
+				db.OAuth2Client.find({where: {client_id: clientId}}).then(resolve, reject);
+			} else {
+				resolve();
+			}
+		}
+	);
+}
 

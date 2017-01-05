@@ -7,7 +7,7 @@ var logger = require('../../../lib/logger');
 exports.issueToken = issueToken;
 
 function issueToken(client, token, scope, done) {
-	oauthTokenHelper.validateRefreshToken(token, client ? client.id : 0, scope)
+	oauthTokenHelper.validateRefreshToken(token, client, scope)
 		.then(
 			function(user) {
 				if (user) {
@@ -25,11 +25,16 @@ function issueToken(client, token, scope, done) {
 				if (logger && typeof(logger.error) == 'function') {
 					logger.error('[OAuth2][issueToken]', error);
 				}
+				console.log(error);
 				return done(new TokenError(oauthTokenHelper.ERRORS.BAD_REQUEST.message, oauthTokenHelper.ERRORS.BAD_REQUEST.code));
 			}
 		)
 		.catch(
 			function(error) {
+				if (logger && typeof(logger.error) == 'function') {
+					logger.error('[OAuth2][issueToken]', error);
+				}
+				console.log(error);
 				return done(error);
 			}
 		);
