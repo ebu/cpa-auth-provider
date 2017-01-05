@@ -4,6 +4,7 @@ var config     = require('../../config');
 var db         = require('../../models/index');
 var authHelper = require('../../lib/auth-helper');
 var util       = require('util');
+var xssFilters = require('xss-filters');
 
 var routes = function (router) {
     router.put('/user/profile/:user_id', authHelper.ensureAuthenticated, function (req, res) {
@@ -23,10 +24,11 @@ var routes = function (router) {
             }).then(function (user_profile) {
                     user_profile.updateAttributes(
                         {
-                            firstname: req.body.firstname,
-                            lastname: req.body.lastname,
-                            gender: req.body.gender,
-                            birthdate: req.body.birthdate ? req.body.birthdate : user_profile.birthdate
+                            //use XSS filters to prevent users storing malicious data/code that could be interpreted then
+                            firstname: xssFilters.inHTMLData(req.body.firstname),
+                            lastname: xssFilters.inHTMLData(req.body.lastname),
+                            gender: xssFilters.inHTMLData(req.body.gender),
+                            birthdate: xssFilters.inHTMLData(req.body.birthdate)
                         })
                         .then(function () {
                                 res.json({msg: 'Successfully updated user_profile.'});

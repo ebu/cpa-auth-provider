@@ -4,6 +4,10 @@ var config =     require('../../config');
 var db =         require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
+var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
+var USER_NOT_FOUND = 'User not found';
+var SUCESS_PASS_CHANGED = 'Successfully changing password';
+
 var routes = function (router) {
     router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
         db.Client
@@ -47,6 +51,39 @@ var routes = function (router) {
         }, function (err) {
             next(err);
         });
+    });
+
+    router.post('/user/:user_id/password', authHelper.ensureAuthenticated, function (req, res) {
+        req.checkBody('previous_password', '"Previous Password" field  is empty').notEmpty();
+        req.checkBody('password', '"New Password" field is empty').notEmpty();
+        req.checkBody('confirm_password', '"Confirm Password" field is empty').notEmpty();
+        req.checkBody('password', '"New Password" field does not match the confirmation password').equals(req.body.confirm_password);
+
+        req.getValidationResult().then(function(result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+            } else {
+                db.User.find({where: {
+                    id: req.user.id
+                }}).then(function (user) {
+                    if (!user) {
+                        return res.status(401).send({errors: [{msg: USER_NOT_FOUND}]});
+                    } else {
+                        user.verifyPassword(req.body.previous_password).then(function (isMatch) {
+                            // if user is found and password is right change password
+                            if (isMatch) {
+                                user.setPassword(req.body.password).done(function (err, result) {
+                                    res.json({msg: SUCESS_PASS_CHANGED});
+                                });
+                            } else {
+                                res.status(401).json({errors: [{msg: INCORRECT_PREVIOUS_PASS}]});
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     });
 };
 
