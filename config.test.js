@@ -2,13 +2,17 @@
 
 module.exports = {
   recaptcha: {
+    enabled: true,
     site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
 
 
   jwtSecret:'bigsecret',
-
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
+  },
 
   identity_providers: {
     facebook: {
