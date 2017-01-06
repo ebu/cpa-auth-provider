@@ -22,7 +22,12 @@ module.exports = {
       enabled: false
     }
   },
-
+  trackingCookie: {
+    enabled: false,
+    secret: 'secret phrase',
+    // name: 'TrackingId',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
   recaptcha: {
     site_key: '',
     secret_key: ''
@@ -51,6 +56,9 @@ module.exports = {
 
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
+
+  // Name of the session cookie. Must be something different than 'connect.sid'
+  sid_cookie_name: 'identity.provider.sid',
 
   // Cross-origin resource sharing
   cors: {
@@ -108,5 +116,9 @@ module.exports = {
 
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.
-  max_poll_interval: 5
+  max_poll_interval: 5,
+
+  mail: {
+    from: 'no-reply@rts.ch',
+  }
 };

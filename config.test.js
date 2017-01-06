@@ -1,14 +1,13 @@
 "use strict";
 
 module.exports = {
-
   recaptcha: {
     enabled: true,
     site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
     secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
-  
-  
+
+
   jwtSecret:'bigsecret',
   jwt: {
     audience: 'cpa',
@@ -30,6 +29,10 @@ module.exports = {
     }
   },
 
+  trackingCookie: {
+    enabled: true
+  },
+
   auto_idp_redirect: 'local',
 
   db: {
@@ -46,6 +49,11 @@ module.exports = {
   // Session cookie is signed with this secret to prevent tampering
   session_secret: 'LKASDMjnr234n90lasndfsadf',
 
+  // Name of the session cookie. Must be something different than 'connect.sid'
+  sid_cookie_name: 'identity.provider.sid',
+
+  enableCORS: true,
+
   // Cross-origin resource sharing
   cors: {
     enabled: true,
@@ -53,8 +61,6 @@ module.exports = {
       'http://localhost.rts.ch:8080'
     ]
   },
-
-  enableCORS: true,
 
   // URL path prefix, e.g., '/myapp'
   urlPrefix: '/ap',
@@ -96,5 +102,9 @@ module.exports = {
   // in seconds.
   max_poll_interval: 5,
 
-  server_clients: []
+  server_clients: [],
+
+  mail: {
+    from: 'no-reply@rts.ch',
+  }
 };

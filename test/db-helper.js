@@ -13,7 +13,8 @@ module.exports = {
       'Domains',
       'IdentityProviders',
       'PairingCodes',
-      'Users'
+      'Users',
+      'UserProfiles'
     ];
 
     var deleteData = function(table, done) {
