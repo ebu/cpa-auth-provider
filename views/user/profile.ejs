@@ -22,6 +22,12 @@
     .error-block .content p{
         margin: 0;
     }
+    .mobile-title {
+        font-size: 25px;
+    }
+    .btn.btn-link {
+        padding: 0;
+    }
 </style>
 
 <div data-rts-widget="rts-header"></div>
@@ -34,8 +40,10 @@
     <hr/>
     <div class="row">
         <div class="col-sm-3">
-            <h4>Personal data</h4>
-            <a id="modify-data" href="#">Edit</a>
+            <h4 class="hidden-xs">Personal data</h4>
+            <h4 class="visible-xs-inline-block hidden-sm mobile-title">Personal data</h4>
+            <button id="modify-data" type="button" class="btn btn-link">Edit</button>
+            <hr class="visible-xs-block hidden-sm"/>
         </div>
         <div class="col-sm-9">
 
@@ -108,10 +116,12 @@
 
         </div>
     </div>
-    <hr/>
+    <hr class="hidden-xs"/>
     <div class="row">
         <div class="col-sm-3">
-            <h4>Security</h4>
+            <h4 class="hidden-xs">Security</h4>
+            <h4 class="visible-xs-inline-block hidden-sm mobile-title">Security</h4>
+            <hr class="visible-xs-block hidden-sm"/>
         </div>
         <div class="col-sm-9">
 
@@ -121,7 +131,7 @@
             </div>
 
             <h4>Password</h4>
-            <a id="btn-modify-password" href="#">Edit your password</a>
+            <button id="btn-modify-password" type="button" class="btn btn-link">Edit your password</button>
             <form id="form-modify-pass">
                 <div class="form-group">
                     <label for="old-password">Previous password</label>
@@ -145,7 +155,9 @@
     <hr/>
     <div class="row">
         <div class="col-sm-3">
-            <h4>Delete account</h4>
+            <h4 class="hidden-xs">Delete account</h4>
+            <h4 class="visible-xs-inline-block hidden-sm mobile-title">Delete account</h4>
+            <hr class="visible-xs-block hidden-sm"/>
         </div>
         <div class="col-sm-9">
             <p>Click the button below to delete your account</p>
