@@ -34,9 +34,9 @@ var routes = function (router) {
             if (!user) {
                 return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
             } else {
-                db.UserProfile.findOrCreate({
+                db.UserProfile.findOrCreate({where: {
                     user_id: req.user.id
-                }).then(function (profile) {
+                }}).then(function (profile) {
                     res.render('./user/profile.ejs', {
                         profile: {
                             firstname: profile.firstname,

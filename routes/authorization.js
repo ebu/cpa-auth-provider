@@ -39,12 +39,7 @@ module.exports = function(router, config) {
 
     db.Domain
       .find({ where: { name: domainName } })
-      .complete(function(err, domain) {
-        if (err) {
-          next(err);
-          return;
-        }
-
+      .then(function(domain) {
         if (!domain) {
           res.sendInvalidRequest("Unknown domain: " + domainName);
           return;
@@ -57,12 +52,7 @@ module.exports = function(router, config) {
 
         db.AccessToken
           .find({ where: query, include: [db.User] })
-          .complete(function(err, accessToken) {
-            if (err) {
-              next(err);
-              return;
-            }
-
+          .then(function(accessToken) {
             if (!accessToken) {
               res.sendErrorResponse(404, "not_found", "Unknown access token");
               return;
@@ -84,7 +74,12 @@ module.exports = function(router, config) {
             }
 
             res.send(responseData);
-          });
-      });
+          }, function(err) {
+              console.log(query);
+            next(err);
+		  });
+      }, function(err) {
+		next(err);
+	  });
   });
 };

@@ -24,12 +24,13 @@ var initDatabase = function(done) {
         access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
       });
     })
-    .then(function() {
-      done();
-    },
-    function(error) {
-      done(new Error(error));
-    });
+    .then(
+      function() {
+        done();
+      },
+      function(error) {
+        done(new Error(error));
+      });
 };
 
 var resetDatabase = function(done) {

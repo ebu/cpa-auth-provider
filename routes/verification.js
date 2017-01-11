@@ -15,12 +15,7 @@ var routes = function(router) {
       where: { user_id: req.user.id, state: 'pending' },
       include: [ db.User, db.Domain ]
     })
-    .complete(function(err, pairingCodes) {
-      if (err) {
-        res.send(500);
-        return;
-      }
-
+    .then(function(pairingCodes) {
       if (pairingCodes.length > 0) {
         res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
       }
@@ -33,7 +28,9 @@ var routes = function(router) {
           res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': null });
         }
       }
-    });
+    }, function(err) {
+      res.send(500);
+	});
   };
 
   var renderVerificationInfo = function(res, message, status) {

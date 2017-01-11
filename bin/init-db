@@ -28,21 +28,18 @@ var config = require('../config');
 
 db.sequelize
   .sync({ force: true })
-  .complete(function(err) {
-    if (err) {
-      console.log('An error occurred while create the table.');
-    }
-    else {
+  .then(
+    function(err) {
       console.log('Synchronization done.');
 
       if (process.env.NODE_ENV === 'development') {
         db.Domain
           .bulkCreate(config.domains)
-          .complete(function() {
+          .then(function() {
             console.log('[DOMAIN] Database populated');
 
             if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
-              db.OAuth2Client.bulkCreate(config.oauth2_clients).success(function() {
+              db.OAuth2Client.bulkCreate(config.oauth2_clients).then(function() {
                 console.log('[OAUTH2_CLIENT] Database populated');
               });
             }
@@ -52,5 +49,8 @@ db.sequelize
           });
 
       }
-    }
-  });
+    },
+    function(err) {
+	  console.log('An error occurred while create the table.');
+	}
+  );
