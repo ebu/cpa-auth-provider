@@ -21,7 +21,7 @@ var routes = function (router) {
             }
             db.UserProfile.findOrCreate({
                 where: { user_id: userId }
-            }).then(function (user_profile) {
+            }).spread(function (user_profile) {
                     user_profile.updateAttributes(
                         {
                             //use XSS filters to prevent users storing malicious data/code that could be interpreted then

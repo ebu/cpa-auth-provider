@@ -42,7 +42,7 @@ function buildResponse(user) {
 function performFacebookLogin(appName, profile, fbAccessToken, done) {
 
     if (appName && profile && fbAccessToken) {
-        db.User.findOrCreate({provider_uid: profile.provider_uid, display_name: profile.display_name, photo_url: profile.photo_url }).then(function(user){
+        db.User.findOrCreate({provider_uid: profile.provider_uid, display_name: profile.display_name, photo_url: profile.photo_url }).spread(function(user){
             if (user.hasChanged(profile.display_name, profile.photo_url)){
                 user.updateAttributes({
                    display_name: profile.display_name,

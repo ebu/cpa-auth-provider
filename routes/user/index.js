@@ -36,7 +36,7 @@ var routes = function (router) {
             } else {
                 db.UserProfile.findOrCreate({where: {
                     user_id: req.user.id
-                }}).then(function (profile) {
+                }}).spread(function (profile) {
                     res.render('./user/profile.ejs', {
                         profile: {
                             firstname: profile.firstname,
