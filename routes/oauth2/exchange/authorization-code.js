@@ -11,7 +11,7 @@ var jwtHelper = require('../../../lib/jwt-helper');
 // code.
 
 exports.authorization_code = function (client, code, redirectURI, done) {
-    console.log('exchange code:', client, code, redirectURI);
+    console.log('[AuthorizationCode][Exchange][client_id', client.id, '][code', code, '][redirectURI', redirectURI, ']');
 
     db.OAuth2AuthorizationCode.find({
         where: {
@@ -19,12 +19,15 @@ exports.authorization_code = function (client, code, redirectURI, done) {
         }
     }).then(function (authorizationCode) {
         if (!authorizationCode) {
+			console.log('[AuthorizationCode][Exchange][Code not found]');
             return done(null, false);
         }
         if (!client || client.id !== authorizationCode.oauth2_client_id) {
+			console.log('[AuthorizationCode][Exchange][client_id', client? client.id : null, '][expected', authorizationCode.oauth2_client_id, ']');
             return done(null, false);
         }
         if (redirectURI !== authorizationCode.redirect_uri) {
+			console.log('[AuthorizationCode][Exchange][redirectURI',redirectURI,'][expected', authorizationCode.redirect_uri, ']');
             return done(null, false);
         }
         var token = jwtHelper.generate(authorizationCode.user_id, 10 * 60 * 60, { cli: authorizationCode.oauth2_client_id });
@@ -39,5 +42,8 @@ exports.authorization_code = function (client, code, redirectURI, done) {
         // }).then(function (token) {
         //     done(null, token.token);
         // }).catch(done);
-    }).catch(done);
+    }).catch(function(err) {
+        console.log('[AuthorizationCode][Exchange][error', err, ']');
+        return done(err);
+	});
 };
