@@ -27,9 +27,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     redirect_uri: { // TODO: Use its own table (RedirectURIWhiteList)
       type: DataTypes.STRING,
-      validate: {
-        allowNull: true
-      }
+      allowNull: true
     }
   }, {
     underscored: true,

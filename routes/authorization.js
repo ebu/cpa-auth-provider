@@ -67,15 +67,14 @@ module.exports = function(router, config) {
               client_id: accessToken.client_id
             };
 
-            if (accessToken.user) {
-              responseData.user_id      = accessToken.user.provider_uid;
-              responseData.display_name = accessToken.user.display_name;
-              responseData.photo_url    = accessToken.user.photo_url;
+            if (accessToken.User) {
+              responseData.user_id      = accessToken.User.provider_uid;
+              responseData.display_name = accessToken.User.display_name;
+              responseData.photo_url    = accessToken.User.photo_url;
             }
 
             res.send(responseData);
           }, function(err) {
-              console.log(query);
             next(err);
 		  });
       }, function(err) {

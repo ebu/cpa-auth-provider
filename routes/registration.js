@@ -48,7 +48,7 @@ module.exports = function(router) {
    */
 
   var handler = function(req, res, next) {
-    db.sequelize.transaction(function(transaction) {
+    db.sequelize.transaction().then(function(transaction) {
       async.waterfall([
         function(callback) {
           var clientIp     = getClientIpAddress(req);
@@ -63,13 +63,17 @@ module.exports = function(router) {
             software_version: req.body.software_version,
             ip:               clientIp
           })
-          .complete(function(err, client) {
-            callback(err, client);
+          .then(function(client) {
+            callback(undefined, client);
+          }, function(err) {
+            callback(err);
           });
         },
         function(client, callback) {
-          transaction.commit().complete(function(err) {
-            callback(err, client);
+          transaction.commit().then(function() {
+            callback(undefined, client);
+          }, function(err) {
+            callback(err);
           });
         },
         function(client, callback) {
@@ -83,21 +87,19 @@ module.exports = function(router) {
       ],
       function(error) {
         if (error) {
-          transaction.rollback().complete(function(err) {
-            if (err) {
-              next(err);
-            }
-            else {
-              // TODO: distinguish between invalid input parameters and other
-              // failure conditions
+          transaction.rollback().then(function() {
+            // TODO: distinguish between invalid input parameters and other
+            // failure conditions
 
-              // TODO: report more specific error message, e.g, which field
-              // is invalid.
-              res.sendInvalidRequest("Invalid request");
-            }
+            // TODO: report more specific error message, e.g, which field
+            // is invalid.
+            res.sendInvalidRequest("Invalid request");
+          }, function(err) {
+			next(err);
           });
         }
       });
+      return new Promise(function(resolve, reject) {resolve();});
     });
   };
 

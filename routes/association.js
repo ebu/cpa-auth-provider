@@ -46,24 +46,14 @@ module.exports = function(router) {
       where: { id: clientId, secret: clientSecret },
       include: [ db.User ]
     })
-    .complete(function(err, client) {
-      if (err) {
-        next(err);
-        return;
-      }
-
+    .then(function(client) {
       if (!client) {
         res.sendInvalidClient("Client " + clientId + " not found");
         return;
       }
 
       db.Domain.find({ where: { name: domainName }})
-        .complete(function(err, domain) {
-          if (err) {
-            next(err);
-            return;
-          }
-
+        .then(function(domain) {
           if (!domain) {
             res.sendInvalidRequest("Domain " + domainName + " not found");
             return;
@@ -77,8 +67,8 @@ module.exports = function(router) {
             verification_uri:    config.verification_uri
           };
 
-          if (client.user) {
-            pairingCode.user_id = client.user.id;
+          if (client.User) {
+            pairingCode.user_id = client.User.id;
 
             if (config.auto_provision_tokens) {
               pairingCode.state = 'verified';
@@ -86,16 +76,11 @@ module.exports = function(router) {
           }
 
           db.PairingCode.create(pairingCode)
-            .complete(function(err, pairingCode) {
-              if (err) {
-                next(err);
-                return;
-              }
-
+            .then(function(pairingCode) {
               res.set('Cache-Control', 'no-store');
               res.set('Pragma', 'no-cache');
 
-              if (client.user) {
+              if (client.User) {
                 if (config.auto_provision_tokens) {
                   // Automatically grant access
                   res.status(200).send({
@@ -123,9 +108,15 @@ module.exports = function(router) {
                   expires_in:       Math.floor(pairingCode.getTimeToLive())
                 });
               }
-          });
-        });
-    });
+            }, function(err) {
+              next(err);
+            });
+        }, function(err) {
+          next(err);
+		});
+    }, function(err) {
+      next(err);
+	});
   };
 
   if (config.cors && config.cors.enabled) {

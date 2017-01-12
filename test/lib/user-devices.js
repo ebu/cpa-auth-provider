@@ -17,7 +17,18 @@ var initDatabase = function(opts, done) {
     })
     .then(function(user) {
       return user.setPassword('testpassword');
-    })    
+    })
+    .then(function() {
+      return db.User.create({
+        id:           2,
+        email:        '2testuser2',
+        provider_uid: '2testuser2',
+        display_name: '2 Test User 2'
+      });
+    })
+    .then(function(user) {
+      return user.setPassword('otherpassword')
+    })
     .then(function() {
       return db.Client.create({
         id:               100,
@@ -110,6 +121,9 @@ var initDatabase = function(opts, done) {
         domain_id: 1,
         client_id: 5
       });
+    })
+    .catch(function() {
+      // client_id: 5 -> will not work
     })
     .then(function() {
       done();
@@ -236,20 +250,20 @@ describe('DELETE /user/client/:id', function() {
               var self = this;
 
               db.Client.findAll()
-                .success(function(clients) {
+                .then(function(clients) {
                   self.clients = clients;
 
                   db.AccessToken.findAll()
-                    .success(function(accessTokens) {
+                    .then(function(accessTokens) {
                       self.accessTokens = accessTokens;
 
                       done();
                     })
-                    .error(function(error) {
+                    .catch(function(error) {
                       done(error);
                     });
                 })
-                .error(function(error) {
+                .catch(function(error) {
                   done(error);
                 });
             });

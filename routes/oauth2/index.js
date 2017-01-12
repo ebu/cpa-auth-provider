@@ -98,15 +98,14 @@ module.exports = function (router) {
 
     var authorization = [
         server.authorization(function (clientID, redirectURI, done) {
-            db.OAuth2Client.find({where: {client_id: clientID}}).complete(function (err, client) {
-                if (err) {
-                    return done(err);
-                }
+            db.OAuth2Client.find({where: {client_id: clientID}}).then(function (client) {
                 // WARNING: For security purposes, it is highly advisable to check that
                 //          redirectURI provided by the client matches one registered with
                 //          the server.  For simplicity, this example does not.  You have
                 //          been warned.
                 return done(null, client, redirectURI);
+            }, function(err) {
+                return done(err);
             });
         }),
 		authHelper.authenticateFirst,

@@ -47,9 +47,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     redirect_uri: { //TODO: Move to its own table
       type: DataTypes.STRING,
-      validate: {
-        allowNull: true
-      }
+      allowNull: true
     }
   }, {
     underscored: true,

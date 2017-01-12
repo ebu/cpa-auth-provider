@@ -25,6 +25,14 @@ var initDatabase = function(done) {
       ip:               '127.0.0.1'
     })
     .then(function() {
+      return db.User.create({
+        id:           3,
+        provider_uid: 'testuser',
+        display_name: 'Test User',
+        password:     'testpassword'
+      });
+    })
+    .then(function() {
       return db.Client.create({
         id:               101,
         secret:           '751ae023-7dc0-4650-b0ff-e48ea627d6b2',
@@ -52,14 +60,6 @@ var initDatabase = function(done) {
         name:         'example-service.bbc.co.uk',
         display_name: 'BBC Radio',
         access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-      });
-    })
-    .then(function() {
-      return db.User.create({
-        id:           3,
-        provider_uid: 'testuser',
-        display_name: 'Test User',
-        password:     'testpassword'
       });
     })
     .then(function() {
