@@ -121,8 +121,8 @@ module.exports = function (app, options) {
                 } else {
 
                     db.UserProfile.findOrCreate({
-                        id: decoded.id
-                    }).then(function (user_profile) {
+                        where: {user_id: decoded.id}
+                    }).spread(function (user_profile) {
                         res.json({
                             success: true,
                             user: {
@@ -131,10 +131,7 @@ module.exports = function (app, options) {
                                 admin: user.admin
                             },
                             token: 'JWT ' + token
-
                         });
-
-
                     });
 
                 }

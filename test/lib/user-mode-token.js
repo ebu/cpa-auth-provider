@@ -300,11 +300,11 @@ describe("POST /token", function() {
                   db.AccessToken.findAll()
                     .then(function(accessTokens) {
                       self.accessTokens = accessTokens;
-                      return db.PairingCode.find(51);
+                      return db.PairingCode.findById(51);
                     })
                     .then(function(pairingCode) {
                       self.pairingCode = pairingCode;
-                      return db.Client.find(101);
+                      return db.Client.findById(101);
                     })
                     .then(function(client) {
                       self.client = client;

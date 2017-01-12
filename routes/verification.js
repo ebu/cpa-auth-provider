@@ -62,9 +62,9 @@ var routes = function(router) {
             return;
           }
 
-          var domain = (config.auto_provision_tokens)? 'every domain' : pairingCode.domain.name;
+          var domain = (config.auto_provision_tokens)? 'every domain' : pairingCode.Domain.name;
           var templateVariables = {
-            'client_name': pairingCode.client.name,
+            'client_name': pairingCode.Client.name,
             'user_code': userCode,
             'redirect_uri': redirectUri,
             'domain': domain
@@ -148,8 +148,8 @@ var routes = function(router) {
         return pairingCode
           .updateAttributes({user_id: userId, state: 'denied'})
           .then(function () {
-            pairingCode.client.user_id = userId;
-            pairingCode.client.save();
+            pairingCode.Client.user_id = userId;
+            pairingCode.Client.save();
           })
           .then(function () {
             done(null, null, 'cancelled');
@@ -194,8 +194,8 @@ var routes = function(router) {
         return pairingCode
           .updateAttributes({user_id: userId, state: 'verified'})
           .then(function () {
-            pairingCode.client.user_id = userId;
-            pairingCode.client.save();
+            pairingCode.Client.user_id = userId;
+            pairingCode.Client.save();
           })
           .then(function () {
             done(null, null, 'success');
