@@ -27,7 +27,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
+    router.get('/:broadcaster?/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
         db.User.find({where: {
             id: req.user.id
         }}).then(function (user) {
@@ -37,7 +37,13 @@ var routes = function (router) {
                 db.UserProfile.findOrCreate({
                     user_id: req.user.id
                 }).then(function (profile) {
-                    res.render('./user/profile.ejs', {
+
+                    var tpl = './user/profile.ejs';
+                    var broadcaster = req.params.broadcaster || false;
+                    var brandingMode = broadcaster !== false;
+                    var data = {
+                        broadcaster: broadcaster,
+                        brandingMode: brandingMode,
                         profile: {
                             firstname: profile.firstname,
                             lastname: profile.lastname,
@@ -45,7 +51,14 @@ var routes = function (router) {
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy)
-                    }});
+                        }
+                    };
+
+                    if(broadcaster) {
+                        tpl = './user/broadcaster/profile-rts.ejs';
+                    }
+
+                    res.render(tpl, data);
                 });
             }
         }, function (err) {
@@ -83,7 +96,6 @@ var routes = function (router) {
                 });
             }
         });
-
     });
 };
 
