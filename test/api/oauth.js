@@ -422,11 +422,11 @@ describe('OAuth2 Implicit Flow', function () {
 		});
 
 		it('should have access_token in location', function() {
-			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '/#access_token=[a-zA-Z0-9._]+&token_type=Bearer&state=a'));
+			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '/#access_token=[a-zA-Z0-9\\._]+&token_type=Bearer&state=a'));
 		});
 
 		it('should have proper access_token content', function() {
-			var match = new RegExp(CLIENT.redirect_uri + '/#access_token=([a-zA-Z0-9._]+)&token_type=Bearer&state=a').exec(this.res.headers.location);
+			var match = new RegExp(CLIENT.redirect_uri + '/#access_token=([a-zA-Z0-9\\._]+)&token_type=Bearer&state=a').exec(this.res.headers.location);
 			var access_token = decodeURIComponent(match[1]);
 			var decoded = jwtHelper.decode(access_token);
 			expect(decoded.iss).equal('cpa');
@@ -493,7 +493,7 @@ describe('OAuth2 Authorization Code Flow', function () {
 		});
 
 		before(function(done) {
-			var match = new RegExp(CLIENT.redirect_uri + '/\\?code=([a-zA-Z0-9\-]+)&state=a').exec(this.res.headers.location);
+			var match = new RegExp(CLIENT.redirect_uri + '/\\?code=([a-zA-Z0-9\\-]+)&state=a').exec(this.res.headers.location);
 			requestHelper.sendRequest(
 				this,
 				"/oauth2/token",
