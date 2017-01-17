@@ -3,8 +3,8 @@
 module.exports = {
   recaptcha: {
     enabled: true,
-    site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-    secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+    site_key: '6Lf8JhIUAAAAAOpDYjfIZnlxmjhPQblCiwwfSPHc',
+    secret_key: '6Lf8JhIUAAAAADblMNVnlvE0Sbg8_P_NwM87IncZ'
   },
 
 

@@ -29,8 +29,8 @@ module.exports = {
     duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
   },
   recaptcha: {
-    site_key: '',
-    secret_key: ''
+    site_key: '6Lf8JhIUAAAAAOpDYjfIZnlxmjhPQblCiwwfSPHc',
+    secret_key: '6Lf8JhIUAAAAADblMNVnlvE0Sbg8_P_NwM87IncZ'
   },
 
   // When accessing the home page, if defined, users are automatically
