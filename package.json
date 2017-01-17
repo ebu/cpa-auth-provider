@@ -38,7 +38,7 @@
     "lodash": "~2.4.1",
     "method-override": "~2.3.5",
     "morgan": "~1.7.0",
-    "mysql": "~2.0.0-rc2",
+    "mysql": "~2.12.0",
     "node-uuid": "~1.4.1",
     "oauth2orize": "~1.2.2",
     "passport": "~0.1.17",
