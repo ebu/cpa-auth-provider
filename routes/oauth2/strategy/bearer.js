@@ -3,10 +3,11 @@
 var db = require('../../../models');
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var jwtHelper = require('../../../lib/jwt-helper');
+var logger = require('../../../lib/logger');
 
 exports.bearer = new BearerStrategy(function (accessToken, done) {
     var userId = jwtHelper.getUserId(accessToken);
-    console.log('[BearerStrategy][user_id', userId, ']');
+	logger.debug('[BearerStrategy][user_id', userId, ']');
     if (userId) {
         db.User.find({where: {id: userId}}).then(
             function(user) {

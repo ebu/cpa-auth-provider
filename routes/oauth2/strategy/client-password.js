@@ -2,11 +2,12 @@
 
 var db = require('../../../models');
 var ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy;
+var logger = require('../../../lib/logger');
 
 exports.client_password_strategy = new ClientPasswordStrategy(
     function (clientId, clientSecret, done) {
         db.OAuth2Client.find({where: {client_id: clientId}}).then(function (client) {
-            console.log('[ClientPassword][client_id', clientId, ']');
+			logger.debug('[ClientPassword][client_id', clientId, ']');
             if (!client) {
                 return done(null, false);
             }
@@ -15,7 +16,7 @@ exports.client_password_strategy = new ClientPasswordStrategy(
             }
             return done(null, client);
         }).catch(function(err) {
-            console.log('[ClientPassword][Error', err, ']');
+			logger.debug('[ClientPassword][Error', err, ']');
             return done(err);
 		});
     }
