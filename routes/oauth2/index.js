@@ -13,6 +13,7 @@ var AuthorizationCodeGrant = require('./grant/authorization-code').authorization
 var TokenGrant = require('./grant/token').token;
 var AuthorizationCodeExchange = require('./exchange/authorization-code').authorization_code;
 var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-password').token;
+var RefreshToken = require('./exchange/refresh-token').issueToken;
 var cors = require('cors');
 
 
@@ -80,6 +81,8 @@ module.exports = function (router) {
 
     server.exchange(oauth2orize.exchange.password(ResourceOwnerPasswordCredentials));
 
+    server.exchange(oauth2orize.exchange.refreshToken(RefreshToken));
+
     // user authorization endpoint
     //
     // `authorization` middleware accepts a `validate` callback which is
@@ -102,11 +105,20 @@ module.exports = function (router) {
                 if (err) {
                     return done(err);
                 }
+                if (!client) {
+                    return done(new Error('unknown client' + clientID));
+                }
                 // WARNING: For security purposes, it is highly advisable to check that
                 //          redirectURI provided by the client matches one registered with
                 //          the server.  For simplicity, this example does not.  You have
                 //          been warned.
-                return done(null, client, redirectURI);
+                if (!client.redirect_uri || (redirectURI && redirectURI.startsWith(client.redirect_uri))) {
+                    return done(null, client, redirectURI);
+                }
+                if (logger && typeof(logger.error) == 'function') {
+                    logger.error('client', client.id, 'not allowed with redirection', redirectURI);
+                }
+                return done(new Error('bad redirection'));
             });
         }),
 		authHelper.authenticateFirst,
@@ -146,10 +158,20 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
+	var easyToken = [
+	    confirmOAuth2Client,
+        cors_header,
+        server.token(),
+        server.errorHandler()
+    ];
+
     router.get('/oauth2/dialog/authorize', authorization);
     router.post('/oauth2/dialog/authorize/decision', decision);
     router.post('/oauth2/token', token);
     router.options('/oauth2/token', cors_header);
+
+    router.options('/oauth2/login', cors_header);
+	router.post('/oauth2/login', easyToken);
 
     function corsOptionsDelegate(req, callback) {
         var options;
@@ -163,4 +185,26 @@ module.exports = function (router) {
         }
         return callback(null, options);
     }
+
+	/**
+     * Most basic oauth2 confirmation of client_id. Merely confirm the client_id
+     * is known to the service. client_secret is not required.
+     */
+	function confirmOAuth2Client(req, res, next) {
+		var clientId = req.body.client_id;
+
+		db.OAuth2Client.find({where: {client_id: clientId}}).then(
+			function (client) {
+			    if (client) {
+			        req.user = client;
+			        return next();
+                } else {
+			        return res.status(400).json({error: 'invalid_client', error_description: 'client not found'});
+                }
+			},
+			function (err) {
+                return next(err);
+			}
+		);
+	}
 };
