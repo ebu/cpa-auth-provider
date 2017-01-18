@@ -10,15 +10,10 @@ var routes = function(router) {
     var clientId = req.params.client_id;
 
     db.Client
-      .find({
+      .findOne({
         where: { id: clientId, user_id: req.user.id },
         include: [ db.AccessToken ]
-      }).complete(function(err, client) {
-        if (err) {
-          next(err);
-          return;
-        }
-
+      }).then(function(client) {
         if (!client) {
           res.sendErrorResponse(404, "not_found", "Unknown client");
           return;
@@ -29,12 +24,12 @@ var routes = function(router) {
           .destroy()
           .then(function() {
             return db.AccessToken.destroy({
-              client_id: client.id
+              where: {client_id: client.id}
             });
           })
           .then(function() {
             return db.PairingCode.destroy({
-              client_id: client.id
+              where: {client_id: client.id}
             });
           })
           .then(function() {
@@ -43,6 +38,8 @@ var routes = function(router) {
             next(err);
           });
 
+      }, function(err) {
+        next(err);
       });
   });
 };

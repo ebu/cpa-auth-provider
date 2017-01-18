@@ -27,9 +27,8 @@ module.exports = function (app, options) {
             return res.status(401).send({success: false, msg: 'Authentication failed. user profile not found.'});
         } else {
             db.UserProfile.findOrCreate({
-                user_id: user.id
-            }).then(function (user_profile) {
-
+                where: { user_id: user.id }
+            }).spread(function (user_profile) {
                 res.json({
                     success: true,
                     user_profile: {
@@ -78,8 +77,8 @@ module.exports = function (app, options) {
                     if (token) {
                         var decoded = jwtHelpers.decode(token, config.jwtSecret);
                         db.UserProfile.findOrCreate({
-                            user_id: decoded.id
-                        }).then(function (user_profile) {
+                            where: { user_id: decoded.id }
+                        }).spread(function (user_profile) {
                                 user_profile.updateAttributes(
                                     {
                                         firstname: req.body.firstname ? req.body.firstname : user_profile.firstname,

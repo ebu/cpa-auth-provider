@@ -247,19 +247,19 @@ describe('POST /verify', function() {
               var self = this;
 
               db.PairingCode.findAll()
-                .success(function (pairingCodes) {
+                .then(function (pairingCodes) {
                   self.pairingCodes = pairingCodes;
 
                   db.Client.findAll()
-                    .success(function (clients) {
+                    .then(function (clients) {
                       self.clients = clients;
                       done();
                     })
-                    .error(function (error) {
+                    .catch(function (error) {
                       done(error);
                     });
                 })
-                .error(function (error) {
+                .catch(function (error) {
                   done(error);
                 });
             });
@@ -350,19 +350,19 @@ describe('POST /verify', function() {
               var self = this;
 
               db.PairingCode.findAll()
-                .success(function (pairingCodes) {
+                .then(function (pairingCodes) {
                   self.pairingCodes = pairingCodes;
 
                   db.Client.findAll()
-                    .success(function (clients) {
+                    .then(function (clients) {
                       self.clients = clients;
                       done();
                     })
-                    .error(function (error) {
+                    .catch(function (error) {
                       done(error);
                     });
                 })
-                .error(function (error) {
+                .catch(function (error) {
                   done(error);
                 });
             });
@@ -455,19 +455,19 @@ describe('POST /verify', function() {
               var self = this;
 
               db.PairingCode.findAll()
-                .success(function (pairingCodes) {
+                .then(function (pairingCodes) {
                   self.pairingCodes = pairingCodes;
 
                   db.Client.findAll()
-                    .success(function (clients) {
+                    .then(function (clients) {
                       self.clients = clients;
                       done();
                     })
-                    .error(function (error) {
+                    .catch(function (error) {
                       done(error);
                     });
                 })
-                .error(function (error) {
+                .catch(function (error) {
                   done(error);
                 });
             });

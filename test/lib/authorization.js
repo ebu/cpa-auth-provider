@@ -31,6 +31,39 @@ var initDatabase = function(done) {
     });
   })
   .then(function() {
+    return db.Client.create({
+      id: 2,
+        secret: 'secret',
+        name: 'Client Name 2',
+        software_id: 'sid',
+        software_version: 'sv',
+        ip: '192.168.0.2',
+        registration_type: 'type',
+    });
+  })
+  .then(function() {
+    return db.Client.create({
+      id: 4,
+        secret: 'secret',
+        name: 'Client Name 4',
+        software_id: 'sid',
+        software_version: 'sv',
+        ip: '192.168.0.4',
+        registration_type: 'type',
+    });
+  })
+  .then(function() {
+    return db.Client.create({
+      id: 5,
+        secret: 'secret',
+        name: 'Client Name 5',
+        software_id: 'sid',
+        software_version: 'sv',
+        ip: '192.168.0.5',
+        registration_type: 'type',
+    });
+  })
+  .then(function() {
     return db.AccessToken.create({
       token:     'aed201ffb3362de42700a293bdebf694',
       domain_id: 1,

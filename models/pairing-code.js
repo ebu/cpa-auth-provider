@@ -25,7 +25,6 @@ module.exports = function(sequelize, DataTypes) {
       values: ['pending', 'verified', 'denied'],
       defaultValue: 'pending',
       validate: {
-        notNull: true,
         notEmpty: true
       }
     }

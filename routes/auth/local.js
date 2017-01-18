@@ -13,7 +13,7 @@ var util = require('util');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
-    db.User.find({where: {email: username}})
+    db.User.findOne({where: {email: username}})
         .then(function (user) {
                 if (!user) {
                     done(null, false, req.flash('loginMessage', loginError));
@@ -48,7 +48,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                 done(null, false, req.flash('signupMessage', 'Something went wrong with the reCAPTCHA'));
                 return;
             }
-            db.User.find({where: {email: req.body.email}})
+            db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));

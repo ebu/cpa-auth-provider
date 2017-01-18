@@ -18,7 +18,7 @@ exports.token = function (client, username, password, scope, done) {
 };
 
 function confirmUser(client, username, password, scope, done) {
-	db.User.find(
+	db.User.findOne(
 		{ where: { email: username} }
 	).then(
 		function(user) {

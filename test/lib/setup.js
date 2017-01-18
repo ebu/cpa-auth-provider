@@ -13,7 +13,11 @@ var config = require('../../config');
 before(function(done) {
   requestHelper.urlPrefix = config.urlPrefix;
 
-  db.sequelize.sync({ force: true }).complete(function(err) {
-    done(err);
-  });
+  db.sequelize.sync({ force: true }).then(
+    function() {
+      done();
+    },
+    function(err) {
+      done(err);
+    });
 });

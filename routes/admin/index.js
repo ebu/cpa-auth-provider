@@ -13,14 +13,14 @@ module.exports = function(router) {
 
   router.get('/admin/domains', authHelper.authenticateFirst, function(req, res) {
     db.Domain.findAll()
-      .complete(function(err, domains) {
-        if (err) {
+      .then(
+        function(domains) {
+          res.render('./admin/domains.ejs', { domains: domains });
+        },
+        function (err) {
           res.send(500);
-          return;
-        }
-
-        res.render('./admin/domains.ejs', { domains: domains });
-      });
+          logger.debug('[Admins][get /admin/domains][error', err, ']');
+        });
   });
 
   router.get('/admin/domains/add', authHelper.authenticateFirst, function(req, res) {
@@ -35,14 +35,14 @@ module.exports = function(router) {
     };
 
     db.Domain.create(domain)
-      .complete(function(err, domain) {
-        if (err) {
+      .then(
+        function(domain) {
+          requestHelper.redirect(res, '/admin/domains');
+        },
+        function(err) {
           // TODO: Report validation errors to the user.
           res.render('./admin/add_domain.ejs');
-          return;
-        }
-
-        requestHelper.redirect(res, '/admin/domains');
-      });
+          logger.debug('[Admins][post /admin/domains][err', err, ']');
+        });
   });
 };

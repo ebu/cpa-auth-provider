@@ -15,18 +15,18 @@
     <tr data-id="<%= client.id %>">
       <td><%= client.id %></td>
       <td><%= client.name %></td>
-      <td><%= client.user.display_name %></td>
+      <td><%= client.User.display_name %></td>
       <td class="small">
         <ul>
-        <% client.accessTokens.forEach(function(token, j) { %>
+        <% client.AccessTokens.forEach(function(token, j) { %>
           <li>
-            <%= token.domain.name %>
+            <%= token.Domain.name %>
             <span class="label label-success">token</span>
           </li>
         <% }); %>
-        <% client.pairingCodes.forEach(function(code, j) { %>
+        <% client.PairingCodes.forEach(function(code, j) { %>
           <li>
-            <%= code.domain.name %>
+            <%= code.Domain.name %>
             <% if (code.state === 'verified') { %>
               <span class="label label-info"><%= code.state %></span>
             <% } %>

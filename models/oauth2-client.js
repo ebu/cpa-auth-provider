@@ -10,33 +10,30 @@ module.exports = function(sequelize, DataTypes) {
     client_id: {
       type: DataTypes.STRING,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     client_secret: {
       type: DataTypes.STRING,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     name: {
       type: DataTypes.STRING,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     redirect_uri: { // TODO: Use its own table (RedirectURIWhiteList)
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     underscored: true,
 
     associate: function(models) {
       OAuth2Client.hasMany(models.OAuth2AuthorizationCode);
-      OAuth2Client.hasMany(models.AccessToken);
       OAuth2Client.belongsTo(models.User);
     }
   });
