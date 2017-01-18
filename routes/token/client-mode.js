@@ -80,12 +80,11 @@ module.exports = function(req, res, next) {
      */
 
     var deleteAccessToken = function(client, domain, callback) {
-      db.sequelize.query(
-        "DELETE FROM AccessTokens WHERE client_id=? AND domain_id=?",
-        { replacements: [client.id, domain.id] }
-        // null, { raw: true }, [ client.id, domain.id ]
-      )
-      .then(function() {
+      db.AccessToken.destroy({
+        where: {
+          client_id: client.id,
+          domain_id: domain.id
+        }}).then(function() {
         callback(undefined, client, domain);
       },
       function(err) {
