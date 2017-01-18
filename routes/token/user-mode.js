@@ -52,7 +52,7 @@ module.exports = function(req, res, next) {
 
     var findClient = function(callback) {
       db.Client
-        .find({
+        .findOne({
           where:   { id: clientId, secret: clientSecret },
           include: [ db.User ]
         })
@@ -69,7 +69,7 @@ module.exports = function(req, res, next) {
 
     var findPairingCode = function(client, callback) {
       db.PairingCode
-        .find({
+        .findOne({
           where:   { client_id: client.id, device_code: deviceCode },
           include: [ db.Domain, db.User, db.Client ]
         })

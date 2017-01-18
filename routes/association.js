@@ -42,7 +42,7 @@ module.exports = function(router) {
     var clientSecret = req.body.client_secret;
     var domainName   = req.body.domain;
 
-    db.Client.find({
+    db.Client.findOne({
       where: { id: clientId, secret: clientSecret },
       include: [ db.User ]
     })
@@ -52,7 +52,7 @@ module.exports = function(router) {
         return;
       }
 
-      db.Domain.find({ where: { name: domainName }})
+      db.Domain.findOne({ where: { name: domainName }})
         .then(function(domain) {
           if (!domain) {
             res.sendInvalidRequest("Domain " + domainName + " not found");

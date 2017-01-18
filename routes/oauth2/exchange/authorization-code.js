@@ -14,7 +14,7 @@ var logger = require('../../../lib/logger');
 exports.authorization_code = function (client, code, redirectURI, done) {
     logger.debug('[AuthorizationCode][Exchange][client_id', client.id, '][code', code, '][redirectURI', redirectURI, ']');
 
-    db.OAuth2AuthorizationCode.find({
+    db.OAuth2AuthorizationCode.findOne({
         where: {
             authorization_code: code
         }

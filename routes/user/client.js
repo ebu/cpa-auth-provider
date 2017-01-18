@@ -10,7 +10,7 @@ var routes = function(router) {
     var clientId = req.params.client_id;
 
     db.Client
-      .find({
+      .findOne({
         where: { id: clientId, user_id: req.user.id },
         include: [ db.AccessToken ]
       }).then(function(client) {

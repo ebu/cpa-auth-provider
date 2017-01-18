@@ -38,7 +38,7 @@ module.exports = function(router, config) {
     var domainName  = req.body.domain;
 
     db.Domain
-      .find({ where: { name: domainName } })
+      .findOne({ where: { name: domainName } })
       .then(function(domain) {
         if (!domain) {
           res.sendInvalidRequest("Unknown domain: " + domainName);
@@ -51,7 +51,7 @@ module.exports = function(router, config) {
         };
 
         db.AccessToken
-          .find({ where: query, include: [db.User] })
+          .findOne({ where: query, include: [db.User] })
           .then(function(accessToken) {
             if (!accessToken) {
               res.sendErrorResponse(404, "not_found", "Unknown access token");

@@ -43,7 +43,7 @@ var routes = function(router) {
 
     if (userCode && redirectUri) {
       db.PairingCode
-        .find({ where: { 'user_code': userCode }, include: [ db.Client, db.Domain ] })
+        .findOne({ where: { 'user_code': userCode }, include: [ db.Client, db.Domain ] })
         .then(function(pairingCode) {
           if (!pairingCode) {
             renderVerificationPage(req, res, messages.INVALID_USERCODE);
@@ -90,7 +90,7 @@ var routes = function(router) {
    */
   var validatePairingCodes = function(userId, formCodes, done) {
     async.each(formCodes, function(code, callback) {
-      db.PairingCode.find({
+      db.PairingCode.findOne({
         where: { id: code.id, user_id: userId, state: 'pending' },
         include: [ db.User, db.Domain ]
       }).then(function(pairingCode) {
@@ -127,7 +127,7 @@ var routes = function(router) {
    */
   var denyUserCode = function(userCode, userId, done) {
     db.PairingCode
-      .find({where: {'user_code': userCode}, include: [db.Client]})
+      .findOne({where: {'user_code': userCode}, include: [db.Client]})
       .then(function (pairingCode) {
         if (!pairingCode) {
           done(null, messages.INVALID_USERCODE, 'cancelled');
@@ -173,7 +173,7 @@ var routes = function(router) {
    */
   var associateUserCodeWithUser = function(userCode, userId, done) {
     db.PairingCode
-      .find({ where: { 'user_code': userCode }, include: [ db.Client ] })
+      .findOne({ where: { 'user_code': userCode }, include: [ db.Client ] })
       .then(function(pairingCode) {
         if (!pairingCode) {
           done(null, messages.INVALID_USERCODE, 'cancelled');

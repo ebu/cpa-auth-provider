@@ -6,7 +6,7 @@ var logger = require('../../../lib/logger');
 
 exports.client_password_strategy = new ClientPasswordStrategy(
     function (clientId, clientSecret, done) {
-        db.OAuth2Client.find({where: {client_id: clientId}}).then(function (client) {
+        db.OAuth2Client.findOne({where: {client_id: clientId}}).then(function (client) {
 			logger.debug('[ClientPassword][client_id', clientId, ']');
             if (!client) {
                 return done(null, false);

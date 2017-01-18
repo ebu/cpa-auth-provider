@@ -45,7 +45,7 @@ module.exports = function(req, res, next) {
     var domainName   = req.body.domain;
 
     var findClient = function(callback) {
-      db.Client.find({
+      db.Client.findOne({
         where: { id: clientId, secret: clientSecret, registration_type: 'dynamic' },
         include: [ db.User ]
       })
@@ -61,7 +61,7 @@ module.exports = function(req, res, next) {
     };
 
     var findDomain = function(client, callback) {
-      db.Domain.find({ where: { name: domainName }})
+      db.Domain.findOne({ where: { name: domainName }})
         .then(function(domain) {
           if (!domain) {
             // SPEC : define correct error message
