@@ -29,7 +29,7 @@ var config = require('../config');
 db.sequelize
   .sync({ force: true })
   .then(
-    function(err) {
+    function() {
       console.log('Synchronization done.');
 
       if (process.env.NODE_ENV === 'development') {
@@ -52,5 +52,6 @@ db.sequelize
     },
     function(err) {
 	  console.log('An error occurred while create the table.');
+	  console.error(err);
 	}
   );

@@ -19,6 +19,7 @@ module.exports = function(router) {
         },
         function (err) {
           res.send(500);
+          logger.debug('[Admins][get /admin/domains][error', err, ']');
         });
   });
 
@@ -41,6 +42,7 @@ module.exports = function(router) {
         function(err) {
           // TODO: Report validation errors to the user.
           res.render('./admin/add_domain.ejs');
+          logger.debug('[Admins][post /admin/domains][err', err, ']');
         });
   });
 };
