@@ -11,18 +11,21 @@ module.exports = function (sequelize, DataTypes) {
 			type: {
 				type: DataTypes.STRING,
 				validate: {
-					notNull: true,
 					notEmpty: true
 				}
 			},
-			sub: DataTypes.STRING
+			sub: DataTypes.STRING,
+			redirect_uri: {
+				type: DataTypes.STRING,
+				allowNull: true,
+			},
 		},
 		{
 			underscored: true,
 
 			associate: function (models) {
 				UserEmailToken.belongsTo(models.User);
-				UserEmailToken.belongsTo(models.OAuth2Client);
+				UserEmailToken.belongsTo(models.OAuth2Client, { foreignKey: 'oauth2_client_id' });
 			}
 		});
 

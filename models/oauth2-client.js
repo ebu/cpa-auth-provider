@@ -54,6 +54,15 @@ module.exports = function(sequelize, DataTypes) {
         } else {
           return this.updateAttributes({email_redirects: JSON.stringify(emailRedirects)})
         }
+      },
+      mayRedirect: function(uri) {
+        if (this.redirect_uri == null) {
+          return true;
+        }
+        if (!uri) {
+          return true;
+        }
+        return uri.startsWith(this.redirect_uri);
       }
     },
 

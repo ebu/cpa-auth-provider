@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     tracking_uid: DataTypes.STRING,
     provider_uid: DataTypes.STRING,
     email: DataTypes.STRING,
+    email_verified: DataTypes.BOOLEAN,
     password: DataTypes.STRING,
     enable_sso: DataTypes.BOOLEAN,
     display_name: DataTypes.STRING,

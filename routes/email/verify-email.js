@@ -15,28 +15,29 @@ function routes(router) {
 		function (req, res, next) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {
-					var verifyToken = data.token;
+					var verifyToken = data;
 					var client = data.client;
+					var user = data.user;
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
-					if (redirect_url) {
-						logger.debug('[email verify][REDIRECT][url', redirect_url, ']');
-						res.redirect(redirect_url + APPEND_VERIFY);
-						return deleteToken(verifyToken);//req.params.key);
-					} else {
-						db.User.find({where: {id: verifyToken.user_id}}).then(
-							function (user) {
+					user.email_verified = true;
+					return user.save().then(
+						function() {
+							if (redirect_url) {
+								logger.debug('[email verify][REDIRECT][url', redirect_url, ']');
+								res.redirect(redirect_url + APPEND_VERIFY);
+								return deleteToken(verifyToken);//req.params.key);
+							} else {
 								res.render('./email/verify.ejs', {
 									user: user,
 									forward_address: 'http://beta.mediathek.br.de'
 								});
 								return deleteToken(verifyToken);//req.params.key);
-							},
-							function (err) {
-								logger.error('[email verify][RENDER][user_id', verifyToken.user_id, '][error', err, ']');
-								return next(err);
 							}
-						);
-					}
+						},
+						function(err) {
+							logger.error('[email verify][RENDER][user_id', verifyToken.user_id, '][error', err, ']');
+						}
+					);
 				},
 				function (err) {
 					return next(err);
@@ -50,7 +51,7 @@ function routes(router) {
 		function (req, res, next) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {
-					var verifyToken = data.token;
+					var verifyToken = data;
 					var client = data.client;
 					getUser(verifyToken.user_id).then(
 						function (user) {
@@ -106,23 +107,24 @@ function getEmailRedirectUrl(verifyToken, client) {
 function getTokenAndClient(key) {
 	return new Promise(
 		function (resolve, reject) {
-			db.UserEmailToken.find({where: {key: key}}).then(
+			db.UserEmailToken.find({where: {key: key}, include: [db.User, db.OAuth2Client]}).then(
 				function (verifyToken) {
 					if (!verifyToken) {
 						return reject(new Error('invalid token'));
 					}
-					if (verifyToken.oauth2_client_id) {
-						db.OAuth2Client.find({where: {id: verifyToken.oauth2_client_id}}).then(
-							function (client) {
-								resolve({token: verifyToken, client: client});
-							},
-							function (e) {
-								resolve({token: verifyToken, client: undefined});
-							}
-						);
-					} else {
-						resolve({token: verifyToken, client: undefined});
-					}
+					resolve(verifyToken);
+					// if (verifyToken.oauth2_client_id) {
+					// 	db.OAuth2Client.find({where: {id: verifyToken.oauth2_client_id}}).then(
+					// 		function (client) {
+					// 			resolve({token: verifyToken, client: client});
+					// 		},
+					// 		function (e) {
+					// 			resolve({token: verifyToken, client: undefined});
+					// 		}
+					// 	);
+					// } else {
+					// 	resolve({token: verifyToken, client: undefined});
+					// }
 				},
 				reject
 			)

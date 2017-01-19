@@ -113,7 +113,7 @@ module.exports = function (router) {
                 //          redirectURI provided by the client matches one registered with
                 //          the server.  For simplicity, this example does not.  You have
                 //          been warned.
-                if (!client.redirect_uri || (redirectURI && redirectURI.startsWith(client.redirect_uri))) {
+                if (client.mayRedirect(redirectURI)) {
                     return done(null, client, redirectURI);
                 }
                 if (logger && typeof(logger.error) == 'function') {
