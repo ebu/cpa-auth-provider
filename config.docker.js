@@ -44,6 +44,7 @@ module.exports = {
 
     // The database type, 'mysql', 'sqlite', etc.
     type: process.env.DB_TYPE,//'sqlite',
+    dialectOptions: process.env.DB_DIALECT_OPTIONS ? JSON.parse(process.env.DB_DIALECT_OPTIONS) : undefined,
     database: process.env.DB_DATABASE,
 
     // Database filename for SQLite.
