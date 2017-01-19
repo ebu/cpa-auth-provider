@@ -3,6 +3,8 @@
 var config =     require('../../config');
 var db =         require('../../models');
 var authHelper = require('../../lib/auth-helper');
+var fs =       require('fs');
+
 
 var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
 var USER_NOT_FOUND = 'User not found';
@@ -54,8 +56,8 @@ var routes = function (router) {
                         }
                     };
 
-                    if(broadcaster) {
-                        tpl = './user/broadcaster/profile-rts.ejs';
+                    if(broadcaster && fs.existsSync(__dirname + '/../../views/user/broadcaster/profile-'+broadcaster+'.ejs')) {
+                        tpl = './user/broadcaster/profile-'+broadcaster+'.ejs';
                     }
 
                     res.render(tpl, data);
