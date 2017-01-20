@@ -24,7 +24,7 @@ function routes(router) {
 						function() {
 							if (redirect_url) {
 								logger.debug('[email verify][REDIRECT][url', redirect_url, ']');
-								res.redirect(redirect_url + APPEND_VERIFY);
+								res.redirect(redirect_url + APPEND_VERIFY + '&username=' + encodeURIComponent(user.email));
 								return deleteToken(verifyToken);//req.params.key);
 							} else {
 								res.render('./email/verify.ejs', {
@@ -53,29 +53,24 @@ function routes(router) {
 				function (data) {
 					var verifyToken = data;
 					var client = data.oAuth2Client;
-					getUser(verifyToken.user_id).then(
-						function (user) {
-							var redirect_url = getEmailRedirectUrl(verifyToken, client);
-							if (redirect_url) {
-								res.redirect(redirect_url + APPEND_DELETE);
-							} else {
-								res.render('./email/delete.ejs', {
-									user: user,
-									forward_address: 'http://beta.mediathek.br.de'
-								});
-							}
-							deleteUser(user).then(
-								function () {
-									deleteToken(verifyToken);
-								},
-								function () {
-								}
-							);
+					var user = data.user;
+
+					var redirect_url = getEmailRedirectUrl(verifyToken, client);
+					if (redirect_url) {
+						res.redirect(redirect_url + APPEND_DELETE + '&username=' + encodeURIComponent(user.email));
+					} else {
+						res.render('./email/delete.ejs', {
+							user: user,
+							forward_address: 'http://beta.mediathek.br.de'
+						});
+					}
+					deleteUser(user).then(
+						function () {
+							deleteToken(verifyToken);
 						},
-						next
+						function () {
+						}
 					);
-
-
 				},
 				next
 			);
