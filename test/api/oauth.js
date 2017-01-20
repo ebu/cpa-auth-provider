@@ -359,3 +359,174 @@ describe('GET /oauth2/dialog/authorize', function () {
 		});
 	});
 });
+
+// this test tries to have a complete oauth 2 implicit flow
+describe('OAuth2 Implicit Flow', function () {
+	context('with normal input', function () {
+		var baseUrl = '/oauth2/dialog/authorize?response_type=token&state=a';
+		var url = baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri);
+
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {}, done);
+		});
+		before(function (done) {
+			requestHelper.sendRequest(
+				this,
+				'/login',
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						email: USER.email,
+						password: USER.password
+					}
+				},
+				done);
+		});
+
+		before(function(done) {
+			requestHelper.sendRequest(
+				this,
+				url,
+				{ method: 'get', cookie: this.cookie },
+				done);
+		});
+
+		before(function(done) {
+			var match = /<input name="transaction_id" type="hidden" value="([A-Za-z0-9]+)">/.exec(this.res.text);
+			requestHelper.sendRequest(
+				this,
+				"/oauth2/dialog/authorize/decision",
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						transaction_id: match[1]
+					}
+				},
+				done
+			);
+		});
+
+		it('should redirect', function() {
+			expect(this.res.statusCode).equal(302);
+		});
+
+		it('should redirect to provided uri', function() {
+			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '.*'));
+		});
+
+		it('should have access_token in location', function() {
+			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '/#access_token=[a-zA-Z0-9\\._]+&token_type=Bearer&state=a'));
+		});
+
+		it('should have proper access_token content', function() {
+			var match = new RegExp(CLIENT.redirect_uri + '/#access_token=([a-zA-Z0-9\\._]+)&token_type=Bearer&state=a').exec(this.res.headers.location);
+			var access_token = decodeURIComponent(match[1]);
+			var decoded = jwtHelper.decode(access_token);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).equal(36000);
+			expect(decoded.cli).equal(CLIENT.id);
+			expect(decoded.sub).equal(USER.id);
+		});
+
+	});
+});
+
+// this test tries to have a complete flow of the oauth 2 authorization code grant flow
+describe('OAuth2 Authorization Code Flow', function () {
+	context('with normal input', function () {
+		var baseUrl = '/oauth2/dialog/authorize?response_type=code&state=a';
+		var url = baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri);
+
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {}, done);
+		});
+		before(function (done) {
+			requestHelper.sendRequest(
+				this,
+				'/login',
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						email: USER.email,
+						password: USER.password
+					}
+				},
+				done);
+		});
+
+		before(function(done) {
+			requestHelper.sendRequest(
+				this,
+				url,
+				{ method: 'get', cookie: this.cookie },
+				done);
+		});
+
+		before(function(done) {
+			var match = /<input name="transaction_id" type="hidden" value="([A-Za-z0-9]+)">/.exec(this.res.text);
+			requestHelper.sendRequest(
+				this,
+				"/oauth2/dialog/authorize/decision",
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						transaction_id: match[1]
+					}
+				},
+				done
+			);
+		});
+
+		before(function(done) {
+			var match = new RegExp(CLIENT.redirect_uri + '/\\?code=([a-zA-Z0-9\\-]+)&state=a').exec(this.res.headers.location);
+			requestHelper.sendRequest(
+				this,
+				"/oauth2/token",
+				{
+					method: 'post',
+					type: 'form',
+					data: {
+						grant_type: 'authorization_code',
+						code: match[1],
+						redirect_uri: CLIENT.redirect_uri,
+						client_id: CLIENT.client_id,
+						client_secret: CLIENT.client_secret
+					}
+				},
+				done
+			);
+		});
+
+		it('should return a success', function() {
+			expect(this.res.statusCode).equal(200);
+		});
+
+		it('should have proper access token', function () {
+			var decoded = jwtHelper.decode(this.res.body.access_token);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).equal(36000);
+			expect(decoded.cli).equal(CLIENT.id);
+			expect(decoded.sub).equal(USER.id);
+		});
+
+		it('should have token type Bearer', function () {
+			expect(this.res.body.token_type).equal('Bearer');
+		});
+	});
+});

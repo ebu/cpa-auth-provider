@@ -87,8 +87,8 @@ passport.use('oauth2', new OAuth2Strategy(oauth2_config,
 
 app.get('/auth/oauth/callback',
     function (req,res,next){
-        console.log('User:', req.user);
-        next();
+        console.log('[/auth/oauth/callback/][User', req.user, ']');
+        return next();
     },
     passport.authenticate('oauth2', { failureRedirect: '/error' }),
     function (req, res) {

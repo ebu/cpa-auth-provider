@@ -2,10 +2,12 @@
 
 var passport = require('passport');
 var cors = require('cors');
+var logger = require('../../lib/logger');
 
 var user_info = [
     passport.authenticate('bearer', {session: false}),
     function (req, res) {
+        logger.debug('[OAuth2][Profile][user_id', req.user.id, ']');
         res.json({
             user: {
                 id: req.user.id,

@@ -57,7 +57,7 @@
     "pg": "6.1.0",
     "pg-hstore": "2.3.2",
     "request": "^2.75.0",
-    "sequelize": "2.0.0-dev4",
+    "sequelize": "3.29.0",
     "serve-favicon": "~2.3.0",
     "serve-static": "~1.10.2",
     "winston": "2.3.0",

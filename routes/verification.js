@@ -15,12 +15,7 @@ var routes = function(router) {
       where: { user_id: req.user.id, state: 'pending' },
       include: [ db.User, db.Domain ]
     })
-    .complete(function(err, pairingCodes) {
-      if (err) {
-        res.send(500);
-        return;
-      }
-
+    .then(function(pairingCodes) {
       if (pairingCodes.length > 0) {
         res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
       }
@@ -33,7 +28,9 @@ var routes = function(router) {
           res.render('verify.ejs', { 'user_code': req.body.user_code, 'error': null });
         }
       }
-    });
+    }, function(err) {
+      res.send(500);
+	});
   };
 
   var renderVerificationInfo = function(res, message, status) {
@@ -46,13 +43,8 @@ var routes = function(router) {
 
     if (userCode && redirectUri) {
       db.PairingCode
-        .find({ where: { 'user_code': userCode }, include: [ db.Client, db.Domain ] })
-        .complete(function(err, pairingCode) {
-          if (err) {
-            res.send(500);
-            return;
-          }
-
+        .findOne({ where: { 'user_code': userCode }, include: [ db.Client, db.Domain ] })
+        .then(function(pairingCode) {
           if (!pairingCode) {
             renderVerificationPage(req, res, messages.INVALID_USERCODE);
             return;
@@ -70,16 +62,18 @@ var routes = function(router) {
             return;
           }
 
-          var domain = (config.auto_provision_tokens)? 'every domain' : pairingCode.domain.name;
+          var domain = (config.auto_provision_tokens)? 'every domain' : pairingCode.Domain.name;
           var templateVariables = {
-            'client_name': pairingCode.client.name,
+            'client_name': pairingCode.Client.name,
             'user_code': userCode,
             'redirect_uri': redirectUri,
             'domain': domain
           };
 
           res.render('verify-prefilled-code.ejs', templateVariables);
-        });
+        }, function(err) {
+          res.send(500);
+		});
       return;
     }
 
@@ -96,15 +90,10 @@ var routes = function(router) {
    */
   var validatePairingCodes = function(userId, formCodes, done) {
     async.each(formCodes, function(code, callback) {
-      db.PairingCode.find({
+      db.PairingCode.findOne({
         where: { id: code.id, user_id: userId, state: 'pending' },
         include: [ db.User, db.Domain ]
-      }).complete(function(err, pairingCode) {
-        if (err) {
-          callback(err);
-          return;
-        }
-
+      }).then(function(pairingCode) {
         if (!pairingCode) {
           callback(new Error('PairingCode with id: ' + code.id + ' not found'));
           return;
@@ -116,9 +105,11 @@ var routes = function(router) {
         }
         else {
           pairingCode.state = (code.value === 'yes') ? 'verified' : 'denied';
-          pairingCode.save(['state']).complete(callback);
+          pairingCode.save(['state']).then(function() { callback(); }, callback);
         }
-      });
+      }, function(err) {
+        callback(err);
+	  });
     },
     function(err) {
       done(err);
@@ -136,13 +127,8 @@ var routes = function(router) {
    */
   var denyUserCode = function(userCode, userId, done) {
     db.PairingCode
-      .find({where: {'user_code': userCode}, include: [db.Client]})
-      .complete(function (err, pairingCode) {
-        if (err) {
-          done(err);
-          return;
-        }
-
+      .findOne({where: {'user_code': userCode}, include: [db.Client]})
+      .then(function (pairingCode) {
         if (!pairingCode) {
           done(null, messages.INVALID_USERCODE, 'cancelled');
           return;
@@ -162,8 +148,8 @@ var routes = function(router) {
         return pairingCode
           .updateAttributes({user_id: userId, state: 'denied'})
           .then(function () {
-            pairingCode.client.user_id = userId;
-            pairingCode.client.save();
+            pairingCode.Client.user_id = userId;
+            pairingCode.Client.save();
           })
           .then(function () {
             done(null, null, 'cancelled');
@@ -171,7 +157,9 @@ var routes = function(router) {
           function (err) {
             done(err);
           });
-      });
+      }, function(err) {
+        done(err);
+	  });
   };
 
   /**
@@ -185,13 +173,8 @@ var routes = function(router) {
    */
   var associateUserCodeWithUser = function(userCode, userId, done) {
     db.PairingCode
-      .find({ where: { 'user_code': userCode }, include: [ db.Client ] })
-      .complete(function(err, pairingCode) {
-        if (err) {
-          done(err);
-          return;
-        }
-
+      .findOne({ where: { 'user_code': userCode }, include: [ db.Client ] })
+      .then(function(pairingCode) {
         if (!pairingCode) {
           done(null, messages.INVALID_USERCODE, 'cancelled');
           return;
@@ -211,8 +194,8 @@ var routes = function(router) {
         return pairingCode
           .updateAttributes({user_id: userId, state: 'verified'})
           .then(function () {
-            pairingCode.client.user_id = userId;
-            pairingCode.client.save();
+            pairingCode.Client.user_id = userId;
+            pairingCode.Client.save();
           })
           .then(function () {
             done(null, null, 'success');
@@ -220,7 +203,9 @@ var routes = function(router) {
           function (err) {
             done(err);
           });
-      });
+      }, function(err) {
+        done(err);
+	  });
   };
 
   /**

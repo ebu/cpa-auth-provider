@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: expiresMixin(config.authorization_code_lifetime),
 
     associate: function(models) {
-      OAuth2AuthorizationCode.belongsTo(models.OAuth2Client);
+      OAuth2AuthorizationCode.belongsTo(models.OAuth2Client, {foreignKey: 'oauth2_client_id'});
       OAuth2AuthorizationCode.belongsTo(models.User);
     }
   });

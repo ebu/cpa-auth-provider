@@ -30,16 +30,15 @@ var routes = function (router) {
     });
 
     router.get('/:broadcaster?/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
-        db.User.find({where: {
+        db.User.findOne({where: {
             id: req.user.id
         }}).then(function (user) {
             if (!user) {
                 return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
             } else {
-                db.UserProfile.findOrCreate({
+                db.UserProfile.findOrCreate({where: {
                     user_id: req.user.id
-                }).then(function (profile) {
-
+                }}).spread(function (profile) {
                     var tpl = './user/profile.ejs';
                     var broadcaster = req.params.broadcaster || false;
                     var brandingMode = broadcaster !== false;
@@ -78,7 +77,7 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                db.User.find({where: {
+                db.User.findOne({where: {
                     id: req.user.id
                 }}).then(function (user) {
                     if (!user) {
