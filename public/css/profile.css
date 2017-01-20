@@ -1,0 +1,26 @@
+.panel {
+    height: 75px;
+    border-bottom: 1px solid #eee;
+    box-shadow: none;
+}
+#btn-container, #form-modify-pass {
+    display: none;
+}
+.personnal-data-input {
+    visibility: hidden;
+}
+.error-block {
+    display: none;
+}
+.error-block .title {
+    font-weight: 500;
+}
+.error-block .content p{
+    margin: 0;
+}
+.mobile-title {
+    font-size: 25px;
+}
+.btn.btn-link {
+    padding: 0;
+}
