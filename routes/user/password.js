@@ -78,7 +78,7 @@ function requestPasswordEmail(req, res, next) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH);
 			}
 
-			if (!client.mayRedirect(redirectUri)) {
+			if (!client.mayEmailRedirect(redirectUri)) {
 				throw new Error(oauthHelper.ERRORS.BAD_REQUEST);
 			}
 			return email.sendForcePasswordEmail(user, req.host, client, redirectUri);

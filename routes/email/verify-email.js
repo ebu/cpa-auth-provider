@@ -16,7 +16,7 @@ function routes(router) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {
 					var verifyToken = data;
-					var client = data.client;
+					var client = data.oAuth2Client;
 					var user = data.user;
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
 					user.email_verified = true;
@@ -52,7 +52,7 @@ function routes(router) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {
 					var verifyToken = data;
-					var client = data.client;
+					var client = data.oAuth2Client;
 					getUser(verifyToken.user_id).then(
 						function (user) {
 							var redirect_url = getEmailRedirectUrl(verifyToken, client);
@@ -86,18 +86,7 @@ function routes(router) {
 /** extract and generate proper url for a redirect */
 function getEmailRedirectUrl(verifyToken, client) {
 	if (client) {
-		var redirect_url = undefined;
-		var sub = verifyToken.sub != undefined ? verifyToken.sub : '';
-		var emailRedirects = client.getEmailRedirects();
-		if (emailRedirects.hasOwnProperty(sub)) {
-			redirect_url = emailRedirects[sub];
-		} else {
-			redirect_url = emailRedirects['default'];
-			if (redirect_url) {
-				redirect_url = redirect_url.replace(/\{\{SUB}}/g, sub);
-			}
-		}
-		return redirect_url;
+		return client.email_redirect_uri;
 	} else {
 		return undefined;
 	}
