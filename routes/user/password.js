@@ -136,12 +136,15 @@ function setPasswordIntern(req, res, next) {
 		function(user_res) {
 			user = user_res;
 			if (!user) {
-				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND);
+				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
 			}
 			return user.verifyPassword(currentPassword);
 		}
 	).then(
-		function(user_res) {
+		function(correct) {
+			if (!correct) {
+				throw new Error(oauthHelper.ERRORS.WRONG_PASSWORD.message);
+			}
 			return user.setPassword(newPassword);
 		}
 	).then(

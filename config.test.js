@@ -112,6 +112,7 @@ module.exports = {
   server_clients: [],
 
   mail: {
+    test_mode: true,
     from: 'no-reply@rts.ch',
   }
 };
