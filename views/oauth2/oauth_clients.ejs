@@ -1,0 +1,32 @@
+<% include ../layout/head %>
+
+<h1>OAuth 2 Clients</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Client ID</th>
+      <th>Client Secret</th>
+      <th>Redirect URI</th>
+      <th>Email Redirect URI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (var i = 0; i < clients.length; i++) { %>
+      <tr>
+        <td><a href="<%= link('/oauth2/client/edit/' + clients[i].id) %>">+</a></td>
+        <td><%= clients[i].name %></td>
+        <td><%= clients[i].client_id %></td>
+        <td><%= clients[i].client_secret %></td>
+        <td><%= clients[i].redirect_uri %></td>
+        <td><%= clients[i].email_redirect_uri %></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<p><a href="<%= link('/oauth2/client/add') %>">Add an OAuth 2 Client</a></p>
+
+<% include ../layout/foot %>
