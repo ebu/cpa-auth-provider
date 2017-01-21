@@ -16,11 +16,10 @@ var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-passwo
 var RefreshToken = require('./exchange/refresh-token').issueToken;
 var cors = require('cors');
 var CreateUser = require('./create-user').createUser;
+var logger = require('../../lib/logger');
 
 
 module.exports = function (router) {
-
-    var logger = router.get('logger');
 
     // create OAuth 2.0 server
     var server = oauth2orize.createServer();
@@ -43,8 +42,8 @@ module.exports = function (router) {
     });
 
     server.deserializeClient(function (id, done) {
-        db.OAuth2Client.find({where: {client_id: id}}).then(function (client) {
-            console.log('deserialize', client.get({plain: true}));
+        db.OAuth2Client.findOne({where: {client_id: id}}).then(function (client) {
+            logger.debug('deserialize', client.get({plain: true}));
             return done(null, client);
         }).catch(done);
     });
@@ -102,10 +101,7 @@ module.exports = function (router) {
 
     var authorization = [
         server.authorization(function (clientID, redirectURI, done) {
-            db.OAuth2Client.find({where: {client_id: clientID}}).complete(function (err, client) {
-                if (err) {
-                    return done(err);
-                }
+            db.OAuth2Client.findOne({where: {client_id: clientID}}).then(function (client) {
                 if (!client) {
                     return done(new Error('unknown client' + clientID));
                 }
@@ -120,6 +116,8 @@ module.exports = function (router) {
                     logger.error('client', client.id, 'not allowed with redirection', redirectURI);
                 }
                 return done(new Error('bad redirection'));
+            }, function(err) {
+                return done(err);
             });
         }),
 		authHelper.authenticateFirst,

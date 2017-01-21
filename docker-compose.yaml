@@ -17,6 +17,10 @@ services:
     build: .
     ports:
     - 3000:3000
+    environment:
+    - EMAIL_FROM=no-reply@rts.ch
+    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 #    depends_on:
 #      - postgres
 #    links:
@@ -37,10 +41,3 @@ services:
 #      - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
 #      - DOCKER_USER=dockercpa
 #      - DOCKER_PASSWORD=SchiefesHausBautFalsch
-
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.18.0.0/16
-          gateway: 172.18.0.1

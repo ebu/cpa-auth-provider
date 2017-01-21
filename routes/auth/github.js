@@ -13,9 +13,9 @@ passport.use(new GithubStrategy({
     callbackURL: config.identity_providers.github.url_callback
   },
   function(accessToken, refreshToken, profile, done) {
-    db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName}).success(function(user){
+    db.User.findOrCreate({provider_uid: profile.id, display_name: profile.displayName}).spread(function(user){
       return done(null, user);
-    }).error(function(err) {
+    }).catch(function(err) {
         done(err, null);
     });
   }

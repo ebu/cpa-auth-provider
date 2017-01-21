@@ -1,0 +1,75 @@
+html {
+    font-size: 10px;
+}
+
+body {
+    margin:0;
+    font-family:"Gotham SSm A", "Gotham SSm B", "Helvetica", "Arial", "Verdana", sans-serif;
+}
+
+h2 {
+    font-size: 3.2rem;
+    line-height: 2.8rem;
+    color: #333333;
+    font-weight: 500;
+}
+
+h4 {
+     font-size: 2.8rem;
+    color: #666666;
+    font-weight: normal;
+}
+
+.btn-link {
+    font-size: 1.8rem;
+    color: #af001e;
+    text-decoration: underline;
+}
+
+.btn-link:hover {
+    color: #bf0020;
+}
+
+.profile-container {
+    padding:10px 0 40px;
+}
+
+#form-personnal-data h4 {
+    font-size: 1.8rem;
+    margin-top: 1.5rem;
+    color: #666666;
+    text-transform: uppercase;
+}
+
+#form-personnal-data span {
+    font-size: 1.8rem;
+}
+
+#form-personnal-data .panel {
+    border:0;
+}
+
+.btn-primary, .btn-danger {
+    background-color: #af001e;
+    border: #af001e;
+    font-size: 1.8rem;
+    margin-right: 10px;
+}
+
+.btn-primary:hover, .btn-danger:hover {
+    background-color: #bf0020;
+}
+
+#form-security-errors + h4 {
+
+}
+
+.delete-container {
+    padding:16px 0;
+}
+
+.delete-container p {
+    font-size: 1.8rem;
+    color: #666666
+}
+

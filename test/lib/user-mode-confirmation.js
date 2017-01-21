@@ -209,11 +209,11 @@ describe('POST /verify', function() {
             var self = this;
 
             db.PairingCode.findAll({ where: { user_id: 4 } })
-              .success(function(pairingCodes) {
+              .then(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
               })
-              .error(function(error) {
+              .catch(function(error) {
                 done(error);
               });
           });
@@ -306,11 +306,11 @@ describe('POST /verify', function() {
             var self = this;
 
             db.PairingCode.findAll({ where: { user_id: 4 } })
-              .success(function(pairingCodes) {
+              .then(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
               })
-              .error(function(error) {
+              .catch(function(error) {
                 done(error);
               });
           });
@@ -403,11 +403,11 @@ describe('POST /verify', function() {
             var self = this;
 
             db.PairingCode.findAll({ where: { user_id: 4 } })
-              .success(function(pairingCodes) {
+              .then(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
               })
-              .error(function(error) {
+              .catch(function(error) {
                 done(error);
               });
           });
@@ -475,12 +475,12 @@ describe('POST /verify', function() {
           before(function(done) {
             var self = this;
 
-            db.PairingCode.find(16)
-              .success(function(pairingCode) {
+            db.PairingCode.findById(16)
+              .then(function(pairingCode) {
                 self.pairingCode = pairingCode;
                 done();
               })
-              .error(function(error) {
+              .catch(function(error) {
                 done(error);
               });
           });
@@ -536,11 +536,11 @@ describe('POST /verify', function() {
             var self = this;
 
             db.PairingCode.findAll()
-              .success(function(pairingCodes) {
+              .then(function(pairingCodes) {
                 self.pairingCodes = pairingCodes;
                 done();
               })
-              .error(function(error) {
+              .catch(function(error) {
                 done(error);
               });
           });

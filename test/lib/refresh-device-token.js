@@ -19,17 +19,37 @@ var dbHelper      = require('../db-helper');
  */
 
 var initDatabase = function(done) {
-  db.Client
-    .create({
-      id:                101,
-      secret:            'e2412cd1-f010-4514-acab-c8af59e5501a',
-      name:              'User mode test client',
-      software_id:       'CPA AP Test',
-      software_version:  '0.0.1',
-      ip:                '127.0.0.1',
-      registration_type: 'dynamic',
-      user_id:           301,
+  new Promise(function(resolve,reject) {
+    resolve();
+  })
+    .then(function() {
+      return db.User.create({
+        id:           301,
+        provider_uid: 'testuser',
+        display_name: 'Test User',
+        password:     'testpassword'
+      });
     })
+    .then(function() {
+      return db.User.create({
+        id:           302,
+        provider_uid: 'anothertestuser',
+        display_name: 'Another Test User',
+        password:     'testpassword'
+      });
+    })
+    .then(function() {
+      return db.Client.create({
+        id: 101,
+        secret: 'e2412cd1-f010-4514-acab-c8af59e5501a',
+        name: 'User mode test client',
+        software_id: 'CPA AP Test',
+        software_version: '0.0.1',
+        ip: '127.0.0.1',
+        registration_type: 'dynamic',
+        user_id: 301,
+      });
+	})
     .then(function() {
       return db.Client.create({
         id:                102,
@@ -69,22 +89,6 @@ var initDatabase = function(done) {
         name:         'example-service.com',
         display_name: 'CPA Example Service',
         access_token: '44e948140678443fbe1d89d1b7313911'
-      });
-    })
-    .then(function() {
-      return db.User.create({
-        id:           301,
-        provider_uid: 'testuser',
-        display_name: 'Test User',
-        password:     'testpassword'
-      });
-    })
-    .then(function() {
-      return db.User.create({
-        id:           302,
-        provider_uid: 'anothertestuser',
-        display_name: 'Another Test User',
-        password:     'testpassword'
       });
     })
     .then(function() {
@@ -341,7 +345,7 @@ describe("POST /token", function() {
             db.AccessToken.findAll({ where: { client_id: 102 } })
               .then(function(accessTokens) {
                 self.accessTokens = accessTokens;
-                return db.Client.find(102);
+                return db.Client.findById(102);
               })
               .then(function(client) {
                 self.client = client;

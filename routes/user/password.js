@@ -175,7 +175,7 @@ function forcePassword(req, res) {
 			if (!token) {
 				throw new Error(oauthHelper.ERRORS.BAD_REQUEST.message);
 			}
-			if (clientId && clientId != token.Client.client_id) {
+			if (clientId && clientId != token.OAuth2Client.client_id) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
 			}
 			if (!token.User && username != token.User.email) {

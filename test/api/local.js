@@ -34,8 +34,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("Something went wrong with the reCAPTCHA");
@@ -61,11 +61,12 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.msg).to.equal("Successfully created new user.");
+            expect(this.res.body.token).to.not.equal('');
         });
 
     });
@@ -87,8 +88,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("Please pass email and password.");
@@ -113,8 +114,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("Please pass email and password.");
@@ -153,8 +154,8 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            console.log('msg:' + this.res.body.msg);
-            console.log('success:' + this.res.body.success);
+            //console.log('msg:' + this.res.body.msg);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(400);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal("email already exists.");
@@ -199,9 +200,29 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('should return a success ', function () {
-            console.log('success:' + this.res.body.success);
+            // console.log('success:' + this.res.body.success);
+            // console.log('token:' + this.res.body.token);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
+        });
+
+        // Test get user info
+        before(function (done) {
+            var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+            requestHelper.sendRequest(this, '/api/local/info', {
+                    method: 'get',
+                    accessToken: accessToken,
+                    tokenType: 'JWT'
+                }, done
+            );
+        });
+
+        it('/api/local/info should return a success ', function () {
+            expect(this.res.statusCode).to.equal(200);
+            expect(this.res.body.success).to.equal(true);
+            expect(this.res.body.user.email).to.equal('qsdf@qsdf.fr');
+            expect(this.res.body.user.display_name).to.equal('qsdf@qsdf.fr');
+
         });
     });
 
@@ -235,7 +256,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('should return a success ', function () {
-            console.log('success:' + this.res.body.success);
+            //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(401);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal(INCORRECT_LOGIN_OR_PASS);

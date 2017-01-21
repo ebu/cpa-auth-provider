@@ -3,12 +3,12 @@
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
 var db = require('../../models');
+var jwtHelper = require('../../lib/jwt-helper');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
 var config = require('../../config');
-var jwtHelper = require('../../lib/jwt-helper');
 
 var CLIENT = {
 	id: 1,
@@ -18,9 +18,17 @@ var CLIENT = {
 	redirect_uri: 'http://localhost'
 };
 var USER = {
+	id: 123,
 	email: 'test@test.com',
 	account_uid: 'RandomUid',
 	password: 'a'
+};
+
+var USER2 = {
+	id: 234,
+	email: 'some@one.else',
+	account_uid: 'AnotherUid',
+	password: 'b'
 };
 
 var URL_PREFIX = config.urlPrefix;
@@ -36,17 +44,27 @@ function createOAuth2Client(done) {
 	);
 }
 
-function createFakeUser(done) {
-	db.User.create(USER).then(
-		function (user) {
-			user.setPassword(USER.password).then(
+function createUser(userTemplate) {
+	return new Promise(
+		function(resolve, reject) {
+			db.User.create(userTemplate).then(
 				function (user) {
-					return done();
+					user.setPassword(userTemplate.password).then(resolve, reject);
 				},
-				done);
-		},
-		done
+				reject);
+		}
 	);
+}
+
+function createFakeUser(done) {
+	createUser(USER).then(
+		function() {
+			return createUser(USER2);
+		}).then(
+			function() {
+				return done();
+			}
+		).catch(done);
 }
 
 var resetDatabase = function (done) {
@@ -132,15 +150,56 @@ describe('POST /oauth2/token', function () {
 		});
 
 		it('should have proper access token', function () {
-			var data = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
-			expect(data.typ).equal('access');
-			expect(data.cli).equal(CLIENT.client_id);
-			expect(data.sub).not.equal(undefined);
-			expect(data.exp).not.equal(undefined);
-			// expect(this.res.body.access_token).equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjcGEiLCJhdWQiOiJjcGEiLCJleHAiOjEzOTcwNzcyMDAwMDAsInN1YiI6MzA3LCJ0eXAiOiJhY2Nlc3MiLCJjbGkiOjEsInZmeSI6IjEifQ.9L7uCyfNoV3kPaUl1JuJdwJuItYC70azIg9vhFri40s');
+			var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).not.equal(undefined);
+			expect(decoded.cli).equal(CLIENT.client_id);
+			expect(decoded.sub).equal(USER.id);
 		});
 
-		it('should have expires_in set correctly', function () {
+		it('should have expires_in set correctly', function() {
+			expect(this.res.body.expires_in).equal(36000);
+		});
+
+		it('should have token type Bearer', function () {
+			expect(this.res.body.token_type).equal('Bearer');
+		});
+	});
+
+	context('using grant_type: \'password\' with 2nd user' , function () {
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {
+				method: 'post',
+				cookie: this.cookie,
+				type: 'form',
+				data: {
+					grant_type: 'password',
+					username: USER2.email,
+					password: USER2.password,
+					client_id: CLIENT.client_id,
+					client_secret: CLIENT.client_secret
+				}
+			}, done);
+		});
+
+		it('should return a success', function () {
+			expect(this.res.statusCode).equal(200);
+		});
+
+		it('should have proper access token', function () {
+			var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).not.equal(undefined);
+			expect(decoded.cli).equal(CLIENT.client_id);
+			expect(decoded.sub).equal(USER2.id);
+		});
+
+		it('should have proper expires_in set', function() {
 			expect(this.res.body.expires_in).equal(36000);
 		});
 
@@ -176,219 +235,6 @@ describe('POST /oauth2/token', function () {
 
 			it('should reject with bad request', function () {
 				expect(this.res.statusCode).equal(400);
-			});
-			it('should give error name', function () {
-				expect(this.res.body.error).equal('invalid_request');
-			});
-		}
-	);
-});
-
-describe('POST /oauth2/login', function () {
-	var url = '/oauth2/login';
-	context('without a client_id', function () {
-		before(resetDatabase);
-
-		before(function (done) {
-			requestHelper.sendRequest(this, url, {
-				method: 'post',
-				cookie: this.cookie,
-				type: 'form',
-				data: {grant_type: 'password', username: USER.email, password: USER.password}
-			}, done);
-		});
-
-		it('should reject the request', function () {
-			expect(this.res.statusCode).equal(400);
-		});
-	});
-
-	context(
-		'with a bad client_id',
-		function () {
-			before(resetDatabase);
-			before(function (done) {
-				requestHelper.sendRequest(this, url, {
-					method: 'post',
-					cookie: this.cookie,
-					type: 'form',
-					data: {
-						grant_type: 'password',
-						username: USER.email,
-						password: USER.password,
-						client_id: '_' + CLIENT.client_id
-					}
-				}, done);
-			});
-
-			it('should reject the request', function () {
-				expect(this.res.statusCode).equal(400);
-			});
-		}
-	);
-
-	context('using grant_type: \'password\'', function () {
-		before(resetDatabase);
-		before(createFakeUser);
-
-		before(function (done) {
-			requestHelper.sendRequest(this, url, {
-				method: 'post',
-				cookie: this.cookie,
-				type: 'form',
-				data: {
-					grant_type: 'password',
-					username: USER.email,
-					password: USER.password,
-					client_id: CLIENT.client_id
-				}
-			}, done);
-		});
-
-		it('should return a success', function () {
-			expect(this.res.statusCode).equal(200);
-		});
-
-		it('should have proper access token', function () {
-			var data = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
-			expect(data.typ).equal('access');
-			expect(data.cli).equal(CLIENT.client_id);
-			expect(data.sub).not.equal(undefined);
-			expect(data.exp).not.equal(undefined);
-			// expect(this.res.body.access_token).equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjcGEiLCJhdWQiOiJjcGEiLCJleHAiOjEzOTcwNzcyMDAwMDAsInN1YiI6MzA5LCJ0eXAiOiJhY2Nlc3MiLCJjbGkiOjEsInZmeSI6IjEifQ.a2wd3w3pkh1TRIb3EFo0yH99n5GL6lNtVgHT0YR11lI');
-		});
-
-		it('should have expires_in set correctly', function () {
-			expect(this.res.body.expires_in).equal(36000);
-		});
-
-		it('should have token type Bearer', function () {
-			expect(this.res.body.token_type).equal('Bearer');
-		});
-	});
-
-	context(
-		'using grant_type \'password\' with bad user login',
-		function () {
-			before(resetDatabase);
-			before(createFakeUser);
-
-			before(function (done) {
-				requestHelper.sendRequest(
-					this,
-					url,
-					{
-						method: 'post',
-						cookie: this.cookie,
-						type: 'form',
-						data: {
-							grant_type: 'password',
-							username: 'abc+' + USER.email,
-							password: USER.password,
-							client_id: CLIENT.client_id
-						}
-					},
-					done);
-			});
-
-			it('should reject with bad request', function () {
-				expect(this.res.statusCode).equal(400);
-			});
-			it('should give error name', function () {
-				expect(this.res.body.error).equal('invalid_request');
-			});
-		}
-	);
-
-	context(
-		'using grant_type \'refresh_token\' with bad token',
-		function () {
-			before(resetDatabase);
-			before(createFakeUser);
-
-			before(function (done) {
-				requestHelper.sendRequest(
-					this,
-					url,
-					{
-						method: 'post',
-						cookie: this.cookie,
-						type: 'form',
-						data: {
-							grant_type: 'refresh_token',
-							refresh_token: 'no.sense.here',
-							client_id: CLIENT.client_id
-						}
-					},
-					done);
-			});
-
-			it('should reject with bad request', function () {
-				expect(this.res.statusCode).equal(400);
-			});
-			it('should give error name', function () {
-				expect(this.res.body.error).equal('invalid_request');
-			});
-		}
-	);
-
-	context(
-		'using grant_type \'refresh_token\' with valid token',
-		function () {
-			var validToken;
-
-			before(resetDatabase);
-			before(createFakeUser);
-
-			before(function (done) {
-				var self = this;
-				requestHelper.sendRequest(
-					this,
-					url,
-					{
-						method: 'post',
-						cookie: this.cookie,
-						type: 'form',
-						data: {
-							grant_type: 'password',
-							username: USER.email,
-							password: USER.password,
-							client_id: CLIENT.client_id
-						}
-					},
-					function () {
-						validToken = self.res.body.refresh_token;
-						return done();
-					});
-			});
-
-			before(function (done) {
-				requestHelper.sendRequest(
-					this,
-					url,
-					{
-						method: 'post',
-						cookie: this.cookie,
-						type: 'form',
-						data: {
-							grant_type: 'refresh_token',
-							refresh_token: validToken,
-							client_id: CLIENT.client_id
-						}
-					},
-					done);
-			});
-
-			it('should accept with 200', function () {
-				expect(this.res.statusCode).equal(200);
-			});
-			it('should provide access token', function () {
-				var data = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
-				expect(data.typ).equal('access');
-				expect(data.cli).equal(CLIENT.client_id);
-				expect(data.sub).not.equal(undefined);
-				expect(data.exp).not.equal(undefined);
-				// expect(this.res.body.access_token).equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjcGEiLCJhdWQiOiJjcGEiLCJleHAiOjEzOTcwNzcyMDAwMDAsInN1YiI6MzEyLCJ0eXAiOiJhY2Nlc3MiLCJjbGkiOjEsInZmeSI6IjEifQ.Kl6JhiyUdVB85aP3hivG_mCCRXin-gpwMbDzsSRcq5w');
 			});
 		}
 	);
@@ -518,6 +364,177 @@ describe('GET /oauth2/dialog/authorize', function () {
 			it('should redirect to login page', function () {
 				expect(this.res.headers.location).equal(URL_PREFIX + '/auth');
 			});
+		});
+	});
+});
+
+// this test tries to have a complete oauth 2 implicit flow
+describe('OAuth2 Implicit Flow', function () {
+	context('with normal input', function () {
+		var baseUrl = '/oauth2/dialog/authorize?response_type=token&state=a';
+		var url = baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri);
+
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(
+				this,
+				'/login',
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						email: USER.email,
+						password: USER.password
+					}
+				},
+				done);
+		});
+
+		before(function(done) {
+			requestHelper.sendRequest(
+				this,
+				url,
+				{ method: 'get', cookie: this.cookie },
+				done);
+		});
+
+		before(function(done) {
+			var match = /<input name="transaction_id" type="hidden" value="([A-Za-z0-9]+)">/.exec(this.res.text);
+			requestHelper.sendRequest(
+				this,
+				"/oauth2/dialog/authorize/decision",
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						transaction_id: match[1]
+					}
+				},
+				done
+			);
+		});
+
+		it('should redirect', function() {
+			expect(this.res.statusCode).equal(302);
+		});
+
+		it('should redirect to provided uri', function() {
+			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '.*'));
+		});
+
+		it('should have access_token in location', function() {
+			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '/#access_token=[a-zA-Z0-9\\._-]+&token_type=Bearer&state=a'));
+		});
+
+		it('should have proper access_token content', function() {
+			var match = new RegExp(CLIENT.redirect_uri + '/#access_token=([a-zA-Z0-9\\._-]+)&token_type=Bearer&state=a').exec(this.res.headers.location);
+			var access_token = decodeURIComponent(match[1]);
+			var decoded = jwtHelper.decode(access_token, CLIENT.client_secret);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).not.equal(undefined);
+			expect(decoded.cli).equal(CLIENT.client_id);
+			expect(decoded.sub).equal(USER.id);
+		});
+	});
+});
+
+// this test tries to have a complete flow of the oauth 2 authorization code grant flow
+describe('OAuth2 Authorization Code Flow', function () {
+	context('with normal input', function () {
+		var baseUrl = '/oauth2/dialog/authorize?response_type=code&state=a';
+		var url = baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri);
+
+		before(resetDatabase);
+		before(createFakeUser);
+
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {}, done);
+		});
+		before(function (done) {
+			requestHelper.sendRequest(
+				this,
+				'/login',
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						email: USER.email,
+						password: USER.password
+					}
+				},
+				done);
+		});
+
+		before(function(done) {
+			requestHelper.sendRequest(
+				this,
+				url,
+				{ method: 'get', cookie: this.cookie },
+				done);
+		});
+
+		before(function(done) {
+			var match = /<input name="transaction_id" type="hidden" value="([A-Za-z0-9]+)">/.exec(this.res.text);
+			requestHelper.sendRequest(
+				this,
+				"/oauth2/dialog/authorize/decision",
+				{
+					method: 'post',
+					cookie: this.cookie,
+					type: 'form',
+					data: {
+						transaction_id: match[1]
+					}
+				},
+				done
+			);
+		});
+
+		before(function(done) {
+			var match = new RegExp(CLIENT.redirect_uri + '/\\?code=([a-zA-Z0-9\\-]+)&state=a').exec(this.res.headers.location);
+			requestHelper.sendRequest(
+				this,
+				"/oauth2/token",
+				{
+					method: 'post',
+					type: 'form',
+					data: {
+						grant_type: 'authorization_code',
+						code: match[1],
+						redirect_uri: CLIENT.redirect_uri,
+						client_id: CLIENT.client_id,
+						client_secret: CLIENT.client_secret
+					}
+				},
+				done
+			);
+		});
+
+		it('should return a success', function() {
+			expect(this.res.statusCode).equal(200);
+		});
+
+		it('should have proper access token', function () {
+			var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.client_secret);
+			expect(decoded.iss).equal('cpa');
+			expect(decoded.aud).equal('cpa');
+			expect(decoded.exp).not.equal(undefined);
+			expect(decoded.cli).equal(CLIENT.client_id);
+			expect(decoded.sub).equal(USER.id);
+		});
+
+		it('should have expires_in set properly', function() {
+			expect(this.res.body.expires_in).equal(36000);
+		});
+
+		it('should have token type Bearer', function () {
+			expect(this.res.body.token_type).equal('Bearer');
 		});
 	});
 });

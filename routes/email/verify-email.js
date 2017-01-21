@@ -16,8 +16,8 @@ function routes(router) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {
 					var verifyToken = data;
-					var client = data.oAuth2Client;
-					var user = data.user;
+					var client = data.OAuth2Client;
+					var user = data.User;
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
 					user.email_verified = true;
 					return user.save().then(
@@ -52,8 +52,8 @@ function routes(router) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {
 					var verifyToken = data;
-					var client = data.oAuth2Client;
-					var user = data.user;
+					var client = data.OAuth2Client;
+					var user = data.User;
 
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
 					if (redirect_url) {
