@@ -13,7 +13,7 @@ exports.token = function (client, user, ares, done) {
 		var accessToken = oauthToken.generateAccessToken(client, user);
 		var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
 		var extras = oauthToken.generateTokenExtras(client, user);
-		return done(null, accessToken, refreshToken, extras);
+		return done(null, accessToken, extras);
 	} catch(e) {
 		return done(e);
 	}
