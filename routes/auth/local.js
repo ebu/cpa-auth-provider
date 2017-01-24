@@ -109,11 +109,13 @@ module.exports = function (app, options) {
     app.get('/email_verify', function (req, res) {
         db.User.findOne({where: {email: req.query.email}})
             .then(function (user) {
-                var verified = false;
-                if (user && user.verifyAccount(req.query.code)) {
-                    verified = true;
+                if (user) {
+                    user.verifyAccount(req.query.code);
+                    res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                } else {
+                    res.render('./verify-mail.ejs', {verified: false});
+
                 }
-                res.render('./verify-mail.ejs', {verified: verified, userId: user.id});
             }, function (error) {
                 done(error);
             });

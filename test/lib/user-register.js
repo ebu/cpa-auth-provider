@@ -14,12 +14,12 @@ describe('Test verification code', function () {
                 this.user.genereateVerificationCode();
             })
         it('should return false when validation code is wrong', function (done) {
-            expect(this.user.verifyAccount('this is a wrong code')).to.be.false;
+            this.user.verifyAccount('this is a wrong code');
             expect(this.user.verified).to.be.false;
             done();
         });
         it('should return true when validation code is correct', function (done) {
-            expect(this.user.verifyAccount(this.user.verificationCode)).to.be.true;
+            this.user.verifyAccount(this.user.verificationCode);
             expect(this.user.verified).to.be.true;
             done();
         });

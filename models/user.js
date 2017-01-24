@@ -29,9 +29,6 @@ module.exports = function (sequelize, DataTypes) {
             verifyAccount: function(sendedVerificationCode){
                 if (sendedVerificationCode === this.verificationCode){
                     this.updateAttributes({verified: true});
-                    return true;
-                } else {
-                    return false;
                 }
             },
             setPassword: function (password) {
