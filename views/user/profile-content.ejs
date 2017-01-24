@@ -138,16 +138,24 @@
         <h4 class="visible-xs-inline-block hidden-sm mobile-title">Account</h4>
         <hr class="visible-xs-block hidden-sm"/>
     </div>
-    <div class="col-sm-9 ">
-        <div class="verification-link-container">
-            <p>Click the button below to resend your account verification link</p>
-            <a class="btn btn-primary">Send</a>
-        </div>
-    </div>
-    <div class="col-sm-9 col-sm-offset-3">
+    <div class="col-sm-9">
         <div class="delete-container">
             <p>Click the button below to delete your account</p>
             <a class="btn btn-danger" disabled="disabled">Delete account</a>
+        </div>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3">
+        <div class="verification-link-container">
+            <p>Click the button below to resend your account verification link</p>
+            <button id="btn-send-verification-link" type="button" class="btn btn-primary"><span class="button-label">Send</span>
+                <div class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+            </button>
+            <span id="verification-success" class="text-success"><span class="glyphicon glyphicon-ok"></span> <span class="text"></span> </span>
+            <span id="verification-error" class="text-danger"><span class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
         </div>
     </div>
 
@@ -167,6 +175,7 @@
         var $modifyPassBtn = $('#btn-modify-password');
         var $formModifyPass = $('#form-modify-pass');
         var $btnContainer = $('#btn-container');
+        var $btnVerificationLink = $('#btn-send-verification-link');
 
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
@@ -256,6 +265,36 @@
             $btnContainer.show();
         });
 
+        $btnVerificationLink.on('click', function (e) {
+            e.preventDefault();
+            var $label = $btnVerificationLink.find(".button-label").first();
+            var $spinner = $btnVerificationLink.find(".spinner").first();
+            var $verifSuccess = $("#verification-success");
+            var $verifError = $("#verification-error");
+            var userId = "<%= user.id %>";
+
+            $verifError.hide();
+            $label.hide();
+            $spinner.show();
+
+            $.ajax({
+                url: "<%= link('/api/local/request_verification_email/') %>" + userId,
+                data: {},
+                type: 'GET',
+                success: function (result) {
+                    $btnVerificationLink.remove();
+                    $verifSuccess.find(".text").first().text("Successfully sent a verification email to your mailbox");
+                    $verifSuccess.show();
+                },
+                error: function (result) {
+                    $spinner.hide();
+                    $label.show();
+                    $verifError.find(".text").first().text("An error occurred during the process, please try again later");
+                    $verifError.show();
+                }
+            });
+        });
+
         $saveDataBtn.on('click', function (e) {
             e.preventDefault();
             resetErrors("form-personnal-data-errors", "personnal-data-errors");
@@ -323,7 +362,6 @@
                 },
                 type: 'POST',
                 success: function(result) {
-                    console.log("success", result);
                     $previousPassword.val("");
                     $password.val("");
                     $confirmPassword.val("");

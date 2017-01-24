@@ -26,27 +26,30 @@
 }
 .status {
     cursor: default;
+    border: none;
 }
 .status.btn-danger {
     color: #fff ;
-    background-color: #c9302c;
-    border-color: #ac2925;
+    background-color: #d9534f;
 }
 .status.btn-danger:hover {
     color: #fff;
-    background-color: #c9302c;
-    border-color: #ac2925;
+    background-color: #d9534f;
 }
 .status.btn-success {
     color: #fff ;
-    background-color: #449d44;
-    border-color: #398439;
+    background-color: #5cb85c;
 }
 .status.btn-success:hover {
     color: #fff;
-    background-color: #449d44;
-    border-color: #398439;
+    background-color: #5cb85c;
 }
-.delete-container {
+#btn-send-verification-link {
+    min-width: 80px;
+}
+#verification-success, #verification-error {
+    display: none;
+}
+.verification-link-container {
     margin-top: 20px;
 }
