@@ -15,10 +15,12 @@ describe('Test verification code', function () {
             })
         it('should return false when validation code is wrong', function (done) {
             expect(this.user.verifyAccount('this is a wrong code')).to.be.false;
+            expect(this.user.verified).to.be.false;
             done();
         });
         it('should return true when validation code is correct', function (done) {
             expect(this.user.verifyAccount(this.user.verificationCode)).to.be.true;
+            expect(this.user.verified).to.be.true;
             done();
         });
     })

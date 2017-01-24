@@ -22,13 +22,13 @@ module.exports = function (sequelize, DataTypes) {
         underscored: true,
         instanceMethods: {
             genereateVerificationCode: function () {
-                var verificationCode = generate.cryptoCode(10)
+                var verificationCode = generate.cryptoCode(30)
                 this.updateAttributes({verificationCode: verificationCode});
                 this.updateAttributes({verified: false});
             },
             verifyAccount: function(sendedVerificationCode){
                 if (sendedVerificationCode === this.verificationCode){
-                    this.updateAttributes({verificationCode: true});
+                    this.updateAttributes({verified: true});
                     return true;
                 } else {
                     return false;
