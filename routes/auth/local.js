@@ -60,7 +60,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
                                     user.genereateVerificationCode();
-                                    console.log("REMOVE THAT LOG", user.verificationCode);
+                                    console.log('REMOVE THAT LOG: \n\nhttp://localhost:3000/email_verify?email=' + req.body.email + 'code=' + user.verificationCode+'\n\n');
                                     done(null, user);
                                 },
                                 function (err) {
