@@ -58,7 +58,7 @@ var routes = function (router) {
                     code: user.verificationCode
                 }, function () {
                 });
-                return res.status(204).send({success: true, msg: "email sent"});
+                return res.status(204).send();
             }
         });
 
