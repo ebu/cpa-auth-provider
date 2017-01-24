@@ -33,6 +33,7 @@ module.exports = function (sequelize, DataTypes) {
             verifyAccount: function(sendedVerificationCode){
                 if (sendedVerificationCode === this.verificationCode){
                     this.updateAttributes({verificationCode: true});
+                    return true;
                 } else {
                     return false;
                 }
