@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
-var crypto = require('crypto');
+var generate = require('../lib/generate');
 
 module.exports = function (sequelize, DataTypes) {
 
@@ -22,13 +22,9 @@ module.exports = function (sequelize, DataTypes) {
         underscored: true,
         instanceMethods: {
             genereateVerificationCode: function () {
-                var self = this;
-                //TODO Move that function to util something
-                crypto.randomBytes(24, function(err, buffer) {
-                    var verificationCode = buffer.toString('hex');
-                    self.updateAttributes({verificationCode: verificationCode});
-                    self.updateAttributes({verified: false});
-                });
+                var verificationCode = generate.cryptoCode(10)
+                this.updateAttributes({verificationCode: verificationCode});
+                this.updateAttributes({verified: false});
             },
             verifyAccount: function(sendedVerificationCode){
                 if (sendedVerificationCode === this.verificationCode){
