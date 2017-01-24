@@ -1,7 +1,8 @@
 "use strict";
 
 var db = require('../../../models');
-var generate = require('../../../lib/generate');
+var oauthTokenHelper = require('../../../lib/oauth2-token');
+var logger = require('../../../lib/logger');
 
 var jwtHelper = require('../../../lib/jwt-helper');
 
@@ -19,26 +20,26 @@ exports.token = function (client, username, password, scope, done) {
 
 function confirmUser(client, username, password, scope, done) {
 	db.User.find(
-		{ where: { email: username} }
+		{where: {email: username}}
 	).then(
-		function(user) {
+		function (user) {
 			if (!user) {
 				done(INCORRECT_LOGIN_OR_PASS);
 				return;
 			}
 
-			user.verifyPassword(password).then(function(isMatch) {
+			user.verifyPassword(password).then(function (isMatch) {
 					if (isMatch) {
-						provideAccessToken(client, user, done);
+						provideAccessToken(client, user, scope, done);
 					} else {
 						done(INCORRECT_LOGIN_OR_PASS);
 					}
 				},
-				function(err) {
+				function (err) {
 					done(err);
 				});
 		},
-		function(error) {
+		function (error) {
 			done(error);
 		}
 	);
@@ -49,29 +50,33 @@ function confirmUser(client, username, password, scope, done) {
  *
  * @param client
  * @param user
+ * @param scope
  * @param done function(err, token)
  */
-function provideAccessToken(client, user, done) {
+function provideAccessToken(client, user, scope, done) {
 	try {
-		var token = jwtHelper.generate(user.id, 10 * 60 * 60, {cli: client ? client.id : 0});
-		return done(null, token);
-	} catch(e) {
+		var accessToken, refreshToken;
+
+		oauthTokenHelper.generateAccessToken(client, user).then(
+			function (_accessToken) {
+				accessToken = _accessToken;
+				return oauthTokenHelper.generateRefreshToken(client, user, scope);
+			}
+		).then(
+			function (_refreshToken) {
+				refreshToken = _refreshToken;
+				return oauthTokenHelper.generateTokenExtras(client, user);
+			}
+		).then(
+			function (_extras) {
+				return done(null, accessToken, refreshToken, _extras);
+			}
+		).catch(
+			function (err) {
+				logger.debug('[OAuth2][ResourceOwner][FAIL][err', err, ']');
+			}
+		);
+	} catch (e) {
 		return done(e);
 	}
-	// var token = generate.accessToken();
-	//
-	// db.AccessToken.create(
-	// 	{ token: token, user_id: user.id, oauth2_client_id: client ? client.id : 0}
-	// ).then(
-	// 	function(accessToken) {
-	// 		done(null, token);
-	// 	},
-	// 	function(err) {
-	// 		done(err);
-	// 	}
-	// ).catch(
-	// 	function(err) {
-	// 		return done(err);
-	// 	}
-	// );
 }

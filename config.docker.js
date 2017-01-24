@@ -112,6 +112,10 @@ module.exports = {
   // in seconds.
   max_poll_interval: 5,
 
+  oauth2: {
+    refresh_tokens_enabled: true
+  },
+
   mail: {
     from: process.env.EMAIL_FROM
   }
