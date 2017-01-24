@@ -1,6 +1,18 @@
 <div class="row">
     <div class="col-sm-12">
-        <h2>Settings</h2>
+        <h2>
+            Settings
+            <% if (profile.verified) { %>
+            <button class="btn btn-success pull-right status" type="button">
+                <span class="hidden-xs">Account</span> status <span class="glyphicon glyphicon-ok-circle"></span>
+            </button>
+            <% } else { %>
+            <button class="btn btn-danger pull-right status" type="button">
+                <span class="hidden-xs">Account</span> status <span class="glyphicon glyphicon-remove-circle"></span>
+            </button>
+            <% } %>
+        </h2>
+
     </div>
 </div>
 <hr/>
@@ -117,20 +129,29 @@
             </div>
         </form>
     </div>
+
 </div>
 <hr/>
 <div class="row">
     <div class="col-sm-3">
-        <h4 class="hidden-xs">Delete account</h4>
-        <h4 class="visible-xs-inline-block hidden-sm mobile-title">Delete account</h4>
+        <h4 class="hidden-xs">Account</h4>
+        <h4 class="visible-xs-inline-block hidden-sm mobile-title">Account</h4>
         <hr class="visible-xs-block hidden-sm"/>
     </div>
-    <div class="col-sm-9">
+    <div class="col-sm-9 ">
+        <div class="verification-link-container">
+            <p>Click the button below to resend your account verification link</p>
+            <a class="btn btn-primary">Send</a>
+        </div>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3">
         <div class="delete-container">
             <p>Click the button below to delete your account</p>
             <a class="btn btn-danger" disabled="disabled">Delete account</a>
         </div>
     </div>
+
+
 </div>
 
 <!-- TODO move it to an appropriate file -->

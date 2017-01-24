@@ -1,6 +1,6 @@
 <% include layout/head %>
 
-<div id="verify-mail">
+<div id="verify-mail" xmlns="http://www.w3.org/1999/html">
 
     <div class="container">
 
@@ -19,7 +19,7 @@
                     <p>Your account has been verified successfully.</p>
                     <p>Thank you <span class="glyphicon glyphicon-thumbs-up"></span></p>
 
-                    <span class="link">Go to <a href="/" class="btn-link">profile page</a></span>
+                    <span class="link">Go to <a href="<%= link('/user/profile') %>" class="btn-link">profile page</a></span>
                 </div>
             </div>
 
@@ -34,10 +34,10 @@
                     </h1>
 
                     <p>Unfortunately we could not validate your account.</p>
-                    <p>Please try again following with <a href="">this link</a></p>
+                    <p>Please go to your <a href="<%= link('/user/profile') %>">profile page</a> and hit the send verification link to try again.</p>
 
-                    <div class="separator">
-                        <div class="line"></div> OR <div class="line"></div>
+                    <div class="separator row">
+                        <div class="line"></div> <span>OR</span> <div class="line"></div>
                     </div>
 
 

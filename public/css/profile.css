@@ -24,3 +24,29 @@
 .btn.btn-link {
     padding: 0;
 }
+.status {
+    cursor: default;
+}
+.status.btn-danger {
+    color: #fff ;
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+.status.btn-danger:hover {
+    color: #fff;
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+.status.btn-success {
+    color: #fff ;
+    background-color: #449d44;
+    border-color: #398439;
+}
+.status.btn-success:hover {
+    color: #fff;
+    background-color: #449d44;
+    border-color: #398439;
+}
+.delete-container {
+    margin-top: 20px;
+}
