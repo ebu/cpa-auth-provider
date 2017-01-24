@@ -2,6 +2,7 @@
 
 var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
+var crypto = require('crypto');
 
 module.exports = function (sequelize, DataTypes) {
 
@@ -14,10 +15,28 @@ module.exports = function (sequelize, DataTypes) {
         enable_sso: DataTypes.BOOLEAN,
         display_name: DataTypes.STRING,
         photo_url: DataTypes.STRING,
+        verified: DataTypes.BOOLEAN,
+        verificationCode: DataTypes.STRING,
         admin: DataTypes.BOOLEAN   // maybe replace that by an array of roles
     }, {
         underscored: true,
         instanceMethods: {
+            genereateVerificationCode: function () {
+                var self = this;
+                //TODO Move that function to util something
+                crypto.randomBytes(24, function(err, buffer) {
+                    var verificationCode = buffer.toString('hex');
+                    self.updateAttributes({verificationCode: verificationCode});
+                    self.updateAttributes({verified: false});
+                });
+            },
+            verifyAccount: function(sendedVerificationCode){
+                if (sendedVerificationCode === this.verificationCode){
+                    this.updateAttributes({verificationCode: true});
+                } else {
+                    return false;
+                }
+            },
             setPassword: function (password) {
                 var self = this;
                 return bcrypt.genSaltAsync(10).then(function (salt) {

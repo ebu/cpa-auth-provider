@@ -58,6 +58,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 email: req.body.email,
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
+                                    user.genereateVerificationCode();
                                     done(null, user);
                                 },
                                 function (err) {
