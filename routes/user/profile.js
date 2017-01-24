@@ -1,28 +1,28 @@
 "use strict";
 
-var config      = require('../../config');
-var db          = require('../../models/index');
-var authHelper  = require('../../lib/auth-helper');
-var util        = require('util');
-var xssFilters  = require('xss-filters');
+var config = require('../../config');
+var db = require('../../models/index');
+var authHelper = require('../../lib/auth-helper');
+var util = require('util');
+var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
 
 
 var routes = function (router) {
-    router.put('/user/profile/:user_id', authHelper.ensureAuthenticated, function (req, res) {
-        var userId = req.params.user_id;
+    router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
+        var userId = authHelper.getAuthenticatedUser(req).id;
         req.checkBody('firstname', '"Firstname" is empty or invalid').notEmpty().isString();
         req.checkBody('lastname', '"Lastname" is empty or invalid').notEmpty().isString();
         req.checkBody('birthdate', '"Birthdate" is empty or invalid').notEmpty().isInt();
         req.checkBody('gender', '"Sex" empty or is invalid').notEmpty().isHuman();
 
-        req.getValidationResult().then(function(result) {
+        req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
             db.UserProfile.findOrCreate({
-                where: { user_id: userId }
+                where: {user_id: userId}
             }).spread(function (user_profile) {
                     user_profile.updateAttributes(
                         {
@@ -43,25 +43,18 @@ var routes = function (router) {
         });
     });
 
-    router.get('/api/local/request_verification_email/:user_id', authHelper.ensureAuthenticated, function (req, res) {
-        var userId = req.params.user_id;
-        db.User.findOne({
-            where: {
-                id: userId
-            }
-        }).then(function (user) {
-            if (!user) {
-                return res.status(403).send({success: false, msg: "not authenticated"});
-            } else {
-                emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
-                    email: 'user.email',
-                    code: user.verificationCode
-                }, function () {
-                });
-                return res.status(204).send();
-            }
-        });
-
+    router.get('/api/local/request_verification_email/', authHelper.ensureAuthenticated, function (req, res) {
+        var user = authHelper.getAuthenticatedUser();
+        if (!user) {
+            return res.status(403).send({success: false, msg: "not authenticated"});
+        } else {
+            emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
+                email: 'user.email',
+                code: user.verificationCode
+            }, function () {
+            });
+            return res.status(204).send();
+        }
     });
 
 
