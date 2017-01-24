@@ -51,7 +51,8 @@ var routes = function (router) {
                             gender: profile.gender,
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
-                            display_name: profile.getDisplayName(user, req.query.policy)
+                            display_name: profile.getDisplayName(user, req.query.policy),
+                            verified: user.verified
                         }
                     };
 
