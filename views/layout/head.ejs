@@ -6,12 +6,10 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
     <link href="/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="/assets/css/main.css" rel="stylesheet">
 
-    <%
-        var isProfilePage = (typeof profile != 'undefined')? true: false;
-        if(isProfilePage) { %>
-
-        <link href="/assets/css/profile.css" rel="stylesheet">
+    <% if(typeof profile != 'undefined') { %>
+            <link href="/assets/css/profile.css" rel="stylesheet">
     <% } %>
 
 
