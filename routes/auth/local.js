@@ -3,6 +3,8 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
+var authHelper = require('../../lib/auth-helper');
+
 
 var bcrypt = require('bcrypt');
 var passport = require('passport');
@@ -104,6 +106,9 @@ module.exports = function (app, options) {
         res.redirect('/');
     });
 
+    app.get('/email_verify', function (req, res) {
+        res.render('./verify-mail.ejs', {message: req.flash('prout')});
+    });
 
     app.post('/login', passport.authenticate('local', {
         failureRedirect: '/auth/local',
