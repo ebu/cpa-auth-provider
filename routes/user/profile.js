@@ -49,7 +49,7 @@ var routes = function (router) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
             emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
-                email: 'user.email',
+                email: user.email,
                 code: user.verificationCode
             }, function () {
             });
