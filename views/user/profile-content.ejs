@@ -264,7 +264,7 @@
             var date = createDate($birthday.val()).getTime();
 
             $.ajax({
-                url: "<%= link('/user/profile/') %>" + userId,
+                url: "<%= link('/user/profile/') %>",
                 data: {
                     firstname: $firstname.val(),
                     lastname: $lastname.val(),
