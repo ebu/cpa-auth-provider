@@ -1,0 +1,49 @@
+/*
+************
+************ BOOTSTRAP
+************
+*/
+.alert .glyphicon{
+    vertical-align: -1px;
+}
+
+/*
+************
+************ LOGIN
+************
+*/
+#login h1.title {
+    font-size: 30px;
+}
+
+#login h1.title span.glyphicon{
+    font-size: 25px;
+}
+/*
+************
+************ VERIFY ACCOUNT
+************
+*/
+#verify-mail h1{
+    margin-bottom: 30px;
+}
+
+#verify-mail p{
+    font-size: 20px;
+}
+
+#verify-mail .link {
+    display: block;
+    margin-top: 30px;
+}
+
+#verify-mail .line {
+    border-top: 1px solid #333;
+    display: inline-block;
+    height: 5px;
+    width: 40px;
+}
+
+#verify-mail .separator {
+    margin-top: 30px;
+}
