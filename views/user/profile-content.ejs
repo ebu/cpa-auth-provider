@@ -271,14 +271,13 @@
             var $spinner = $btnVerificationLink.find(".spinner").first();
             var $verifSuccess = $("#verification-success");
             var $verifError = $("#verification-error");
-            var userId = "<%= user.id %>";
 
             $verifError.hide();
             $label.hide();
             $spinner.show();
 
             $.ajax({
-                url: "<%= link('/api/local/request_verification_email/') %>" + userId,
+                url: "<%= link('/api/local/request_verification_email/') %>",
                 data: {},
                 type: 'GET',
                 success: function (result) {
