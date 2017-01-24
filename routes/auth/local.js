@@ -3,7 +3,6 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
-var authHelper = require('../../lib/auth-helper');
 
 
 var bcrypt = require('bcrypt');
@@ -61,6 +60,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
                                     user.genereateVerificationCode();
+                                    console.log("REMOVE THAT LOG", user.verificationCode);
                                     done(null, user);
                                 },
                                 function (err) {
@@ -107,7 +107,16 @@ module.exports = function (app, options) {
     });
 
     app.get('/email_verify', function (req, res) {
-        res.render('./verify-mail.ejs', {message: req.flash('prout')});
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                var verified = false;
+                if (user && user.verifyAccount(req.query.code)) {
+                    verified = true;
+                }
+                res.render('./verify-mail.ejs', {verified: verified, userId: user.id});
+            }, function (error) {
+                done(error);
+            });
     });
 
     app.post('/login', passport.authenticate('local', {
