@@ -43,8 +43,8 @@ var routes = function (router) {
         });
     });
 
-    router.get('/api/local/request_verification_email/', authHelper.ensureAuthenticated, function (req, res) {
-        var user = authHelper.getAuthenticatedUser();
+    router.get('/user/profile/request_verification_email/', authHelper.ensureAuthenticated, function (req, res) {
+        var user = authHelper.getAuthenticatedUser(req);
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {

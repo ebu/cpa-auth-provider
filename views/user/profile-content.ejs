@@ -277,7 +277,7 @@
             $spinner.show();
 
             $.ajax({
-                url: "<%= link('/api/local/request_verification_email/') %>",
+                url: "<%= link('/user/profile/request_verification_email/') %>",
                 data: {},
                 type: 'GET',
                 success: function (result) {
