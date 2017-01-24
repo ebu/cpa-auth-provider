@@ -1,10 +1,12 @@
 "use strict";
 
-var config     = require('../../config');
-var db         = require('../../models/index');
-var authHelper = require('../../lib/auth-helper');
-var util       = require('util');
-var xssFilters = require('xss-filters');
+var config      = require('../../config');
+var db          = require('../../models/index');
+var authHelper  = require('../../lib/auth-helper');
+var util        = require('util');
+var xssFilters  = require('xss-filters');
+var emailHelper = require('../../lib/email-helper');
+
 
 var routes = function (router) {
     router.put('/user/profile/:user_id', authHelper.ensureAuthenticated, function (req, res) {
@@ -40,6 +42,29 @@ var routes = function (router) {
             );
         });
     });
+
+    router.get('/api/local/request_verification_email/:user_id', authHelper.ensureAuthenticated, function (req, res) {
+        var userId = req.params.user_id;
+        db.User.findOne({
+            where: {
+                id: userId
+            }
+        }).then(function (user) {
+            if (!user) {
+                return res.status(403).send({success: false, msg: "not authenticated"});
+            } else {
+                emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
+                    email: 'user.email',
+                    code: user.verificationCode
+                }, function () {
+                });
+                return res.status(204).send({success: true, msg: "email sent"});
+            }
+        });
+
+    });
+
+
 };
 
 module.exports = routes;
