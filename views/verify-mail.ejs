@@ -10,7 +10,9 @@
 
             <div id="success-panel" class="panel panel-default">
                 <div class="panel-body text-center">
-                    <h1 class="title">
+
+                    <h1 class="title text-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span>
                         Email validation
                     </h1>
 
@@ -25,7 +27,9 @@
 
             <div id="error-panel" class="panel panel-default">
                 <div class="panel-body text-center">
-                    <h1 class="title">
+
+                    <h1 class="title text-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span>
                         Email validation
                     </h1>
 
@@ -37,7 +41,7 @@
                     </div>
 
 
-                    <span class="link">Go back to <a href="<%= link('/login') %>" class="btn-link">login page</a></span>
+                    <span class="link">Go back to <a href="<%= link('/auth/local') %>" class="btn-link">login page</a></span>
                 </div>
             </div>
 

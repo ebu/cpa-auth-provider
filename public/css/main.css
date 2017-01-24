@@ -47,3 +47,7 @@
 #verify-mail .separator {
     margin-top: 30px;
 }
+
+#verify-mail h1 span.glyphicon {
+    vertical-align: -5px;
+}
