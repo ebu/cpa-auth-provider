@@ -14,6 +14,12 @@ module.exports = {
 
   },
 
+  mail: {
+    from:'no-reply@rts.ch',
+    local:'ch_fr',
+    host:'http://localhost:3000'
+  },
+
   jwtSecret: process.env.JWT_SECRET,
   jwt: {
     audience: 'cpa',
@@ -112,7 +118,4 @@ module.exports = {
   // in seconds.
   max_poll_interval: 5,
 
-  mail: {
-    from: process.env.EMAIL_FROM
-  }
 };
