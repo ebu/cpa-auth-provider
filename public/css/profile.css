@@ -18,16 +18,16 @@
 .error-block .content p{
     margin: 0;
 }
-.mobile-title {
-    font-size: 25px;
+.account-title {
+    display: inline-block;
 }
 .btn.btn-link {
     padding: 0;
 }
 .status {
+    display: block;
     cursor: default;
     border: none;
-    font-size: 0.8em;
 }
 .status.btn-danger {
     color: #fff ;
@@ -53,4 +53,15 @@
 }
 .verification-link-container {
     margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .h4, h4 {
+        font-size: 25px;
+    }
+    .status {
+        display: inline-block;
+        float: right;
+        margin-top: 15px;
+    }
 }
