@@ -61,6 +61,11 @@
 #login h1.title {
     font-size: 30px;
 }
+#login .link-center {
+    display: block;
+    margin: auto;
+    text-align: center;
+}
 
 #login h1.title span.glyphicon{
     font-size: 25px;

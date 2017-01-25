@@ -29,22 +29,6 @@
     cursor: default;
     border: none;
 }
-.status.btn-danger {
-    color: #fff ;
-    background-color: #d9534f;
-}
-.status.btn-danger:hover {
-    color: #fff;
-    background-color: #d9534f;
-}
-.status.btn-success {
-    color: #fff ;
-    background-color: #5cb85c;
-}
-.status.btn-success:hover {
-    color: #fff;
-    background-color: #5cb85c;
-}
 #btn-send-verification-link {
     min-width: 80px;
 }
