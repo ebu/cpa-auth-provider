@@ -58,6 +58,9 @@
 ************ LOGIN
 ************
 */
+#login #login-panel {
+    margin-top: 25px;
+}
 #login h1.title {
     font-size: 30px;
 }
@@ -65,6 +68,9 @@
     display: block;
     margin: auto;
     text-align: center;
+}
+#login #password-recovery {
+    font-size: 0.9em;
 }
 
 #login h1.title span.glyphicon{
