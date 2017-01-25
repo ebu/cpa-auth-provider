@@ -52,18 +52,32 @@
 .alert .glyphicon{
     vertical-align: -1px;
 }
-
+/*
+************
+************ GENERAL
+************
+*/
+.panel {
+    margin: 15px 0;
+}
+.panel .panel-body {
+    padding: 20px 15px;
+}
+.panel .panel-body > h1 {
+    margin: 0 0 20px 0;
+    font-size: 30px;
+}
+.panel .last-link {
+    margin: 15px 0 0 0;
+}
+.g-recaptcha.centered > div {
+    margin: auto;
+}
 /*
 ************
 ************ LOGIN
 ************
 */
-#login #login-panel {
-    margin-top: 25px;
-}
-#login h1.title {
-    font-size: 30px;
-}
 #login .link-center {
     display: block;
     margin: auto;

@@ -104,6 +104,10 @@ module.exports = function (app, options) {
         res.render('signup.ejs', {email: req.query.email, message: req.flash('signupMessage')});
     });
 
+    app.get('/password_recovery', function (req, res) {
+        res.render('password-recovery.ejs', {email: req.query.email, message: req.flash('passwordRecoveryMessage')});
+    });
+
     app.get('/logout', function (req, res) {
         req.logout();
         res.redirect('/');
