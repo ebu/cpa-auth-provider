@@ -2,15 +2,6 @@
     <div class="col-sm-12">
         <h2>
             Settings
-            <% if (profile.verified) { %>
-            <button class="btn btn-success pull-right status" type="button">
-                <span class="hidden-xs">Account</span> status <span class="glyphicon glyphicon-ok-circle"></span>
-            </button>
-            <% } else { %>
-            <button class="btn btn-danger pull-right status" type="button">
-                <span class="hidden-xs">Account</span> status <span class="glyphicon glyphicon-remove-circle"></span>
-            </button>
-            <% } %>
         </h2>
 
     </div>
@@ -134,9 +125,22 @@
 <hr/>
 <div class="row">
     <div class="col-sm-3">
-        <h4 class="hidden-xs">Account</h4>
-        <h4 class="visible-xs-inline-block hidden-sm mobile-title">Account</h4>
+        <h4 class="account-title">
+            Account
+        </h4>
+
+        <% if (profile.verified) { %>
+        <span class="text-success status">
+            <span class="glyphicon glyphicon-ok"></span> verified
+        </span>
+        <% } else { %>
+        <span class="text-danger status">
+            <span class="glyphicon glyphicon-remove"></span> not verified
+        </span>
+        <% } %>
+
         <hr class="visible-xs-block hidden-sm"/>
+
     </div>
     <div class="col-sm-9">
         <div class="delete-container">

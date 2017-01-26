@@ -18,31 +18,16 @@
 .error-block .content p{
     margin: 0;
 }
-.mobile-title {
-    font-size: 25px;
+.account-title {
+    display: inline-block;
 }
 .btn.btn-link {
     padding: 0;
 }
 .status {
+    display: block;
     cursor: default;
     border: none;
-}
-.status.btn-danger {
-    color: #fff ;
-    background-color: #d9534f;
-}
-.status.btn-danger:hover {
-    color: #fff;
-    background-color: #d9534f;
-}
-.status.btn-success {
-    color: #fff ;
-    background-color: #5cb85c;
-}
-.status.btn-success:hover {
-    color: #fff;
-    background-color: #5cb85c;
 }
 #btn-send-verification-link {
     min-width: 80px;
@@ -52,4 +37,15 @@
 }
 .verification-link-container {
     margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .h4, h4 {
+        font-size: 25px;
+    }
+    .status {
+        display: inline-block;
+        float: right;
+        margin-top: 15px;
+    }
 }
