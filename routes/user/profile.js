@@ -6,6 +6,7 @@ var authHelper = require('../../lib/auth-helper');
 var util = require('util');
 var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
+var recaptcha = require('express-recaptcha');
 
 
 var routes = function (router) {
@@ -43,7 +44,10 @@ var routes = function (router) {
         });
     });
 
-    router.get('/user/profile/request_verification_email/', authHelper.ensureAuthenticated, function (req, res) {
+    router.post('/user/profile/request_verification_email', [authHelper.ensureAuthenticated, recaptcha.middleware.verify], function (req, res) {
+        if (req.recaptcha.error)
+            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+
         var user = authHelper.getAuthenticatedUser(req);
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});

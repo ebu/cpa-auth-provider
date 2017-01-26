@@ -15,6 +15,7 @@ var JwtStrategy = require('passport-jwt').Strategy;
 var cors = require('../../lib/cors');
 
 var emailHelper = require('../../lib/email-helper');
+var authHelper = require('../../lib/auth-helper');
 
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
@@ -145,24 +146,16 @@ module.exports = function (app, options) {
     });
 
     app.get('/api/local/request_verification_email', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
-        var token = jwtHelpers.getToken(req.headers);
-        if (token) {
-            var decoded = jwt.decode(token, config.jwtSecret);
-            db.User.findOne({
-                where: {
-                    id: decoded.id
-                }
-            }).then(function (user) {
-                if (!user) {
-                    return res.status(403).send({success: false, msg: "not authenticated"});
-                } else {
-                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.verificationCode}, config.mail.local, function() {});
-                    return res.status(204).send({success: true, msg: "email sent"});
-                }
-            });
+
+        var user = authHelper.getAuthenticatedUser(req);
+
+        if (!user) {
+            return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            return res.status(403).send({success: false, msg: 'No token provided.'});
+            emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.verificationCode}, config.mail.local, function() {});
+            return res.status(204).send({success: true, msg: "email sent"});
         }
+
     });
 };
 
