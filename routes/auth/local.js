@@ -160,7 +160,7 @@ module.exports = function (app, options) {
         })(req, res, next);
     });
 
-    app.post('/recover-password-request', recaptcha.middleware.verify, function (req, res, next) {
+    app.post('/password/code', recaptcha.middleware.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
@@ -169,7 +169,8 @@ module.exports = function (app, options) {
         db.User.findOne({where: {email: req.query.email}})
             .then(function (user) {
                 if (user) {
-
+                    user.generateRecoveryCode();
+                    emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.passwordRecoveryCode}, config.mail.local, function() {});
                     return res.status(200).send();
                 } else {
                     return res.status(400).json({msg: 'User not found.'});
@@ -180,21 +181,22 @@ module.exports = function (app, options) {
 
     });
 
-    app.post('/recover-password', function (req, res, next) {
-
-
+    app.post('/password/update', function (req, res, next) {
 
         db.User.findOne({where: {email: req.query.email}})
             .then(function (user) {
                 if (user) {
-                    return res.status(200).send();
+                    if (user.recoverPassword(req.query.code, req.query.password)){
+                        return res.status(200).send();
+                    } else {
+                        return res.status(400).json({msg: 'Wrong recovery code.'});
+                    }
                 } else {
                     return res.status(400).json({msg: 'User not found.'});
                 }
             }, function (error) {
                 done(error);
             });
-
     });
 
     function redirectOnSuccess(req, res, next) {
