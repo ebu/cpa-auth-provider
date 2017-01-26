@@ -17,10 +17,17 @@ module.exports = function (sequelize, DataTypes) {
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
         verificationCode: DataTypes.STRING,
+        passwordRecoveryCode: DataTypes.STRING,
+        passwordRecoveryCodeDate:DataTypes.DATE,
         admin: DataTypes.BOOLEAN   // maybe replace that by an array of roles
     }, {
         underscored: true,
         instanceMethods: {
+            genereateRecoveryCode: function () {
+                var verificationCode = generate.cryptoCode(30)
+                this.updateAttributes({passwordRecoveryCode: verificationCode});
+                this.updateAttributes({passwordRecoveryCodeDate: Date.now()});
+            },
             genereateVerificationCode: function () {
                 var verificationCode = generate.cryptoCode(30)
                 this.updateAttributes({verificationCode: verificationCode});

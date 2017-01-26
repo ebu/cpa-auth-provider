@@ -135,8 +135,9 @@ module.exports = function (app, options) {
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
-        if (req.recaptcha.error)
+        if (req.recaptcha.error){
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+        }
 
         passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
@@ -154,6 +155,43 @@ module.exports = function (app, options) {
                 return redirectOnSuccess(req, res, next);
             });
         })(req, res, next);
+    });
+
+    app.post('/recover-password-request', recaptcha.middleware.verify, function (req, res, next) {
+
+        if (req.recaptcha.error) {
+            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+        }
+
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                if (user) {
+
+                    return res.status(200).send();
+                } else {
+                    return res.status(400).json({msg: 'User not found.'});
+                }
+            }, function (error) {
+                done(error);
+            });
+
+    });
+
+    app.post('/recover-password', function (req, res, next) {
+
+
+
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                if (user) {
+                    return res.status(200).send();
+                } else {
+                    return res.status(400).json({msg: 'User not found.'});
+                }
+            }, function (error) {
+                done(error);
+            });
+
     });
 
     function redirectOnSuccess(req, res, next) {
