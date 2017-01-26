@@ -150,14 +150,19 @@
     </div>
     <div class="col-sm-9 col-sm-offset-3">
         <div class="verification-link-container">
-            <p>Click the button below to resend your account verification link</p>
-            <button id="btn-send-verification-link" type="button" class="btn btn-primary"><span class="button-label">Send</span>
-                <div class="spinner">
-                    <div class="bounce1"></div>
-                    <div class="bounce2"></div>
-                    <div class="bounce3"></div>
+            <p>Fill the verification field below and resend your account verification link</p>
+            <form id="verification-link-form" action='/user/profile/request_verification_email' method="post">
+                <div class="form-group">
+                    <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
                 </div>
-            </button>
+                <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span class="button-label">Resend</span>
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </button>
+            </form>
             <span id="verification-success" class="text-success"><span class="glyphicon glyphicon-ok"></span> <span class="text"></span> </span>
             <span id="verification-error" class="text-danger"><span class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
         </div>
@@ -269,7 +274,7 @@
             $btnContainer.show();
         });
 
-        $btnVerificationLink.on('click', function (e) {
+        $('#verification-link-form').submit(function(e) {
             e.preventDefault();
             var $label = $btnVerificationLink.find(".button-label").first();
             var $spinner = $btnVerificationLink.find(".spinner").first();
@@ -280,20 +285,21 @@
             $label.hide();
             $spinner.show();
 
-            $.ajax({
-                url: "<%= link('/user/profile/request_verification_email/') %>",
-                data: {},
-                type: 'GET',
-                success: function (result) {
-                    $btnVerificationLink.remove();
-                    $verifSuccess.find(".text").first().text("Successfully sent a verification email to your mailbox");
-                    $verifSuccess.show();
-                },
+            $(this).ajaxSubmit({
                 error: function (result) {
                     $spinner.hide();
                     $label.show();
-                    $verifError.find(".text").first().text("An error occurred during the process, please try again later");
+                    if(!result.responseJSON.msg)
+                        $verifError.find(".text").first().text("An error occurred during the process, please try again later");
+                    else
+                        $verifError.find(".text").first().text(result.responseJSON.msg);
+
                     $verifError.show();
+                },
+                success: function (response) {
+                    $btnVerificationLink.remove();
+                    $verifSuccess.find(".text").first().text("Successfully sent a verification email to your mailbox");
+                    $verifSuccess.show();
                 }
             });
         });

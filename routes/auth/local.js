@@ -134,6 +134,10 @@ module.exports = function (app, options) {
     }), redirectOnSuccess);
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
+
+        if (req.recaptcha.error)
+            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+
         passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
                 return next(err);
