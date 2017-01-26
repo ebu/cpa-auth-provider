@@ -166,7 +166,7 @@ module.exports = function (app, options) {
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
         }
 
-        db.User.findOne({where: {email: req.query.email}})
+        db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                 if (user) {
                     user.generateRecoveryCode();
@@ -176,17 +176,17 @@ module.exports = function (app, options) {
                     return res.status(400).json({msg: 'User not found.'});
                 }
             }, function (error) {
-                done(error);
+                next(error);
             });
 
     });
 
     app.post('/password/update', function (req, res, next) {
 
-        db.User.findOne({where: {email: req.query.email}})
+        db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                 if (user) {
-                    if (user.recoverPassword(req.query.code, req.query.password)){
+                    if (user.recoverPassword(req.body.code, req.body.password)){
                         return res.status(200).send();
                     } else {
                         return res.status(400).json({msg: 'Wrong recovery code.'});
