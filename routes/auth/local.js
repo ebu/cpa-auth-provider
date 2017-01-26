@@ -62,8 +62,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
                                     user.genereateVerificationCode();
-                                    //console.log('REMOVE THAT LOG: \n\nhttp://localhost:3000/email_verify?email=' + req.body.email + '&code=' + user.verificationCode+'\n\n');
-                                    emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log:true}, {email:'user.email', code:user.verificationCode}, function() {});
+                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.verificationCode}, config.mail.local, function() {});
                                     done(null, user);
                                 },
                                 function (err) {
@@ -139,8 +138,9 @@ module.exports = function (app, options) {
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
-        if (req.recaptcha.error)
+        if (req.recaptcha.error){
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+        }
 
         passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
@@ -158,6 +158,43 @@ module.exports = function (app, options) {
                 return redirectOnSuccess(req, res, next);
             });
         })(req, res, next);
+    });
+
+    app.post('/recover-password-request', recaptcha.middleware.verify, function (req, res, next) {
+
+        if (req.recaptcha.error) {
+            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+        }
+
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                if (user) {
+
+                    return res.status(200).send();
+                } else {
+                    return res.status(400).json({msg: 'User not found.'});
+                }
+            }, function (error) {
+                done(error);
+            });
+
+    });
+
+    app.post('/recover-password', function (req, res, next) {
+
+
+
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                if (user) {
+                    return res.status(200).send();
+                } else {
+                    return res.status(400).json({msg: 'User not found.'});
+                }
+            }, function (error) {
+                done(error);
+            });
+
     });
 
     function redirectOnSuccess(req, res, next) {

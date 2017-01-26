@@ -22,6 +22,11 @@ module.exports = {
       enabled: false
     }
   },
+  mail: {
+    from:'no-reply@rts.ch',
+    local:'ch_fr',
+    host:'http://localhost:3000'
+  },
   trackingCookie: {
     enabled: false,
     secret: 'secret phrase',
@@ -117,8 +122,4 @@ module.exports = {
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.
   max_poll_interval: 5,
-
-  mail: {
-    from: 'no-reply@rts.ch',
-  }
 };
