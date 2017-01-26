@@ -33,6 +33,12 @@ module.exports = {
     enabled: true
   },
 
+  mail: {
+    from:'no-reply@rts.ch',
+    local:'ch_fr',
+    host:'http://localhost:3000'
+  },
+
   auto_idp_redirect: 'local',
 
   db: {
@@ -103,8 +109,5 @@ module.exports = {
   max_poll_interval: 5,
 
   server_clients: [],
-
-  mail: {
-    from: 'no-reply@rts.ch',
-  }
+  
 };
