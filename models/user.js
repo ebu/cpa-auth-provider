@@ -20,14 +20,14 @@ module.exports = function (sequelize, DataTypes) {
         verified: DataTypes.BOOLEAN,
         verificationCode: DataTypes.STRING,
         passwordRecoveryCode: DataTypes.STRING,
-        passwordRecoveryCodeDate:DataTypes.INTEGER,
+        passwordRecoveryCodeDate: DataTypes.INTEGER,
         admin: DataTypes.BOOLEAN   // maybe replace that by an array of roles
     }, {
         underscored: true,
         instanceMethods: {
             generateRecoveryCode: function () {
                 // Generate a recovery code only if the TTL is too short
-                if (! this.passwordRecoveryCode || Date.now() + config.password.keep_recovery_code_until + this.passwordRecoveryCodeDate){
+                if (!this.passwordRecoveryCode || Date.now() + config.password.keep_recovery_code_until + this.passwordRecoveryCodeDate) {
                     var verificationCode = generate.cryptoCode(30)
                     this.updateAttributes({passwordRecoveryCode: verificationCode});
                     this.updateAttributes({passwordRecoveryCodeDate: Date.now()});
@@ -35,8 +35,10 @@ module.exports = function (sequelize, DataTypes) {
             },
             recoverPassword: function (code, newPass) {
                 // Check if passwordRecoveryCode is defined
-                if (this.passwordRecoveryCode && this.code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration < Date.now()){
+                if (this.passwordRecoveryCode && code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
                     this.updateAttributes({passwordRecoveryCode: newPass});
+                    this.updateAttributes({passwordRecoveryCodeDate: 0});
+                    this.setPassword(newPass);
                     return true;
                 } else {
                     return false;
@@ -47,8 +49,8 @@ module.exports = function (sequelize, DataTypes) {
                 this.updateAttributes({verificationCode: verificationCode});
                 this.updateAttributes({verified: false});
             },
-            verifyAccount: function(sendedVerificationCode){
-                if (sendedVerificationCode === this.verificationCode){
+            verifyAccount: function (sendedVerificationCode) {
+                if (sendedVerificationCode === this.verificationCode) {
                     this.updateAttributes({verified: true});
                 }
             },
