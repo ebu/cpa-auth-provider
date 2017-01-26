@@ -104,11 +104,11 @@ module.exports = function (app, options) {
     });
 
     app.get('/password/recovery', function (req, res) {
-        res.render('password-recovery.ejs', {email: req.query.email, message: req.flash('passwordRecoveryMessage')});
+        res.render('password-recovery.ejs', {});
     });
 
     app.get('/password/edit', function (req, res) {
-        res.render('password-edit.ejs', {email: req.query.email, message: req.flash('passwordEditMessage')});
+        res.render('password-edit.ejs', {email: req.query.email, code: req.query.code});
     });
 
     app.get('/logout', function (req, res) {
