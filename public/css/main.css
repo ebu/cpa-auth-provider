@@ -70,9 +70,6 @@
 .panel .last-link {
     margin: 15px 0 0 0;
 }
-.g-recaptcha.centered > div {
-    margin: auto;
-}
 /*
 ************
 ************ LOGIN
@@ -121,4 +118,13 @@
 
 #verify-mail h1 span.glyphicon {
     vertical-align: -5px;
+}
+
+@media screen and (max-height: 575px) {
+    #rc-imageselect, .g-recaptcha {
+        transform: scale(0.92);
+        -webkit-transform: scale(0.92);
+        transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+    }
 }
