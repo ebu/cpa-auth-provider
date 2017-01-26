@@ -23,10 +23,22 @@ module.exports = function (sequelize, DataTypes) {
     }, {
         underscored: true,
         instanceMethods: {
-            genereateRecoveryCode: function () {
-                var verificationCode = generate.cryptoCode(30)
-                this.updateAttributes({passwordRecoveryCode: verificationCode});
-                this.updateAttributes({passwordRecoveryCodeDate: Date.now()});
+            generateRecoveryCode: function () {
+                // Generate a recovery code only if the TTL is too short
+                if (! this.passwordRecoveryCode || Date.now().getTime() + config.password.keep_recovery_code_until + this.passwordRecoveryCodeDate.getTime()){
+                    var verificationCode = generate.cryptoCode(30)
+                    this.updateAttributes({passwordRecoveryCode: verificationCode});
+                    this.updateAttributes({passwordRecoveryCodeDate: Date.now()});
+                }
+            },
+            recoverPassword: function (code, newPass) {
+                // Check if passwordRecoveryCode is defined
+                if (this.passwordRecoveryCode && this.code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate.getTime() + config.password.recovery_code_validity_duration < Date.now().getTime()){
+                    this.updateAttributes({passwordRecoveryCode: newPass});
+                    return true;
+                } else {
+                    return false;
+                }
             },
             genereateVerificationCode: function () {
                 var verificationCode = generate.cryptoCode(30)
