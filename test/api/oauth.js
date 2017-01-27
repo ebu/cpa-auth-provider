@@ -153,7 +153,7 @@ describe('POST /oauth2/token', function () {
 			var decoded = jwtHelper.decode(this.res.body.access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER.id);
 		});
@@ -190,7 +190,7 @@ describe('POST /oauth2/token', function () {
 			var decoded = jwtHelper.decode(this.res.body.access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER2.id);
 		});
@@ -431,7 +431,7 @@ describe('OAuth2 Implicit Flow', function () {
 			var decoded = jwtHelper.decode(access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER.id);
 		});
@@ -520,7 +520,7 @@ describe('OAuth2 Authorization Code Flow', function () {
 			var decoded = jwtHelper.decode(this.res.body.access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER.id);
 		});
