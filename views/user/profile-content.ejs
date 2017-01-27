@@ -1,6 +1,9 @@
 <div class="row">
     <div class="col-sm-12">
-        <h2>Settings</h2>
+        <h2>
+            Settings
+        </h2>
+
     </div>
 </div>
 <hr/>
@@ -117,13 +120,27 @@
             </div>
         </form>
     </div>
+
 </div>
 <hr/>
 <div class="row">
     <div class="col-sm-3">
-        <h4 class="hidden-xs">Delete account</h4>
-        <h4 class="visible-xs-inline-block hidden-sm mobile-title">Delete account</h4>
+        <h4 class="account-title">
+            Account
+        </h4>
+
+        <% if (profile.verified) { %>
+        <span class="text-success status">
+            <span class="glyphicon glyphicon-ok"></span> verified
+        </span>
+        <% } else { %>
+        <span class="text-danger status">
+            <span class="glyphicon glyphicon-remove"></span> not verified
+        </span>
+        <% } %>
+
         <hr class="visible-xs-block hidden-sm"/>
+
     </div>
     <div class="col-sm-9">
         <div class="delete-container">
@@ -131,6 +148,27 @@
             <a class="btn btn-danger" disabled="disabled">Delete account</a>
         </div>
     </div>
+    <div class="col-sm-9 col-sm-offset-3">
+        <div class="verification-link-container">
+            <p>Fill the verification field below and resend your account verification link</p>
+            <form id="verification-link-form" action='/user/profile/request_verification_email' method="post">
+                <div class="form-group">
+                    <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
+                </div>
+                <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span class="button-label">Resend</span>
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </button>
+                <span id="verification-success" class="text-success"><span class="glyphicon glyphicon-ok"></span> <span class="text"></span> </span>
+                <span id="verification-error" class="text-danger"><span class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
+            </form>
+        </div>
+    </div>
+
+
 </div>
 
 <!-- TODO move it to an appropriate file -->
@@ -146,6 +184,7 @@
         var $modifyPassBtn = $('#btn-modify-password');
         var $formModifyPass = $('#form-modify-pass');
         var $btnContainer = $('#btn-container');
+        var $btnVerificationLink = $('#btn-send-verification-link');
 
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
@@ -235,6 +274,36 @@
             $btnContainer.show();
         });
 
+        $('#verification-link-form').submit(function(e) {
+            e.preventDefault();
+            var $label = $btnVerificationLink.find(".button-label").first();
+            var $spinner = $btnVerificationLink.find(".spinner").first();
+            var $verifSuccess = $("#verification-success");
+            var $verifError = $("#verification-error");
+
+            $verifError.hide();
+            $label.hide();
+            $spinner.show();
+
+            $(this).ajaxSubmit({
+                error: function (result) {
+                    $spinner.hide();
+                    $label.show();
+                    if(!result.responseJSON.msg)
+                        $verifError.find(".text").first().text("An error occurred during the process, please try again later");
+                    else
+                        $verifError.find(".text").first().text(result.responseJSON.msg);
+
+                    $verifError.show();
+                },
+                success: function (response) {
+                    $btnVerificationLink.remove();
+                    $verifSuccess.find(".text").first().text("Successfully sent a verification email to your mailbox");
+                    $verifSuccess.show();
+                }
+            });
+        });
+
         $saveDataBtn.on('click', function (e) {
             e.preventDefault();
             resetErrors("form-personnal-data-errors", "personnal-data-errors");
@@ -243,7 +312,7 @@
             var date = createDate($birthday.val()).getTime();
 
             $.ajax({
-                url: "<%= link('/user/profile/') %>" + userId,
+                url: "<%= link('/user/profile/') %>",
                 data: {
                     firstname: $firstname.val(),
                     lastname: $lastname.val(),
@@ -302,7 +371,6 @@
                 },
                 type: 'POST',
                 success: function(result) {
-                    console.log("success", result);
                     $previousPassword.val("");
                     $password.val("");
                     $confirmPassword.val("");

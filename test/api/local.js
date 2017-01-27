@@ -208,10 +208,10 @@ describe('POST /api/local/authenticate', function () {
 
         // Test get user info
         before(function (done) {
-            var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+            this.accessToken = this.res.body.token.substring(4, this.res.body.token.size);
             requestHelper.sendRequest(this, '/api/local/info', {
                     method: 'get',
-                    accessToken: accessToken,
+                    accessToken: this.accessToken,
                     tokenType: 'JWT'
                 }, done
             );
@@ -255,7 +255,7 @@ describe('POST /api/local/authenticate', function () {
             }, done);
         });
 
-        it('should return a success ', function () {
+        it('should return a 401 ', function () {
             //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(401);
             expect(this.res.body.success).to.equal(false);

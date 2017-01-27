@@ -4,11 +4,14 @@ var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
+
 var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 var util = require('util');
+var emailHelper = require('../../lib/email-helper');
+
 
 
 var localStrategyCallback = function (req, username, password, done) {
@@ -58,6 +61,9 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 email: req.body.email,
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
+                                    user.genereateVerificationCode();
+                                    //console.log('REMOVE THAT LOG: \n\nhttp://localhost:3000/email_verify?email=' + req.body.email + '&code=' + user.verificationCode+'\n\n');
+                                    emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log:true}, {email:'user.email', code:user.verificationCode}, function() {});
                                     done(null, user);
                                 },
                                 function (err) {
@@ -103,6 +109,20 @@ module.exports = function (app, options) {
         res.redirect('/');
     });
 
+    app.get('/email_verify', function (req, res) {
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                if (user) {
+                    user.verifyAccount(req.query.code);
+                    res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                } else {
+                    res.render('./verify-mail.ejs', {verified: false});
+
+                }
+            }, function (error) {
+                done(error);
+            });
+    });
 
     app.post('/login', passport.authenticate('local', {
         failureRedirect: '/auth/local',
@@ -110,6 +130,10 @@ module.exports = function (app, options) {
     }), redirectOnSuccess);
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
+
+        if (req.recaptcha.error)
+            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+
         passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
                 return next(err);

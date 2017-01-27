@@ -18,9 +18,34 @@
 .error-block .content p{
     margin: 0;
 }
-.mobile-title {
-    font-size: 25px;
+.account-title {
+    display: inline-block;
 }
 .btn.btn-link {
     padding: 0;
+}
+.status {
+    display: block;
+    cursor: default;
+    border: none;
+}
+#btn-send-verification-link {
+    min-width: 80px;
+}
+#verification-success, #verification-error {
+    display: none;
+}
+.verification-link-container {
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .h4, h4 {
+        font-size: 25px;
+    }
+    .status {
+        display: inline-block;
+        float: right;
+        margin-top: 15px;
+    }
 }

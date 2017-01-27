@@ -14,6 +14,10 @@ var jwt = require('jwt-simple');
 var JwtStrategy = require('passport-jwt').Strategy;
 var cors = require('../../lib/cors');
 
+var emailHelper = require('../../lib/email-helper');
+var authHelper = require('../../lib/auth-helper');
+
+
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
 
 // Google reCAPTCHA
@@ -141,6 +145,21 @@ module.exports = function (app, options) {
         }
     });
 
+    app.get('/api/local/request_verification_email', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
+        var user = authHelper.getAuthenticatedUser(req);
+
+        if (!user) {
+            return res.status(403).send({success: false, msg: "not authenticated"});
+        } else {
+            emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
+                email: 'user.email',
+                code: user.verificationCode
+            }, function () {
+            });
+            return res.status(204).send({success: true, msg: "email sent"});
+        }
+
+    });
 };
 
