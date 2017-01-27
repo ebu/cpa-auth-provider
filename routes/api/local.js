@@ -14,6 +14,10 @@ var jwt = require('jwt-simple');
 var JwtStrategy = require('passport-jwt').Strategy;
 var cors = require('../../lib/cors');
 
+var emailHelper = require('../../lib/email-helper');
+var authHelper = require('../../lib/auth-helper');
+
+
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
 
 // Google reCAPTCHA
@@ -26,7 +30,7 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         done(null, false);
         return;
     }
-    db.User.find({where: {id: jwt_payload.id}})
+    db.User.findOne({where: {id: jwt_payload.id}})
         .then(function (user) {
             if (user) {
                 done(null, user);
@@ -48,7 +52,7 @@ module.exports = function (app, options) {
         if (!req.body.email || !req.body.password) {
             res.json({success: false, msg: 'Please pass email and password.'});
         } else {
-            db.User.find({where: {email: req.body.email}})
+            db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
                         return res.status(400).json({success: false, msg: 'email already exists.'});
@@ -73,7 +77,7 @@ module.exports = function (app, options) {
     });
 
     app.post('/api/local/authenticate', cors, function (req, res) {
-        db.User.find({where: {email: req.body.email}})
+        db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                     if (!user) {
                         res.status(401).json({success: false, msg: INCORRECT_LOGIN_OR_PASS});
@@ -111,7 +115,7 @@ module.exports = function (app, options) {
         var token = jwtHelpers.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.jwtSecret);
-            db.User.find({
+            db.User.findOne({
                 where: {
                     id: decoded.id
                 }
@@ -121,8 +125,8 @@ module.exports = function (app, options) {
                 } else {
 
                     db.UserProfile.findOrCreate({
-                        id: decoded.id
-                    }).then(function (user_profile) {
+                        where: {user_id: decoded.id}
+                    }).spread(function (user_profile) {
                         res.json({
                             success: true,
                             user: {
@@ -131,10 +135,7 @@ module.exports = function (app, options) {
                                 admin: user.admin
                             },
                             token: 'JWT ' + token
-
                         });
-
-
                     });
 
                 }
@@ -144,6 +145,21 @@ module.exports = function (app, options) {
         }
     });
 
+    app.get('/api/local/request_verification_email', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
+        var user = authHelper.getAuthenticatedUser(req);
+
+        if (!user) {
+            return res.status(403).send({success: false, msg: "not authenticated"});
+        } else {
+            emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
+                email: 'user.email',
+                code: user.verificationCode
+            }, function () {
+            });
+            return res.status(204).send({success: true, msg: "email sent"});
+        }
+
+    });
 };
 

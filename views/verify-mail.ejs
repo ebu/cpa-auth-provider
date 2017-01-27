@@ -1,0 +1,55 @@
+<% include layout/head %>
+
+<div id="verify-mail" xmlns="http://www.w3.org/1999/html">
+
+    <div class="container">
+
+        <div class="col-sm-6 col-sm-offset-3">
+
+            <% if (verified) { %>
+
+            <div id="success-panel" class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <h1 class="title text-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span>
+                        Email validation
+                    </h1>
+
+                    <p>Your account has been verified successfully.</p>
+                    <p>Thank you <span class="glyphicon glyphicon-thumbs-up"></span></p>
+
+                    <span class="link">Go to <a href="<%= link('/user/profile') %>" class="btn-link">profile page</a></span>
+                </div>
+            </div>
+
+            <% } else { %>
+
+            <div id="error-panel" class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <h1 class="title text-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span>
+                        Email validation
+                    </h1>
+
+                    <p>Unfortunately we could not validate your account.</p>
+                    <p>Please go to your <a href="<%= link('/user/profile') %>">profile page</a> and hit the send verification link to try again.</p>
+
+                    <div class="separator row">
+                        <div class="line"></div> <span>OR</span> <div class="line"></div>
+                    </div>
+
+
+                    <span class="link">Go back to <a href="<%= link('/auth/local') %>" class="btn-link">login page</a></span>
+                </div>
+            </div>
+
+            <% } %>
+
+        </div>
+    </div>
+
+</div>
+
+<% include layout/foot %>

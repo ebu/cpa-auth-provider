@@ -52,42 +52,34 @@ module.exports = function(req, res, next) {
 
     var findClient = function(callback) {
       db.Client
-        .find({
+        .findOne({
           where:   { id: clientId, secret: clientSecret },
           include: [ db.User ]
         })
-        .complete(function(err, client) {
-          if (err) {
-            callback(err);
-            return;
-          }
-
+        .then(function(client) {
           if (!client) {
             res.sendInvalidClient("Unknown client: " + clientId);
             return;
           }
           callback(null, client);
-        });
+        }, function(err) {
+          callback(err);
+		});
     };
 
     var findPairingCode = function(client, callback) {
       db.PairingCode
-        .find({
+        .findOne({
           where:   { client_id: client.id, device_code: deviceCode },
           include: [ db.Domain, db.User, db.Client ]
         })
-        .complete(function(err, pairingCode) {
-          if (err) {
-            callback(err);
-            return;
-          }
-
+        .then(function(pairingCode) {
           if (!pairingCode) {
             res.sendInvalidRequest("Pairing code not found");
             return;
           }
 
-          if (!pairingCode.domain || pairingCode.domain.name !== domainName) {
+          if (!pairingCode.Domain || pairingCode.Domain.name !== domainName) {
             res.sendInvalidRequest("Pairing code domain mismatch");
             return;
           }
@@ -116,14 +108,16 @@ module.exports = function(req, res, next) {
             }
           }
 
-          callback(null, client, pairingCode.user, pairingCode);
-        });
+          callback(null, client, pairingCode.User, pairingCode);
+        }, function(err) {
+          callback(err);
+		});
     };
 
     var createAccessToken = function(client, user, pairingCode, callback) {
       var accessToken;
 
-      db.sequelize.transaction(function(transaction) {
+      db.sequelize.transaction().then(function(transaction) {
         db.AccessToken
           .create({
             token:      generate.accessToken(),
@@ -144,9 +138,7 @@ module.exports = function(req, res, next) {
             callback(null, user, accessToken, pairingCode);
           },
           function(error) {
-            transaction.rollback().complete(function(err) {
-              next(err);
-            });
+            transaction.rollback().then(next, next);
           });
       });
     };
@@ -164,7 +156,7 @@ module.exports = function(req, res, next) {
       sendAccessToken(
         res,
         accessToken,
-        pairingCode.domain,
+        pairingCode.Domain,
         user
       );
     });

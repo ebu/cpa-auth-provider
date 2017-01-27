@@ -18,7 +18,11 @@ module.exports = {
     ];
 
     var deleteData = function(table, done) {
-      db.sequelize.query("DELETE from " + table).complete(done);
+      db.sequelize.query("DELETE from " + table).then(
+        function() {
+          done();
+		},
+        done);
     };
 
     async.eachSeries(tables, deleteData, done);

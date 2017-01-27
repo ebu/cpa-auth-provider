@@ -42,20 +42,20 @@ function buildResponse(user) {
 function performFacebookLogin(appName, profile, fbAccessToken, done) {
 
     if (appName && profile && fbAccessToken) {
-        db.User.findOrCreate({provider_uid: profile.provider_uid, display_name: profile.display_name, photo_url: profile.photo_url }).success(function(user){
+        db.User.findOrCreate({where: {provider_uid: profile.provider_uid, display_name: profile.display_name, photo_url: profile.photo_url }}).spread(function(user){
             if (user.hasChanged(profile.display_name, profile.photo_url)){
                 user.updateAttributes({
                    display_name: profile.display_name,
                    photo_url: profile.photo_url
-                }).success(function(){
+                }).then(function(){
                     return done(null, buildResponse(user));
-                }).error(function(error){
+                }).catch(function(error){
                     return done(error, null);
                 });
             } else {
                 return done(null, buildResponse(user));
             }
-        }).error(function(err) {
+        }).catch(function(err) {
            return done(err, null);
         });
     }

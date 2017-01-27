@@ -3,6 +3,8 @@
 var config =     require('../../config');
 var db =         require('../../models');
 var authHelper = require('../../lib/auth-helper');
+var fs =       require('fs');
+
 
 var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
 var USER_NOT_FOUND = 'User not found';
@@ -27,25 +29,38 @@ var routes = function (router) {
             });
     });
 
-    router.get('/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
-        db.User.find({where: {
+    router.get('/:broadcaster?/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
+        db.User.findOne({where: {
             id: req.user.id
         }}).then(function (user) {
             if (!user) {
                 return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
             } else {
-                db.UserProfile.findOrCreate({
+                db.UserProfile.findOrCreate({where: {
                     user_id: req.user.id
-                }).then(function (profile) {
-                    res.render('./user/profile.ejs', {
+                }}).spread(function (profile) {
+                    var tpl = './user/profile.ejs';
+                    var broadcaster = req.params.broadcaster || false;
+                    var brandingMode = broadcaster !== false;
+                    var data = {
+                        broadcaster: broadcaster,
+                        brandingMode: brandingMode,
                         profile: {
                             firstname: profile.firstname,
                             lastname: profile.lastname,
                             gender: profile.gender,
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
-                            display_name: profile.getDisplayName(user, req.query.policy)
-                    }});
+                            display_name: profile.getDisplayName(user, req.query.policy),
+                            verified: user.verified
+                        }
+                    };
+
+                    if(broadcaster && fs.existsSync(__dirname + '/../../views/user/broadcaster/profile-'+broadcaster+'.ejs')) {
+                        tpl = './user/broadcaster/profile-'+broadcaster+'.ejs';
+                    }
+
+                    res.render(tpl, data);
                 });
             }
         }, function (err) {
@@ -63,7 +78,7 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                db.User.find({where: {
+                db.User.findOne({where: {
                     id: req.user.id
                 }}).then(function (user) {
                     if (!user) {
@@ -83,7 +98,6 @@ var routes = function (router) {
                 });
             }
         });
-
     });
 };
 

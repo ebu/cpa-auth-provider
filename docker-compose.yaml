@@ -40,10 +40,3 @@ services:
 #      - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
 #      - DOCKER_USER=dockercpa
 #      - DOCKER_PASSWORD=SchiefesHausBautFalsch
-
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.18.0.0/16
-          gateway: 172.18.0.1

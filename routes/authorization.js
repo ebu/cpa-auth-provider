@@ -38,13 +38,8 @@ module.exports = function(router, config) {
     var domainName  = req.body.domain;
 
     db.Domain
-      .find({ where: { name: domainName } })
-      .complete(function(err, domain) {
-        if (err) {
-          next(err);
-          return;
-        }
-
+      .findOne({ where: { name: domainName } })
+      .then(function(domain) {
         if (!domain) {
           res.sendInvalidRequest("Unknown domain: " + domainName);
           return;
@@ -56,13 +51,8 @@ module.exports = function(router, config) {
         };
 
         db.AccessToken
-          .find({ where: query, include: [db.User] })
-          .complete(function(err, accessToken) {
-            if (err) {
-              next(err);
-              return;
-            }
-
+          .findOne({ where: query, include: [db.User] })
+          .then(function(accessToken) {
             if (!accessToken) {
               res.sendErrorResponse(404, "not_found", "Unknown access token");
               return;
@@ -77,14 +67,18 @@ module.exports = function(router, config) {
               client_id: accessToken.client_id
             };
 
-            if (accessToken.user) {
-              responseData.user_id      = accessToken.user.provider_uid;
-              responseData.display_name = accessToken.user.display_name;
-              responseData.photo_url    = accessToken.user.photo_url;
+            if (accessToken.User) {
+              responseData.user_id      = accessToken.User.provider_uid;
+              responseData.display_name = accessToken.User.display_name;
+              responseData.photo_url    = accessToken.User.photo_url;
             }
 
             res.send(responseData);
-          });
-      });
+          }, function(err) {
+            next(err);
+		  });
+      }, function(err) {
+		next(err);
+	  });
   });
 };

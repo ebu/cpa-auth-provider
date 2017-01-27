@@ -45,29 +45,32 @@ module.exports = function(req, res, next) {
     var domainName   = req.body.domain;
 
     var findClient = function(callback) {
-      db.Client.find({
+      db.Client.findOne({
         where: { id: clientId, secret: clientSecret, registration_type: 'dynamic' },
         include: [ db.User ]
       })
-      .complete(function(err, client) {
+      .then(function(client) {
         if (!client) {
           res.sendInvalidClient("Unknown client: " + clientId);
           return;
         }
-        callback(err, client);
-      });
+        callback(undefined, client);
+      }, function(err) {
+        callback(err);
+	  });
     };
 
     var findDomain = function(client, callback) {
-      db.Domain.find({ where: { name: domainName }})
-        .complete(function(err, domain) {
+      db.Domain.findOne({ where: { name: domainName }})
+        .then(function(domain) {
           if (!domain) {
             // SPEC : define correct error message
             res.sendInvalidRequest("Unknown domain: " + domainName);
             return;
           }
-
-          callback(err, client, domain);
+          callback(undefined, client, domain);
+        }, function(err) {
+          callback(err);
         });
     };
 
@@ -77,12 +80,12 @@ module.exports = function(req, res, next) {
      */
 
     var deleteAccessToken = function(client, domain, callback) {
-      db.sequelize.query(
-        "DELETE FROM AccessTokens WHERE client_id=? AND domain_id=?",
-        null, { raw: true }, [ client.id, domain.id ]
-      )
-      .then(function(err) {
-        callback(err, client, domain);
+      db.AccessToken.destroy({
+        where: {
+          client_id: client.id,
+          domain_id: domain.id
+        }}).then(function() {
+        callback(undefined, client, domain);
       },
       function(err) {
         callback(err);
@@ -98,8 +101,10 @@ module.exports = function(req, res, next) {
           client_id: client.id,
           domain_id: domain.id
         })
-        .complete(function(err, accessToken) {
-          callback(err, client, domain, accessToken);
+        .then(function(accessToken) {
+          callback(undefined, client, domain, accessToken);
+        }, function(err) {
+          callback(err);
         });
     };
 
@@ -114,7 +119,7 @@ module.exports = function(req, res, next) {
         return;
       }
 
-      sendAccessToken(res, accessToken, domain, client.user);
+      sendAccessToken(res, accessToken, domain, client.User);
     });
   });
 };
