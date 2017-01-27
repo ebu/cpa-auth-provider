@@ -20,6 +20,7 @@ var CLIENT = {
 var USER = {
 	id: 123,
 	email: 'test@test.com',
+	email_verified: true,
 	account_uid: 'RandomUid',
 	password: 'a'
 };
@@ -156,6 +157,7 @@ describe('POST /oauth2/token', function () {
 			expect(decoded.exp).not.equal(undefined);
 			expect(decoded.cli).equal(CLIENT.client_id);
 			expect(decoded.sub).equal(USER.id);
+			expect(decoded.vfy).equal('1');
 		});
 
 		it('should have expires_in set correctly', function() {
@@ -197,6 +199,7 @@ describe('POST /oauth2/token', function () {
 			expect(decoded.exp).not.equal(undefined);
 			expect(decoded.cli).equal(CLIENT.client_id);
 			expect(decoded.sub).equal(USER2.id);
+			expect(decoded.vfy).equal('0');
 		});
 
 		it('should have proper expires_in set', function() {
