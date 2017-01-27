@@ -3,8 +3,8 @@
 module.exports = {
   recaptcha: {
     enabled: true,
-    site_key: '6Lf8JhIUAAAAAOpDYjfIZnlxmjhPQblCiwwfSPHc',
-    secret_key: '6Lf8JhIUAAAAADblMNVnlvE0Sbg8_P_NwM87IncZ'
+    site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+    secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
 
 
@@ -103,6 +103,10 @@ module.exports = {
   max_poll_interval: 5,
 
   server_clients: [],
+
+  oauth2: {
+    refresh_tokens_enabled: true
+  },
 
   mail: {
     from: 'no-reply@rts.ch',

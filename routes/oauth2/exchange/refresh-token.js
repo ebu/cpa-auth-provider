@@ -28,15 +28,22 @@ function issueToken(client, token, scope, done) {
 							function (_extras) {
 								return done(null, accessToken, refreshToken, _extras);
 							}
+						).catch(
+							function(err) {
+								return done(err);
+							}
 						);
 					} catch (e) {
 						return done(e);
 					}
+				} else {
+					return done(new TokenError(oauthTokenHelper.ERRORS.USER_NOT_FOUND.message, oauthTokenHelper.ERRORS.USER_NOT_FOUND.code));
 				}
 			},
 			function (error) {
 				logger.error('[OAuth2][issueToken]', error);
-				return done(new TokenError(oauthTokenHelper.ERRORS.BAD_REQUEST.message, oauthTokenHelper.ERRORS.BAD_REQUEST.code));
+				// return done(new TokenError(oauthTokenHelper.ERRORS.BAD_REQUEST.message, oauthTokenHelper.ERRORS.BAD_REQUEST.code));
+				return done(error);
 			}
 		)
 		.catch(

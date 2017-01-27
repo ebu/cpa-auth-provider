@@ -270,7 +270,7 @@ describe('GET /oauth2/dialog/authorize', function () {
 			});
 
 			it('should reject the request', function () {
-				expect(this.res.statusCode).equal(403);
+				expect(this.res.statusCode).equal(500);
 			});
 		});
 
@@ -333,7 +333,7 @@ describe('GET /oauth2/dialog/authorize', function () {
 			});
 
 			it('should reject the request', function () {
-				expect(this.res.statusCode).equal(403);
+				expect(this.res.statusCode).equal(500);
 			});
 		});
 
