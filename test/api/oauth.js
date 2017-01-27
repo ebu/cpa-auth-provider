@@ -161,6 +161,10 @@ describe('POST /oauth2/token', function () {
 		it('should have token type Bearer', function () {
 			expect(this.res.body.token_type).equal('Bearer');
 		});
+
+		it('should send a refresh token', function () {
+			expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
+		});
 	});
 
 	context('using grant_type: \'password\' with 2nd user' , function () {
@@ -197,6 +201,10 @@ describe('POST /oauth2/token', function () {
 
 		it('should have token type Bearer', function () {
 			expect(this.res.body.token_type).equal('Bearer');
+		});
+
+		it('should send a refresh token', function () {
+			expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
 		});
 	});
 
@@ -527,6 +535,10 @@ describe('OAuth2 Authorization Code Flow', function () {
 
 		it('should have token type Bearer', function () {
 			expect(this.res.body.token_type).equal('Bearer');
+		});
+
+		it('should send a refresh token', function () {
+			expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
 		});
 	});
 });
