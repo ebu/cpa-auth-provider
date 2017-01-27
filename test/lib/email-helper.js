@@ -5,7 +5,8 @@ var config = require('../../config');
 
 describe("send", function() {
     it("should not crash", function() {
-        emailHelper.send("from", "to", "this is the template body designed by {{=it.name}}", {log:false}, {name:'dom'}, function() {});
+        emailHelper.send(config.mail.from, 'from@from.ch', "validation-email", {log:false}, {host:"htt://localhost:3000", mail:'a@aaa.aa', code:'12345'}, config.mail.local, function() {});
+
     });
 
 });
