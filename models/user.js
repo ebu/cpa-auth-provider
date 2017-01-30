@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
 var generate = require('../lib/generate');
 var config = require('../config');
+var db = require('../models');
 
 
 module.exports = function (sequelize, DataTypes) {
@@ -50,19 +51,61 @@ module.exports = function (sequelize, DataTypes) {
                     return false;
                 }
             },
+            //recoverPassword: function (code, newPass) {
+            //    // Check if passwordRecoveryCode is defined
+            //    if (this.passwordRecoveryCode && code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
+            //
+            //        var self = this;
+            //
+            //        console.log("id:", self.id);
+            //
+            //        return sequelize.transaction({autocommit: false}, function (t) {
+            //            return User.findOne({where:{id: self.id}}, t).then(function (user) {
+            //                console.log("user", user);
+            //                console.log("t", t);
+            //                user.passwordRecoveryCode = null;
+            //                user.save({transaction: t});
+            //                return user;
+            //            }).then(function (user) {
+            //                user.updateAttributes({passwordRecoveryCodeDate: 0}, {transaction: t});
+            //                return user;
+            //            }).then(function (user) {
+            //                var hash = user.hashPassword(newPass);
+            //                user.updateAttributes({password: hash}, {transaction: t});
+            //                return user;
+            //            }).then(function () {
+            //                console.log("tx success");
+            //                return t.commit();
+            //            }).catch(function (err) {
+            //                console.log("err", err);
+            //                console.log("tx rollback");
+            //                return t.rollback();
+            //            });
+            //        });
+            //    } else {
+            //        return false;
+            //    }
+            //},
             genereateVerificationCode: function () {
                 var verificationCode = generate.cryptoCode(30)
                 this.updateAttributes({verificationCode: verificationCode});
                 this.updateAttributes({verified: false});
+                return true;
             },
             verifyAccount: function (sendedVerificationCode) {
                 if (sendedVerificationCode === this.verificationCode) {
                     this.updateAttributes({verified: true});
+                    return true;
                 }
+                return false;
             },
-            setPassword: function (password) {
+            hashPassword: function (password) {
                 var salt = bcrypt.genSaltSync(10);
                 var hash = bcrypt.hashSync(password, salt);
+                return hash;
+            },
+            setPassword: function (password) {
+                var hash = this.hashPassword(password);
                 this.updateAttributes({password: hash});
                 return true;
             },
