@@ -28,7 +28,7 @@ module.exports = function (sequelize, DataTypes) {
             generateRecoveryCode: function () {
                 // Generate a recovery code only if the TTL is too short
                 if (!this.passwordRecoveryCode || Date.now() + config.password.keep_recovery_code_until + this.passwordRecoveryCodeDate) {
-                    var verificationCode = generate.cryptoCode(30)
+                    var verificationCode = generate.cryptoCode(30);
                     this.updateAttributes({passwordRecoveryCode: verificationCode});
                     this.updateAttributes({passwordRecoveryCodeDate: Date.now()});
                 }
@@ -51,7 +51,7 @@ module.exports = function (sequelize, DataTypes) {
                 }
             },
             genereateVerificationCode: function () {
-                var verificationCode = generate.cryptoCode(30)
+                var verificationCode = generate.cryptoCode(30);
                 this.updateAttributes({verificationCode: verificationCode});
                 this.updateAttributes({verified: false});
             },
