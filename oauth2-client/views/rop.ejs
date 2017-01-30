@@ -11,11 +11,18 @@
 
 <span id="user-widget"></span>
 
+<div id="refresh-area">
+    <div id="rop-access-info"></div>
+    <a href="javascript:useRefreshToken()" class="btn btn-info hide" id="rop-refresh-btn">Use Refresh Token</a>
+</div>
+
 <script>
 
-    var storeToken = function(token) {
+    var storeToken = function(token, refreshToken, expires) {
         if(typeof(Storage) !== "undefined") {
             localStorage.setItem("cpa:rop-token", token);
+            localStorage.setItem("cpa:rop-refresh-token", refreshToken);
+            localStorage.setItem("cpa:rop-expires-at", Date.now() + expires * 1000);
         } else {
             // Cookie
             throw "NotImplementedError"
@@ -31,8 +38,26 @@
         }
     };
 
+    var getRefreshToken = function() {
+    	if (typeof(Storage) !== "undefined") {
+    		return localStorage.getItem("cpa:rop-refresh-token");
+        } else {
+    		throw "NotImplementedError";
+        }
+    };
+
+    var getExpirationDate = function() {
+    	if (typeof(Storage) !== "undefined") {
+    		return new Date(new Date().setTime(localStorage.getItem("cpa:rop-expires-at")));
+        } else {
+    		throw "NotImplementedError";
+        }
+    };
+
     var removeToken = function(token) {
         if(typeof(Storage) !== "undefined") {
+        	localStorage.removeItem("cpa:rop-refresh-token");
+        	localStorage.removeItem("cpa:rop-expires-at");
             return localStorage.removeItem("cpa:rop-token");
         } else {
             // Cookie
@@ -46,6 +71,7 @@
             removeToken();
             location.reload();
         });
+        $('#rop-access-info').html('Expires at ' + getExpirationDate());
     };
 
     var loadProfile = function (done) {
@@ -96,7 +122,7 @@
                 }
         ).done(
                 function (data, textStatus, jqXhr){
-                    storeToken(data.access_token);
+                    storeToken(data.access_token, data.refresh_token, data.expires_in);
                     location.reload();
                 }
         ).fail(
@@ -105,7 +131,36 @@
                     // location.reload();
                 }
         );
+    }
 
+    function useRefreshToken() {
+    	var refreshToken = getRefreshToken();
+
+    	var data = {
+    		grant_type: 'refresh_token',
+            refresh_token: refreshToken,
+			client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+			client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98"
+        };
+
+		jQuery.ajax(
+			{
+				url: "<%= ropUrl %>",
+				type: "POST",
+				data: data,
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			}
+		).done(
+			function (data, textStatus, jqXhr){
+				storeToken(data.access_token, data.refresh_token, data.expires_in);
+				location.reload();
+			}
+		).fail(
+			function (jqXhr, textStatus, errorThrown) {
+				console.log(errorThrown);
+				// location.reload();
+			}
+		);
     }
 
 
@@ -118,6 +173,9 @@
                 $('#login-btn').removeClass('hide');
                 $('#login-area').removeClass('hide');
             }
+			if (getRefreshToken()) {
+				$('#rop-refresh-btn').removeClass('hide');
+			}
         });
     });
 
