@@ -12,9 +12,7 @@ var resetDatabase = function(done) {
     });
   })
   .then(function(user) {
-    return user.setPassword('testpassword');
-  })
-  .then(function() {
+    user.setPassword('testpassword');
     done();
   },
   function(error) {

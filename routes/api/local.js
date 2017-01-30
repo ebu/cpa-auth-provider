@@ -61,9 +61,8 @@ module.exports = function (app, options) {
                             var user = db.User.create({
                                 email: req.body.email,
                             }).then(function (user) {
-                                    user.setPassword(req.body.password).done(function (err, result) {
-                                        res.json({success: true, msg: 'Successfully created new user.'});
-                                    });
+                                    user.setPassword(req.body.password);
+                                    res.json({success: true, msg: 'Successfully created new user.'});
                                 },
                                 function (err) {
                                     res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
@@ -152,7 +151,12 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.verificationCode}, config.mail.local, function() {});
+            emailHelper.send(config.mail.from, user.email, "validation-email", {log: false}, {
+                host: config.mail.host,
+                mail: user.email,
+                code: user.verificationCode
+            }, config.mail.local, function () {
+            });
             return res.status(204).send({success: true, msg: "email sent"});
         }
 

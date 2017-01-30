@@ -36,10 +36,16 @@ module.exports = function (sequelize, DataTypes) {
             recoverPassword: function (code, newPass) {
                 // Check if passwordRecoveryCode is defined
                 if (this.passwordRecoveryCode && code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
-                    this.updateAttributes({passwordRecoveryCode: newPass});
+
+                    this.passwordRecoveryCode = null;
+                    this.save();
+
                     this.updateAttributes({passwordRecoveryCodeDate: 0});
+
                     this.setPassword(newPass);
+
                     return true;
+
                 } else {
                     return false;
                 }
@@ -55,13 +61,10 @@ module.exports = function (sequelize, DataTypes) {
                 }
             },
             setPassword: function (password) {
-                var self = this;
-                return bcrypt.genSaltAsync(10).then(function (salt) {
-                        return bcrypt.hashAsync(password, salt);
-                    })
-                    .then(function (encrypted, salt) {
-                        return self.updateAttributes({password: encrypted});
-                    });
+                var salt = bcrypt.genSaltSync(10);
+                var hash = bcrypt.hashSync(password, salt);
+                this.updateAttributes({password: hash});
+                return true;
             },
             verifyPassword: function (password) {
                 return bcrypt.compareAsync(password, this.password);

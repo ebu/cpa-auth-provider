@@ -32,9 +32,7 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function(user) {
-      return user.setPassword('testpassword');
-    })  
-    .then(function() {
+      user.setPassword('testpassword');
       return db.Domain.create({
         id:           5,
         display_name: 'Example',

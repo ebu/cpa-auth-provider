@@ -14,9 +14,7 @@ var initDatabase = function(done) {
       provider_uid: 'testuser'
     })
     .then(function(user) {
-      return user.setPassword('testpassword');
-    })
-    .then(function(user) {
+      user.setPassword('testpassword');
       return db.Domain.create({
         id:           5,
         name:         'example-service.bbc.co.uk',
