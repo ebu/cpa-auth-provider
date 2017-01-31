@@ -5,33 +5,10 @@ var authHelper    = require('../../lib/auth-helper');
 var logger        = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate      = require('../../lib/generate');
-var ConnectRoles = require('connect-roles');
-
-var roles = new ConnectRoles({
-    failureHandler: function (req, res, action) {
-        // optional function to customise code that runs when
-        // user fails authorisation
-        var accept = req.headers.accept || '';
-        res.status(403);
-        if (~accept.indexOf('html')) {
-            res.render('access-denied', {action: action});
-        } else {
-            res.send('Access Denied - You don\'t have permission to: ' + action);
-        }
-    }
-});
-
-app.use(roles.middleware());
-
-//admin users can access all pages
-roles.use(function (req) {
-    if (req.user.role === 'admin') {
-        return true;
-    }
-});
+var roleHelper    = require('../../lib/role-helper');
 
 module.exports = function(router) {
-  router.get('/admin', [authHelper.authenticateFirst, roles.can('access admin page')], function(req, res) {
+  router.get('/admin', [authHelper.authenticateFirst, roleHelper.can('access admin page')], function(req, res) {
     res.render('./admin/index.ejs');
   });
 
