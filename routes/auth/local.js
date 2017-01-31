@@ -166,37 +166,61 @@ module.exports = function (app, options) {
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
         }
 
-        db.User.findOne({where: {email: req.body.email}})
-            .then(function (user) {
-                if (user) {
-                    user.generateRecoveryCode();
-                    emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.passwordRecoveryCode}, config.mail.local, function() {});
-                    return res.status(200).send();
-                } else {
-                    return res.status(400).json({msg: 'User not found.'});
-                }
-            }, function (error) {
-                next(error);
-            });
+        req.checkBody('email', 'Email is empty or invalid').isEmail();
 
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        user.generateRecoveryCode();
+                        emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log: true}, {
+                            host: config.mail.host,
+                            mail: user.email,
+                            code: user.passwordRecoveryCode
+                        }, config.mail.local, function () {
+                        });
+                        return res.status(200).send();
+                    } else {
+                        return res.status(400).json({msg: 'User not found.'});
+                    }
+                }, function (error) {
+                    next(error);
+                });
+        });
     });
 
     app.post('/password/update', function (req, res, next) {
 
-        db.User.findOne({where: {email: req.body.email}})
-            .then(function (user) {
-                if (user) {
-                    if (user.recoverPassword(req.body.code, req.body.password)){
-                        return res.status(200).send();
+        req.checkBody('password', 'New Password" is empty').notEmpty();
+        req.checkBody('confirm-password', 'Confirm password is empty').notEmpty();
+        req.checkBody('confirm-password', 'Passwords do not match').equals(req.body.password);
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        if (user.recoverPassword(req.body.code, req.body.password)) {
+                            return res.status(200).send();
+                        } else {
+                            return res.status(400).json({msg: 'Wrong recovery code.'});
+                        }
                     } else {
-                        return res.status(400).json({msg: 'Wrong recovery code.'});
+                        return res.status(400).json({msg: 'User not found.'});
                     }
-                } else {
-                    return res.status(400).json({msg: 'User not found.'});
-                }
-            }, function (error) {
-                done(error);
-            });
+                }, function (error) {
+                    done(error);
+                });
+        });
     });
 
     function redirectOnSuccess(req, res, next) {
