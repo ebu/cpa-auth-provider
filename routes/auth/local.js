@@ -180,8 +180,8 @@ module.exports = function (app, options) {
                         user.generateRecoveryCode();
                         emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log: true}, {
                             host: config.mail.host,
-                            mail: user.email,
-                            code: user.passwordRecoveryCode
+                            mail: encodeURIComponent(user.email),
+                            code: encodeURIComponent(user.passwordRecoveryCode)
                         }, config.mail.local, function () {
                         });
                         return res.status(200).send();
