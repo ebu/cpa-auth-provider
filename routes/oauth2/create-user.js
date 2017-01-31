@@ -49,7 +49,11 @@ function sendSuccess(user, req, res) {
 	db.OAuth2Client.find({where: {client_id: req.body.client_id}})
 		.then(
 			function (client) {
-				emailUtil.sendVerifyEmail(user, req.host, client, req.body.sub).then(
+				var redirectUri = req.body.redirect_uri || client.email_redirect_uri;
+				if(!client.mayEmailRedirect(redirectUri)) {
+					redirectUri = undefined;
+				}
+				emailUtil.sendVerifyEmail(user, req.host, client, redirectUri).then(
 					function() {
 					},
 					function(e) {

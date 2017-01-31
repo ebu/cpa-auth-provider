@@ -78,6 +78,8 @@ function requestPasswordEmail(req, res, next) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH);
 			}
 
+			redirectUri = redirectUri || client.email_redirect_uri;
+
 			if (!client.mayEmailRedirect(redirectUri)) {
 				throw new Error(oauthHelper.ERRORS.BAD_REQUEST);
 			}

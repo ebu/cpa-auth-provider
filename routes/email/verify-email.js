@@ -2,6 +2,7 @@
 
 var db = require('../../models/index');
 var logger = require('../../lib/logger');
+var cors = require('cors');
 
 var APPEND_VERIFY = '?auth=account_created';
 var APPEND_DELETE = '?auth=account_removed';
@@ -9,6 +10,52 @@ var APPEND_DELETE = '?auth=account_removed';
 module.exports = routes;
 
 function routes(router) {
+
+	router.options('/email/confirm/:key', cors());
+	router.get(
+		'/email/confirm/:key',
+		function (req, res, next) {
+			getTokenAndClient(req.params.key).then(
+				function (data) {
+					var verifyToken = data;
+					var client = data.OAuth2Client;
+					var user = data.User;
+
+					var clientId = req.query.client_id;
+
+					if (client.client_id != clientId) {
+						return res.status(400).json({success: false, reason: 'MISMATCHED_CLIENT_ID'});
+					}
+
+					if (!verifyToken.isAvailable()) {
+						return res.status(400).json({success: user.email_verified, reason: 'ALREADY_USED'});
+					}
+
+					if (user.email_verified) {
+						res.status(200).json({success: true, reason: 'NO_CHANGE'});
+						return deleteToken(verifyToken);
+					}
+
+					user.email_verified = true;
+					return user.save().then(
+						function () {
+							res.status(200).json({success: true, reason: 'CONFIRMED'});
+							return deleteToken(verifyToken);
+						}
+					).catch(
+						function (err) {
+							logger.error('[/email/confirm/][FAIL][key', req.params.key, '][err', err, ']');
+							return res.status(500).json({success: false, reason: 'INTERNAL'});
+						}
+					);
+				},
+				function (err) {
+					logger.error('[/email/confirm/][FAIL][key', req.params.key, '][err', err, ']');
+					res.status(400).json({success: false, reason: 'BAD_REQUEST'});
+				}
+			)
+		}
+	);
 
 	router.get(
 		'/email/verify/:key',
@@ -21,7 +68,7 @@ function routes(router) {
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
 					user.email_verified = true;
 					return user.save().then(
-						function() {
+						function () {
 							if (redirect_url) {
 								logger.debug('[email verify][REDIRECT][url', redirect_url, ']');
 								res.redirect(redirect_url + APPEND_VERIFY + '&username=' + encodeURIComponent(user.email));
@@ -34,7 +81,7 @@ function routes(router) {
 								return deleteToken(verifyToken);//req.params.key);
 							}
 						},
-						function(err) {
+						function (err) {
 							logger.error('[email verify][RENDER][user_id', verifyToken.user_id, '][error', err, ']');
 						}
 					);
@@ -135,12 +182,12 @@ function getUser(user_id) {
 
 /** remove user-verify-token */
 function deleteToken(verifyToken) {//key) {
-	verifyToken.destroy().then(
+	verifyToken.consume().then(
 		function () {
-			logger.debug('[verify token delete][SUCCESS][key', verifyToken.key, '][user_id', verifyToken.user_id, ']');
+			logger.debug('[verify token consume][SUCCESS][key', verifyToken.key, '][user_id', verifyToken.user_id, ']');
 		},
 		function (e) {
-			logger.error('[verify token delete][FAIL][key', verifyToken.key, '][user_id', verifyToken.user_id, '][error', e, ']');
+			logger.error('[verify token consume][FAIL][key', verifyToken.key, '][user_id', verifyToken.user_id, '][error', e, ']');
 		}
 	);
 }
@@ -151,7 +198,7 @@ function deleteUser(user) {
 		function (resolve, reject) {
 			user.destroy().then(
 				function () {
-					logger.debug('[user delete][SUCCESS][id', user.id, '][email', user.email,']');
+					logger.debug('[user delete][SUCCESS][id', user.id, '][email', user.email, ']');
 					return resolve();
 				},
 				function (e) {
