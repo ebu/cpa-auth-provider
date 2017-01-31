@@ -24,7 +24,7 @@ module.exports = {
   },
   mail: {
     from:'no-reply@rts.ch',
-    local:'ch_fr',
+    locale:'ch_fr',
     host:'http://localhost:3000'
   },
   trackingCookie: {
