@@ -62,7 +62,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
                                     user.genereateVerificationCode();
-                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:emailHelper.send(user.email), code:emailHelper.send(user.verificationCode)}, config.mail.locale, function() {});
+                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
                                     done(null, user);
                                 },
                                 function (err) {
