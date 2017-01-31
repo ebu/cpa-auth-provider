@@ -62,8 +62,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
                                     user.genereateVerificationCode();
-                                    //console.log('REMOVE THAT LOG: \n\nhttp://localhost:3000/email_verify?email=' + req.body.email + '&code=' + user.verificationCode+'\n\n');
-                                    emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log:true}, {email:'user.email', code:user.verificationCode}, function() {});
+                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
                                     done(null, user);
                                 },
                                 function (err) {
