@@ -153,8 +153,8 @@ module.exports = function (app, options) {
         } else {
             emailHelper.send(config.mail.from, user.email, "validation-email", {log: false}, {
                 host: config.mail.host,
-                mail: user.email,
-                code: user.verificationCode
+                mail: encodeURIComponent(user.email),
+                code: encodeURIComponent(user.verificationCode)
             }, config.mail.local, function () {
             });
             return res.status(204).send({success: true, msg: "email sent"});

@@ -15,9 +15,9 @@ module.exports = {
   },
 
   mail: {
-    from:'no-reply@rts.ch',
-    local:'ch_fr',
-    host:'http://localhost:3000'
+    from: process.env.MAIL_FROM,
+    locale: process.env.MAIL_LOCALE,
+    host: process.env.IDP_HOST
   },
 
   password: {
