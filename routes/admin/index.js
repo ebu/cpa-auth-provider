@@ -5,10 +5,10 @@ var authHelper    = require('../../lib/auth-helper');
 var logger        = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate      = require('../../lib/generate');
-var roleHelper    = require('../../lib/role-helper');
+var role   = require('../../lib/role');
 
 module.exports = function(router) {
-  router.get('/admin', [authHelper.authenticateFirst, roleHelper.can('access admin page')], function(req, res) {
+  router.get('/admin', [authHelper.authenticateFirst, role.can('access admin page')], function(req, res) {
     res.render('./admin/index.ejs');
   });
 
