@@ -11,7 +11,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 var util = require('util');
 var emailHelper = require('../../lib/email-helper');
-
+var codeHelper = require('../../lib/code-helper');
 
 
 var localStrategyCallback = function (req, username, password, done) {
@@ -61,8 +61,12 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 email: req.body.email,
                             }).then(function (user) {
                                     user.setPassword(req.body.password);
-                                    user.genereateVerificationCode();
-                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.verificationCode}, config.mail.local, function() {});
+                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log: true}, {
+                                        host: config.mail.host,
+                                        mail: user.email,
+                                        code: codeHelper.getOrGenereateEmailVerificationCode(user)
+                                    }, config.mail.local, function () {
+                                    });
                                     done(null, user);
                                 },
                                 function (err) {
@@ -120,11 +124,17 @@ module.exports = function (app, options) {
         db.User.findOne({where: {email: req.query.email}})
             .then(function (user) {
                 if (user) {
-                    user.verifyAccount(req.query.code);
-                    res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                    codeHelper.verifyEmail(user, req.query.code).then(function (success) {
+                        console.log("susssssssssses", success);
+                            if (success) {
+                                res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                            } else {
+                                res.render('./verify-mail.ejs', {verified: false});
+                            }
+                        }
+                    );
                 } else {
-                    res.render('./verify-mail.ejs', {verified: false});
-
+                    return res.status(400).json({msg: 'User not found.'});
                 }
             }, function (error) {
                 done(error);
@@ -138,7 +148,7 @@ module.exports = function (app, options) {
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
-        if (req.recaptcha.error){
+        if (req.recaptcha.error) {
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
         }
 
@@ -169,9 +179,15 @@ module.exports = function (app, options) {
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                 if (user) {
-                    user.generateRecoveryCode();
-                    emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log:true}, {host:config.mail.host, mail:user.email, code:user.passwordRecoveryCode}, config.mail.local, function() {});
-                    return res.status(200).send();
+                    codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+                        emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log: true}, {
+                            host: config.mail.host,
+                            mail: user.email,
+                            code: code
+                        }, config.mail.local, function () {
+                        });
+                        return res.status(200).send();
+                    });
                 } else {
                     return res.status(400).json({msg: 'User not found.'});
                 }
@@ -186,17 +202,21 @@ module.exports = function (app, options) {
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                 if (user) {
-                    if (user.recoverPassword(req.body.code, req.body.password)){
-                        return res.status(200).send();
-                    } else {
-                        return res.status(400).json({msg: 'Wrong recovery code.'});
-                    }
-                } else {
+                    return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (sucess) {
+                        if (sucess) {
+                            return res.status(200).send();
+                        } else {
+                            return res.status(400).json({msg: 'Wrong recovery code.'});
+                        }
+                        ;
+                    });
+                }
+                else {
                     return res.status(400).json({msg: 'User not found.'});
                 }
             }, function (error) {
                 done(error);
-            });
+            })
     });
 
     function redirectOnSuccess(req, res, next) {

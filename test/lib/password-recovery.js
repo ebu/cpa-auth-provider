@@ -1,37 +1,49 @@
 "use strict";
 
 var db = require('../../models');
+var codeHelper = require('../../lib/code-helper');
 
 describe('Test password recovery code', function () {
     context('When tries to recover password', function () {
+        var self = this;
         before(function (done) {
-            this.user = db.User.build({
+            db.User.create({
                 id: 1,
                 email: 'user1@earth.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User 1'
+            }).then(function (user) {
+                self.user = user;
+                user.setPassword('mdp');
+                codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                    self.recoverCode = recoverCode;
+                    self.currentPass = user.password;
+                    done();
+                });
+
             });
-            this.user.setPassword('mdp');
-            this.user.generateRecoveryCode();
-            this.currentPass = this.user.password;
-            done();
+
         })
         it('should do nothing when code is empty', function (done) {
-            this.user.recoverPassword('', 'new pass');
-            expect(this.user.password).to.be.equal(this.currentPass);
-            done();
+            codeHelper.recoverPassword(self.user, '', 'new pass').then(function (res) {
+                expect(res).to.be.false;
+                expect(self.currentPass).to.be.equal(self.user.password);
+                done();
+            });
         });
         it('should do nothing when code is wrong', function (done) {
-            this.user.recoverPassword('wrong code', 'new pass');
-            expect(this.user.password).to.be.equal(this.currentPass);
-            done();
+            codeHelper.recoverPassword(self.user, 'wrong code', 'new pass').then(function (res) {
+                expect(res).to.be.false;
+                expect(self.currentPass).to.be.equal(self.user.password);
+                done();
+            });
         });
         it('should  udpate the password and remove recovery code stuff', function (done) {
-            this.user.recoverPassword(this.user.passwordRecoveryCode, 'new pass');
-            expect(this.user.password).not.to.be.equal(this.currentPass);
-            expect(this.user.passwordRecoveryCode).to.be.null;
-            expect(this.user.passwordRecoveryCodeDate).to.be.equal(0);
-            done();
+            codeHelper.recoverPassword(self.user, self.recoverCode, 'new pass').then(function (res) {
+                expect(res).to.be.true;
+                expect(self.currentPass).not.to.be.equal(self.user.password);
+                done();
+            });
         });
     })
 });
