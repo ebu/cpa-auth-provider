@@ -50,7 +50,7 @@ describe('Test password recovery code', function () {
         });
     });
 
-    context('When tries to recover password with expired code', function () {
+    context('When tries to recover password several time', function () {
         var self = this;
         before(function (done) {
             db.User.create({
@@ -67,10 +67,37 @@ describe('Test password recovery code', function () {
                         done();
                     });
                 });
-
-
             });
+        })
+        it('should  udpate the password and remove recovery code stuff', function (done) {
+            codeHelper.recoverPassword(self.user, self.recoverCode, 'new pass').then(function (res) {
+                expect(res).to.be.true;
+                expect(self.currentPass).not.to.be.equal(self.user.password);
+                done();
+            });
+        });
+    });
 
+    context('When tries to recover password with expired code', function () {
+        var self = this;
+        before(function (done) {
+            db.User.create({
+                id: 3,
+                email: 'user3@earth.com',
+                provider_uid: 'testuser3',
+                display_name: 'Test User 3'
+            }).then(function (user) {
+                self.user = user;
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function () {
+                            done();
+                        });
+                    });
+                });
+            });
         })
         it('should  not udpate the password and not remove recovery code stuff', function (done) {
             config.password.recovery_code_validity_duration = -1800;
