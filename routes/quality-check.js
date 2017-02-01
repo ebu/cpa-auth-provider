@@ -21,7 +21,7 @@ module.exports = function(router) {
 			var quality = pwQuality.getQuality(password);
 
 			var message = pwQuality.getMessage(quality.error);
-			if (quality.value >= 1) {
+			if (quality.value > 0) {
 				res.status(200).json({ accept: true, value: quality.value, message: message });
 			} else {
 				res.status(200).json({ accept: false, value: quality.value, message: message });
