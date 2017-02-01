@@ -17,12 +17,12 @@ module.exports = function (sequelize, DataTypes) {
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
         verificationCode: DataTypes.STRING,
-        admin: DataTypes.BOOLEAN   // maybe replace that by an array of roles
+        id_role: DataTypes.INTEGER
     }, {
         underscored: true,
         instanceMethods: {
             genereateVerificationCode: function () {
-                var verificationCode = generate.cryptoCode(30)
+                var verificationCode = generate.cryptoCode(30);
                 this.updateAttributes({verificationCode: verificationCode});
                 this.updateAttributes({verified: false});
             },
