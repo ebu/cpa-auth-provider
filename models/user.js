@@ -25,8 +25,9 @@ module.exports = function (sequelize, DataTypes) {
             setPassword: function (password) {
                 var salt = bcrypt.genSaltSync(10);
                 var hash = bcrypt.hashSync(password, salt);
-                this.updateAttributes({password: hash});
-                return true;
+                return this.updateAttributes({password: hash}).then(function () {
+                    return true;
+                });
             },
             verifyPassword: function (password) {
                 return bcrypt.compareAsync(password, this.password);
