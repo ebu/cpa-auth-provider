@@ -16,11 +16,12 @@ describe('Test password recovery code', function () {
                 display_name: 'Test User 1'
             }).then(function (user) {
                 self.user = user;
-                user.setPassword('mdp');
-                codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                    self.recoverCode = recoverCode;
-                    self.currentPass = user.password;
-                    done();
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        done();
+                    });
                 });
 
             });
@@ -47,36 +48,39 @@ describe('Test password recovery code', function () {
                 done();
             });
         });
-    })
-    //context('When tries to recover password with expired code', function () {
-    //    var self = this;
-    //    before(function (done) {
-    //        db.User.create({
-    //            id: 2,
-    //            email: 'user2@earth.com',
-    //            provider_uid: 'testuser2',
-    //            display_name: 'Test User 2'
-    //        }).then(function (user) {
-    //            self.user = user;
-    //            user.setPassword('mdp');
-    //            codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-    //                self.recoverCode = recoverCode;
-    //                self.currentPass = user.password;
-    //                done();
-    //            });
-    //
-    //        });
-    //
-    //    })
-    //    it('should  not udpate the password and not remove recovery code stuff', function (done) {
-    //        config.password.recovery_code_validity_duration = 0;
-    //        codeHelper.recoverPassword(self.user, self.recoverCode, 'new pass').then(function (res) {
-    //            expect(res).to.be.false;
-    //            expect(self.currentPass).to.be.equal(self.user.password);
-    //            done();
-    //        });
-    //    });
-    //})
+    });
+
+    context('When tries to recover password with expired code', function () {
+        var self = this;
+        before(function (done) {
+            db.User.create({
+                id: 2,
+                email: 'user2@earth.com',
+                provider_uid: 'testuser2',
+                display_name: 'Test User 2'
+            }).then(function (user) {
+                self.user = user;
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        done();
+                    });
+                });
+
+
+            });
+
+        })
+        it('should  not udpate the password and not remove recovery code stuff', function (done) {
+            config.password.recovery_code_validity_duration = -1800;
+            codeHelper.recoverPassword(self.user, self.recoverCode, 'new pass').then(function (res) {
+                expect(res).to.be.false;
+                expect(self.currentPass).to.be.equal(self.user.password);
+                done();
+            });
+        });
+    });
 
 
 });
