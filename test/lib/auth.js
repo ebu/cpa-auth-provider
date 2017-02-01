@@ -13,7 +13,9 @@ var initDatabase = function(done) {
     provider_uid: 'testuser'
   })
   .then(function(user) {
-    user.setPassword('testpassword');
+    return user.setPassword('testpassword');
+  })
+  .then(function() {
     done();
   },
   function(err) {

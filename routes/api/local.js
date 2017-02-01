@@ -61,12 +61,12 @@ module.exports = function (app, options) {
                             var user = db.User.create({
                                 email: req.body.email,
                             }).then(function (user) {
-                                    user.setPassword(req.body.password);
-                                    res.json({success: true, msg: 'Successfully created new user.'});
-                                },
-                                function (err) {
-                                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
-                                });
+								return user.setPassword(req.body.password);
+							}).then(function() {
+								res.json({success: true, msg: 'Successfully created new user.'});
+                            }).catch(function (err) {
+                                res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                            });
                         });
                     }
                 }, function (error) {

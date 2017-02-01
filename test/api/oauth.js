@@ -46,8 +46,7 @@ function createOAuth2Client(done) {
 
 function createUser(userTemplate) {
 	return db.User.create(userTemplate).then(function (user) {
-		user.setPassword(userTemplate.password);
-		return user;
+		return user.setPassword(userTemplate.password);
 	});
 }
 

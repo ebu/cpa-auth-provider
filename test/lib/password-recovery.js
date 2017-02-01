@@ -5,33 +5,57 @@ var db = require('../../models');
 describe('Test password recovery code', function () {
     context('When tries to recover password', function () {
         before(function (done) {
+        	var self = this;
             this.user = db.User.build({
                 id: 1,
                 email: 'user1@earth.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User 1'
             });
-            this.user.setPassword('mdp');
-            this.user.generateRecoveryCode();
-            this.currentPass = this.user.password;
-            done();
-        })
+            this.user.setPassword('mdp').then(
+                function() {
+					self.user.generateRecoveryCode();
+					self.currentPass = self.user.password;
+					done();
+                }
+            );
+        });
         it('should do nothing when code is empty', function (done) {
-            this.user.recoverPassword('', 'new pass');
-            expect(this.user.password).to.be.equal(this.currentPass);
-            done();
+        	var self = this;
+            this.user.recoverPassword('', 'new pass').then(
+                function() {
+					expect(self.user.password).to.be.equal(self.currentPass);
+					done();
+                },
+				function() {
+					expect(self.user.password).to.be.equal(self.currentPass);
+					done();
+				}
+            );
         });
         it('should do nothing when code is wrong', function (done) {
-            this.user.recoverPassword('wrong code', 'new pass');
-            expect(this.user.password).to.be.equal(this.currentPass);
-            done();
+        	var self = this;
+            this.user.recoverPassword('wrong code', 'new pass').then(
+                function() {
+					expect(self.user.password).to.be.equal(self.currentPass);
+					done();
+                },
+				function() {
+					expect(self.user.password).to.be.equal(self.currentPass);
+					done();
+				}
+            );
         });
         it('should  udpate the password and remove recovery code stuff', function (done) {
-            this.user.recoverPassword(this.user.passwordRecoveryCode, 'new pass');
-            expect(this.user.password).not.to.be.equal(this.currentPass);
-            expect(this.user.passwordRecoveryCode).to.be.null;
-            expect(this.user.passwordRecoveryCodeDate).to.be.equal(0);
-            done();
+        	var self = this;
+            this.user.recoverPassword(this.user.passwordRecoveryCode, 'new pass').then(
+                function() {
+					expect(self.user.password).not.to.be.equal(self.currentPass);
+					expect(self.user.passwordRecoveryCode).to.be.null;
+					expect(self.user.passwordRecoveryCodeDate).to.be.equal(0);
+					done();
+                }
+            );
         });
     })
 });

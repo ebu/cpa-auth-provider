@@ -35,21 +35,24 @@ module.exports = function (sequelize, DataTypes) {
                 }
             },
             recoverPassword: function (code, newPass) {
-                // Check if passwordRecoveryCode is defined
-                if (this.passwordRecoveryCode && code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
+                var self = this;
+                return new Promise(
+                    function (resolve, reject) {
+						// Check if passwordRecoveryCode is defined
+						if (self.passwordRecoveryCode
+                            && code === self.passwordRecoveryCode
+                            && self.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
 
-                    this.passwordRecoveryCode = null;
-                    this.save();
-
-                    this.updateAttributes({passwordRecoveryCodeDate: 0});
-
-                    this.setPassword(newPass);
-
-                    return true;
-
-                } else {
-                    return false;
-                }
+							self.updateAttributes({passwordRecoveryCode: null, passwordRecoveryCodeDate: 0}).then(
+							    function() {
+							        return self.setPassword(newPass);
+                                }
+                            ).then(resolve).catch(reject);
+						} else {
+							return reject(false);
+						}
+                    }
+                );
             },
             //recoverPassword: function (code, newPass) {
             //    // Check if passwordRecoveryCode is defined
@@ -99,15 +102,23 @@ module.exports = function (sequelize, DataTypes) {
                 }
                 return false;
             },
-            hashPassword: function (password) {
-                var salt = bcrypt.genSaltSync(10);
-                var hash = bcrypt.hashSync(password, salt);
-                return hash;
-            },
             setPassword: function (password) {
-                var hash = this.hashPassword(password);
-                this.updateAttributes({password: hash});
-                return true;
+                var self = this;
+                return new Promise(
+                    function(resolve, reject) {
+						bcrypt.hash(
+							password,
+							10,
+							function (err, hash) {
+							    if (err) {
+							        return reject(err);
+                                } else {
+									return self.updateAttributes({password: hash}).then(resolve, reject);
+								}
+                            }
+						);
+                    }
+                );
             },
             verifyPassword: function (password) {
                 return bcrypt.compareAsync(password, this.password);

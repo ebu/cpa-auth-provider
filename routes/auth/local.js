@@ -57,17 +57,21 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));
                     } else {
                         db.sequelize.sync().then(function () {
+                            var user;
                             db.User.create({
                                 email: req.body.email,
-                            }).then(function (user) {
-                                    user.setPassword(req.body.password);
-                                    user.genereateVerificationCode();
-                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
-                                    done(null, user);
-                                },
+                            }).then(function (_user) {
+								user = _user;
+								return user.setPassword(req.body.password);
+							}).then(function() {
+                                user.genereateVerificationCode();
+                                emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
+                                done(null, user);
+                            }).catch(
                                 function (err) {
                                     done(err);
-                                });
+                                }
+                            );
                         });
                     }
                 }, function (error) {
@@ -209,11 +213,14 @@ module.exports = function (app, options) {
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
-                        if (user.recoverPassword(req.body.code, req.body.password)) {
-                            return res.status(200).send();
-                        } else {
-                            return res.status(400).json({msg: 'Wrong recovery code.'});
-                        }
+                        user.recoverPassword(req.body.code, req.body.password).then(
+                            function() {
+								return res.status(200).send();
+                            },
+                            function() {
+								return res.status(400).json({msg: 'Wrong recovery code.'});
+                            }
+                        );
                     } else {
                         return res.status(400).json({msg: 'User not found.'});
                     }
