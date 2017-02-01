@@ -22,6 +22,9 @@
           <mj-button href='{{CONFIRMLINK}}' background-color='#0082c5'>
             Anmeldung bestätigen
           </mj-button>
+          <mj-text color='#a8a8a8'>
+            <a style='color: inherit; text-decoration: none;' href='{{CONFIRMLINK}}'>{{CONFIRMLINK}}</a>
+          </mj-text>
           <mj-text>
             Durch deine Registrierung kannst du jetzt folgende Vorteile nutzen:
             Wenn du dich auf unterschiedlichen Geräten wie Smartphone, Tablet,

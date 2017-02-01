@@ -14,6 +14,7 @@ function routes(router) {
 	router.options('/email/confirm/:key', cors());
 	router.get(
 		'/email/confirm/:key',
+		cors(),
 		function (req, res, next) {
 			getTokenAndClient(req.params.key).then(
 				function (data) {

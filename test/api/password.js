@@ -352,12 +352,12 @@ describe('POST /user/password', function () {
 				}, done);
 			});
 
-			it('should return status 400', function () {
-				expect(this.res.statusCode).equal(400);
+			it('should return status 200', function () {
+				expect(this.res.statusCode).equal(200);
 			});
 
-			it('should send success false', function() {
-				expect(this.res.body.success).equal(false);
+			it('should send success true', function() {
+				expect(this.res.body.success).equal(true);
 			});
 		});
 	});
