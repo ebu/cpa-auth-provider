@@ -116,5 +116,8 @@ module.exports = {
   max_poll_interval: 5,
 
   server_clients: [],
-  
+
+  oauth2: {
+    refresh_tokens_enabled: true
+  }
 };
