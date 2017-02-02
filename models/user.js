@@ -23,11 +23,22 @@ module.exports = function (sequelize, DataTypes) {
         instanceMethods: {
 
             setPassword: function (password) {
-                var salt = bcrypt.genSaltSync(10);
-                var hash = bcrypt.hashSync(password, salt);
-                return this.updateAttributes({password: hash}).then(function () {
-                    return true;
-                });
+                var self = this;
+                return new Promise(
+                    function (resolve, reject) {
+                        bcrypt.hash(
+                            password,
+                            10,
+                            function (err, hash) {
+                                if (err) {
+                                    return reject(err);
+                                } else {
+                                    return self.updateAttributes({password: hash}).then(resolve, reject);
+                                }
+                            }
+                        );
+                    }
+                );
             },
             verifyPassword: function (password) {
                 return bcrypt.compareAsync(password, this.password);
