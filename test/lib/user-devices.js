@@ -16,7 +16,9 @@ var initDatabase = function(opts, done) {
       display_name: 'Test User'
     })
     .then(function(user) {
-      user.setPassword('testpassword');
+      return user.setPassword('testpassword');
+	})
+    .then(function() {
       return db.User.create({
         id:           2,
         email:        '2testuser2',
@@ -25,7 +27,9 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function(user) {
-      user.setPassword('otherpassword')
+      return user.setPassword('otherpassword');
+	})
+    .then(function() {
       return db.Client.create({
         id:               100,
         secret:           'e2412cd1-f010-4514-acab-c8af59e5501a',

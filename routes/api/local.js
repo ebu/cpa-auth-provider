@@ -61,12 +61,12 @@ module.exports = function (app, options) {
                             var user = db.User.create({
                                 email: req.body.email,
                             }).then(function (user) {
-                                    user.setPassword(req.body.password);
-                                    res.json({success: true, msg: 'Successfully created new user.'});
-                                },
-                                function (err) {
-                                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
-                                });
+								return user.setPassword(req.body.password);
+							}).then(function() {
+								res.json({success: true, msg: 'Successfully created new user.'});
+                            }).catch(function (err) {
+                                res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                            });
                         });
                     }
                 }, function (error) {
@@ -153,8 +153,8 @@ module.exports = function (app, options) {
         } else {
             emailHelper.send(config.mail.from, user.email, "validation-email", {log: false}, {
                 host: config.mail.host,
-                mail: user.email,
-                code: user.verificationCode
+                mail: encodeURIComponent(user.email),
+                code: encodeURIComponent(user.verificationCode)
             }, config.mail.local, function () {
             });
             return res.status(204).send({success: true, msg: "email sent"});

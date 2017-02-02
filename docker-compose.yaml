@@ -17,7 +17,11 @@ services:
     ports:
     - 3000:3000
     environment:
-    - EMAIL_FROM=no-reply@rts.ch
+    - MAIL_FROM=no-reply@rts.ch
+    - MAIL_LOCALE=de_de
+    - IDP_HOST=http://localhost/email
+    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 #    depends_on:
 #      - postgres
 #    links:

@@ -13,7 +13,6 @@ var util = require('util');
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 
-
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
     db.User.findOne({where: {email: username}})
@@ -57,21 +56,26 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));
                     } else {
                         db.sequelize.sync().then(function () {
+                            var user;
                             db.User.create({
                                 email: req.body.email,
-                            }).then(function (user) {
-                                    user.setPassword(req.body.password);
-                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log: true}, {
-                                        host: config.mail.host,
-                                        mail: user.email,
-                                        code: codeHelper.getOrGenereateEmailVerificationCode(user)
-                                    }, config.mail.local, function () {
-                                    });
-                                    done(null, user);
-                                },
+                            }).then(function (_user) {
+                                user = _user;
+                                return user.setPassword(req.body.password);
+                            }).then(function () {
+                                codeHelper.getOrGenereateEmailVerificationCode(user);
+                                emailHelper.send(config.mail.from, user.email, "validation-email", {log: true}, {
+                                    host: config.mail.host,
+                                    mail: encodeURIComponent(user.email),
+                                    code: encodeURIComponent(user.verificationCode)
+                                }, config.mail.locale, function () {
+                                });
+                                done(null, user);
+                            }).catch(
                                 function (err) {
                                     done(err);
-                                });
+                                }
+                            );
                         });
                     }
                 }, function (error) {
@@ -176,6 +180,14 @@ module.exports = function (app, options) {
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
         }
 
+        req.checkBody('email', 'Email is empty or invalid').isEmail();
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                 if (user) {
@@ -194,11 +206,21 @@ module.exports = function (app, options) {
             }, function (error) {
                 next(error);
             });
+        });
 
     });
 
     app.post('/password/update', function (req, res, next) {
 
+        req.checkBody('password', 'New Password" is empty').notEmpty();
+        req.checkBody('confirm-password', 'Confirm password is empty').notEmpty();
+        req.checkBody('confirm-password', 'Passwords do not match').equals(req.body.password);
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                 if (user) {
@@ -216,7 +238,9 @@ module.exports = function (app, options) {
                 }
             }, function (error) {
                 done(error);
-            })
+            });
+        });
+
     });
 
     function redirectOnSuccess(req, res, next) {
