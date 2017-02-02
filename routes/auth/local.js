@@ -13,7 +13,6 @@ var util = require('util');
 var emailHelper = require('../../lib/email-helper');
 
 
-
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
     db.User.findOne({where: {email: username}})
@@ -61,16 +60,21 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             db.User.create({
                                 email: req.body.email,
                             }).then(function (_user) {
-								user = _user;
-								return user.setPassword(req.body.password).then(_user)(function(){
+                                user = _user;
+                                return user.setPassword(req.body.password).then(_user)(function () {
                                     user = _user;
                                     user.genereateVerificationCode();
-                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
+                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log: true}, {
+                                        host: config.mail.host,
+                                        mail: encodeURIComponent(user.email),
+                                        code: encodeURIComponent(user.verificationCode)
+                                    }, config.mail.locale, function () {
+                                    });
                                     done(null, user);
-                                }).catch(function (err){
+                                }).catch(function (err) {
                                     done(err);
                                 });
-							});
+                            });
                         });
                     }
                 }, function (error) {
@@ -141,7 +145,7 @@ module.exports = function (app, options) {
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
-        if (req.recaptcha.error){
+        if (req.recaptcha.error) {
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
         }
 
@@ -213,11 +217,11 @@ module.exports = function (app, options) {
                 .then(function (user) {
                     if (user) {
                         user.recoverPassword(req.body.code, req.body.password).then(
-                            function() {
-								return res.status(200).send();
+                            function () {
+                                return res.status(200).send();
                             },
-                            function() {
-								return res.status(400).json({msg: 'Wrong recovery code.'});
+                            function () {
+                                return res.status(400).json({msg: 'Wrong recovery code.'});
                             }
                         );
                     } else {
