@@ -11,10 +11,16 @@ module.exports = function(sequelize, DataTypes) {
             autoIncrement: true
         },
         date: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            validate: {
+                notEmpty: true
+            }
         },
         value: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            validate: {
+                notEmpty: true
+            }
         },
         type: {
             type: DataTypes.ENUM,
