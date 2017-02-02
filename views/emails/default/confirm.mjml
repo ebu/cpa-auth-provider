@@ -8,7 +8,7 @@
           </mj-text>
           <mj-divider border-color='#dddddd' border-width='1px' padding-top='0px' padding-bottom='0px'></mj-divider>
           <mj-text color='#a8a8a8'>
-            <a style='color: inherit; text-decoration: none;' href='https://www.brmediathek.de'>www.brmediathek.de</a>
+            <a style='color: inherit; text-decoration: none;' href='https://beta.mediathek.br.de'>beta.mediathek.br.de</a>
           </mj-text>
           <mj-divider border-color='#dddddd' border-width='1px' padding-top='0px' padding-bottom='0px'></mj-divider>
           <mj-text>
@@ -28,9 +28,9 @@
           <mj-text>
             Durch deine Registrierung kannst du jetzt folgende Vorteile nutzen:
             Wenn du dich auf unterschiedlichen Geräten wie Smartphone, Tablet,
-            Computer und SmartTV mit dem selben Benutzernamen anmeldest, siehst du
+            Computer und SmartTV mit derselben E-Mail-Adresse anmeldest, siehst du
             überall dieselben Empfehlungen und Abonnenments, deine Merkliste
-            und deine Boards sowie deinen bisherigen Sendungsverlauf.
+            und deine Boards, sowie deinen bisherigen Sendungsverlauf.
           </mj-text>
           <mj-text>
             Nur im eingeloggten Bereich kannst du eigene Boards erstellen und
@@ -40,7 +40,7 @@
             Viel Spaß beim Stöbern und Schauen!
           </mj-text>
           <mj-text color='#a8a8a8'>
-            Dein BR Mediathek-Team
+            Dein BR Mediatheks-Team
           </mj-text>
         </mj-column>
       </mj-section>
