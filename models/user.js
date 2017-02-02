@@ -16,8 +16,7 @@ module.exports = function (sequelize, DataTypes) {
         display_name: DataTypes.STRING,
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
-        verificationCode: DataTypes.STRING,
-        id_role: DataTypes.INTEGER
+        verificationCode: DataTypes.STRING
     }, {
         underscored: true,
         instanceMethods: {
@@ -52,6 +51,7 @@ module.exports = function (sequelize, DataTypes) {
             User.hasMany(models.AccessToken);
             User.belongsTo(models.IdentityProvider);
             User.hasOne(models.UserProfile);
+            User.belongsTo(models.Role);
         }
     });
 

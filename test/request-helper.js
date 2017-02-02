@@ -49,7 +49,6 @@ module.exports = {
 
         if (opts.accessToken) {
             var tokenType = opts.tokenType || 'Bearer';
-
             req.set('Authorization', tokenType + ' ' + opts.accessToken);
         }
 
