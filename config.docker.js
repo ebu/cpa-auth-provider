@@ -14,6 +14,19 @@ module.exports = {
 
   },
 
+  mail: {
+    from: process.env.MAIL_FROM,
+    locale: process.env.MAIL_LOCALE,
+    host: process.env.IDP_HOST
+  },
+
+  password: {
+    // in sec
+    recovery_code_validity_duration: 1800,
+    // a new recovery code will be generated only if the current one has less that TTL
+    keep_recovery_code_until: 900
+  },
+
   jwtSecret: process.env.JWT_SECRET,
   jwt: {
     audience: 'cpa',
@@ -114,9 +127,5 @@ module.exports = {
 
   oauth2: {
     refresh_tokens_enabled: true
-  },
-
-  mail: {
-    from: process.env.EMAIL_FROM
   }
 };

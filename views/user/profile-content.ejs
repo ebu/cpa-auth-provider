@@ -148,6 +148,7 @@
             <a class="btn btn-danger" disabled="disabled">Delete account</a>
         </div>
     </div>
+    <% if (!profile.verified) { %>
     <div class="col-sm-9 col-sm-offset-3">
         <div class="verification-link-container">
             <p>Fill the verification field below and resend your account verification link</p>
@@ -167,6 +168,7 @@
             </form>
         </div>
     </div>
+    <% } %>
 
 
 </div>
@@ -332,7 +334,7 @@
                 },
                 error: function(result) {
                     $.each(result.responseJSON.errors, function(index, error){
-                        $("#personnal-data-errors").append($('<p>').text(error.msg));
+                        $("#personnal-data-errors").append($('<span>').text(error.msg));
                     });
                     $("#form-personnal-data-errors").show("fast");
                     $('html, body').animate({

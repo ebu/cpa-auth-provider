@@ -52,11 +52,7 @@ var routes = function (router) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
-                email: user.email,
-                code: user.verificationCode
-            }, function () {
-            });
+            emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
             return res.status(204).send();
         }
     });
