@@ -62,16 +62,15 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 email: req.body.email,
                             }).then(function (_user) {
 								user = _user;
-								return user.setPassword(req.body.password);
-							}).then(function() {
-                                user.genereateVerificationCode();
-                                emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
-                                done(null, user);
-                            }).catch(
-                                function (err) {
+								return user.setPassword(req.body.password).then(_user)(function(){
+                                    user = _user;
+                                    user.genereateVerificationCode();
+                                    emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
+                                    done(null, user);
+                                }).catch(function (err){
                                     done(err);
-                                }
-                            );
+                                });
+							});
                         });
                     }
                 }, function (error) {
