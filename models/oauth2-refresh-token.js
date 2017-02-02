@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
 				}
 			},
 			expires_at: {
-				type: DataTypes.DATE,
+				type: DataTypes.INTEGER,
 				validate: {
 					notEmpty: true
 				}
