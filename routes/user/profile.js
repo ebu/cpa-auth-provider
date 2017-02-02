@@ -7,6 +7,7 @@ var util = require('util');
 var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
+var codeHelper = require('../../lib/code-helper');
 
 
 var routes = function (router) {
@@ -52,7 +53,9 @@ var routes = function (router) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(user.verificationCode)}, config.mail.locale, function() {});
+            codeHelper.getOrGenereateEmailVerificationCode(user).then(function(code){
+                emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)}, config.mail.local, function() {});
+            });
             return res.status(204).send();
         }
     });
