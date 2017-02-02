@@ -39,7 +39,7 @@ module.exports = function (sequelize, DataTypes) {
         associate: function (models) {
             User.hasMany(models.Client);
             User.hasMany(models.AccessToken);
-            User.hasMany(models.ValidationCode);
+            User.hasMany(models.ValidationCode, {foreignKey: 'user_id'});
             User.belongsTo(models.IdentityProvider);
             User.hasOne(models.UserProfile);
         }
