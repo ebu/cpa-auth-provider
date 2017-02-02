@@ -3,6 +3,9 @@
 var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
 var generate = require('../lib/generate');
+var config = require('../config');
+var db = require('../models');
+
 
 module.exports = function (sequelize, DataTypes) {
 
@@ -17,28 +20,105 @@ module.exports = function (sequelize, DataTypes) {
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
         verificationCode: DataTypes.STRING,
+        passwordRecoveryCode: DataTypes.STRING,
+        passwordRecoveryCodeDate: DataTypes.INTEGER,
         admin: DataTypes.BOOLEAN   // maybe replace that by an array of roles
     }, {
         underscored: true,
         instanceMethods: {
+            generateRecoveryCode: function () {
+                // Generate a recovery code only if the TTL is too short
+                if (!this.passwordRecoveryCode || Date.now() + config.password.keep_recovery_code_until + this.passwordRecoveryCodeDate) {
+                    var verificationCode = generate.cryptoCode(30);
+                    this.updateAttributes({passwordRecoveryCode: verificationCode});
+                    this.updateAttributes({passwordRecoveryCodeDate: Date.now()});
+                }
+            },
+            recoverPassword: function (code, newPass) {
+                var self = this;
+                return new Promise(
+                    function (resolve, reject) {
+						// Check if passwordRecoveryCode is defined
+						if (self.passwordRecoveryCode
+                            && code === self.passwordRecoveryCode
+                            && self.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
+
+							self.updateAttributes({passwordRecoveryCode: null, passwordRecoveryCodeDate: 0}).then(
+							    function() {
+							        return self.setPassword(newPass);
+                                }
+                            ).then(resolve).catch(reject);
+						} else {
+							return reject(false);
+						}
+                    }
+                );
+            },
+            //recoverPassword: function (code, newPass) {
+            //    // Check if passwordRecoveryCode is defined
+            //    if (this.passwordRecoveryCode && code === this.passwordRecoveryCode && this.passwordRecoveryCodeDate + config.password.recovery_code_validity_duration * 1000 > Date.now()) {
+            //
+            //        var self = this;
+            //
+            //        console.log("id:", self.id);
+            //
+            //        return sequelize.transaction({autocommit: false}, function (t) {
+            //            return User.findOne({where:{id: self.id}}, t).then(function (user) {
+            //                console.log("user", user);
+            //                console.log("t", t);
+            //                user.passwordRecoveryCode = null;
+            //                user.save({transaction: t});
+            //                return user;
+            //            }).then(function (user) {
+            //                user.updateAttributes({passwordRecoveryCodeDate: 0}, {transaction: t});
+            //                return user;
+            //            }).then(function (user) {
+            //                var hash = user.hashPassword(newPass);
+            //                user.updateAttributes({password: hash}, {transaction: t});
+            //                return user;
+            //            }).then(function () {
+            //                console.log("tx success");
+            //                return t.commit();
+            //            }).catch(function (err) {
+            //                console.log("err", err);
+            //                console.log("tx rollback");
+            //                return t.rollback();
+            //            });
+            //        });
+            //    } else {
+            //        return false;
+            //    }
+            //},
             genereateVerificationCode: function () {
-                var verificationCode = generate.cryptoCode(30)
+                var verificationCode = generate.cryptoCode(30);
                 this.updateAttributes({verificationCode: verificationCode});
                 this.updateAttributes({verified: false});
+                return true;
             },
-            verifyAccount: function(sendedVerificationCode){
-                if (sendedVerificationCode === this.verificationCode){
+            verifyAccount: function (sendedVerificationCode) {
+                if (sendedVerificationCode === this.verificationCode) {
                     this.updateAttributes({verified: true});
+                    return true;
                 }
+                return false;
             },
             setPassword: function (password) {
                 var self = this;
-                return bcrypt.genSaltAsync(10).then(function (salt) {
-                        return bcrypt.hashAsync(password, salt);
-                    })
-                    .then(function (encrypted, salt) {
-                        return self.updateAttributes({password: encrypted});
-                    });
+                return new Promise(
+                    function(resolve, reject) {
+						bcrypt.hash(
+							password,
+							10,
+							function (err, hash) {
+							    if (err) {
+							        return reject(err);
+                                } else {
+									return self.updateAttributes({password: hash}).then(resolve, reject);
+								}
+                            }
+						);
+                    }
+                );
             },
             verifyPassword: function (password) {
                 return bcrypt.compareAsync(password, this.password);

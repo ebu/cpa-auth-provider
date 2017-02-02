@@ -334,7 +334,7 @@
                 },
                 error: function(result) {
                     $.each(result.responseJSON.errors, function(index, error){
-                        $("#personnal-data-errors").append($('<p>').text(error.msg));
+                        $("#personnal-data-errors").append($('<span>').text(error.msg));
                     });
                     $("#form-personnal-data-errors").show("fast");
                     $('html, body').animate({

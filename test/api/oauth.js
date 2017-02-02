@@ -45,15 +45,9 @@ function createOAuth2Client(done) {
 }
 
 function createUser(userTemplate) {
-	return new Promise(
-		function(resolve, reject) {
-			db.User.create(userTemplate).then(
-				function (user) {
-					user.setPassword(userTemplate.password).then(resolve, reject);
-				},
-				reject);
-		}
-	);
+	return db.User.create(userTemplate).then(function (user) {
+		return user.setPassword(userTemplate.password);
+	});
 }
 
 function createFakeUser(done) {

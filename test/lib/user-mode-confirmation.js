@@ -43,7 +43,7 @@ var initDatabase = function(done) {
     })
     .then(function(user) {
       return user.setPassword('testpassword');
-    })
+	})
     .then(function() {
       return db.Domain.create({
         id:           5,

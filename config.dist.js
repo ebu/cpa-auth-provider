@@ -22,11 +22,20 @@ module.exports = {
       enabled: false
     }
   },
+
   mail: {
     from:'no-reply@rts.ch',
     locale:'ch_fr',
     host:'http://localhost:3000'
   },
+
+  password: {
+    // in sec
+    recovery_code_validity_duration: 1800,
+    // a new recovery code will be generated only if the current one has less that TTL
+    keep_recovery_code_until: 900
+  },
+
   trackingCookie: {
     enabled: false,
     secret: 'secret phrase',
