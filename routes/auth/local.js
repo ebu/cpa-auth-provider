@@ -63,14 +63,15 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 user = _user;
                                 return user.setPassword(req.body.password);
                             }).then(function () {
-                                codeHelper.getOrGenereateEmailVerificationCode(user);
-                                emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
-                                    host: config.mail.host,
-                                    mail: encodeURIComponent(user.email),
-                                    code: encodeURIComponent(user.verificationCode)
-                                }, config.mail.locale, function () {
+                                codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
+                                    emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
+                                        host: config.mail.host,
+                                        mail: encodeURIComponent(user.email),
+                                        code: encodeURIComponent(code)
+                                    }, config.mail.locale, function () {
+                                    });
+                                    done(null, user);
                                 });
-                                done(null, user);
                             }).catch(
                                 function (err) {
                                     done(err);
@@ -129,7 +130,6 @@ module.exports = function (app, options) {
             .then(function (user) {
                 if (user) {
                     codeHelper.verifyEmail(user, req.query.code).then(function (success) {
-                        console.log("susssssssssses", success);
                             if (success) {
                                 res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
                             } else {
@@ -188,24 +188,24 @@ module.exports = function (app, options) {
                 return;
             }
 
-        db.User.findOne({where: {email: req.body.email}})
-            .then(function (user) {
-                if (user) {
-                    codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
-                        emailHelper.send(config.mail.from, user.email, 'Récupération de votre mots de passe', "password-recovery-email", {log: true}, {
-                            host: config.mail.host,
-                            mail: user.email,
-                            code: code
-                        }, config.mail.local, function () {
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+                            emailHelper.send(config.mail.from, user.email, 'Récupération de votre mots de passe', "password-recovery-email", {log: true}, {
+                                host: config.mail.host,
+                                mail: user.email,
+                                code: code
+                            }, config.mail.local, function () {
+                            });
+                            return res.status(200).send();
                         });
-                        return res.status(200).send();
-                    });
-                } else {
-                    return res.status(400).json({msg: 'User not found.'});
-                }
-            }, function (error) {
-                next(error);
-            });
+                    } else {
+                        return res.status(400).json({msg: 'User not found.'});
+                    }
+                }, function (error) {
+                    next(error);
+                });
         });
 
     });
@@ -221,24 +221,24 @@ module.exports = function (app, options) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
-        db.User.findOne({where: {email: req.body.email}})
-            .then(function (user) {
-                if (user) {
-                    return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (sucess) {
-                        if (sucess) {
-                            return res.status(200).send();
-                        } else {
-                            return res.status(400).json({msg: 'Wrong recovery code.'});
-                        }
-                        ;
-                    });
-                }
-                else {
-                    return res.status(400).json({msg: 'User not found.'});
-                }
-            }, function (error) {
-                done(error);
-            });
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (sucess) {
+                            if (sucess) {
+                                return res.status(200).send();
+                            } else {
+                                return res.status(400).json({msg: 'Wrong recovery code.'});
+                            }
+                            ;
+                        });
+                    }
+                    else {
+                        return res.status(400).json({msg: 'User not found.'});
+                    }
+                }, function (error) {
+                    done(error);
+                });
         });
 
     });
