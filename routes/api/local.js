@@ -151,7 +151,7 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send(config.mail.from, user.email, "validation-email", {log: false}, {
+            emailHelper.send(config.mail.from, user.email, 'Validation de votre email',  "validation-email", {log: false}, {
                 host: config.mail.host,
                 mail: encodeURIComponent(user.email),
                 code: encodeURIComponent(user.verificationCode)

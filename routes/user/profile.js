@@ -54,7 +54,7 @@ var routes = function (router) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
             codeHelper.getOrGenereateEmailVerificationCode(user).then(function(code){
-                emailHelper.send(config.mail.from, user.email, "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)}, config.mail.local, function() {});
+                emailHelper.send(config.mail.from, user.email, 'Validation de votre email',  "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)}, config.mail.local, function() {});
             });
             return res.status(204).send();
         }

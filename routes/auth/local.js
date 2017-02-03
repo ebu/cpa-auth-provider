@@ -64,7 +64,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 return user.setPassword(req.body.password);
                             }).then(function () {
                                 codeHelper.getOrGenereateEmailVerificationCode(user);
-                                emailHelper.send(config.mail.from, user.email, "validation-email", {log: true}, {
+                                emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
                                     host: config.mail.host,
                                     mail: encodeURIComponent(user.email),
                                     code: encodeURIComponent(user.verificationCode)
@@ -192,7 +192,7 @@ module.exports = function (app, options) {
             .then(function (user) {
                 if (user) {
                     codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
-                        emailHelper.send(config.mail.from, user.email, "password-recovery-email", {log: true}, {
+                        emailHelper.send(config.mail.from, user.email, 'Récupération de votre mots de passe', "password-recovery-email", {log: true}, {
                             host: config.mail.host,
                             mail: user.email,
                             code: code
