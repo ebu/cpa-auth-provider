@@ -105,14 +105,13 @@
     function connectRop() {
         var resourceOwner = $('#login-username').val();
         var password = $('#login-password').val();
-        var config = require('../config.docker');
 
         var data = {
             grant_type: 'password',
             username: resourceOwner,
             password: password,
-            client_id: config.identity_providers.client_id,
-            client_secret: config.identity_providers.client_secret
+            client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+            client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98"
         };
         jQuery.ajax(
                 {
@@ -142,8 +141,8 @@
     	var data = {
     		grant_type: 'refresh_token',
             refresh_token: refreshToken,
-			client_id: config.identity_providers.client_id,
-			client_secret: config.identity_providers.client_secret
+			client_id: identity_providers.client_id,
+			client_secret: identity_providers.client_secret
         };
 
 		jQuery.ajax(
