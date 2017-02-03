@@ -27,7 +27,7 @@
             // Cookie
             throw "NotImplementedError"
         }
-    }
+    };
 
     var getToken = function() {
         if(typeof(Storage) !== "undefined") {
@@ -83,8 +83,8 @@
                         type: "GET",
                         headers: {
                             "Authorization": "Bearer "+ token,
-                            "Content-Type": "application/x-www-form-urlencoded",
-                        },
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        }
                     })
                     .done(function(data, textStatus, jqXHR) {
                         console.log("HTTP Request Succeeded: " + jqXHR.status);
@@ -134,13 +134,15 @@
     }
 
     function useRefreshToken() {
+
+        var config = require('../config.docker');
     	var refreshToken = getRefreshToken();
 
     	var data = {
     		grant_type: 'refresh_token',
             refresh_token: refreshToken,
-			client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-			client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98"
+			client_id: identity_providers.client_id,
+			client_secret: identity_providers.client_secret
         };
 
 		jQuery.ajax(
