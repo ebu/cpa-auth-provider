@@ -20,11 +20,4 @@ module.exports = function(router) {
 
     requestHelper.redirect(res, '/verify' + query);
   });
-
-  router.get(
-    '/_lbhealth',
-    function (req, res) {
-      return res.status(200).json({summary: "ok"});
-    }
-  );
 };

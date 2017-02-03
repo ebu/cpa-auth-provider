@@ -68,9 +68,6 @@ function requestPasswordEmail(req, res, next) {
 			}
 			user = user_res;
 			return db.OAuth2Client.find({where: {client_id: clientId}});
-		},
-		function(err) {
-			console.log(err);
 		}
 	).then(
 		function(client) {
