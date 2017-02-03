@@ -15,6 +15,19 @@ module.exports = {
   },
 
   mail: {
+    sending: {
+      // transport: 'sendmail'
+      // transport: 'stream'
+      transport: 'gmail',
+      username: 'ebuidp@gmail.com',
+      password: 'HalloEBU',
+      // transport: 'smtp',
+      // username: '',
+      // password: '',
+      // host: '',
+      // port: 465,
+      // secure: true
+    },
     from: process.env.MAIL_FROM,
     locale: process.env.MAIL_LOCALE,
     host: process.env.IDP_HOST

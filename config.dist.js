@@ -24,6 +24,13 @@ module.exports = {
   },
 
   mail: {
+    sending: {
+      // transport: 'sendmail'
+      // transport: 'stream'
+      transport: 'gmail',
+      username: 'ebuidp@gmail.com',
+      password: 'HalloEBU',
+    },
     from:'no-reply@rts.ch',
     locale:'ch_fr',
     host:'http://localhost:3000'
