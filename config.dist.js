@@ -22,6 +22,27 @@ module.exports = {
       enabled: false
     }
   },
+
+  mail: {
+    sending: {
+      // transport: 'sendmail'
+      // transport: 'stream'
+      transport: 'gmail',
+      username: 'ebuidp@gmail.com',
+      password: 'HalloEBU',
+    },
+    from:'no-reply@rts.ch',
+    locale:'ch_fr',
+    host:'http://localhost:3000'
+  },
+
+  password: {
+    // in sec
+    recovery_code_validity_duration: 1800,
+    // a new recovery code will be generated only if the current one has less that TTL
+    keep_recovery_code_until: 900
+  },
+
   trackingCookie: {
     enabled: false,
     secret: 'secret phrase',
@@ -117,8 +138,4 @@ module.exports = {
   // The maximum rate at which clients should poll to obtain an access token,
   // in seconds.
   max_poll_interval: 5,
-
-  mail: {
-    from: 'no-reply@rts.ch',
-  }
 };

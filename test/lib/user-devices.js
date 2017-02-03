@@ -17,7 +17,7 @@ var initDatabase = function(opts, done) {
     })
     .then(function(user) {
       return user.setPassword('testpassword');
-    })
+	})
     .then(function() {
       return db.User.create({
         id:           2,
@@ -27,8 +27,8 @@ var initDatabase = function(opts, done) {
       });
     })
     .then(function(user) {
-      return user.setPassword('otherpassword')
-    })
+      return user.setPassword('otherpassword');
+	})
     .then(function() {
       return db.Client.create({
         id:               100,
