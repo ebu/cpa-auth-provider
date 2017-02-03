@@ -142,14 +142,8 @@
         <hr class="visible-xs-block hidden-sm"/>
 
     </div>
-    <div class="col-sm-9">
-        <div class="delete-container">
-            <p>Click the button below to delete your account</p>
-            <a class="btn btn-danger" disabled="disabled">Delete account</a>
-        </div>
-    </div>
     <% if (!profile.verified) { %>
-    <div class="col-sm-9 col-sm-offset-3">
+    <div class="col-sm-9">
         <div class="verification-link-container">
             <p>Fill the verification field below and resend your account verification link</p>
             <form id="verification-link-form" action='/user/profile/request_verification_email' method="post">
@@ -169,6 +163,12 @@
         </div>
     </div>
     <% } %>
+    <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
+        <div class="delete-container">
+            <p>Click the button below to delete your account</p>
+            <a class="btn btn-danger" disabled="disabled">Delete account</a>
+        </div>
+    </div>
 
 
 </div>

@@ -212,7 +212,7 @@ module.exports = function (app, options) {
 
     app.post('/password/update', function (req, res, next) {
 
-        req.checkBody('password', 'New Password" is empty').notEmpty();
+        req.checkBody('password', 'New Password is empty').notEmpty();
         req.checkBody('confirm-password', 'Confirm password is empty').notEmpty();
         req.checkBody('confirm-password', 'Passwords do not match').equals(req.body.password);
 
