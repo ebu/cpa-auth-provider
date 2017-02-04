@@ -2,16 +2,17 @@
 
 var db = require('../../models');
 var logger = require('../../lib/logger');
+var authHelper = require('../../lib/auth-helper');
 
 module.exports = setupClientControlRoute;
 
 function setupClientControlRoute(router) {
-	router.get('/oauth2/clients', showClientList);
-	router.get('/oauth2/client/add', showAddClient);
-	router.get('/oauth2/client/edit/:id', showEditClient);
+	router.get('/oauth2/clients', authHelper.ensureAuthenticated, showClientList);
+	router.get('/oauth2/client/add', authHelper.ensureAuthenticated, showAddClient);
+	router.get('/oauth2/client/edit/:id', authHelper.ensureAuthenticated, showEditClient);
 
-	router.post('/oauth2/client_control', createClientRoute);
-	router.post('/oauth2/client_update', updateClientRoute);
+	router.post('/oauth2/client_control', authHelper.ensureAuthenticated, createClientRoute);
+	router.post('/oauth2/client_update', authHelper.ensureAuthenticated, updateClientRoute);
 }
 
 function showClientList(req, res, next) {

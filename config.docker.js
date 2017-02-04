@@ -1,6 +1,8 @@
 'use strict';
 
 module.exports = {
+  full_redirect: process.env.FULL_REDIRECT,
+
   identity_providers: {
     github: {
       enabled: false,
