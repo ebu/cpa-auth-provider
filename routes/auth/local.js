@@ -63,13 +63,23 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 user = _user;
                                 return user.setPassword(req.body.password);
                             }).then(function () {
+                                console.log('--------------', req.origin);
                                 codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
-                                    emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
-                                        host: config.mail.host,
-                                        mail: encodeURIComponent(user.email),
-                                        code: encodeURIComponent(code)
-                                    }, config.mail.locale, function () {
-                                    });
+                                    emailHelper.send(
+                                        config.mail.from,
+                                        user.email,
+                                        'Validation de votre email',
+                                        "validation-email",
+                                        {log: true},
+                                        {
+                                            confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                            host: config.mail.host,
+                                            mail: encodeURIComponent(user.email),
+                                            code: encodeURIComponent(code)
+                                        },
+                                        config.mail.locale,
+                                        function () {
+                                        });
                                     done(null, user);
                                 });
                             }).catch(
@@ -192,7 +202,7 @@ module.exports = function (app, options) {
                 .then(function (user) {
                     if (user) {
                         codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
-                            emailHelper.send(config.mail.from, user.email, 'Récupération de votre mots de passe', "password-recovery-email", {log: true}, {
+                            emailHelper.send(config.mail.from, user.email, 'Récupération de votre mots de passe', "password-recovery-email", {log: true, templateClass: 'mediathek'}, {
                                 host: config.mail.host,
                                 mail: user.email,
                                 code: code

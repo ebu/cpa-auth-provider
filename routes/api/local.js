@@ -147,6 +147,7 @@ module.exports = function (app, options) {
     app.get('/api/local/request_verification_email', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
         var user = authHelper.getAuthenticatedUser(req);
+        var templateClass = req.query.template_class;
 
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
