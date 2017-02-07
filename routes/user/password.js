@@ -20,7 +20,7 @@ function setupRoutes(router) {
 	register('set-password', setPassword);
 	register('force-password', forcePassword);
 
-	var cors_headers = cors({origin: true, methods: ['GET']});
+	var cors_headers = cors({origin: true, methods: ['POST']});
 	router.options('/user/password', cors_headers);
 	router.post('/user/password', cors_headers, handlePassword);
 
@@ -44,7 +44,9 @@ function handlePassword(req, res, next) {
 			logger.error('[Password][post /user/password][err', err.message, ']', err);
 		}
 	}
-	return next();
+
+	return res.status(400).json({success: false, reason: 'UNKNOWN_REQUEST_TYPE'});
+	// return next();
 }
 
 function requestPasswordEmail(req, res, next) {
@@ -59,6 +61,10 @@ function requestPasswordEmail(req, res, next) {
 		res.status(400).json({success: false, reason: oauthHelper.ERRORS.BAD_REQUEST.message});
 		logger.debug('[User][Password][FAIL][type password-email][username', username, '][clientId', clientId, '][err wrong request type]');
 		return;
+	}
+
+	if (!clientId || !username) {
+		return res.status(400).json({success: false, reason: 'MISSING_REQUEST_FIELDS'});
 	}
 
 	db.User.find({ where: { email: username }}).then(
@@ -117,6 +123,10 @@ function setPasswordIntern(req, res, next) {
 		return;
 	}
 
+	if (!clientId || !username || !currentPassword || !newPassword) {
+		return res.status(400).json({success: false, reason: 'MISSING_REQUEST_FIELDS'});
+	}
+
 	// if (username != user.email) {
 	// 	res.status(400).json({success: false, reason: oauthHelper.ERRORS.USER_NOT_FOUND.message});
 	// 	logger.debug('[User][Password][FAIL][type set-password][username', username, '][clientId', clientId, '][userId', user.id, '][err user not matched]');
@@ -161,39 +171,47 @@ function setPasswordIntern(req, res, next) {
 function forcePassword(req, res) {
 	var clientId = req.body.client_id;
 	var requestType = req.body.request_type;
-	var username = req.body.username;
 
 	var tokenKey = req.body.token;
 	var newPassword = req.body.new_password;
 
 	if (requestType !== 'force-password') {
 		res.status(400).json({success: false, reason: oauthHelper.ERRORS.BAD_REQUEST.message});
-		logger.debug('[User][Password][FAIL][type force-password][username', username, '][token', tokenKey, '][clientId', clientId, '][err bad request type]');
+		logger.debug('[User][Password][FAIL][type force-password][token', tokenKey, '][clientId', clientId, '][err bad request type]');
 		return;
 	}
 
+	if (!clientId || !tokenKey|| !newPassword) {
+		return res.status(400).json({success: false, reason: 'MISSING_REQUEST_FIELDS'});
+	}
+
+	var token;
 	db.UserEmailToken.find({where: {key: tokenKey}, include: [db.User, db.OAuth2Client]}).then(
-		function(token) {
+		function(_token) {
+			token = _token;
 			if (!token) {
-				throw new Error(oauthHelper.ERRORS.BAD_REQUEST.message);
+				throw new Error('INVALID_TOKEN');
 			}
 			if (clientId && clientId != token.OAuth2Client.client_id) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
 			}
-			if (!token.User && username != token.User.email) {
-				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND);
-			}
+
 			return token.User.setPassword(newPassword);
 		}
 	).then(
 		function() {
+			return token.consume();
+		}
+	).then(
+		function() {
 			res.status(200).json({success: true});
-			logger.debug('[User][Password][SUCCESS][type force-password][username', username, '][token', tokenKey, '][clientId', clientId, ']');
+			logger.debug('[User][Password][SUCCESS][type force-password][token', tokenKey, '][clientId', clientId, ']');
 		}
 	).catch(
 		function(err) {
+			console.log(err);
 			res.status(400).json({success: false, reason: err.message});
-			logger.debug('[User][Password][FAIL][type force-password][username', username, '][token', tokenKey, '][clientId', clientId, '][err', err, ']');
+			logger.debug('[User][Password][FAIL][type force-password][token', tokenKey, '][clientId', clientId, '][err', err, ']');
 		}
 	);
 }
