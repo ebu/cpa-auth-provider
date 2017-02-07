@@ -45,15 +45,9 @@ function createOAuth2Client(done) {
 }
 
 function createUser(userTemplate) {
-	return new Promise(
-		function(resolve, reject) {
-			db.User.create(userTemplate).then(
-				function (user) {
-					user.setPassword(userTemplate.password).then(resolve, reject);
-				},
-				reject);
-		}
-	);
+	return db.User.create(userTemplate).then(function (user) {
+		return user.setPassword(userTemplate.password);
+	});
 }
 
 function createFakeUser(done) {
@@ -153,13 +147,17 @@ describe('POST /oauth2/token', function () {
 			var decoded = jwtHelper.decode(this.res.body.access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER.id);
 		});
 
 		it('should have token type Bearer', function () {
 			expect(this.res.body.token_type).equal('Bearer');
+		});
+
+		it('should send a refresh token', function () {
+			expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
 		});
 	});
 
@@ -190,13 +188,17 @@ describe('POST /oauth2/token', function () {
 			var decoded = jwtHelper.decode(this.res.body.access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER2.id);
 		});
 
 		it('should have token type Bearer', function () {
 			expect(this.res.body.token_type).equal('Bearer');
+		});
+
+		it('should send a refresh token', function () {
+			expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
 		});
 	});
 
@@ -270,7 +272,7 @@ describe('GET /oauth2/dialog/authorize', function () {
 			});
 
 			it('should reject the request', function () {
-				expect(this.res.statusCode).equal(403);
+				expect(this.res.statusCode).equal(500);
 			});
 		});
 
@@ -333,7 +335,7 @@ describe('GET /oauth2/dialog/authorize', function () {
 			});
 
 			it('should reject the request', function () {
-				expect(this.res.statusCode).equal(403);
+				expect(this.res.statusCode).equal(500);
 			});
 		});
 
@@ -431,7 +433,7 @@ describe('OAuth2 Implicit Flow', function () {
 			var decoded = jwtHelper.decode(access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER.id);
 		});
@@ -520,13 +522,17 @@ describe('OAuth2 Authorization Code Flow', function () {
 			var decoded = jwtHelper.decode(this.res.body.access_token);
 			expect(decoded.iss).equal('cpa');
 			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).equal(36000);
+			expect(decoded.exp).match(/[0-9]+/);
 			expect(decoded.cli).equal(CLIENT.id);
 			expect(decoded.sub).equal(USER.id);
 		});
 
 		it('should have token type Bearer', function () {
 			expect(this.res.body.token_type).equal('Bearer');
+		});
+
+		it('should send a refresh token', function () {
+			expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
 		});
 	});
 });

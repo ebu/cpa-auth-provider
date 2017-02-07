@@ -12,6 +12,7 @@ ADD models /src/models
 ADD public /src/public
 ADD routes /src/routes
 ADD views /src/views
+ADD templates /src/templates
 ADD package.json /src/package.json
 ADD config.js /src/config.js
 # TODO find better way to run tests without adding test file to the image

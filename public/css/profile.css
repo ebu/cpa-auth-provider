@@ -39,6 +39,10 @@
     margin-top: 20px;
 }
 
+.delete-container {
+    margin-top: 10px;
+}
+
 @media (max-width: 767px) {
     .h4, h4 {
         font-size: 25px;

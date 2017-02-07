@@ -4,6 +4,7 @@ var db = require('../../../models');
 var generate = require('../../../lib/generate');
 var jwtHelper = require('../../../lib/jwt-helper');
 var logger = require('../../../lib/logger');
+var oauthTokenHelper = require('../../../lib/oauth2-token');
 
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the
@@ -17,7 +18,8 @@ exports.authorization_code = function (client, code, redirectURI, done) {
     db.OAuth2AuthorizationCode.findOne({
         where: {
             authorization_code: code
-        }
+        },
+		include: [db.User]
     }).then(function (authorizationCode) {
         if (!authorizationCode) {
 			logger.debug('[AuthorizationCode][Exchange][Code not found]');
@@ -31,8 +33,7 @@ exports.authorization_code = function (client, code, redirectURI, done) {
 			logger.debug('[AuthorizationCode][Exchange][redirectURI',redirectURI,'][expected', authorizationCode.redirect_uri, ']');
             return done(null, false);
         }
-        var token = jwtHelper.generate(authorizationCode.user_id, 10 * 60 * 60, { cli: authorizationCode.oauth2_client_id });
-        return done(null, token);
+        return provideAccessToken(client, authorizationCode.User, '', done);
         // var token = generate.accessToken();
         // db.AccessToken.create({
 		//
@@ -48,3 +49,31 @@ exports.authorization_code = function (client, code, redirectURI, done) {
         return done(err);
 	});
 };
+
+function provideAccessToken(client, user, scope, done) {
+	try {
+		var accessToken, refreshToken;
+
+		oauthTokenHelper.generateAccessToken(client, user).then(
+			function (_accessToken) {
+				accessToken = _accessToken;
+				return oauthTokenHelper.generateRefreshToken(client, user, scope);
+			}
+		).then(
+			function (_refreshToken) {
+				refreshToken = _refreshToken;
+				return oauthTokenHelper.generateTokenExtras(client, user);
+			}
+		).then(
+			function (_extras) {
+				return done(null, accessToken, refreshToken, _extras);
+			}
+		).catch(
+			function (err) {
+				logger.debug('[OAuth2][ResourceOwner][FAIL][err', err, ']');
+			}
+		);
+	} catch (e) {
+		return done(e);
+	}
+}

@@ -4,4 +4,11 @@
 
 <%- main_content %>
 
+<% if (expiresAt) { %>
+<div>Expires at <%= expiresAt %>.</div>
+<% } %>
+<% if (refreshToken) { %>
+<a href="/auth/refresh" class="btn btn-info">Use Refresh Token</a>
+<% } %>
+
 <% include layout/foot %>

@@ -1,9 +1,9 @@
 "use strict";
 
-var config =     require('../../config');
-var db =         require('../../models');
+var config = require('../../config');
+var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
-var fs =       require('fs');
+var fs = require('fs');
 
 
 var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
@@ -30,15 +30,19 @@ var routes = function (router) {
     });
 
     router.get('/:broadcaster?/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
-        db.User.findOne({where: {
-            id: req.user.id
-        }}).then(function (user) {
+        db.User.findOne({
+            where: {
+                id: req.user.id
+            }
+        }).then(function (user) {
             if (!user) {
                 return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
             } else {
-                db.UserProfile.findOrCreate({where: {
-                    user_id: req.user.id
-                }}).spread(function (profile) {
+                db.UserProfile.findOrCreate({
+                    where: {
+                        user_id: req.user.id
+                    }
+                }).spread(function (profile) {
                     var tpl = './user/profile.ejs';
                     var broadcaster = req.params.broadcaster || false;
                     var brandingMode = broadcaster !== false;
@@ -56,8 +60,8 @@ var routes = function (router) {
                         }
                     };
 
-                    if(broadcaster && fs.existsSync(__dirname + '/../../views/user/broadcaster/profile-'+broadcaster+'.ejs')) {
-                        tpl = './user/broadcaster/profile-'+broadcaster+'.ejs';
+                    if (broadcaster && fs.existsSync(__dirname + '/../../views/user/broadcaster/profile-' + broadcaster + '.ejs')) {
+                        tpl = './user/broadcaster/profile-' + broadcaster + '.ejs';
                     }
 
                     res.render(tpl, data);
@@ -74,22 +78,29 @@ var routes = function (router) {
         req.checkBody('confirm_password', '"Confirm Password" field is empty').notEmpty();
         req.checkBody('password', '"New Password" field does not match the confirmation password').equals(req.body.confirm_password);
 
-        req.getValidationResult().then(function(result) {
+        req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                db.User.findOne({where: {
-                    id: req.user.id
-                }}).then(function (user) {
+                db.User.findOne({
+                    where: {
+                        id: req.user.id
+                    }
+                }).then(function (user) {
                     if (!user) {
                         return res.status(401).send({errors: [{msg: USER_NOT_FOUND}]});
                     } else {
                         user.verifyPassword(req.body.previous_password).then(function (isMatch) {
                             // if user is found and password is right change password
                             if (isMatch) {
-                                user.setPassword(req.body.password).done(function (err, result) {
-                                    res.json({msg: SUCESS_PASS_CHANGED});
-                                });
+                                user.setPassword(req.body.password).then(
+                                    function() {
+										res.json({msg: SUCESS_PASS_CHANGED});
+                                    },
+                                    function(err) {
+										res.status(500).json({errors: [err]});
+                                    }
+                                );
                             } else {
                                 res.status(401).json({errors: [{msg: INCORRECT_PREVIOUS_PASS}]});
                             }

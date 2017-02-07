@@ -52,19 +52,39 @@
 .alert .glyphicon{
     vertical-align: -1px;
 }
-
+/*
+************
+************ GENERAL
+************
+*/
+.panel {
+    margin: 15px 0;
+}
+.panel .panel-body {
+    padding: 20px 15px;
+}
+.panel .panel-body > h1 {
+    margin: 0 0 20px 0;
+    font-size: 30px;
+}
+.panel .last-link {
+    margin: 15px 0 0 0;
+}
+.error-message {
+    display: none;
+}
 /*
 ************
 ************ LOGIN
 ************
 */
-#login h1.title {
-    font-size: 30px;
-}
 #login .link-center {
     display: block;
     margin: auto;
     text-align: center;
+}
+#login #password-recovery {
+    font-size: 0.9em;
 }
 
 #login h1.title span.glyphicon{
@@ -101,4 +121,13 @@
 
 #verify-mail h1 span.glyphicon {
     vertical-align: -5px;
+}
+
+@media screen and (max-height: 575px) {
+    #rc-imageselect, .g-recaptcha {
+        transform: scale(0.92);
+        -webkit-transform: scale(0.92);
+        transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+    }
 }

@@ -63,6 +63,7 @@ var callbackServer = process.env.OAUTH2_CALLBACK || 'http://192.168.99.100:3001'
 var httpPort = process.env.HTTP_PORT ? process.env.HTTP_PORT : 3000;
 
 oauth2_config = {
+	passReqToCallback: true,
     requestTokenURL: serverInternal + '/oauth2/request_token',
     publicTokenUrl: server + '/oauth2/token',
     tokenURL: serverInternal + '/oauth2/token',
@@ -75,15 +76,25 @@ oauth2_config = {
 };
 
 passport.use('oauth2', new OAuth2Strategy(oauth2_config,
-    function(token, refreshToken, profile, done) {
+    function(req, token, refreshToken, params, profile, done) {
         //User.findOrCreate(..., function(err, user) {
         //    done(err, user);
         //});
+        updateSession(req.session, refreshToken, params.expires_in);
+        console.log('Params:', params);
         console.log('Profile: ', profile);
         users[profile.id] = profile;
         done(null, profile);
     }
 ));
+
+function updateSession(session, refreshToken, expiresIn) {
+    console.log('exp', expiresIn);
+    if (expiresIn) {
+        session.expiresAt = Date.now() + expiresIn * 1000;
+    }
+    session.refreshToken = refreshToken;
+}
 
 app.get('/auth/oauth/callback',
     function (req,res,next){
@@ -98,11 +109,46 @@ app.get('/auth/oauth/callback',
 app.get('/protected',
     authHelper.ensureAuthenticated,
     function (req, res) {
-        res.render('index', { main_content: 'Hello '+ req.user.name + '!'});
+		var expiresAt = req.session.expiresAt ? new Date(req.session.expiresAt) : '';
+		console.log(expiresAt, '<-', req.session.expiresAt);
+		res.render('index', {
+			main_content: 'Hello ' + req.user.name + '!',
+			expiresAt: expiresAt,
+			refreshToken: !!req.session.refreshToken
+		});
     });
 
 app.get('/auth/oauth',
     passport.authenticate('oauth2'));
+
+app.get(
+    '/auth/refresh',
+    function (req, res) {
+
+        console.log('RT', req.session.refreshToken);
+        request.post(
+            {
+                url: oauth2_config.tokenURL,
+                form: {
+                    client_id: oauth2_config.clientID,
+                    client_secret: oauth2_config.clientSecret,
+                    grant_type: 'refresh_token',
+                    refresh_token: req.session.refreshToken,
+                }
+            },
+            function(error, response, body) {
+                if (!error) {
+					try {
+						body = JSON.parse(body);
+					} catch (e) {
+					}
+					updateSession(req.session, body.refresh_token, body.expires_in);
+				}
+                res.redirect('/protected');
+            }
+        )
+    }
+);
 
 app.get('/auth/logout',
     function (req, res) {
@@ -112,7 +158,13 @@ app.get('/auth/logout',
 
 app.get('/', function (req, res) {
     loginUrl = "/auth/oauth";
-    res.render('code', { loginUrl: loginUrl, user: req.user });
+    var expiresAt = req.session.expiresAt ? new Date(new Date().getTime(req.session.expiresAt)) : '';
+	res.render('code', {
+		loginUrl: loginUrl,
+		user: req.user,
+		expiresAt: expiresAt,
+		refreshToken: req.session.refreshToken,
+	});
 });
 
 app.get('/implicit', function (req, res) {

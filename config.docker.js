@@ -14,6 +14,32 @@ module.exports = {
 
   },
 
+  mail: {
+    sending: {
+      // transport: 'sendmail'
+      // transport: 'stream'
+      transport: 'gmail',
+      username: 'ebuidp@gmail.com',
+      password: 'HalloEBU',
+      // transport: 'smtp',
+      // username: '',
+      // password: '',
+      // host: '',
+      // port: 465,
+      // secure: true
+    },
+    from: process.env.MAIL_FROM,
+    locale: process.env.MAIL_LOCALE,
+    host: process.env.IDP_HOST
+  },
+
+  password: {
+    // in sec
+    recovery_code_validity_duration: 1800,
+    // a new recovery code will be generated only if the current one has less that TTL
+    keep_recovery_code_until: 900
+  },
+
   jwtSecret: process.env.JWT_SECRET,
   jwt: {
     audience: 'cpa',
@@ -123,7 +149,7 @@ module.exports = {
   // in seconds.
   max_poll_interval: 5,
 
-  mail: {
-    from: process.env.EMAIL_FROM
+  oauth2: {
+    refresh_tokens_enabled: true
   }
 };

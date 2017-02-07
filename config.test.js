@@ -33,6 +33,19 @@ module.exports = {
     enabled: true
   },
 
+  mail: {
+    from:'no-reply@rts.ch',
+    locale:'ch_fr',
+    host:'http://localhost:3000'
+  },
+
+  password: {
+    // in sec
+    recovery_code_validity_duration: 1800,
+    // a new recovery code will be generated only if the current one has less that TTL
+    keep_recovery_code_until: 900
+  },
+
   auto_idp_redirect: 'local',
 
   db: {
@@ -115,7 +128,7 @@ module.exports = {
 
   server_clients: [],
 
-  mail: {
-    from: 'no-reply@rts.ch',
+  oauth2: {
+    refresh_tokens_enabled: true
   }
 };

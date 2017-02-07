@@ -7,6 +7,7 @@ var util = require('util');
 var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
+var codeHelper = require('../../lib/code-helper');
 
 
 var routes = function (router) {
@@ -52,10 +53,8 @@ var routes = function (router) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send("from", "to", "Please verify your email by clicking on the following link  \n\nhttp://localhost:3000/email_verify?email={{=it.email}}&code={{=it.code}}\n\n", {log: true}, {
-                email: user.email,
-                code: user.verificationCode
-            }, function () {
+            codeHelper.getOrGenereateEmailVerificationCode(user).then(function(code){
+                emailHelper.send(config.mail.from, user.email, 'Validation de votre email',  "validation-email", {log:true}, {host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)}, config.mail.local, function() {});
             });
             return res.status(204).send();
         }
