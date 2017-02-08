@@ -5,7 +5,6 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var jwtHelpers = require('../../lib/jwt-helper');
 
-var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
@@ -152,12 +151,21 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send(config.mail.from, user.email, 'Validation de votre email',  "validation-email", {log: false}, {
-                host: config.mail.host,
-                mail: encodeURIComponent(user.email),
-                code: encodeURIComponent(user.verificationCode)
-            }, config.mail.local, function () {
-            });
+            emailHelper.send(
+                config.mail.from,
+                user.email,
+                "validation-email",
+                {log: false},
+                {
+                    host: config.mail.host,
+                    mail: encodeURIComponent(user.email),
+                    code: encodeURIComponent(user.verificationCode)
+                },
+                config.mail.local
+            ).then(
+                function() {},
+                function(err) {}
+            );
             return res.status(204).send({success: true, msg: "email sent"});
         }
 
