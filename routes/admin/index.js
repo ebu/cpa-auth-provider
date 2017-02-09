@@ -8,11 +8,11 @@ var generate      = require('../../lib/generate');
 var role   = require('../../lib/role');
 
 module.exports = function(router) {
-  router.get('/admin', [[authHelper.authenticateFirst, role.can('access admin page')], role.can('access admin page')], function(req, res) {
+  router.get('/admin', [authHelper.authenticateFirst, role.can('access admin page')], function(req, res) {
     res.render('./admin/index.ejs');
   });
 
-  router.get('/admin/domains', [authHelper.authenticateFirst, role.can('access admin page')], function(req, res) {
+  router.get('/admin/domains', authHelper.authenticateFirst, function(req, res) {
     db.Domain.findAll()
       .then(
         function(domains) {
@@ -24,7 +24,7 @@ module.exports = function(router) {
         });
   });
 
-  router.get('/admin/domains/add', [authHelper.authenticateFirst, role.can('access admin page')], function(req, res) {
+  router.get('/admin/domains/add', authHelper.authenticateFirst, function(req, res) {
     res.render('./admin/add_domain.ejs');
   });
 
