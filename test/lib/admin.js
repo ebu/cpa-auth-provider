@@ -2,40 +2,40 @@
 
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
-var db       = require('../../models');
+var db = require('../../models');
 
 var requestHelper = require('../request-helper');
-var dbHelper      = require('../db-helper');
+var dbHelper = require('../db-helper');
 
-var initDatabase = function(done) {
+var initDatabase = function (done) {
 
     db.User.create({
-        id:           5,
-        email:        'testuser',
+        id: 5,
+        email: 'testuser',
         provider_uid: 'testuser'
     })
-        .then(function(user) {
+        .then(function (user) {
             return user.setPassword('testpassword');
         })
-        .then(function(user) {
+        .then(function (user) {
             return db.Domain.create({
-                id:           5,
-                name:         'example-service.bbc.co.uk',
+                id: 5,
+                name: 'example-service.bbc.co.uk',
                 display_name: 'BBC',
                 access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
             });
         })
         .then(
-            function() {
+            function () {
                 done();
             },
-            function(error) {
+            function (error) {
                 done(new Error(error));
             });
 };
 
-var resetDatabase = function(done) {
-    dbHelper.clearDatabase(function(err) {
+var resetDatabase = function (done) {
+    dbHelper.clearDatabase(function (err) {
         if (err) {
             done(err);
         }
@@ -45,117 +45,118 @@ var resetDatabase = function(done) {
     });
 };
 
-describe('GET /admin', function() {
+describe('GET /admin', function () {
 
-    context('When the user is authenticated and is not admin', function() {
+    context('When the user is authenticated and is not admin', function () {
+
+        var self = this;
+
         before(resetDatabase);
 
-        before(function(done) {
-            requestHelper.login(this, done);
+        before(function (done) {
+            // Login with a non admin login
+            requestHelper.login(self, done);
         });
 
-        before(function(done) {
-            requestHelper.sendRequest(this, '/admin', {
-                cookie:   this.cookie,
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin', {
+                cookie: self.cookie,
                 parseDOM: true
             }, done);
         });
 
-        it('should return status 403', function() {
-            expect(this.res.statusCode).to.equal(403);
+        it('should return status 403', function () {
+            expect(self.res.statusCode).to.equal(403);
         });
     });
 
-    // TODO context('When the user is authenticated and is admin', function() {
-    //
-    //     before(function(done) {
-    //         db.Role.create({
-    //             id:     1,
-    //             label: 'admin'
-    //         }).then(function(){
-    //             done();
-    //         });
-    //     });
-    //
-    //     before(function(done) {
-    //         db.User.create({
-    //             id:           100,
-    //             email:        'monadmin@ebu.fr',
-    //             username:     'admin',
-    //             password:     'admin'
-    //         }).then(function() {
-    //             done();
-    //         });
-    //     });
-    //
-    //     before(function(done) {
-    //         var loginUrl = '/login';
-    //
-    //         request
-    //             .post(loginUrl)
-    //             .type('form')
-    //             .send({email: 'monadmin@ebu.fr', username: 'admin', password: 'admin'})
-    //             .end(function (err, res) {
-    //                 console.log("RES", res);
-    //                 this.cookie = res.headers['set-cookie'];
-    //                 done(err);
-    //             });
-    //     });
-    //
-    //     before(function(done) {
-    //
-    //         requestHelper.sendRequest(this, '/admin', {
-    //             cookie:   this.cookie,
-    //             parseDOM: true
-    //         }, done);
-    //     });
-    //
-    //     it('should return status 200', function() {
-    //         expect(this.res.statusCode).to.equal(200);
-    //     });
-    //
-    //     it('should return HTML', function() {
-    //         expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-    //     });
-    // });
+    context('When the user is authenticated and is admin', function () {
 
-    context('When the user is not authenticated', function() {
-        before(function(done) {
-            requestHelper.sendRequest(this, '/admin', null, done);
+        var self = this;
+
+        before(function (done) {
+            db.Role.create({
+                id: 1,
+                label: 'admin'
+            }).then(function () {
+                done();
+            });
         });
 
-        it('should redirect to the login page', function() {
+        before(function (done) {
+            db.User.create({
+                id: 100,
+                email: 'monadmin@ebu.fr',
+                username: 'admin',
+                role_id: 1
+            }).then(function (user) {
+                user.setPassword('admin').then(function () {
+                    done();
+                })
+            });
+        });
+
+        before(function (done) {
+            requestHelper.loginCustom('monadmin@ebu.fr', 'admin', self, done);
+        });
+
+        before(function (done) {
+            // console.log("the cookie", self.cookie);
+            requestHelper.sendRequest(this, '/admin', {
+                cookie: self.cookie,
+                parseDOM: true
+            }, done);
+        });
+
+        it('should return status 200', function () {
+            expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function () {
+            expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+    });
+
+    context('When the user is not authenticated', function () {
+
+        var self = this;
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin', null, done);
+        });
+
+        it('should redirect to the login page', function () {
             var urlPrefix = requestHelper.urlPrefix;
-            expect(this.res.statusCode).to.equal(302);
-            expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
+            expect(self.res.statusCode).to.equal(302);
+            expect(self.res.headers.location).to.equal(urlPrefix + "/auth");
             // TODO: check redirect location and page to return to after login
         });
     });
 });
 
-describe('GET /admin/domains', function() {
-    context('When the user is authenticated', function() {
-        before(function(done) {
+describe('GET /admin/domains', function () {
+    context('When the user is authenticated', function () {
+        before(function (done) {
             requestHelper.login(this, done);
         });
 
-        before(function(done) {
+        before(function (done) {
             requestHelper.sendRequest(this, '/admin/domains', {
-                cookie:   this.cookie,
+                cookie: this.cookie,
                 parseDOM: true
             }, done);
         });
 
-        it('should return status 200', function() {
+        it('should return status 200', function () {
             expect(this.res.statusCode).to.equal(200);
         });
 
-        it('should return HTML', function() {
+        it('should return HTML', function () {
             expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
         });
 
-        describe('the HTML page', function() {
-            it('should show the existing domains', function() {
+        describe('the HTML page', function () {
+            it('should show the existing domains', function () {
                 expect(this.$('table > tbody > tr').length).to.equal(1);
                 expect(this.$('table > tbody > tr:nth-child(1) > td').length).to.equal(3);
 
@@ -174,12 +175,12 @@ describe('GET /admin/domains', function() {
         });
     });
 
-    context('When the user is not authenticated', function() {
-        before(function(done) {
+    context('When the user is not authenticated', function () {
+        before(function (done) {
             requestHelper.sendRequest(this, '/admin/domains', null, done);
         });
 
-        it('should redirect to the login page', function() {
+        it('should redirect to the login page', function () {
             var urlPrefix = requestHelper.urlPrefix;
             expect(this.res.statusCode).to.equal(302);
             expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
@@ -188,31 +189,31 @@ describe('GET /admin/domains', function() {
     });
 });
 
-describe('GET /admin/domains/add', function() {
-    context('When the user is authenticated', function() {
+describe('GET /admin/domains/add', function () {
+    context('When the user is authenticated', function () {
         before(resetDatabase);
 
-        before(function(done) {
+        before(function (done) {
             requestHelper.login(this, done);
         });
 
-        before(function(done) {
+        before(function (done) {
             requestHelper.sendRequest(this, '/admin/domains/add', {
-                cookie:   this.cookie,
+                cookie: this.cookie,
                 parseDOM: true
             }, done);
         });
 
-        it('should return status 200', function() {
+        it('should return status 200', function () {
             expect(this.res.statusCode).to.equal(200);
         });
 
-        it('should return HTML', function() {
+        it('should return HTML', function () {
             expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
         });
 
-        describe('the HTML page', function() {
-            it('should contain a form with domain parameters', function() {
+        describe('the HTML page', function () {
+            it('should contain a form with domain parameters', function () {
                 expect(this.$('input#inputDisplayName').length).to.equal(1);
                 expect(this.$('input#inputDisplayName').attr('type')).to.equal('text');
 
@@ -222,12 +223,12 @@ describe('GET /admin/domains/add', function() {
         });
     });
 
-    context('When the user is not authenticated', function() {
-        before(function(done) {
+    context('When the user is not authenticated', function () {
+        before(function (done) {
             requestHelper.sendRequest(this, '/admin/domains/add', null, done);
         });
 
-        it('should redirect to the login page', function() {
+        it('should redirect to the login page', function () {
             var urlPrefix = requestHelper.urlPrefix;
             expect(this.res.statusCode).to.equal(302);
             expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
@@ -236,63 +237,65 @@ describe('GET /admin/domains/add', function() {
     });
 });
 
-describe('POST /admin/domains', function() {
-    before(function() {
+describe('POST /admin/domains', function () {
+    before(function () {
         sinon.stub(generate, 'accessToken').returns('51f6ceb51ac44ea3899bb9f07dd120e4');
     });
 
-    after(function() {
+    after(function () {
         generate.accessToken.restore();
     });
 
-    context('When the user is authenticated', function() {
+    context('When the user is authenticated', function () {
         before(resetDatabase);
 
-        before(function(done) {
+        before(function (done) {
             requestHelper.login(this, done);
         });
 
-        before(function(done) {
+        before(function (done) {
             requestHelper.sendRequest(this, '/admin/domains', {
                 method: 'post',
                 cookie: this.cookie,
-                type:   'form',
-                data:   { display_name: 'Test', name: 'example.com' }
+                type: 'form',
+                data: {display_name: 'Test', name: 'example.com'}
             }, done);
         });
 
-        it('should redirect to the domain listing page', function() {
+        it('should redirect to the domain listing page', function () {
             var urlPrefix = requestHelper.urlPrefix;
             expect(this.res.statusCode).to.equal(302);
             expect(this.res.headers.location).to.equal(urlPrefix + "/admin/domains");
             // TODO: check redirect location and page to return to after login
         });
 
-        describe("the database", function() {
-            before(function(done) {
+        describe("the database", function () {
+            before(function (done) {
                 var self = this;
 
-                db.Domain.findAll({ order: [['created_at']]})
-                    .then(function(domains) {
+                db.Domain.findAll({order: [['created_at']]})
+                    .then(function (domains) {
                             self.domains = domains;
                             done();
                         },
-                        function(error) {
+                        function (error) {
                             done(error);
                         });
             });
 
-            it("should contain a new domain", function() {
+            it("should contain a new domain", function () {
                 // jshint expr: true
                 expect(this.domains).to.be.ok;
                 // jshint expr: false
                 expect(this.domains.length).to.equal(2);
             });
 
-            describe("the domain", function() {
-                before(function() { this.domain = this.domains[1]; });
+            describe("the domain", function () {
+                before(function () {
+                    this.domain = this.domains[1];
+                });
 
-                it("should have the correct attributes", function() {
+                it("should have the correct attributes", function () {
                     expect(this.domain.display_name).to.equal('Test');
                     expect(this.domain.name).to.equal('example.com');
                     expect(this.domain.access_token).to.equal('51f6ceb51ac44ea3899bb9f07dd120e4');
@@ -301,18 +304,18 @@ describe('POST /admin/domains', function() {
         });
     });
 
-    context('When the user is not authenticated', function() {
+    context('When the user is not authenticated', function () {
         before(resetDatabase);
 
-        before(function(done) {
+        before(function (done) {
             requestHelper.sendRequest(this, '/admin/domains', {
                 method: 'post',
-                type:   'form',
-                data:   { display_name: 'Test', name: 'example.com' }
+                type: 'form',
+                data: {display_name: 'Test', name: 'example.com'}
             }, done);
         });
 
-        it('should return status 401', function() {
+        it('should return status 401', function () {
             expect(this.res.statusCode).to.equal(401);
         });
     });

@@ -72,12 +72,16 @@ module.exports = {
     },
 
     login: function (context, done) {
+        this.loginCustom('testuser','testpassword', context, done);
+    },
+
+    loginCustom: function (email, password, context, done) {
         var loginUrl = this.urlPrefix + '/login';
 
         request
             .post(loginUrl)
             .type('form')
-            .send({email: 'testuser', username: 'testuser', password: 'testpassword'})
+            .send({email: email, password: password})
             .end(function (err, res) {
                 context.cookie = res.headers['set-cookie'];
                 done(err);
