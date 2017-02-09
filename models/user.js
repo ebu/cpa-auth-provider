@@ -3,6 +3,7 @@
 var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
 var config = require('../config');
+var constant = require ('../lib/constant');
 
 
 module.exports = function (sequelize, DataTypes) {
@@ -44,6 +45,15 @@ module.exports = function (sequelize, DataTypes) {
             },
             hasChanged: function (displayName, photoUrl) {
                 return (this.display_name !== displayName || this.photo_url !== photoUrl);
+            },
+            isAdmin: function() {
+                return this.role_id === constant.ADMIN_ROLE;
+            },
+            grantAdmin: function() {
+                return this.updateAttributes({role_id: constant.ADMIN_ROLE});
+            },
+            ungrantAdmin: function() {
+                return this.updateAttributes({role_id: constant.OTHER_ROLE});
             }
         },
         associate: function (models) {
