@@ -1,0 +1,71 @@
+<% include ../layout/head %>
+
+<!-- TODO move it to an appropriate file -->
+<script type="text/javascript">
+    var ungrant = function (id) {
+        console.log("id", id);
+        $.post( '/admin/user/' + id + '/ungrant', function( data ) {
+            console.log("ungrant data", data);
+            updateUi(id, data);
+        });
+    };
+    var grant = function (id) {
+        console.log("id", id);
+        $.post( '/admin/user/' + id + '/grant', function( data ) {
+            console.log("grant data", data);
+            updateUi(id, data);
+        });
+    };
+
+    var updateUi = function (id, data){
+        if (data){
+            console.log("admin", data.admin);
+
+            if (data.admin){
+                $('#adminTxt'+id).text('Yes');
+                $('#btnContainer'+id).html("<button id=\"button"+id+"\" class=\"btn btn-danger\" onclick=\"javascript:ungrant("+id+")\">Remove Admin accesses</button>");
+            } else {
+                $('#adminTxt'+id).text('No');
+                $('#btnContainer'+id).html("<button id=\"button"+id+"\" class=\"btn btn-success\" onclick=\"javascript:grant("+id+")\">Grant Admin accesses</button>");
+            }
+        }
+    }
+</script>
+
+<h1>Users</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>email</th>
+        <th>admin</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (var i = 0; i < users.length; i++) { %>
+    <tr>
+        <td><%= users[i].email %></td>
+        <td>
+            <% if(users[i].isAdmin()){ %>
+            <span id="adminTxt<%=users[i].id%>">Yes</span>
+            <% } else { %>
+            <span id="adminTxt<%=users[i].id%>">No</span>
+            <% } %>
+        </td>
+        <td id="btnContainer<%= users[i].id %>">
+            <% if(users[i].isAdmin()){ %>
+            <button id="button<%= users[i].id %>" class="btn btn-danger" onclick="javascript:ungrant(<%= users[i].id %>)">Remove Admin accesses</button>
+            <% } else { %>
+            <button id="button<%= users[i].id %>" class="btn btn-success" onclick="javascript:grant(<%= users[i].id %>)">Grant Admin accesses</button>
+            <% } %>
+        </td>
+    </tr>
+    <% } %>
+    </tbody>
+</table>
+
+
+
+
+<% include ../layout/foot %>
