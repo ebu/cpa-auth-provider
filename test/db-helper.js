@@ -7,14 +7,15 @@ var async = require('async');
 module.exports = {
   clearDatabase: function(done) {
     var tables = [
-      'AccessTokens',
-      'OAuth2AuthorizationCodes',
-      'Clients',
-      'Domains',
-      'IdentityProviders',
-      'PairingCodes',
-      'Users',
-      'UserProfiles'
+        'AccessTokens',
+        'OAuth2AuthorizationCodes',
+        'Clients',
+        'Domains',
+        'IdentityProviders',
+        'PairingCodes',
+        'Users',
+        'Roles',
+        'UserProfiles'
     ];
 
     var deleteData = function(table, done) {
