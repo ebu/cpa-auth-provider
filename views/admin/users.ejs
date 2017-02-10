@@ -4,14 +4,14 @@
 <script type="text/javascript">
     var ungrant = function (id) {
         console.log("id", id);
-        $.post( '/admin/user/' + id + '/ungrant', function( data ) {
+        $.post( '/admin/users/' + id + '/ungrant', function( data ) {
             console.log("ungrant data", data);
             updateUi(id, data);
         });
     };
     var grant = function (id) {
         console.log("id", id);
-        $.post( '/admin/user/' + id + '/grant', function( data ) {
+        $.post( '/admin/users/' + id + '/grant', function( data ) {
             console.log("grant data", data);
             updateUi(id, data);
         });

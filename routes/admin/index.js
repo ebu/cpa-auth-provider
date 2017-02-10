@@ -80,7 +80,7 @@ module.exports = function (router) {
                 });
     });
 
-    router.post('/admin/user/:user_id/grant', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
+    router.post('/admin/users/:user_id/grant', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
         db.User.findOne({where: {id: req.params.user_id}})
             .then(
                 function (user) {
@@ -91,7 +91,7 @@ module.exports = function (router) {
     });
 
 
-    router.post('/admin/user/:user_id/ungrant', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
+    router.post('/admin/users/:user_id/ungrant', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
         db.User.findOne({where: {id: req.params.user_id}})
             .then(
                 function (user) {
