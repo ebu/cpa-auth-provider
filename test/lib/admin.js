@@ -74,6 +74,8 @@ describe('GET /admin', function () {
 
         var self = this;
 
+        before(resetDatabase);
+
         before(function (done) {
             db.Role.create({
                 id: 1,
@@ -121,6 +123,8 @@ describe('GET /admin', function () {
 
         var self = this;
 
+        before(resetDatabase);
+
         before(function (done) {
             requestHelper.sendRequest(self, '/admin', null, done);
         });
@@ -136,6 +140,9 @@ describe('GET /admin', function () {
 
 describe('GET /admin/domains', function () {
     context('When the user is authenticated', function () {
+
+        before(resetDatabase);
+
         before(function (done) {
             requestHelper.login(this, done);
         });
