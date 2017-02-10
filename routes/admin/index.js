@@ -49,7 +49,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/users', authHelper.authenticateFirst, function (req, res) {
+    router.get('/admin/users', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
         db.User.findAll()
             .then(
                 function (users) {
@@ -62,7 +62,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/users/csv', authHelper.authenticateFirst, function (req, res) {
+    router.get('/admin/users/csv', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
         db.User.findAll()
             .then(
                 function (resultset) {
@@ -80,7 +80,7 @@ module.exports = function (router) {
                 });
     });
 
-    router.post('/admin/user/:user_id/grant', authHelper.authenticateFirst, function (req, res) {
+    router.post('/admin/user/:user_id/grant', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
         db.User.findOne({where: {id: req.params.user_id}})
             .then(
                 function (user) {
@@ -91,7 +91,7 @@ module.exports = function (router) {
     });
 
 
-    router.post('/admin/user/:user_id/ungrant', authHelper.authenticateFirst, function (req, res) {
+    router.post('/admin/user/:user_id/ungrant', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
         db.User.findOne({where: {id: req.params.user_id}})
             .then(
                 function (user) {
