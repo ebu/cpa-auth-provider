@@ -6,6 +6,7 @@ var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
 var role = require('../../lib/role');
+var csv = require('express-csv');
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
@@ -57,6 +58,25 @@ module.exports = function (router) {
                 function (err) {
                     res.send(500);
                     logger.debug('[Admins][get /admin/users][error', err, ']');
+                });
+    });
+
+
+    router.get('/admin/users/csv', authHelper.authenticateFirst, function (req, res) {
+        db.User.findAll()
+            .then(
+                function (resultset) {
+                    var head = ['email', 'admin'];
+                    var lines = [];
+                    lines.push(head);
+                    for (var i = 0 ; i < resultset.length ; i++){
+                        lines.push([resultset[i].email, resultset[i].isAdmin()]);
+                    }
+                    res.csv(lines);
+                },
+                function (err) {
+                    res.send(500);
+                    logger.debug('[Admins][get /admin/users/csv][error', err, ']');
                 });
     });
 

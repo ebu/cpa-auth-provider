@@ -32,6 +32,7 @@
     "email-templates": "^2.5.4",
     "errorhandler": "~1.4.3",
     "express": "~4.13.4",
+    "express-csv": "^0.6.0",
     "express-namespace": "~0.1.1",
     "express-recaptcha": "^2.1.0",
     "express-session": "~1.13.0",
