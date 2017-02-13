@@ -9,54 +9,63 @@
  */
 
 switch (process.env.NODE_ENV) {
-  case 'development':
-    console.log('Resetting local database');
-    break;
+    case 'development':
+        console.log('Resetting local database');
+        break;
 
-  case 'test':
-    console.log('Resetting test database');
-    break;
+    case 'test':
+        console.log('Resetting test database');
+        break;
 
-  default:
-    console.error('Unknown environment\r\nUsage: NODE_ENV=[development|test] bin/init-db\r\nExiting...');
-    process.exit(1);
-    break;
+    default:
+        console.error('Unknown environment\r\nUsage: NODE_ENV=[development|test] bin/init-db\r\nExiting...');
+        process.exit(1);
+        break;
 }
 
-var db     = require('../models');
+var db = require('../models');
 var config = require('../config');
 
 db.sequelize
-  .sync({ force: true })
-  .then(
-    function() {
-      console.log('Synchronization done.');
+    .sync({force: true})
+    .then(
+        function () {
+            console.log('Synchronization done.');
 
-      if (process.env.NODE_ENV === 'development') {
-        db.Role
-          .bulkCreate(config.roles)
-          .then(function() {
-            console.log('[ROLE] Database populated');
-          });
-        db.Domain
-          .bulkCreate(config.domains)
-          .then(function() {
-            console.log('[DOMAIN] Database populated');
+            if (process.env.NODE_ENV === 'development') {
+                db.Role
+                    .bulkCreate(config.roles)
+                    .then(function () {
+                        console.log('[ROLE] Database populated');
+                    });
+                db.User
+                    .bulkCreate(config.users)
+                    .then(function () {
+                        db.User.findOne({where: {id: 1}})
+                            .then(function (user) {
+                                return user.setPassword("admin");
+                            });
+                        console.log('[USER] Database populated');
+                    });
+                db.Domain
+                    .bulkCreate(config.domains)
+                    .then(function () {
+                        console.log('[DOMAIN] Database populated');
 
-            if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
-              db.OAuth2Client.bulkCreate(config.oauth2_clients).then(function() {
-                console.log('[OAUTH2_CLIENT] Database populated');
-              });
+                        if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
+                            db.OAuth2Client.bulkCreate(config.oauth2_clients).then(function () {
+                                console.log('[OAUTH2_CLIENT] Database populated');
+                            });
+                        }
+                        else {
+                            console.log("No server clients configured");
+                        }
+                    });
+
             }
-            else {
-              console.log("No server clients configured");
-            }
-          });
-
-      }
-    },
-    function(err) {
-	  console.log('An error occurred while create the table.');
-	  console.error(err);
-	}
-  );
+        },
+        function (err) {
+            console.log('An error occurred while create the table.');
+            console.error(err);
+        }
+    );
