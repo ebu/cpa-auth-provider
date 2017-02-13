@@ -127,6 +127,7 @@ describe('GET /admin/users security', function () {
             before(function (done) {
                 requestHelper.sendRequest(self, '/admin/users/csv', {
                     cookie: self.cookie,
+                    method: 'get'
                 }, done);
             });
 
@@ -140,6 +141,7 @@ describe('GET /admin/users security', function () {
             before(function (done) {
                 requestHelper.sendRequest(self, '/admin/users', {
                     cookie: self.cookie,
+                    method: 'get'
                 }, done);
             });
 
@@ -152,14 +154,14 @@ describe('GET /admin/users security', function () {
 
     });
 
-    context('When the user is authenticated and is admin', function () {
+    context('When the user is authenticated and is admin, testing (un)grant', function () {
 
         var self = this;
 
         before(resetDatabase);
 
         before(function (done) {
-            // Login with a non admin login
+            // Login with an admin login
             requestHelper.login(self, done);
         });
 
@@ -190,43 +192,58 @@ describe('GET /admin/users security', function () {
             });
 
         });
+    });
 
-        //TODO make the 2 follings test pass
+    context('When the user is authenticated and is admin', function () {
 
-        // context('When the user request download cvs list', function () {
-        //     before(function (done) {
-        //         requestHelper.sendRequest(self, '/admin/users/csv', {
-        //             cookie: self.cookie,
-        //         }, done);
-        //     });
-        //
-        //     it('should return status 200', function () {
-        //         expect(self.res.statusCode).to.equal(200);
-        //     });
-        //
-        // });
-        //
-        // context('When the user request user list', function () {
-        //     before(function (done) {
-        //         requestHelper.sendRequest(self, '/admin/users', {
-        //             cookie: self.cookie,
-        //             method: 'get'
-        //         }, done);
-        //     });
-        //
-        //     it('should return status 200', function () {
-        //         expect(self.res.statusCode).to.equal(200);
-        //     });
-        //
-        // });
+        var self = this;
 
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with an admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/users/csv/', {
+                cookie: self.cookie,
+                method: 'get'
+            }, done);
+        });
+
+        it('should return status 200', function () {
+            expect(self.res.statusCode).to.equal(200);
+        });
 
     });
 
+    context('When the user is authenticated and is admin', function () {
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with an admin login
+            requestHelper.login(self, done);
+        });
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/users', {
+                cookie: self.cookie,
+                method: 'get'
+            }, done);
+        });
+
+        it('should return status 200', function () {
+            expect(self.res.statusCode).to.equal(200);
+        });
+
+    });
 
 });
 
-describe('GET /admin/users/<id>/grant', function () {
+describe('POST /admin/users/<id>/grant', function () {
     var self = this;
 
     before(resetDatabase);
@@ -259,7 +276,7 @@ describe('GET /admin/users/<id>/grant', function () {
 });
 
 
-describe('GET /admin/users/<id>/grant', function () {
+describe('POST /admin/users/<id>/grant', function () {
     var self = this;
 
     before(resetDatabase);

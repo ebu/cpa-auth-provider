@@ -6,7 +6,7 @@ var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
 var role = require('../../lib/role');
-var csv = require('express-csv');
+var csv = require('csv-string');
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, role.can('access admin page')], function (req, res) {
@@ -53,7 +53,7 @@ module.exports = function (router) {
         db.User.findAll()
             .then(
                 function (users) {
-                    res.render('./admin/users.ejs', {users: users});
+                    return res.render('./admin/users.ejs', {users: users});
                 },
                 function (err) {
                     res.send(500);
@@ -69,10 +69,15 @@ module.exports = function (router) {
                     var head = ['email', 'admin'];
                     var lines = [];
                     lines.push(head);
-                    for (var i = 0 ; i < resultset.length ; i++){
+                    for (var i = 0; i < resultset.length; i++) {
                         lines.push([resultset[i].email, resultset[i].isAdmin()]);
                     }
-                    res.csv(lines);
+
+                    var toDownload = csv.stringify(lines);
+
+                    res.setHeader('Content-disposition', 'attachment; filename=users.csv');
+                    res.setHeader('Content-type', 'text/csv');
+                    return res.send(toDownload);
                 },
                 function (err) {
                     res.send(500);
@@ -100,6 +105,5 @@ module.exports = function (router) {
                     });
                 });
     });
-
 
 };
