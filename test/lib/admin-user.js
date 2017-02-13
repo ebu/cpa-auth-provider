@@ -7,6 +7,11 @@ var db = require('../../models');
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
+var chai = require('chai')
+var chaiHttp = require('chai-http');
+
+chai.use(chaiHttp);
+
 var initDatabase = function (done) {
 
     db.Role
@@ -243,67 +248,164 @@ describe('GET /admin/users security', function () {
 
 });
 
-describe('POST /admin/users/<id>/grant', function () {
-    var self = this;
+describe('POST /admin/users/<id>/ungrant ', function () {
+    context('When target user is an admin', function () {
 
-    before(resetDatabase);
+        var self = this;
 
-    before(function (done) {
-        // Login with a non admin login
-        requestHelper.login(self, done);
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with a non admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/users/5/ungrant', {
+                cookie: self.cookie,
+                method: 'post'
+            }, done);
+        });
+
+        before(function (done) {
+            db.User.findOne({where: {id: 5}})
+                .then(function (user) {
+                    self.user = user;
+                    done();
+                })
+        });
+
+        it('should return status 200 and role_id should be 2', function () {
+            expect(self.res.statusCode).to.equal(200);
+            expect(self.user.role_id === 2);
+        });
+    });
+    context('When target user is not an admin', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with a non admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/users/6/ungrant', {
+                cookie: self.cookie,
+                method: 'post'
+            }, done);
+        });
+
+        before(function (done) {
+            db.User.findOne({where: {id: 6}})
+                .then(function (user) {
+                    self.user = user;
+                    done();
+                })
+        });
+
+        it('should return status 200', function () {
+            expect(self.res.statusCode).to.equal(200);
+            expect(self.user.role_id === 2);
+        });
+
     });
 
-    before(function (done) {
-        requestHelper.sendRequest(self, '/admin/users/5/ungrant', {
-            cookie: self.cookie,
-            method: 'post'
-        }, done);
-    });
-
-    before(function (done) {
-        db.User.findOne({where: {id: 5}})
-            .then(function (user) {
-                self.user = user;
-                done();
-            })
-    });
-
-    it('should return status 200', function () {
-        expect(self.res.statusCode).to.equal(200);
-        expect(self.user.role_id === 2);
-    });
 
 });
 
+describe('POST /admin/users/<id>/ungrant ', function () {
 
-describe('POST /admin/users/<id>/grant', function () {
+    context('when target user is not an admin', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with a non admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/users/6/grant', {
+                cookie: self.cookie,
+                method: 'post'
+            }, done);
+        });
+
+        before(function (done) {
+            db.User.findOne({where: {id: 6}})
+                .then(function (user) {
+                    self.user = user;
+                    done();
+                })
+        });
+
+        it('should return status 200 and role id shoud be 1', function () {
+            expect(self.res.statusCode).to.equal(200);
+            expect(self.user.role_id === 1);
+        });
+
+    });
+
+    context('when target user is an admin', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with a non admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/users/5/grant', {
+                cookie: self.cookie,
+                method: 'post'
+            }, done);
+        });
+
+        before(function (done) {
+            db.User.findOne({where: {id: 5}})
+                .then(function (user) {
+                    self.user = user;
+                    done();
+                })
+        });
+
+        it('should return status 200 and role id shoud be 1', function () {
+            expect(self.res.statusCode).to.equal(200);
+            expect(self.user.role_id === 1);
+        });
+    });
+});
+
+describe('GET /admin/users/csv', function () {
+
     var self = this;
 
     before(resetDatabase);
 
     before(function (done) {
-        // Login with a non admin login
+        // Login with an admin login
         requestHelper.login(self, done);
     });
 
     before(function (done) {
-        requestHelper.sendRequest(self, '/admin/users/6/grant', {
+        requestHelper.sendRequest(self, '/admin/users/csv/', {
             cookie: self.cookie,
-            method: 'post'
+            method: 'get'
         }, done);
-    });
-
-    before(function (done) {
-        db.User.findOne({where: {id: 6}})
-            .then(function (user) {
-                self.user = user;
-                done();
-            })
     });
 
     it('should return status 200', function () {
         expect(self.res.statusCode).to.equal(200);
-        expect(self.user.role_id === 1);
+        expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
+        expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
+        expect(self.res).to.have.header('content-length', '48');
+        expect(self.res.text).to.equal('email,admin\r\ntestuser,true\r\nuser@user.ch,false\r\n');
     });
+
 
 });
