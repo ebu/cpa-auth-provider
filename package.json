@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "chai": "~1.8.1",
+    "chai-jquery": "^2.0.0",
     "cheerio": "~0.13.1",
     "mocha": "~1.15.1",
     "sinon": "~1.7.3",
