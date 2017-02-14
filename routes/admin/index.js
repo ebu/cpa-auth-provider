@@ -54,15 +54,13 @@ module.exports = function (router) {
 
 
     router.get('/admin/users', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
-        db.Role.findOne({where: {label: permission.ADMIN_PERMISSION}}).then(function (role) {
-            var roleId = -1;
-            if (role){
-                roleId = role.id;
-            }
+
+        db.Role.findAll().then(function (roles) {
+
             db.User.findAll()
                 .then(
                     function (users) {
-                        return res.render('./admin/users.ejs', {users: users, adminId: roleId});
+                        return res.render('./admin/users.ejs', {users: users, roles: roles});
                     },
                     function (err) {
                         res.send(500);

@@ -58,14 +58,21 @@ module.exports = function (app, options) {
                         return res.status(400).json({success: false, msg: 'email already exists.'});
                     } else {
                         db.sequelize.sync().then(function () {
-                            var user = db.User.create({
-                                email: req.body.email,
-                            }).then(function (user) {
-								return user.setPassword(req.body.password);
-							}).then(function() {
-								res.json({success: true, msg: 'Successfully created new user.'});
-                            }).catch(function (err) {
-                                res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                                var roleId = -1;
+                                if (role) {
+                                    roleId = role.id;
+                                }
+                                var user = db.User.create({
+                                    email:   req.body.email,
+                                    role_id: roleId
+                                }).then(function (user) {
+                                    return user.setPassword(req.body.password);
+                                }).then(function() {
+                                    res.json({success: true, msg: 'Successfully created new user.'});
+                                }).catch(function (err) {
+                                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                                });
                             });
                         });
                     }

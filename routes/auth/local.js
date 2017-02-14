@@ -56,27 +56,34 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));
                     } else {
                         db.sequelize.sync().then(function () {
-                            var user;
-                            db.User.create({
-                                email: req.body.email,
-                            }).then(function (_user) {
-                                user = _user;
-                                return user.setPassword(req.body.password);
-                            }).then(function () {
-                                codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
-                                    emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
-                                        host: config.mail.host,
-                                        mail: encodeURIComponent(user.email),
-                                        code: encodeURIComponent(code)
-                                    }, config.mail.locale, function () {
-                                    });
-                                    done(null, user);
-                                });
-                            }).catch(
-                                function (err) {
-                                    done(err);
+                            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                                var roleId = -1;
+                                var user;
+
+                                if (role) {
+                                    roleId = role.id;
                                 }
-                            );
+                                db.User.create({
+                                    email: req.body.email
+                                }).then(function (_user) {
+                                    user = _user;
+                                    return user.setPassword(req.body.password);
+                                }).then(function () {
+                                    codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
+                                        emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
+                                            host: config.mail.host,
+                                            mail: encodeURIComponent(user.email),
+                                            code: encodeURIComponent(code)
+                                        }, config.mail.locale, function () {
+                                        });
+                                        done(null, user);
+                                    });
+                                }).catch(
+                                    function (err) {
+                                        done(err);
+                                    }
+                                );
+                            });
                         });
                     }
                 }, function (error) {

@@ -47,11 +47,17 @@ function createOAuth2Client(done) {
 function createUser(userTemplate) {
     return new Promise(
         function (resolve, reject) {
-            db.User.create(userTemplate).then(
-                function (user) {
-                    user.setPassword(userTemplate.password).then(resolve, reject);
-                },
-                reject);
+            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                userTemplate.role_id = -1;
+                if (role) {
+                    userTemplate.role_id = role;
+                }
+                db.User.create(userTemplate).then(
+                    function (user) {
+                        user.setPassword(userTemplate.password).then(resolve, reject);
+                    },
+                    reject);
+            });
         }
     );
 }
