@@ -9,9 +9,6 @@ var routes = function(router) {
   router.delete('/user/client/:client_id', authHelper.ensureAuthenticated, function(req, res, next) {
     var clientId = req.params.client_id;
 
-    //Raise 500 http error until we use/develop the endpoint
-    res.sendStatus(500);
-    //TODO check that user id is the one of the connected user
     db.Client
       .findOne({
         where: { id: clientId, user_id: req.user.id },
