@@ -11,13 +11,12 @@ module.exports = function (sequelize, DataTypes) {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         tracking_uid: DataTypes.STRING,
         provider_uid: DataTypes.STRING,
-        email: DataTypes.STRING,
+        email: {type: DataTypes.STRING, unique: true},
         password: DataTypes.STRING,
         enable_sso: DataTypes.BOOLEAN,
         display_name: DataTypes.STRING,
         photo_url: DataTypes.STRING,
-        verified: DataTypes.BOOLEAN,
-        admin: DataTypes.BOOLEAN   // maybe replace that by an array of roles
+        verified: DataTypes.BOOLEAN
     }, {
         underscored: true,
         instanceMethods: {

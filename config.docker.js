@@ -109,6 +109,17 @@ module.exports = {
     },
   ],
 
+  roles: [
+    {
+      id:       1,
+      label:    "admin"
+    },
+    {
+      id:       2,
+      label:    "other"
+    }
+  ],
+
   oauth2_clients: [
     {
       id: 1,

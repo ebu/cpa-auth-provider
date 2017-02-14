@@ -110,6 +110,17 @@ module.exports = {
     }
   ],
 
+  roles: [
+    {
+      id:       1,
+      label:    "admin"
+    },
+    {
+      id:       2,
+      label:    "other"
+    }
+  ],
+
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:
   // - false: The user must authenticate and confirm access to the new domain
