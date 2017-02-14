@@ -16,18 +16,18 @@
         <tr id="user-<%=users[i].id%>">
             <td><%= users[i].email %></td>
             <td>
-                <span class="admin-text" <% if(!users[i].isAdmin()){ %> style="display: none;" <% } %> >
+                <span class="admin-text" <% if(users[i].role_id !== adminId){ %> style="display: none;" <% } %> >
                     Administrator
                 </span>
-                <span class="user-text" <% if(users[i].isAdmin()){ %> style="display: none;" <% } %> >
+                <span class="user-text" <% if(users[i].role_id === adminId){ %> style="display: none;" <% } %> >
                     User
                 </span>
             </td>
             <td class="btn-container">
-                <button class="btn btn-link admin-btn" onclick="javascript:ungrant(<%= users[i].id %>)" <% if(!users[i].isAdmin()){ %> style="display: none;" <% } %> >
+                <button class="btn btn-link admin-btn" onclick="javascript:ungrant(<%= users[i].id %>)" <% if(users[i].role_id !== adminId){ %> style="display: none;" <% } %> >
                     <span class="glyphicon glyphicon-star-empty"></span> Set user role
                 </button>
-                <button class="btn btn-link user-btn" onclick="javascript:grant(<%= users[i].id %>)" <% if(users[i].isAdmin()){ %> style="display: none;" <% } %> >
+                <button class="btn btn-link user-btn" onclick="javascript:grant(<%= users[i].id %>)" <% if(users[i].role_id === adminId){ %> style="display: none;" <% } %> >
                     <span class="glyphicon glyphicon-star"></span> Set admin role
                 </button>
             </td>

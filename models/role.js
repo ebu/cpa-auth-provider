@@ -4,7 +4,7 @@ module.exports = function (sequelize, DataTypes) {
 
     var Role = sequelize.define('Role', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-        label: DataTypes.STRING
+        label: {type: DataTypes.STRING, unique: true}
     }, {
         underscored: true,
         instanceMethods: {},
