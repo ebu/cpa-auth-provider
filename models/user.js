@@ -3,7 +3,6 @@
 var Promise = require('bluebird');
 var bcrypt = Promise.promisifyAll(require('bcrypt'));
 var config = require('../config');
-var constant = require ('../lib/constant');
 
 
 module.exports = function (sequelize, DataTypes) {
@@ -12,7 +11,7 @@ module.exports = function (sequelize, DataTypes) {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         tracking_uid: DataTypes.STRING,
         provider_uid: DataTypes.STRING,
-        email: DataTypes.STRING,
+        email: {type: DataTypes.STRING, unique: true},
         password: DataTypes.STRING,
         enable_sso: DataTypes.BOOLEAN,
         display_name: DataTypes.STRING,
@@ -45,15 +44,6 @@ module.exports = function (sequelize, DataTypes) {
             },
             hasChanged: function (displayName, photoUrl) {
                 return (this.display_name !== displayName || this.photo_url !== photoUrl);
-            },
-            isAdmin: function() {
-                return this.role_id === constant.ADMIN_ROLE;
-            },
-            grantAdmin: function() {
-                return this.updateAttributes({role_id: constant.ADMIN_ROLE});
-            },
-            ungrantAdmin: function() {
-                return this.updateAttributes({role_id: constant.OTHER_ROLE});
             }
         },
         associate: function (models) {

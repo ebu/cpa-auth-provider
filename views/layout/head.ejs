@@ -64,7 +64,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="<%= link('/user/devices') %>">My Devices</a></li>
                             <li><a href="<%= link('/user/profile') %>">Edit Profile</a></li>
-                            <% if (userCan('access admin page')) { %>
+                            <% if (userCan(permission.ADMIN_PERMISSION)) { %>
                             <li><a href="<%= link('/admin') %>">Admin</a></li>
                             <% } %>
                             <li><a href="<%= link('/logout') %>">Logout</a></li>
