@@ -64,7 +64,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 return user.setPassword(req.body.password);
                             }).then(function () {
 								return codeHelper.getOrGenereateEmailVerificationCode(user);
-							}).then(function() {
+							}).then(function(code) {
                                 return emailHelper.send(
                                     config.mail.from,
                                     user.email,
