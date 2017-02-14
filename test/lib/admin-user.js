@@ -7,7 +7,8 @@ var db = require('../../models');
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
-var chai = require('chai')
+var chai = require('chai');
+var chaiJquery = require('chai-jquery');
 var chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
@@ -346,7 +347,6 @@ describe('POST /admin/users/<id>/ungrant ', function () {
             expect(self.res.statusCode).to.equal(200);
             expect(self.user.role_id === 1);
         });
-
     });
 
     context('when target user is an admin', function () {
@@ -378,6 +378,48 @@ describe('POST /admin/users/<id>/ungrant ', function () {
             expect(self.res.statusCode).to.equal(200);
             expect(self.user.role_id === 1);
         });
+    });
+});
+
+describe('GET /admin/users', function () {
+    context('When the admin is authenticated', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+        });
+
+        before(function (done) {
+            // console.log("the cookie", self.cookie);
+            requestHelper.sendRequest(this, '/admin/users', {
+                cookie: self.cookie,
+                parseDOM: true
+            }, done);
+        });
+
+        it('should return status 200', function () {
+            expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function () {
+            expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        it('should show the right number of users in table', function () {
+            expect(this.$('table > tbody > tr').length).to.equal(2);
+        });
+
+        it('should show the right text and buttons for admin and user', function () {
+            expect(this.$('#user-5 .admin-text')).to.be.visible;
+            expect(this.$('#user-6 .admin-text')).to.be.hidden;
+        });
+
+    });
+
+    context('When the user is not authenticated', function () {
+
     });
 });
 
