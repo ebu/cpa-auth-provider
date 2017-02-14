@@ -4,9 +4,12 @@ var config     = require('../../config');
 var db         = require('../../models/index');
 var authHelper = require('../../lib/auth-helper');
 var async      = require('async');
+var role       = require('../../lib/role');
+var permission = require('../../lib/permission');
+
 
 var routes = function(router) {
-  router.delete('/user/client/:client_id', authHelper.ensureAuthenticated, function(req, res, next) {
+  router.delete('/user/client/:client_id', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function(req, res, next) {
     var clientId = req.params.client_id;
 
     db.Client
