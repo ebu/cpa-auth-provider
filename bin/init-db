@@ -41,7 +41,7 @@ db.sequelize
                 db.User
                     .bulkCreate(config.users)
                     .then(function () {
-                        db.User.findOne({where: {id: 1}})
+                        db.User.findOne({where: {id: -1}})
                             .then(function (user) {
                                 return user.setPassword("admin");
                             });
