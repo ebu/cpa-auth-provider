@@ -206,6 +206,7 @@ module.exports = function (app, options) {
                                 "password-recovery-email",
                                 {log: true},
                                 {
+                                    forceLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.mail) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
                                     mail: user.email,
                                     code: code
