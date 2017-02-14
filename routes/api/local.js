@@ -146,30 +146,30 @@ module.exports = function (app, options) {
     app.get('/api/local/request_verification_email', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
 
         var user = authHelper.getAuthenticatedUser(req);
-        var templateClass = req.query.template_class;
 
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send(
-                config.mail.from,
-                user.email,
-                "validation-email",
-                {log: false},
-                {
-					confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(user.verificationCode),
-                    host: config.mail.host,
-                    mail: encodeURIComponent(user.email),
-                    code: encodeURIComponent(user.verificationCode)
-                },
-                config.mail.local
-            ).then(
-                function() {},
-                function(err) {}
-            );
-            return res.status(204).send({success: true, msg: "email sent"});
+            codeHelper.getOrGenereateEmailVerificationCode(user).then(function (){
+                emailHelper.send(
+                    config.mail.from,
+                    user.email,
+                    "validation-email",
+                    {log: false},
+                    {
+                        confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(user.verificationCode),
+                        host: config.mail.host,
+                        mail: encodeURIComponent(user.email),
+                        code: encodeURIComponent(user.verificationCode)
+                    },
+                    config.mail.local
+                ).then(
+                    function() {},
+                    function(err) {}
+                );
+                return res.status(204).send({success: true, msg: "email sent"});
+            });
         }
-
     });
 };
 

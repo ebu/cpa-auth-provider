@@ -59,7 +59,7 @@ var routes = function (router) {
 					user.email,
                     "validation-email",
                     {log:true},
-                    {confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(user.verificationCode), host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)},
+                    {confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code), host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)},
                     config.mail.local
                 ).then(
                     function() {},
