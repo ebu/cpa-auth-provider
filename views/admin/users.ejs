@@ -1,0 +1,85 @@
+<% include ../layout/head %>
+
+<h1>Users</h1>
+
+<a id="export-csv" href="/admin/users/csv">
+    <span class="glyphicon glyphicon-download"></span> CSV
+</a>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (var i = 0; i < users.length; i++) { %>
+        <tr id="user-<%=users[i].id%>">
+            <td><%= users[i].email %></td>
+            <td>
+                <span class="admin-text" <% if(users[i].role_id !== adminId){ %> style="display: none;" <% } %> >
+                    Administrator
+                </span>
+                <span class="user-text" <% if(users[i].role_id === adminId){ %> style="display: none;" <% } %> >
+                    User
+                </span>
+            </td>
+            <td class="btn-container">
+                <button class="btn btn-link admin-btn" onclick="javascript:ungrant(<%= users[i].id %>)" <% if(users[i].role_id !== adminId){ %> style="display: none;" <% } %> >
+                    <span class="glyphicon glyphicon-star-empty"></span> Set user role
+                </button>
+                <button class="btn btn-link user-btn" onclick="javascript:grant(<%= users[i].id %>)" <% if(users[i].role_id === adminId){ %> style="display: none;" <% } %> >
+                    <span class="glyphicon glyphicon-star"></span> Set admin role
+                </button>
+            </td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>
+
+<!-- TODO move it to an appropriate file -->
+<script type="text/javascript">
+
+    function ungrant(id) {
+        $.post( '/admin/users/' + id + '/ungrant', function( data ) {
+            console.log("ungrant data", data);
+            updateUi(id, data);
+        });
+    }
+
+    function grant(id) {
+        $.post( '/admin/users/' + id + '/grant', function( data ) {
+            console.log("grant data", data);
+            updateUi(id, data);
+        });
+    }
+
+    function updateUi(id, data){
+        if (data){
+            var $adminText = $('#user-'+id+' .admin-text').first();
+            var $adminBtn = $('#user-'+id+' .admin-btn').first();
+
+            var $userText = $('#user-'+id+' .user-text').first();
+            var $userBtn = $('#user-'+id+' .user-btn').first();
+
+            if (data.admin){
+                $adminText.show();
+                $adminBtn.show();
+                $userText.hide();
+                $userBtn.hide();
+            } else {
+                $userText.show();
+                $userBtn.show();
+                $adminText.hide();
+                $adminBtn.hide();
+            }
+        }
+    }
+
+</script>
+
+<% include ../layout/foot %>

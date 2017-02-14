@@ -121,6 +121,16 @@ module.exports = {
     }
   ],
 
+    // users: [
+    //     {
+    //         id:           -1,
+    //         email:        "admin@admin.com",
+    //         display_name: "Admin",
+    //         verified:     true,
+    //         role_id:      1
+    //     }
+    // ],
+
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:
   // - false: The user must authenticate and confirm access to the new domain
