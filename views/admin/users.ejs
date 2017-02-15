@@ -30,9 +30,10 @@
             <% for (var i = 0; i < users.length; i++) { %>
             <tr id="user-<%=users[i].id%>">
                 <td><%= users[i].email %></td>
+                <%= users[i].role_id %>
                 <td>
                     <select class=" role form-control">
-                        <option value="default" selected>
+                        <option value="default" disabled selected>
                             none
                         </option>
                         <% for (var j = 0; j < roles.length; j++) { %>
@@ -57,6 +58,8 @@
 
         var errorSuccess = $("#alert-success");
         var errorAlert = $("#alert-error");
+        errorSuccess.hide();
+        errorAlert.hide();
 
         $('.role').on('change', function() {
 
@@ -67,16 +70,19 @@
             var params = $(this).val().split("_");
             var userId = params[0];
             var roleId = params[1];
+
             $.ajax({
                 url : '/admin/users/' + userId + '/role',
                 type : 'POST',
                 data : {
                     role: roleId
                 }
-            }).done(function() {
-                console.log("Success");
-            }).fail(function() {
-                console.log("Error");
+            }).done(function(data) {
+                errorAlert.html("Success");
+                errorAlert.show();
+            }).fail(function(error) {
+                errorAlert.html("Error");
+                errorAlert.show();
             });
         });
 
