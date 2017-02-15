@@ -60,24 +60,34 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         db.sequelize.sync().then(function () {
                             db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
                                 var userParams = {
-                                    email:   req.body.email
+                                    email: req.body.email
                                 };
                                 if (role) {
                                     userParams.role_id = role.id;
                                 }
+                                var user;
                                 db.User.create(userParams).then(function (_user) {
                                     user = _user;
                                     return user.setPassword(req.body.password);
                                 }).then(function () {
-                                    codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
-                                        emailHelper.send(config.mail.from, user.email, 'Validation de votre email', "validation-email", {log: true}, {
+                                    return codeHelper.getOrGenereateEmailVerificationCode(user);
+                                }).then(function (code) {
+                                    console.log("dqdssqfsqdfdsf");
+                                    return emailHelper.send(
+                                        config.mail.from,
+                                        user.email,
+                                        "validation-email",
+                                        {log: true},
+                                        {
+                                            confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                                             host: config.mail.host,
                                             mail: encodeURIComponent(user.email),
                                             code: encodeURIComponent(code)
-                                        }, config.mail.locale, function () {
-                                        });
-                                        done(null, user);
-                                    });
+                                        },
+                                        config.mail.locale
+                                    );
+                                }).then(function () {
+                                    return done(null, user);
                                 }).catch(
                                     function (err) {
                                         done(err);
@@ -199,12 +209,24 @@ module.exports = function (app, options) {
                 .then(function (user) {
                     if (user) {
                         codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
-                            emailHelper.send(config.mail.from, user.email, 'Récupération de votre mots de passe', "password-recovery-email", {log: true}, {
-                                host: config.mail.host,
-                                mail: user.email,
-                                code: code
-                            }, config.mail.local, function () {
-                            });
+                            emailHelper.send(
+                                config.mail.from,
+                                user.email,
+                                "password-recovery-email",
+                                {log: true},
+                                {
+                                    forceLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.mail) + '&code=' + encodeURIComponent(code),
+                                    host: config.mail.host,
+                                    mail: user.email,
+                                    code: code
+                                },
+                                config.mail.local
+                            ).then(
+                                function () {
+                                },
+                                function (err) {
+                                }
+                            );
                             return res.status(200).send();
                         });
                     } else {

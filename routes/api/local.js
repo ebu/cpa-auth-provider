@@ -5,7 +5,6 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var jwtHelpers = require('../../lib/jwt-helper');
 
-var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
@@ -17,6 +16,8 @@ var cors = require('../../lib/cors');
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
 var permission = require('../../lib/permission');
+
+var codeHelper = require('../../lib/code-helper');
 
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
@@ -159,15 +160,27 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            emailHelper.send(config.mail.from, user.email, 'Validation de votre email',  "validation-email", {log: false}, {
-                host: config.mail.host,
-                mail: encodeURIComponent(user.email),
-                code: encodeURIComponent(user.verificationCode)
-            }, config.mail.local, function () {
-            });
-            return res.status(204).send({success: true, msg: "email sent"});
-        }
+            return codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code){
 
+                emailHelper.send(
+                    config.mail.from,
+                    user.email,
+                    "validation-email",
+                    {log: false},
+                    {
+                        confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        host: config.mail.host,
+                        mail: encodeURIComponent(user.email),
+                        code: encodeURIComponent(user.verificationCode)
+                    },
+                    config.mail.local
+                ).then(
+                    function() {},
+                    function(err) {}
+                );
+                return res.status(204).send({success: true, msg: "email sent"});
+            });
+        }
     });
 };
 
