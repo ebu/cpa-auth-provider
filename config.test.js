@@ -34,6 +34,7 @@ module.exports = {
   },
 
   mail: {
+    sending: {transport: 'test'},
     from:'no-reply@rts.ch',
     locale:'ch_fr',
     host:'http://localhost:3000'
