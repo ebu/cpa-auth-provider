@@ -30,7 +30,6 @@
             <% for (var i = 0; i < users.length; i++) { %>
             <tr id="user-<%=users[i].id%>">
                 <td><%= users[i].email %></td>
-                <%= users[i].role_id %>
                 <td>
                     <select class=" role form-control">
                         <option value="default" disabled selected>
@@ -78,10 +77,10 @@
                     role: roleId
                 }
             }).done(function(data) {
-                errorAlert.html("Success");
-                errorAlert.show();
+                errorSuccess.html("Successfully changed "+ data.user.email+ " role");
+                errorSuccess.show();
             }).fail(function(error) {
-                errorAlert.html("Error");
+                errorAlert.html("Error changin "+ data.user.email+ " role, please try again");
                 errorAlert.show();
             });
         });
