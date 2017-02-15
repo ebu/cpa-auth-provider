@@ -45,15 +45,9 @@ function createOAuth2Client(done) {
 }
 
 function createUser(userTemplate) {
-    db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
-        userTemplate.role_id = -1;
-        if (role) {
-            userTemplate.role_id = role;
-        }
-        return db.User.create(userTemplate).then(function (user) {
-            return user.setPassword(userTemplate.password);
-        });
-    });
+	return db.User.create(userTemplate).then(function (user) {
+		return user.setPassword(userTemplate.password);
+	});
 }
 
 function createFakeUser(done) {

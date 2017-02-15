@@ -10,8 +10,10 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 var util = require('util');
+
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
+var permission = require('../../lib/permission');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
@@ -57,15 +59,13 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     } else {
                         db.sequelize.sync().then(function () {
                             db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
-                                var roleId = -1;
-                                var user;
-
+                                var userParams = {
+                                    email:   req.body.email
+                                };
                                 if (role) {
-                                    roleId = role.id;
+                                    userParams.role_id = role.id;
                                 }
-                                db.User.create({
-                                    email: req.body.email
-                                }).then(function (_user) {
+                                db.User.create(userParams).then(function (_user) {
                                     user = _user;
                                     return user.setPassword(req.body.password);
                                 }).then(function () {

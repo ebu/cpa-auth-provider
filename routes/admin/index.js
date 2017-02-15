@@ -56,9 +56,7 @@ module.exports = function (router) {
     router.get('/admin/users', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
 
         db.Role.findAll().then(function (roles) {
-
-            db.User.findAll()
-                .then(
+            db.User.findAll().then(
                     function (users) {
                         return res.render('./admin/users.ejs', {users: users, roles: roles});
                     },

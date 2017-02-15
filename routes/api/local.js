@@ -16,6 +16,7 @@ var cors = require('../../lib/cors');
 
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
+var permission = require('../../lib/permission');
 
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
@@ -59,18 +60,18 @@ module.exports = function (app, options) {
                     } else {
                         db.sequelize.sync().then(function () {
                             db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
-                                var roleId = -1;
+                                var userParams = {
+                                    email:   req.body.email
+                                };
                                 if (role) {
-                                    roleId = role.id;
+                                     userParams.role_id = role.id;
                                 }
-                                var user = db.User.create({
-                                    email:   req.body.email,
-                                    role_id: roleId
-                                }).then(function (user) {
+                                var user = db.User.create(userParams).then(function (user) {
                                     return user.setPassword(req.body.password);
                                 }).then(function() {
                                     res.json({success: true, msg: 'Successfully created new user.'});
                                 }).catch(function (err) {
+                                    console.log("ERROR", err);
                                     res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
                                 });
                             });
