@@ -438,8 +438,8 @@ describe('GET /admin/users/csv', function () {
         expect(self.res.statusCode).to.equal(200);
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
-        expect(self.res).to.have.header('content-length', '48');
-        expect(self.res.text).to.equal('email,admin\r\ntestuser,true\r\nuser@user.ch,false\r\n');
+        expect(self.res).to.have.header('content-length', '54');
+        expect(self.res.text).to.equal('email,role_id,role\r\ntestuser,1,admin\r\nuser@user.ch,,\r\n');
     });
 
 

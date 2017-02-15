@@ -68,28 +68,32 @@ module.exports = function (router) {
 
 
     router.get('/admin/users/csv', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
-        db.Role.findOne({where: {label: permission.ADMIN_PERMISSION}}).then(function (role) {
-            db.User.findAll()
-                .then(
-                    function (resultset) {
-                        var head = ['email', 'admin'];
-                        var lines = [];
-                        lines.push(head);
-                        for (var i = 0; i < resultset.length; i++) {
-                            lines.push([resultset[i].email, role && (resultset[i].role_id === role.id)]);
+        db.User.findAll({include: [{model: db.Role}]})
+            .then(
+                function (resultset) {
+                    var head = ['email', 'role_id', 'role'];
+                    var lines = [];
+                    lines.push(head);
+                    for (var i = 0; i < resultset.length; i++) {
+                        var id = '';
+                        var label = '';
+                        if (resultset[i].Role){
+                            id = resultset[i].Role.id;
+                            label = resultset[i].Role.label;
                         }
+                        lines.push([resultset[i].email, id, label]);
+                    }
 
-                        var toDownload = csv.stringify(lines);
+                    var toDownload = csv.stringify(lines);
 
-                        res.setHeader('Content-disposition', 'attachment; filename=users.csv');
-                        res.setHeader('Content-type', 'text/csv');
-                        return res.send(toDownload);
-                    },
-                    function (err) {
-                        res.send(500);
-                        logger.debug('[Admins][get /admin/users/csv][error', err, ']');
-                    });
-        });
+                    res.setHeader('Content-disposition', 'attachment; filename=users.csv');
+                    res.setHeader('Content-type', 'text/csv');
+                    return res.send(toDownload);
+                },
+                function (err) {
+                    res.send(500);
+                    logger.debug('[Admins][get /admin/users/csv][error', err, ']');
+                });
 
     });
 
