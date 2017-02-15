@@ -57,13 +57,13 @@ module.exports = function (router) {
 
         db.Role.findAll().then(function (roles) {
             db.User.findAll().then(
-                    function (users) {
-                        return res.render('./admin/users.ejs', {users: users, roles: roles});
-                    },
-                    function (err) {
-                        res.send(500);
-                        logger.debug('[Admins][get /admin/users][error', err, ']');
-                    });
+                function (users) {
+                    return res.render('./admin/users.ejs', {users: users, roles: roles});
+                },
+                function (err) {
+                    res.send(500);
+                    logger.debug('[Admins][get /admin/users][error', err, ']');
+                });
         });
     });
 
@@ -94,29 +94,21 @@ module.exports = function (router) {
 
     });
 
-    router.post('/admin/users/:user_id/grant', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
-        db.User.findOne({where: {id: req.params.user_id}})
-            .then(
-                function (user) {
-                    permissionHelper.grantPermission(user, permission.ADMIN_PERMISSION).then(function (user) {
-                        permissionHelper.isAdmin(user).then(function (isAdmin) {
-                            return res.status(200).send({success: true, user: user, admin: isAdmin});
+    router.post('/admin/users/:user_id/role', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
+        db.Role.findOne({where: {id: req.body.role}}).then(function (role) {
+            if (!role) {
+                return res.status(400).send({success: false, msg: 'wrong role id'});
+            }
+            db.User.findOne({where: {id: req.params.user_id}})
+                .then(
+                    function (user) {
+                        user.updateAttributes({role_id: role.id}).then(function () {
+                            return res.status(200).send({success: true, user: user});
                         });
                     });
-                });
-    });
+        });
 
 
-    router.post('/admin/users/:user_id/ungrant', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
-        db.User.findOne({where: {id: req.params.user_id}})
-            .then(
-                function (user) {
-                    permissionHelper.ungrantPermission(user, permission.ADMIN_PERMISSION).then(function (user) {
-                        permissionHelper.isAdmin(user).then(function (isAdmin) {
-                            return res.status(200).send({success: true, user: user, admin: isAdmin});
-                        });
-                    });
-                });
     });
 
 };

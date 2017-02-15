@@ -103,23 +103,10 @@ describe('GET /admin/users security', function () {
 
         context('When the user request grant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/grant', {
+                requestHelper.sendRequest(self, '/admin/users/5/role', {
                     cookie: self.cookie,
-                    method: 'post'
-                }, done);
-            });
-
-            it('should return status 403', function () {
-                expect(self.res.statusCode).to.equal(403);
-            });
-
-        });
-
-        context('When the user request ungrant admin right', function () {
-            before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/ungrant', {
-                    cookie: self.cookie,
-                    method: 'post'
+                    method: 'post',
+                    data: {role : 1}
                 }, done);
             });
 
@@ -173,10 +160,11 @@ describe('GET /admin/users security', function () {
 
         context('When the user request grant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/grant', {
+                requestHelper.sendRequest(self, '/admin/users/5/role', {
                     cookie: self.cookie,
-                    method: 'post'
-                }, done);
+                    method: 'post',
+                    data: {role : 1}
+            }, done);
             });
 
             it('should return status 200', function () {
@@ -187,10 +175,11 @@ describe('GET /admin/users security', function () {
 
         context('When the user request ungrant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/ungrant', {
+                requestHelper.sendRequest(self, '/admin/users/5/role', {
                     cookie: self.cookie,
-                    method: 'post'
-                }, done);
+                    method: 'post',
+                    data: {role : 2}
+            }, done);
             });
 
             it('should return status 200', function () {
@@ -262,9 +251,10 @@ describe('POST /admin/users/<id>/ungrant ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/5/ungrant', {
+            requestHelper.sendRequest(self, '/admin/users/5/role', {
                 cookie: self.cookie,
-                method: 'post'
+                method: 'post',
+                data: {role : 2}
             }, done);
         });
 
@@ -292,9 +282,10 @@ describe('POST /admin/users/<id>/ungrant ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/6/ungrant', {
+            requestHelper.sendRequest(self, '/admin/users/6/role', {
                 cookie: self.cookie,
-                method: 'post'
+                method: 'post',
+                data: {role : 2}
             }, done);
         });
 
@@ -329,9 +320,10 @@ describe('POST /admin/users/<id>/ungrant ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/6/grant', {
+            requestHelper.sendRequest(self, '/admin/users/6/role', {
                 cookie: self.cookie,
-                method: 'post'
+                method: 'post',
+                data: {role : 1}
             }, done);
         });
 
@@ -360,9 +352,10 @@ describe('POST /admin/users/<id>/ungrant ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/5/grant', {
+            requestHelper.sendRequest(self, '/admin/users/5/role', {
                 cookie: self.cookie,
-                method: 'post'
+                method: 'post',
+                data: {role : 1}
             }, done);
         });
 
