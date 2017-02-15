@@ -238,7 +238,7 @@ describe('GET /admin/users security', function () {
 
 });
 
-describe('POST /admin/users/<id>/ungrant ', function () {
+describe('POST /admin/users/<id>/role ', function () {
     context('When target user is an admin', function () {
 
         var self = this;
@@ -307,7 +307,7 @@ describe('POST /admin/users/<id>/ungrant ', function () {
 
 });
 
-describe('POST /admin/users/<id>/ungrant ', function () {
+describe('POST /admin/users/<id>/role ', function () {
 
     context('when target user is not an admin', function () {
         var self = this;
