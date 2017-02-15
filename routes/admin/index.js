@@ -10,7 +10,6 @@ var csv = require('csv-string');
 var generate = require('../../lib/generate');
 var role = require('../../lib/role');
 var permission = require('../../lib/permission');
-var permissionHelper = require('../../lib/permission-helper');
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
