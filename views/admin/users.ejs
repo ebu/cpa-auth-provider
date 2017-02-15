@@ -1,39 +1,53 @@
 <% include ../layout/head %>
 
-<h1>Users</h1>
+<div id="users">
 
-<a id="export-csv" href="/admin/users/csv">
-    <span class="glyphicon glyphicon-download"></span> CSV
-</a>
+    <h1>Users</h1>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Email</th>
-            <th>Role</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% for (var i = 0; i < users.length; i++) { %>
-        <tr id="user-<%=users[i].id%>">
-            <td><%= users[i].email %></td>
-            <td>
-                <select id="role" class="form-control">
-                    <option value="default" selected>
-                        none
-                    </option>
-                    <% for (var j = 0; j < roles.length; j++) { %>
+    <div class="toolbar">
+        <a class="btn btn-primary" id="export-csv" href="/admin/users/csv">
+            <span class="glyphicon glyphicon-download"></span> CSV
+        </a>
+    </div>
+
+    <div id="alert-success" class="alert alert-success alert-dismissible" role="alert">
+
+    </div>
+
+    <div id="alert-error" class="alert alert-danger alert-dismissible" role="alert">
+
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (var i = 0; i < users.length; i++) { %>
+            <tr id="user-<%=users[i].id%>">
+                <td><%= users[i].email %></td>
+                <td>
+                    <select class=" role form-control">
+                        <option value="default" selected>
+                            none
+                        </option>
+                        <% for (var j = 0; j < roles.length; j++) { %>
                         <option value="<%= users[i].id %>_<%= roles[j].id %>" <% if(typeof users[i].role_id !== "undefined" && roles[j].id === users[i].role_id){ %> selected <% } %>>
                             <%= roles[j].label %>
                         </option>
-                    <% } %>
-                </select>
-            </td>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
+                        <% } %>
+                    </select>
+                </td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+
 </div>
 
 <!-- TODO move it to an appropriate file -->
@@ -41,7 +55,10 @@
 
     (function() {
 
-        $('#role').on('change', function() {
+        var errorSuccess = $("#alert-success");
+        var errorAlert = $("#alert-error");
+
+        $('.role').on('change', function() {
 
             if($(this).val() == "default"){
                 return;

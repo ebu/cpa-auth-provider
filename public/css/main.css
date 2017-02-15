@@ -131,3 +131,18 @@
         -webkit-transform-origin: 0 0;
     }
 }
+/*
+************
+************ USERS
+************
+*/
+#users .toolbar{
+    background-color: #eee;
+    padding: 10px;
+    text-align: right;
+    margin: 20px auto;
+}
+
+#users #alert-success, #users #alert-error{
+    display: none;
+}
