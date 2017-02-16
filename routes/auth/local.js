@@ -10,8 +10,10 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 var util = require('util');
+
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
+var permission = require('../../lib/permission');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
@@ -56,35 +58,42 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));
                     } else {
                         db.sequelize.sync().then(function () {
-                            var user;
-                            db.User.create({
-                                email: req.body.email,
-                            }).then(function (_user) {
-                                user = _user;
-                                return user.setPassword(req.body.password);
-                            }).then(function () {
-								return codeHelper.getOrGenereateEmailVerificationCode(user);
-							}).then(function(code) {
-                                return emailHelper.send(
-                                    config.mail.from,
-                                    user.email,
-                                    "validation-email",
-                                    {log: true},
-                                    {
-                                        confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
-                                        host: config.mail.host,
-                                        mail: encodeURIComponent(user.email),
-                                        code: encodeURIComponent(code)
-                                    },
-                                    config.mail.locale
-                                );
-                            }).then(function () {
-                                return done(null, user);
-                            }).catch(
-                                function (err) {
-                                    done(err);
+                            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                                var userParams = {
+                                    email: req.body.email
+                                };
+                                if (role) {
+                                    userParams.role_id = role.id;
                                 }
-                            );
+                                var user;
+                                db.User.create(userParams).then(function (_user) {
+                                    user = _user;
+                                    return user.setPassword(req.body.password);
+                                }).then(function () {
+                                    return codeHelper.getOrGenereateEmailVerificationCode(user);
+                                }).then(function (code) {
+                                    console.log("dqdssqfsqdfdsf");
+                                    return emailHelper.send(
+                                        config.mail.from,
+                                        user.email,
+                                        "validation-email",
+                                        {log: true},
+                                        {
+                                            confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                            host: config.mail.host,
+                                            mail: encodeURIComponent(user.email),
+                                            code: encodeURIComponent(code)
+                                        },
+                                        config.mail.locale
+                                    );
+                                }).then(function () {
+                                    return done(null, user);
+                                }).catch(
+                                    function (err) {
+                                        done(err);
+                                    }
+                                );
+                            });
                         });
                     }
                 }, function (error) {
@@ -213,8 +222,10 @@ module.exports = function (app, options) {
                                 },
                                 config.mail.local
                             ).then(
-                                function () {},
-                                function(err) {}
+                                function () {
+                                },
+                                function (err) {
+                                }
                             );
                             return res.status(200).send();
                         });

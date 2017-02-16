@@ -15,7 +15,6 @@ var resetDatabase = function (done) {
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
 
-
 // Test signup
 
 describe('POST /api/local/signup', function () {

@@ -15,6 +15,9 @@ var cors = require('../../lib/cors');
 
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
+var permission = require('../../lib/permission');
+
+var codeHelper = require('../../lib/code-helper');
 
 
 var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
@@ -57,14 +60,21 @@ module.exports = function (app, options) {
                         return res.status(400).json({success: false, msg: 'email already exists.'});
                     } else {
                         db.sequelize.sync().then(function () {
-                            var user = db.User.create({
-                                email: req.body.email,
-                            }).then(function (user) {
-								return user.setPassword(req.body.password);
-							}).then(function() {
-								res.json({success: true, msg: 'Successfully created new user.'});
-                            }).catch(function (err) {
-                                res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                                var userParams = {
+                                    email:   req.body.email
+                                };
+                                if (role) {
+                                     userParams.role_id = role.id;
+                                }
+                                var user = db.User.create(userParams).then(function (user) {
+                                    return user.setPassword(req.body.password);
+                                }).then(function() {
+                                    res.json({success: true, msg: 'Successfully created new user.'});
+                                }).catch(function (err) {
+                                    console.log("ERROR", err);
+                                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                                });
                             });
                         });
                     }
@@ -150,14 +160,15 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(403).send({success: false, msg: "not authenticated"});
         } else {
-            codeHelper.getOrGenereateEmailVerificationCode(user).then(function (){
+            return codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code){
+
                 emailHelper.send(
                     config.mail.from,
                     user.email,
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(user.verificationCode),
+                        confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(user.verificationCode)

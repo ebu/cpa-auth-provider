@@ -338,8 +338,8 @@ describe('POST /admin/domains', function () {
             }, done);
         });
 
-        it('should return status 302', function () {
-            expect(this.res.statusCode).to.equal(302);
+        it('should return status 401', function () {
+            expect(this.res.statusCode).to.equal(401);
         });
     });
 });
