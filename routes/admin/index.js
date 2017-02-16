@@ -32,7 +32,7 @@ module.exports = function (router) {
         res.render('./admin/add_domain.ejs');
     });
 
-    router.post('/admin/domains', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res, next) {
+    router.post('/admin/domains', [authHelper.ensureAuthenticated, role.can(permission.ADMIN_PERMISSION)], function (req, res, next) {
         var domain = {
             name: req.body.name,
             display_name: req.body.display_name,
@@ -97,7 +97,7 @@ module.exports = function (router) {
 
     });
 
-    router.post('/admin/users/:user_id/role', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
+    router.post('/admin/users/:user_id/role', [authHelper.ensureAuthenticated, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
         db.Role.findOne({where: {id: req.body.role}}).then(function (role) {
             if (!role) {
                 return res.status(400).send({success: false, msg: 'wrong role id'});
