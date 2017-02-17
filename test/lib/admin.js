@@ -3,6 +3,11 @@
 var generate = require('../../lib/generate');
 var messages = require('../../lib/messages');
 var db = require('../../models');
+var config = require('../../config');
+
+var chai = require('chai');
+var chaiJquery = require('chai-jquery');
+var chaiHttp = require('chai-http');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
@@ -133,6 +138,82 @@ describe('GET /admin', function () {
         it('should return HTML', function () {
             expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
         });
+    });
+
+    context('When the admin is authenticated and config.displyUsersInfos is false', function () {
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            db.User.create({
+                id: 100,
+                email: 'monadmin@ebu.fr',
+                username: 'admin',
+                role_id: 1
+            }).then(function (user) {
+                user.setPassword('admin').then(function () {
+                    done();
+                })
+            });
+        });
+
+        before(function (done) {
+            requestHelper.loginCustom('monadmin@ebu.fr', 'admin', self, done);
+        });
+
+        before(function (done) {
+            config.displayUsersInfos = false;
+            // console.log("the cookie", self.cookie);
+            requestHelper.sendRequest(this, '/admin', {
+                cookie: self.cookie,
+                parseDOM: true
+            }, done);
+        });
+
+        it('should hide Users link', function () {
+            expect(this.$('#users-link')).to.be.hidden;
+        });
+
+    });
+
+    context('When the admin is authenticated and config.displyUsersInfos is true', function () {
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            db.User.create({
+                id: 100,
+                email: 'monadmin@ebu.fr',
+                username: 'admin',
+                role_id: 1
+            }).then(function (user) {
+                user.setPassword('admin').then(function () {
+                    done();
+                })
+            });
+        });
+
+        before(function (done) {
+            requestHelper.loginCustom('monadmin@ebu.fr', 'admin', self, done);
+        });
+
+        before(function (done) {
+            config.displayUsersInfos = true;
+            // console.log("the cookie", self.cookie);
+            requestHelper.sendRequest(this, '/admin', {
+                cookie: self.cookie,
+                parseDOM: true
+            }, done);
+        });
+
+        it('should show Users link', function () {
+            expect(this.$('#users-link')).to.be.visible;
+        });
+
     });
 
     context('When the user is not authenticated', function () {

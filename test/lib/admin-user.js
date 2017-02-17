@@ -6,6 +6,7 @@ var db = require('../../models');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
+var config = require('../../config');
 
 var chai = require('chai');
 var chaiJquery = require('chai-jquery');
@@ -375,6 +376,7 @@ describe('POST /admin/users/<id>/role ', function () {
 });
 
 describe('GET /admin/users', function () {
+
     context('When the admin is authenticated', function () {
         var self = this;
 
@@ -385,6 +387,31 @@ describe('GET /admin/users', function () {
         });
 
         before(function (done) {
+            config.displayUsersInfos = false;
+            // console.log("the cookie", self.cookie);
+            requestHelper.sendRequest(this, '/admin/users', {
+                cookie: self.cookie,
+                parseDOM: true
+            }, done);
+        });
+
+        it('should return status 404 if config.displayUsersInfos is false', function () {
+            expect(this.res.statusCode).to.equal(404);
+        });
+
+    });
+
+    context('When the admin is authenticated', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+        });
+
+        before(function (done) {
+            config.displayUsersInfos = true;
             // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin/users', {
                 cookie: self.cookie,

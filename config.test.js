@@ -68,6 +68,8 @@ module.exports = {
 
   enableCORS: true,
 
+  displayUsersInfos: true,
+
   // Cross-origin resource sharing
   cors: {
     enabled: true,
