@@ -58,6 +58,8 @@ module.exports = {
   // redirected to the specified identity_providers (ie: 'github')
   auto_idp_redirect: '',
 
+  displayUsersInfos: true,
+
   db: {
     host: '',
     port: 3306,

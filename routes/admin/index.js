@@ -10,6 +10,7 @@ var csv = require('csv-string');
 var generate = require('../../lib/generate');
 var role = require('../../lib/role');
 var permission = require('../../lib/permission');
+var config = require('../../config');
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
@@ -54,6 +55,11 @@ module.exports = function (router) {
 
     router.get('/admin/users', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
 
+        //Depending on countries user protection laws, set this config variable to deny access to user infos
+        if(!config.displayUsersInfos) {
+            res.sendStatus(404);
+        }
+
         db.Role.findAll().then(function (roles) {
             db.User.findAll().then(
                 function (users) {
@@ -68,6 +74,12 @@ module.exports = function (router) {
 
 
     router.get('/admin/users/csv', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function (req, res) {
+
+        //Depending on countries user protection laws, set this config variable to deny access to user infos
+        if(!config.displayUsersInfos) {
+            res.sendStatus(404);
+        }
+
         db.User.findAll({include: [{model: db.Role}]})
             .then(
                 function (resultset) {
