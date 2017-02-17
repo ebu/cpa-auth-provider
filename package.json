@@ -39,6 +39,7 @@
     "express-recaptcha": "^2.1.0",
     "express-session": "~1.13.0",
     "express-validator": "^3.1.2",
+    "i18n": "^0.8.3",
     "jade": "~0.35.0",
     "jquery": "^3.1.1",
     "jquery-form": "^3.50.0",
