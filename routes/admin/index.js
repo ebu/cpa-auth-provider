@@ -57,7 +57,7 @@ module.exports = function (router) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if(!config.displayUsersInfos) {
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
 
         db.Role.findAll().then(function (roles) {
@@ -77,7 +77,7 @@ module.exports = function (router) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if(!config.displayUsersInfos) {
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
 
         db.User.findAll({include: [{model: db.Role}]})
