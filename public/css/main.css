@@ -75,6 +75,25 @@
 }
 /*
 ************
+************ HEADER
+************
+*/
+nav .lang abbr[title], .lang abbr[data-original-title] {
+     cursor: pointer;
+     border: 0;
+}
+nav .lang ul.dropdown-menu{
+    min-width: inherit;
+    border: none;
+    left: 0;
+}
+nav .lang ul.dropdown-menu{
+    min-width: inherit;
+    border: none;
+    left: 0;
+}
+/*
+************
 ************ LOGIN
 ************
 */

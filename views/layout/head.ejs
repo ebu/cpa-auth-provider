@@ -28,9 +28,8 @@
     <script src="/jquery-form/jquery.form.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
-
     <script type="text/javascript" src="/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-
+    <script type="text/javascript" src="/assets/js/lang.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-default" role="navigation">
@@ -72,6 +71,31 @@
                     </li>
                 </ul>
                 <% } %>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown selectable lang">
+                        <a href="#" class="dropdown-toggle current" data-toggle="dropdown" role="button" aria-expanded="false">
+                            FR
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="menuitem">
+                                <a hreflang="en" href="#">
+                                    <abbr lang="EN" title="English">
+                                        EN
+                                    </abbr>
+                                </a>
+                            </li>
+                            <li role="menuitem">
+                                <a hreflang="de" href="#">
+                                    <abbr lang="DE" title="German">DE</abbr>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                </ul>
+
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
