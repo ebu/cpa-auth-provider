@@ -5,19 +5,18 @@ var authHelper = require('../../lib/auth-helper');
 var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
-var role = require('../../lib/role');
 var csv = require('csv-string');
 var generate = require('../../lib/generate');
-var role = require('../../lib/role');
+var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
 
 module.exports = function (router) {
-    router.get('/admin', [authHelper.authenticateFirst, role.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         res.render('./admin/index.ejs');
     });
 
-    router.get('/admin/domains', [authHelper.authenticateFirst, role.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/domains', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Domain.findAll()
             .then(
                 function (domains) {
@@ -29,11 +28,11 @@ module.exports = function (router) {
                 });
     });
 
-    router.get('/admin/domains/add', [authHelper.authenticateFirst, role.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/domains/add', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         res.render('./admin/add_domain.ejs');
     });
 
-    router.post('/admin/domains', [authHelper.ensureAuthenticated, role.can(permissionName.ADMIN_PERMISSION)], function (req, res, next) {
+    router.post('/admin/domains', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res, next) {
         var domain = {
             name: req.body.name,
             display_name: req.body.display_name,
@@ -53,7 +52,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/users', [authHelper.authenticateFirst, role.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/users', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if(!config.displayUsersInfos) {
@@ -73,7 +72,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/users/csv', [authHelper.authenticateFirst, role.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/users/csv', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if(!config.displayUsersInfos) {
@@ -109,7 +108,7 @@ module.exports = function (router) {
 
     });
 
-    router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, role.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
             if (!permission) {
                 return res.status(400).send({success: false, msg: 'wrong permission id'});
