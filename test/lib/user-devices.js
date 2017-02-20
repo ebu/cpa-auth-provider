@@ -15,7 +15,7 @@ var initDatabase = function (opts, done) {
                 label: "admin"
             }
         ).then(function () {
-        db.Permission
+        db.User
             .create({
                 id: 3,
                 email: 'testuser',
