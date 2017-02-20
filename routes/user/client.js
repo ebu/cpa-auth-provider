@@ -1,15 +1,15 @@
 "use strict";
 
-var config     = require('../../config');
-var db         = require('../../models/index');
-var authHelper = require('../../lib/auth-helper');
-var async      = require('async');
-var role       = require('../../lib/role');
-var permission = require('../../lib/permission');
+var config         = require('../../config');
+var db             = require('../../models/index');
+var authHelper     = require('../../lib/auth-helper');
+var async          = require('async');
+var role           = require('../../lib/role');
+var permissionName = require('../../lib/permission-name');
 
 
 var routes = function(router) {
-  router.delete('/user/client/:client_id', [authHelper.authenticateFirst, role.can(permission.ADMIN_PERMISSION)], function(req, res, next) {
+  router.delete('/user/client/:client_id', [authHelper.authenticateFirst, role.can(permissionName.ADMIN_PERMISSION)], function(req, res, next) {
     var clientId = req.params.client_id;
 
     db.Client
