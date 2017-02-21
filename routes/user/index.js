@@ -11,6 +11,21 @@ var USER_NOT_FOUND = 'User not found';
 var SUCESS_PASS_CHANGED = 'Successfully changing password';
 
 var routes = function (router) {
+
+    router.get('/user/home', authHelper.ensureAuthenticated, function (req, res, next) {
+        db.User.findOne({
+            where: {
+                id: req.user.id
+            }
+        }).then(function (user) {
+            if (!user) {
+                return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
+            } else {
+                return res.render('./user/home.ejs');
+            }
+        });
+    });
+
     router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
         db.Client
             .findAll({
