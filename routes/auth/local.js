@@ -259,7 +259,6 @@ module.exports = function (app, options) {
                             } else {
                                 return res.status(400).json({msg: 'Wrong recovery code.'});
                             }
-                            ;
                         });
                     }
                     else {

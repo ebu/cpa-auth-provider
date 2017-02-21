@@ -1,12 +1,43 @@
 <%- include ../layout/head %>
 
-<div class="row">
-    <div class="col-sm-12">
-        <h2>
-            Settings
-        </h2>
+<div id="home">
+
+    <div class="row">
+
+        <div class="col-sm-6">
+            <a class="home-panel" href="<%= link('/user/profile') %>">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                    <span class="home-icon hidden-xs">
+                        <span class="glyphicon glyphicon-user text-info"></span>
+                    </span>
+                        <h3 class="text-info">My profile</h3>
+                        <p>
+                            Access your personal details and update them
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-sm-6">
+            <a class="home-panel" href="<%= link('/user/devices') %>">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <span class="home-icon hidden-xs">
+                            <span class="glyphicon glyphicon-hdd text-info"></span>
+                        </span>
+                        <h3 class="text-info">My devices</h3>
+                        <p>
+                            Check your devices and add some
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
 
     </div>
+
 </div>
 
 <%- include ../layout/foot %>
