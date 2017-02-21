@@ -26,6 +26,7 @@ var localStrategyCallback = function (req, username, password, done) {
 
                 user.verifyPassword(password).then(function (isMatch) {
                         if (isMatch) {
+                            user.logLogin().then(function() {}, function() {});
                             done(null, user);
                         } else {
                             done(null, false, req.flash('loginMessage', loginError));

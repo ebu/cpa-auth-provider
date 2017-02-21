@@ -16,11 +16,15 @@ module.exports = function (sequelize, DataTypes) {
         enable_sso: DataTypes.BOOLEAN,
         display_name: DataTypes.STRING,
         photo_url: DataTypes.STRING,
-        verified: DataTypes.BOOLEAN
+        verified: DataTypes.BOOLEAN,
+        password_changed_at: DataTypes.INTEGER,
+        last_login_at: DataTypes.INTEGER
     }, {
         underscored: true,
         instanceMethods: {
-
+            logLogin: function(transaction) {
+                return self.updateAttributes({last_login_at: Date.now()}, {transaction: transaction});
+            },
             setPassword: function (password) {
                 var self = this;
                 return new Promise(
@@ -32,7 +36,9 @@ module.exports = function (sequelize, DataTypes) {
                                 if (err) {
                                     return reject(err);
                                 } else {
-                                    return self.updateAttributes({password: hash}).then(resolve, reject);
+                                    return self.updateAttributes(
+                                        {password: hash, password_changed_at: Date.now()}
+                                        ).then(resolve, reject);
                                 }
                             }
                         );

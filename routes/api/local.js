@@ -94,6 +94,7 @@ module.exports = function (app, options) {
 
                     user.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
+                                user.logLogin().then(function() {}, function() {});
                                 // if user is found and password is right create a token
                                 var token = jwt.encode(user, config.jwtSecret);
                                 // return the information including token as JSON
