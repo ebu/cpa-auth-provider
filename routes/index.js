@@ -18,6 +18,10 @@ module.exports = function(router) {
       query = '?' + querystring.stringify(req.query);
     }
 
-    requestHelper.redirect(res, '/verify' + query);
+    requestHelper.redirect(res, '/home' + query);
+  });
+
+  router.get('/home', authHelper.ensureAuthenticated, function (req, res) {
+    return res.render('./user/home.ejs');
   });
 };
