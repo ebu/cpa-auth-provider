@@ -109,7 +109,7 @@ module.exports = {
     },
   ],
 
-  roles: [
+  permissions: [
     {
       id:       1,
       label:    "admin"

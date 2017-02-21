@@ -14,13 +14,13 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (done) {
 
-    db.Role
+    db.Permission
         .create({
                 id: 1,
                 label: "admin"
             }
         ).then(function () {
-        db.Role
+        db.Permission
             .create({
                     id: 2,
                     label: "other"
@@ -35,7 +35,7 @@ var initDatabase = function (done) {
                     return user.setPassword('testpassword');
                 })
                 .then(function (user) {
-                    return user.updateAttributes({role_id: 1});
+                    return user.updateAttributes({permission_id: 1});
                 })
                 .then(function (user) {
                     return db.Domain.create({
@@ -79,7 +79,7 @@ describe('GET /admin', function () {
 
         before(function (done) {
             db.User.findOne({where: {id: 5}}).then(function (user) {
-                user.updateAttributes({role_id: 2}).then(done())
+                user.updateAttributes({permission_id: 2}).then(done())
             });
         });
 
@@ -111,7 +111,7 @@ describe('GET /admin', function () {
                 id: 100,
                 email: 'monadmin@ebu.fr',
                 username: 'admin',
-                role_id: 1
+                permission_id: 1
             }).then(function (user) {
                 user.setPassword('admin').then(function () {
                     done();
@@ -151,7 +151,7 @@ describe('GET /admin', function () {
                 id: 100,
                 email: 'monadmin@ebu.fr',
                 username: 'admin',
-                role_id: 1
+                permission_id: 1
             }).then(function (user) {
                 user.setPassword('admin').then(function () {
                     done();
@@ -189,7 +189,7 @@ describe('GET /admin', function () {
                 id: 100,
                 email: 'monadmin@ebu.fr',
                 username: 'admin',
-                role_id: 1
+                permission_id: 1
             }).then(function (user) {
                 user.setPassword('admin').then(function () {
                     done();

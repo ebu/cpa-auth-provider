@@ -23,7 +23,7 @@
             <thead>
             <tr>
                 <th>Email</th>
-                <th>Role</th>
+                <th>Permissions</th>
             </tr>
             </thead>
             <tbody>
@@ -31,13 +31,13 @@
             <tr id="user-<%=users[i].id%>">
                 <td><%= users[i].email %></td>
                 <td>
-                    <select class=" role form-control">
+                    <select class=" permission form-control">
                         <option value="default" disabled selected>
                             none
                         </option>
-                        <% for (var j = 0; j < roles.length; j++) { %>
-                        <option value="<%= users[i].id %>_<%= roles[j].id %>" <% if(typeof users[i].role_id !== "undefined" && roles[j].id === users[i].role_id){ %> selected <% } %>>
-                            <%= roles[j].label %>
+                        <% for (var j = 0; j < permissions.length; j++) { %>
+                        <option value="<%= users[i].id %>_<%= permissions[j].id %>" <% if(typeof users[i].permission_id !== "undefined" && permissions[j].id === users[i].permission_id){ %> selected <% } %>>
+                            <%= permissions[j].label %>
                         </option>
                         <% } %>
                     </select>
@@ -60,7 +60,7 @@
         errorSuccess.hide();
         errorAlert.hide();
 
-        $('.role').on('change', function() {
+        $('.permission').on('change', function() {
 
             if($(this).val() == "default"){
                 return;
@@ -68,19 +68,19 @@
 
             var params = $(this).val().split("_");
             var userId = params[0];
-            var roleId = params[1];
+            var permissionId = params[1];
 
             $.ajax({
-                url : '/admin/users/' + userId + '/role',
+                url : '/admin/users/' + userId + '/permission',
                 type : 'POST',
                 data : {
-                    role: roleId
+                    permissionId: permissionId
                 }
             }).done(function(data) {
-                errorSuccess.html("Successfully changed "+ data.user.email+ " role");
+                errorSuccess.html("Successfully changed "+ data.user.email+ " permission");
                 errorSuccess.show();
             }).fail(function(error) {
-                errorAlert.html("Error changin "+ data.user.email+ " role, please try again");
+                errorAlert.html("Error changin "+ data.user.email+ " permission, please try again");
                 errorAlert.show();
             });
         });

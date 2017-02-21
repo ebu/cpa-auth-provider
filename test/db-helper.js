@@ -14,7 +14,7 @@ module.exports = {
         'IdentityProviders',
         'PairingCodes',
         'Users',
-        'Roles',
+        'Permissions',
         'UserProfiles'
     ];
 

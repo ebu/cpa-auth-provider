@@ -51,7 +51,7 @@ module.exports = function (sequelize, DataTypes) {
             User.hasMany(models.AccessToken);
             User.hasMany(models.ValidationCode);
             User.belongsTo(models.IdentityProvider);
-            User.belongsTo(models.Role);
+            User.belongsTo(models.Permission);
             User.hasOne(models.UserProfile);
         }
     });

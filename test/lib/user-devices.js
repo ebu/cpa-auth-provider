@@ -9,7 +9,7 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (opts, done) {
 
-    db.Role
+    db.Permission
         .create({
                 id: 1,
                 label: "admin"
@@ -21,7 +21,7 @@ var initDatabase = function (opts, done) {
                 email: 'testuser',
                 provider_uid: 'testuser',
                 display_name: 'Test User',
-                role_id: 1
+                permission_id: 1
             })
             .then(function (user) {
                 return user.setPassword('testpassword');
@@ -32,7 +32,7 @@ var initDatabase = function (opts, done) {
                     email: '2testuser2',
                     provider_uid: '2testuser2',
                     display_name: '2 Test User 2',
-                    role_id: 1
+                    permission_id: 1
                 });
             })
             .then(function (user) {

@@ -33,10 +33,10 @@ db.sequelize
             console.log('Synchronization done.');
 
             if (process.env.NODE_ENV === 'development') {
-                db.Role
-                    .bulkCreate(config.roles)
+                db.Permission
+                    .bulkCreate(config.permissions)
                     .then(function () {
-                        console.log('[ROLE] Database populated');
+                        console.log('[PERMISSION] Database populated');
                     });
                 db.User
                     .bulkCreate(config.users)
