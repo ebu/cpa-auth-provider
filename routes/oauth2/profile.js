@@ -11,6 +11,9 @@ var user_info = [
         res.json({
             user: {
                 id: req.user.id,
+                email: req.user.email,
+                email_verified: req.user.email_verified,
+                display_name: req.user.display_name,
                 name: req.user.display_name || req.user.email
             },
             scope: req.authInfo.scope

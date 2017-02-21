@@ -7,7 +7,7 @@ var logger = require('../../../lib/logger');
 
 exports.bearer = new BearerStrategy(function (accessToken, done) {
     var clientId = jwtHelper.read(accessToken).cli;
-	db.OAuth2Client.find({where: {id: clientId}}).then(
+	db.OAuth2Client.find({where: {client_id: clientId}}).then(
 		function(client) {
 			if (!client) {
 				return done(null, false);
