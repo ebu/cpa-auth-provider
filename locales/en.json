@@ -1,1 +1,6 @@
-{}
+{
+	"LAYOUT_HEAD_MY_DEVICES": "My devices",
+	"LAYOUT_HEAD_EDIT_PROFILE": "Profile",
+	"LAYOUT_HEAD_ADMIN": "Admin",
+	"LAYOUT_HEAD_LOGOUT": "Logout"
+}
