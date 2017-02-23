@@ -53,16 +53,6 @@ describe('user profile timestamps', function () {
 
 		before(function (done) {
 			var self = this;
-			requestHelper.sendRequest(
-				self,
-				'/',
-				{method: 'get'},
-				done
-			)
-		});
-
-		before(function (done) {
-			var self = this;
 			this.clock.restore();
 			this.clock = sinon.useFakeTimers(new Date("Wed Feb 01 2017 11:42:00 GMT+0000").getTime(), "Date");
 			this.login_at = Date.now();
@@ -95,24 +85,6 @@ describe('user profile timestamps', function () {
 						},
 						done
 					);
-					// requestHelper.sendRequest(
-					// 	self,
-					// 	'/user/' + user.id + '/password',
-					// 	{
-					// 		method: 'post',
-					// 		cookie: self.cookie,
-					// 		type: 'form',
-					// 		data: {
-					// 			previous_password: OLD_PASSWORD,
-					// 			confirm_password: OLD_PASSWORD,
-					// 			password: NEW_PASSWORD
-					// 		}
-					// 	},
-					// 	function () {
-					// 		console.log(self.res.error);
-					// 		done();
-					// 	}
-					// );
 				},
 				done
 			);
