@@ -14,6 +14,7 @@ passport.use(new GithubStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     db.User.findOrCreate({where: {provider_uid: profile.id, display_name: profile.displayName}}).spread(function(user){
+      user.logLogin().then(function() {}, function() {});
       return done(null, user);
     }).catch(function(err) {
         done(err, null);

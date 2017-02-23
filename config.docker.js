@@ -14,6 +14,8 @@ module.exports = {
 
   },
 
+  displayUsersInfos: true,
+
   mail: {
     sending: {
       // transport: 'sendmail'
@@ -119,7 +121,15 @@ module.exports = {
       label:    "other"
     }
   ],
-
+	users: [
+		{
+			id:           1,
+			email:        "admin@admin.com",
+			display_name: "Admin",
+			verified:     true,
+			role_id:      1
+		}
+	],
   oauth2_clients: [
     {
       id: 1,
