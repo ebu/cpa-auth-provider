@@ -58,6 +58,8 @@ module.exports = {
   // redirected to the specified identity_providers (ie: 'github')
   auto_idp_redirect: '',
 
+  displayUsersInfos: true,
+
   db: {
     host: '',
     port: 3306,
@@ -110,7 +112,7 @@ module.exports = {
     }
   ],
 
-  roles: [
+  permissions: [
     {
       id:       1,
       label:    "admin"
@@ -127,7 +129,7 @@ module.exports = {
     //         email:        "admin@admin.com",
     //         display_name: "Admin",
     //         verified:     true,
-    //         role_id:      1
+    //         permission_id:      1
     //     }
     // ],
 

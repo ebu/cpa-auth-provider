@@ -6,6 +6,7 @@ var db = require('../../models');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
+var config = require('../../config');
 
 var chai = require('chai');
 var chaiJquery = require('chai-jquery');
@@ -15,13 +16,13 @@ chai.use(chaiHttp);
 
 var initDatabase = function (done) {
 
-    db.Role
+    db.Permission
         .create({
                 id: 1,
                 label: "admin"
             }
         ).then(function () {
-        db.Role
+        db.Permission
             .create({
                     id: 2,
                     label: "other"
@@ -45,7 +46,7 @@ var initDatabase = function (done) {
                         return user.setPassword('testpassword');
                     })
                     .then(function (user) {
-                        return user.updateAttributes({role_id: 1});
+                        return user.updateAttributes({permission_id: 1});
                     })
                     .then(function (user) {
                         return db.Domain.create({
@@ -91,7 +92,7 @@ describe('GET /admin/users security', function () {
         before(function (done) {
             db.User.findOne({where: {id: 5}})
                 .then(function (user) {
-                    return user.updateAttributes({role_id: 2});
+                    return user.updateAttributes({permission_id: 2});
                 })
                 .then(done());
         });
@@ -103,10 +104,10 @@ describe('GET /admin/users security', function () {
 
         context('When the user request grant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/role', {
+                requestHelper.sendRequest(self, '/admin/users/5/permission', {
                     cookie: self.cookie,
                     method: 'post',
-                    data: {role : 1}
+                    data: {permission : 1}
                 }, done);
             });
 
@@ -160,10 +161,10 @@ describe('GET /admin/users security', function () {
 
         context('When the user request grant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/role', {
+                requestHelper.sendRequest(self, '/admin/users/5/permission', {
                     cookie: self.cookie,
                     method: 'post',
-                    data: {role : 1}
+                    data: {permission : 1}
             }, done);
             });
 
@@ -175,10 +176,10 @@ describe('GET /admin/users security', function () {
 
         context('When the user request ungrant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/role', {
+                requestHelper.sendRequest(self, '/admin/users/5/permission', {
                     cookie: self.cookie,
                     method: 'post',
-                    data: {role : 2}
+                    data: {permission : 2}
             }, done);
             });
 
@@ -238,7 +239,7 @@ describe('GET /admin/users security', function () {
 
 });
 
-describe('POST /admin/users/<id>/role ', function () {
+describe('POST /admin/users/<id>/permission ', function () {
     context('When target user is an admin', function () {
 
         var self = this;
@@ -251,10 +252,10 @@ describe('POST /admin/users/<id>/role ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/5/role', {
+            requestHelper.sendRequest(self, '/admin/users/5/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {role : 2}
+                data: {permission : 2}
             }, done);
         });
 
@@ -266,9 +267,9 @@ describe('POST /admin/users/<id>/role ', function () {
                 })
         });
 
-        it('should return status 200 and role_id should be 2', function () {
+        it('should return status 200 and permission_id should be 2', function () {
             expect(self.res.statusCode).to.equal(200);
-            expect(self.user.role_id === 2);
+            expect(self.user.permission_id === 2);
         });
     });
     context('When target user is not an admin', function () {
@@ -282,10 +283,10 @@ describe('POST /admin/users/<id>/role ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/6/role', {
+            requestHelper.sendRequest(self, '/admin/users/6/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {role : 2}
+                data: {permission : 2}
             }, done);
         });
 
@@ -299,7 +300,7 @@ describe('POST /admin/users/<id>/role ', function () {
 
         it('should return status 200', function () {
             expect(self.res.statusCode).to.equal(200);
-            expect(self.user.role_id === 2);
+            expect(self.user.permission_id === 2);
         });
 
     });
@@ -307,7 +308,7 @@ describe('POST /admin/users/<id>/role ', function () {
 
 });
 
-describe('POST /admin/users/<id>/role ', function () {
+describe('POST /admin/users/<id>/permission ', function () {
 
     context('when target user is not an admin', function () {
         var self = this;
@@ -320,10 +321,10 @@ describe('POST /admin/users/<id>/role ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/6/role', {
+            requestHelper.sendRequest(self, '/admin/users/6/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {role : 1}
+                data: {permission : 1}
             }, done);
         });
 
@@ -335,9 +336,9 @@ describe('POST /admin/users/<id>/role ', function () {
                 })
         });
 
-        it('should return status 200 and role id shoud be 1', function () {
+        it('should return status 200 and permission id shoud be 1', function () {
             expect(self.res.statusCode).to.equal(200);
-            expect(self.user.role_id === 1);
+            expect(self.user.permission_id === 1);
         });
     });
 
@@ -352,10 +353,10 @@ describe('POST /admin/users/<id>/role ', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/5/role', {
+            requestHelper.sendRequest(self, '/admin/users/5/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {role : 1}
+                data: {permission : 1}
             }, done);
         });
 
@@ -367,14 +368,15 @@ describe('POST /admin/users/<id>/role ', function () {
                 })
         });
 
-        it('should return status 200 and role id shoud be 1', function () {
+        it('should return status 200 and permission id shoud be 1', function () {
             expect(self.res.statusCode).to.equal(200);
-            expect(self.user.role_id === 1);
+            expect(self.user.permission_id === 1);
         });
     });
 });
 
 describe('GET /admin/users', function () {
+
     context('When the admin is authenticated', function () {
         var self = this;
 
@@ -385,6 +387,31 @@ describe('GET /admin/users', function () {
         });
 
         before(function (done) {
+            config.displayUsersInfos = false;
+            // console.log("the cookie", self.cookie);
+            requestHelper.sendRequest(this, '/admin/users', {
+                cookie: self.cookie,
+                parseDOM: true
+            }, done);
+        });
+
+        it('should return status 404 if config.displayUsersInfos is false', function () {
+            expect(this.res.statusCode).to.equal(404);
+        });
+
+    });
+
+    context('When the admin is authenticated', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+        });
+
+        before(function (done) {
+            config.displayUsersInfos = true;
             // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin/users', {
                 cookie: self.cookie,
@@ -438,8 +465,8 @@ describe('GET /admin/users/csv', function () {
         expect(self.res.statusCode).to.equal(200);
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
-        expect(self.res).to.have.header('content-length', '54');
-        expect(self.res.text).to.equal('email,role_id,role\r\ntestuser,1,admin\r\nuser@user.ch,,\r\n');
+        expect(self.res).to.have.header('content-length', '66'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
+        expect(self.res.text).to.equal('email,permission_id,permission\r\ntestuser,1,admin\r\nuser@user.ch,,\r\n');
     });
 
 

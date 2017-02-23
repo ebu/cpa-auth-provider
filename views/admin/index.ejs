@@ -2,7 +2,7 @@
 
 <h1>Admin</h1>
 
-<p><a href="<%= link('/admin/domains') %>">Service Providers</a></p>
-<p><a href="<%= link('/admin/users') %>">Users</a></p>
+<p><a id="providers-link" href="<%= link('/admin/domains') %>">Service Providers</a></p>
+<% if(config.displayUsersInfos) { %><p><a id="users-link" href="<%= link('/admin/users') %>">Users</a></p><% } %>
 
 <% include ../layout/foot %>

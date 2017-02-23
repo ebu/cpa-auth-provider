@@ -13,7 +13,7 @@ var util = require('util');
 
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
-var permission = require('../../lib/permission');
+var permissionName = require('../../lib/permission-name');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
@@ -26,6 +26,7 @@ var localStrategyCallback = function (req, username, password, done) {
 
                 user.verifyPassword(password).then(function (isMatch) {
                         if (isMatch) {
+                            user.logLogin().then(function() {}, function() {});
                             done(null, user);
                         } else {
                             done(null, false, req.flash('loginMessage', loginError));
@@ -58,12 +59,12 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         done(null, false, req.flash('signupMessage', 'That email is already taken'));
                     } else {
                         db.sequelize.sync().then(function () {
-                            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
                                 var userParams = {
                                     email: req.body.email
                                 };
-                                if (role) {
-                                    userParams.role_id = role.id;
+                                if (permission) {
+                                    userParams.permission_id = permission.id;
                                 }
                                 var user;
                                 db.User.create(userParams).then(function (_user) {
@@ -215,7 +216,7 @@ module.exports = function (app, options) {
                                 "password-recovery-email",
                                 {log: true},
                                 {
-                                    forceLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.mail) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
                                     mail: user.email,
                                     code: code

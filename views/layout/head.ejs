@@ -63,7 +63,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="<%= link('/user/devices') %>"><%= __('LAYOUT_HEAD_MY_DEVICES')%></a></li>
                             <li><a href="<%= link('/user/profile') %>"><%= __('LAYOUT_HEAD_EDIT_PROFILE') %></a></li>
-                            <% if (userCan(permission.ADMIN_PERMISSION)) { %>
+                            <% if (userCan(permissionName.ADMIN_PERMISSION)) { %>
                             <li><a href="<%= link('/admin') %>"><%= __('LAYOUT_HEAD_ADMIN') %></a></li>
                             <% } %>
                             <li><a href="<%= link('/logout') %>"><%= __('LAYOUT_HEAD_LOGOUT') %></a></li>

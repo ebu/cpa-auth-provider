@@ -68,6 +68,8 @@ module.exports = {
 
   enableCORS: true,
 
+  displayUsersInfos: true,
+
   // Cross-origin resource sharing
   cors: {
     enabled: true,
@@ -97,7 +99,7 @@ module.exports = {
     }
   ],
 
-  roles: [
+  permissions: [
     {
       id:       1,
       label:    "admin"

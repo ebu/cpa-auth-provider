@@ -29,7 +29,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/:broadcaster?/user/profile', authHelper.ensureAuthenticated, function (req, res, next) {
+    router.get('/:broadcaster?/user/profile', authHelper.authenticateFirst, function (req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
