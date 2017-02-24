@@ -1,6 +1,15 @@
 {
-  "LAYOUT_HEAD_MY_DEVICES": "My devices",
-  "LAYOUT_HEAD_EDIT_PROFILE": "Profile",
-  "LAYOUT_HEAD_ADMIN": "Admin",
-  "LAYOUT_HEAD_LOGOUT": "Logout"
+  "LAYOUT_HEAD_NAV_MY_DEVICES": "My devices",
+  "LAYOUT_HEAD_NAV_EDIT_PROFILE": "Profile",
+  "LAYOUT_HEAD_NAV_ADMIN": "Admin",
+  "LAYOUT_HEAD_NAV_LOGOUT": "Logout",
+
+  "LOGIN_TITLE": "Login",
+  "LOGIN_BACK_IDP_LINK": "Back to Identity Providers",
+  "LOGIN_FORGOT_PASSWORD_LINK": "Forgot your password?",
+  "LOGIN_NEED_AN_ACCOUNT_LINK": "Need an account?",
+  "LOGIN_SIGNUP_LINK": "Signup",
+  "LOGIN_EMAIL_LABEL": "Email",
+  "LOGIN_PASSWORD_LABEL": "Password",
+  "LOGIN_LOGIN_BUTTON": "Login"
 }
