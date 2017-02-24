@@ -164,7 +164,7 @@ module.exports = function (app, options) {
     });
 
     app.post('/login', passport.authenticate('local', {
-        failureRedirect: '/auth/local',
+        failureRedirect: config.urlPrefix + '/auth/local',
         failureFlash: true
     }), redirectOnSuccess);
 
@@ -180,7 +180,7 @@ module.exports = function (app, options) {
             }
             // Redirect if it fails
             if (!user) {
-                return res.redirect('/signup?email=' + req.body.email);
+                return res.redirect(config.urlPrefix + '/signup?email=' + req.body.email);
             }
             req.logIn(user, function (err) {
                 if (err) {
@@ -216,7 +216,7 @@ module.exports = function (app, options) {
                                 "password-recovery-email",
                                 {log: true},
                                 {
-                                    forceLink: config.mail.host + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
                                     mail: user.email,
                                     code: code

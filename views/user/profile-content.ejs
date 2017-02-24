@@ -146,7 +146,7 @@
     <div class="col-sm-9">
         <div class="verification-link-container">
             <p>Fill the verification field below and resend your account verification link</p>
-            <form id="verification-link-form" action='/user/profile/request_verification_email' method="post">
+            <form id="verification-link-form" action='<%= link('/user/profile/request_verification_email') %>' method="post">
                 <div class="form-group">
                     <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
                 </div>
