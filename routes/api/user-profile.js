@@ -37,6 +37,7 @@ module.exports = function (app, options) {
                         lastname: user_profile.lastname,
                         gender: user_profile.gender,
                         birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
+                        language: user_profile.language,
                         email: user.email,
                         display_name: user_profile.getDisplayName(user, req.query.policy)
                     }
@@ -59,6 +60,9 @@ module.exports = function (app, options) {
         }
         if (req.body.gender) {
             req.checkBody('gender', 'gender, invalide value. Must be a "male" or "female"').isHuman();
+        }
+        if (req.body.language) {
+            req.checkBody('language', 'language, invalide value.').isString();
         }
 
         req.getValidationResult().then(function (result) {
@@ -87,8 +91,10 @@ module.exports = function (app, options) {
                                         lastname: req.body.lastname ? xssFilters.inHTMLData(req.body.lastname) : user_profile.lastname,
                                         gender: req.body.gender ? xssFilters.inHTMLData(req.body.gender) : user_profile.gender,
                                         birthdate: req.body.birthdate ? xssFilters.inHTMLData(req.body.birthdate) + '' : user_profile.birthdate,
+                                        language: req.body.language ? xssFilters.inHTMLData(req.body.language) + '' : user_profile.language,
                                     })
                                     .then(function () {
+                                            res.cookie('lang', user_profile.language, {maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true}); // TODO Move cookie name and duration in config
                                             res.json({success: true, msg: 'Successfully updated user_profile.'});
                                         },
                                         function (err) {

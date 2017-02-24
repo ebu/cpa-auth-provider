@@ -53,6 +53,7 @@ var routes = function (router) {
                             firstname: profile.firstname,
                             lastname: profile.lastname,
                             gender: profile.gender,
+                            language: profile.language,
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),

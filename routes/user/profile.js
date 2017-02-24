@@ -16,7 +16,8 @@ var routes = function (router) {
         req.checkBody('firstname', '"Firstname" is empty or invalid').notEmpty().isString();
         req.checkBody('lastname', '"Lastname" is empty or invalid').notEmpty().isString();
         req.checkBody('birthdate', '"Birthdate" is empty or invalid').notEmpty().isInt();
-        req.checkBody('gender', '"Sex" empty or is invalid').notEmpty().isHuman();
+        req.checkBody('gender', '"Sex" is empty or is invalid').notEmpty().isHuman();
+        req.checkBody('language', '"language" is empty or is invalid').notEmpty().isString();
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -32,9 +33,11 @@ var routes = function (router) {
                             firstname: xssFilters.inHTMLData(req.body.firstname),
                             lastname: xssFilters.inHTMLData(req.body.lastname),
                             gender: xssFilters.inHTMLData(req.body.gender),
-                            birthdate: xssFilters.inHTMLData(req.body.birthdate)
+                            birthdate: xssFilters.inHTMLData(req.body.birthdate),
+                            language: xssFilters.inHTMLData(req.body.language)
                         })
-                        .then(function () {
+                        .then(function (user_profile) {
+                                res.cookie('lang',  user_profile.language, {maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true}); // TODO Move cookie name and duration in config
                                 res.json({msg: 'Successfully updated user_profile.'});
                             },
                             function (err) {

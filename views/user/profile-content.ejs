@@ -55,17 +55,37 @@
                 <div class="panel">
                     <h4>Sexe</h4>
                     <% if (profile.gender) { %>
-                    <% if (profile.gender === "female") { %>
-                    <span class="data-value" data-selected="<%= profile.gender %>">Woman</span>
+                        <% if (profile.gender === "female") { %>
+                        <span class="data-value" data-selected="<%= profile.gender %>">Woman</span>
+                        <% } else { %>
+                        <span class="data-value" data-selected="<%= profile.gender %>">Man</span>
+                        <% } %>
                     <% } else { %>
-                    <span class="data-value" data-selected="<%= profile.gender %>">Man</span>
-                    <% } %>
-                    <% } else { %>
-                    <span class="data-value" data-selected="male"></span>
+                        <span class="data-value" data-selected="male"></span>
                     <% } %>
                     <select id="gender" name="gender" class="form-control personnal-data-input">
                         <option value="male">Man</option>
                         <option value="female">Woman</option>
+                    </select>
+                </div>
+                <div class="panel">
+                    <h4>Language</h4>
+                    <% if (profile.language) { %>
+                        <% if (profile.language === "fr") { %>
+                        <span class="data-value" data-selected="<%= profile.language %>">Français</span>
+                        <% } else { if (profile.language === "de") {%>
+                                <span class="data-value" data-selected="<%= profile.language %>">Deutsch</span>
+                            <% } else { %>
+                                <span class="data-value" data-selected="<%= profile.language %>">English</span>
+                            <% } %>
+                        <% } %>
+                    <% } else { %>
+                        <span class="data-value" data-selected="fr"></span>
+                    <% } %>
+                    <select id="language" name="language" class="form-control personnal-data-input">
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
                     </select>
                 </div>
                 <div class="panel">
@@ -191,6 +211,7 @@
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
         var $gender = $("#gender");
+        var $language = $("#language");
         var $previousPassword = $("#previous-password");
         var $password = $("#password");
         var $confirmPassword = $("#confirm-password");
@@ -319,6 +340,7 @@
                     firstname: $firstname.val(),
                     lastname: $lastname.val(),
                     gender: $gender.val(),
+                    language: $language.val(),
                     birthdate: date
                 },
                 type: 'PUT',
@@ -330,7 +352,12 @@
                     $gender.prev(".data-value").text($gender.find("option:selected").text());
                     $gender.prev(".data-value").attr("data-selected", $gender.val());
 
+                    $language.prev(".data-value").text($language.find("option:selected").text());
+                    $language.prev(".data-value").attr("data-selected", $language.val());
+
                     closeEditMode();
+                    // Reload in case the user has changed the local
+                    location.reload();
                 },
                 error: function(result) {
                     $.each(result.responseJSON.errors, function(index, error){
