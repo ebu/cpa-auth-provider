@@ -16,7 +16,7 @@ module.exports = {
 
   i18n: {
       cookie_name:'language',
-      cookie_duration:365 * 24 * 60 * 60 * 1000
+      cookie_duration: 365 * 24 * 60 * 60 * 1000
   },
 
   identity_providers: {
