@@ -94,7 +94,7 @@ module.exports = function (app, options) {
                                         language: req.body.language ? xssFilters.inHTMLData(req.body.language) + '' : user_profile.language,
                                     })
                                     .then(function () {
-                                            res.cookie('lang', user_profile.language, {maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true}); // TODO Move cookie name and duration in config
+                                            res.cookie(config.i18n.cookie_name, user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
                                             res.json({success: true, msg: 'Successfully updated user_profile.'});
                                         },
                                         function (err) {

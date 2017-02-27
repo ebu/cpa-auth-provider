@@ -37,7 +37,7 @@ var routes = function (router) {
                             language: xssFilters.inHTMLData(req.body.language)
                         })
                         .then(function (user_profile) {
-                                res.cookie('lang',  user_profile.language, {maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true}); // TODO Move cookie name and duration in config
+                                res.cookie(config.i18n.cookie_name,  user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
                                 res.json({msg: 'Successfully updated user_profile.'});
                             },
                             function (err) {

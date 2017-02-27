@@ -3,7 +3,6 @@
   "LAYOUT_HEAD_NAV_EDIT_PROFILE": "Profile",
   "LAYOUT_HEAD_NAV_ADMIN": "Admin",
   "LAYOUT_HEAD_NAV_LOGOUT": "Logout",
-
   "LOGIN_TITLE": "Login",
   "LOGIN_BACK_IDP_LINK": "Back to Identity Providers",
   "LOGIN_FORGOT_PASSWORD_LINK": "Forgot your password?",

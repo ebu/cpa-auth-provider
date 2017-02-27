@@ -9,7 +9,7 @@ var routes = function (router) {
     router.post('/i18n', function (req, res) {
 
         if (req.body.language) {
-            res.cookie('lang', req.body.language, {maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true}); // TODO Move cookie name and duration in config
+            res.cookie(config.i18n.cookie_name, req.body.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
 
             if (req.body.update_profile && req.body.update_profile === 'yes') {
                 var user = authHelper.getAuthenticatedUser(req);

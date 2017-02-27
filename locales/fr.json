@@ -1,15 +1,14 @@
 {
-	"LAYOUT_HEAD_NAV_MY_DEVICES": "Mes appareils",
-	"LAYOUT_HEAD_NAV_EDIT_PROFILE": "Profil",
-	"LAYOUT_HEAD_NAV_ADMIN": "Administration",
-	"LAYOUT_HEAD_NAV_LOGOUT": "Déconnexion",
-
-	"LOGIN_TITLE": "Connexion",
-	"LOGIN_BACK_IDP_LINK": "Retour à la liste des fournisseurs d'identité",
-	"LOGIN_FORGOT_PASSWORD_LINK": "Mots de passe oublié ?",
-	"LOGIN_NEED_AN_ACCOUNT_LINK": "Besoin d'un compte ?",
-	"LOGIN_SIGNUP_LINK": "S'enregistrer",
-	"LOGIN_EMAIL_LABEL": "Email",
-	"LOGIN_PASSWORD_LABEL": "Mots de passe",
-	"LOGIN_LOGIN_BUTTON": "Connection"
+  "LAYOUT_HEAD_NAV_MY_DEVICES": "Mes appareils",
+  "LAYOUT_HEAD_NAV_EDIT_PROFILE": "Profil",
+  "LAYOUT_HEAD_NAV_ADMIN": "Administration",
+  "LAYOUT_HEAD_NAV_LOGOUT": "Déconnexion",
+  "LOGIN_TITLE": "Connexion",
+  "LOGIN_BACK_IDP_LINK": "Retour à la liste des fournisseurs d'identité",
+  "LOGIN_FORGOT_PASSWORD_LINK": "Mot de passe oublié ?",
+  "LOGIN_NEED_AN_ACCOUNT_LINK": "Besoin d'un compte ?",
+  "LOGIN_SIGNUP_LINK": "S'enregistrer",
+  "LOGIN_EMAIL_LABEL": "Email",
+  "LOGIN_PASSWORD_LABEL": "Mot de passe",
+  "LOGIN_LOGIN_BUTTON": "Connection"
 }
