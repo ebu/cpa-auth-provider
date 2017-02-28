@@ -2,11 +2,11 @@
 
 <div id="users">
 
-    <h1>Users</h1>
+    <h1><%= __('ADMIN_USERS_TITLE')%></h1>
 
     <div class="toolbar">
         <a class="btn btn-primary" id="export-csv" href="/admin/users/csv">
-            <span class="glyphicon glyphicon-download"></span> CSV
+            <span class="glyphicon glyphicon-download"></span><%= __('ADMIN_USERS_CSV_DOWNLOAD_LINK')%>
         </a>
     </div>
 
@@ -22,11 +22,11 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Email</th>
-                <th>Permissions</th>
-                <th>Created</th>
-                <th>Password Changed</th>
-                <th>Last Login</th>
+                <th><%= __('ADMIN_USERS_EMAIL_TABLE_COL_TITLE')%></th>
+                <th><%= __('ADMIN_USERS_PERMISSIONS_TABLE_COL_TITLE')%></th>
+                <th><%= __('ADMIN_USERS_CREATED_TABLE_COL_TITLE')%></th>
+                <th><%= __('ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE')%></th>
+                <th><%= __('ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE')%></th>
             </tr>
             </thead>
             <tbody>

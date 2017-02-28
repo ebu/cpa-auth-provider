@@ -1,8 +1,8 @@
 <% include ../layout/head %>
 
-<h1>Admin</h1>
+<h1><%= __('ADMIN_TITLE')%></h1>
 
-<p><a id="providers-link" href="<%= link('/admin/domains') %>">Service Providers</a></p>
-<% if(config.displayUsersInfos) { %><p><a id="users-link" href="<%= link('/admin/users') %>">Users</a></p><% } %>
+<p><a id="providers-link" href="<%= link('/admin/domains') %>"><%= __('ADMIN_SERVICE_PROVIDER_LINK')%></a></p>
+<% if(config.displayUsersInfos) { %><p><a id="users-link" href="<%= link('/admin/users') %>"><%= __('ADMIN_USERS_LINK')%></a></p><% } %>
 
 <% include ../layout/foot %>
