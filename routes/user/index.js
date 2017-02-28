@@ -3,8 +3,6 @@
 var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
-var fs = require('fs');
-
 
 var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
 var USER_NOT_FOUND = 'User not found';
@@ -30,7 +28,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/:broadcaster?/user/profile', authHelper.authenticateFirst, function (req, res, next) {
+    router.get('/user/profile', authHelper.authenticateFirst, function (req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
@@ -44,12 +42,7 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
-                    var tpl = './user/profile.ejs';
-                    var broadcaster = req.params.broadcaster || false;
-                    var brandingMode = broadcaster !== false;
                     var data = {
-                        broadcaster: broadcaster,
-                        brandingMode: brandingMode,
                         profile: {
                             firstname: profile.firstname,
                             lastname: profile.lastname,
@@ -61,11 +54,8 @@ var routes = function (router) {
                         }
                     };
 
-                    if (broadcaster && fs.existsSync(__dirname + '/../../views/user/broadcaster/profile-' + broadcaster + '.ejs')) {
-                        tpl = './user/broadcaster/profile-' + broadcaster + '.ejs';
-                    }
+                    res.render('./user/profile.ejs', data);
 
-                    res.render(tpl, data);
                 });
             }
         }, function (err) {

@@ -1,53 +1,53 @@
-.panel {
+#profile .panel {
     height: 75px;
     border-bottom: 1px solid #eee;
     box-shadow: none;
 }
-#btn-container, #form-modify-pass {
+#profile #btn-container, #profile #form-modify-pass {
     display: none;
 }
-.personnal-data-input {
+#profile .personnal-data-input {
     visibility: hidden;
 }
-.error-block {
+#profile .error-block {
     display: none;
 }
-.error-block .title {
+#profile .error-block .title {
     font-weight: 500;
 }
-.error-block .content p{
+#profile .error-block .content p{
     margin: 0;
 }
-.account-title {
+#profile .account-title {
     display: inline-block;
 }
-.btn.btn-link {
+#profile .btn.btn-link {
     padding: 0;
 }
-.status {
+#profile .status {
     display: block;
     cursor: default;
     border: none;
 }
-#btn-send-verification-link {
+#profile #btn-send-verification-link {
     min-width: 80px;
 }
-#verification-success, #verification-error {
+#profile #verification-success, #profile #verification-error {
     display: none;
 }
-.verification-link-container {
+#profile .verification-link-container {
     margin-top: 20px;
 }
 
-.delete-container {
+#profile .delete-container {
     margin-top: 10px;
 }
 
 @media (max-width: 767px) {
-    .h4, h4 {
+    #profile .h4, #profile h4 {
         font-size: 25px;
     }
-    .status {
+    #profile .status {
         display: inline-block;
         float: right;
         margin-top: 15px;
