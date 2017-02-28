@@ -3,8 +3,6 @@
 var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
-var fs = require('fs');
-
 
 var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
 var USER_NOT_FOUND = 'User not found';

@@ -11,7 +11,7 @@
     <% if ( broadcaster && broadcaster.name === "rts" ) { %>
         <%- include rts/head %>
     <% } else { %>
-        <% include head %>
+        <%- include head %>
     <% } %>
 
 </head>
@@ -20,7 +20,7 @@
     <% if ( broadcaster && broadcaster.name === "rts" ) { %>
         <%- include rts/nav %>
     <% } else { %>
-        <% include default/nav %>
+        <%- include default/nav %>
     <% } %>
 
     <div class="container">
