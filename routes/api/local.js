@@ -15,7 +15,7 @@ var cors = require('../../lib/cors');
 
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
-var permission = require('../../lib/permission');
+var permissionName = require('../../lib/permission-name');
 
 var codeHelper = require('../../lib/code-helper');
 
@@ -60,12 +60,12 @@ module.exports = function (app, options) {
                         return res.status(400).json({success: false, msg: 'email already exists.'});
                     } else {
                         db.sequelize.sync().then(function () {
-                            db.Role.findOne({where: {label: permission.USER_PERMISSION}}).then(function (role) {
+                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
                                 var userParams = {
                                     email:   req.body.email
                                 };
-                                if (role) {
-                                     userParams.role_id = role.id;
+                                if (permission) {
+                                     userParams.permission_id = permission.id;
                                 }
                                 var user = db.User.create(userParams).then(function (user) {
                                     return user.setPassword(req.body.password);
@@ -94,6 +94,7 @@ module.exports = function (app, options) {
 
                     user.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
+                                user.logLogin().then(function() {}, function() {});
                                 // if user is found and password is right create a token
                                 var token = jwt.encode(user, config.jwtSecret);
                                 // return the information including token as JSON

@@ -112,7 +112,7 @@ module.exports = {
     }
   ],
 
-  roles: [
+  permissions: [
     {
       id:       1,
       label:    "admin"
@@ -129,7 +129,7 @@ module.exports = {
     //         email:        "admin@admin.com",
     //         display_name: "Admin",
     //         verified:     true,
-    //         role_id:      1
+    //         permission_id:      1
     //     }
     // ],
 

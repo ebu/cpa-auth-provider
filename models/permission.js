@@ -2,16 +2,16 @@
 
 module.exports = function (sequelize, DataTypes) {
 
-    var Role = sequelize.define('Role', {
+    var Permission = sequelize.define('Permission', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         label: {type: DataTypes.STRING, unique: true}
     }, {
         underscored: true,
         instanceMethods: {},
         associate: function (models) {
-            Role.hasMany(models.User);
+            Permission.hasMany(models.User);
         }
     });
 
-    return Role;
+    return Permission;
 };
