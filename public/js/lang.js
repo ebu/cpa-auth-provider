@@ -23,7 +23,7 @@ function setLanguage(language, logged) {
             language: language,
         },
         success: function (result) {
-            //location.reload();
+            location.reload();
         },
         error: function (error) {
         }
