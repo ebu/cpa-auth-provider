@@ -34,6 +34,13 @@
   "ADMIN_USERS_PERMISSIONS_TABLE_COL_TITLE": "Permissions",
   "ADMIN_USERS_CREATED_TABLE_COL_TITLE": "Created",
   "ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE": "Password Changed",
-  "ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Last Login"
+  "ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Last Login",
+
+
+  "AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Available providers",
+  "AUTH_MAIN_LOGIN_FB_LINK": "Login with Facebook",
+  "AUTH_MAIN_LOGIN_GITHUB_LINK": "Login with Github",
+  "AUTH_MAIN_LOGIN_EBU_LINK": "Login with EBU",
+  "AUTH_MAIN_LOGIN_USER_LINK": "Login with Username and Password"
 
 }
