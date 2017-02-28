@@ -333,6 +333,7 @@
                     closeEditMode();
                 },
                 error: function(result) {
+                    console.log(result);
                     $.each(result.responseJSON.errors, function(index, error){
                         $("#personnal-data-errors").append($('<span>').text(error.msg));
                     });

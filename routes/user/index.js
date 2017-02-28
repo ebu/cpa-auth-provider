@@ -29,7 +29,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/:broadcaster?/user/profile', authHelper.authenticateFirst, function (req, res, next) {
+    router.get('/user/profile', authHelper.authenticateFirst, function (req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
@@ -44,6 +44,7 @@ var routes = function (router) {
                     }
                 }).spread(function (profile) {
                     var tpl = './user/profile.ejs';
+                    console.log("PARAMS", req.params);
                     var broadcaster = req.params.broadcaster || false;
                     var brandingMode = broadcaster !== false;
                     var data = {
