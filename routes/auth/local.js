@@ -73,8 +73,10 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                 }).then(function () {
                                     return codeHelper.getOrGenereateEmailVerificationCode(user);
                                 }).then(function (code) {
+                                    // Async
+                                    user.logLogin().then(function() {}, function() {});
                                     console.log("dqdssqfsqdfdsf");
-                                    return emailHelper.send(
+                                    emailHelper.send(
                                         config.mail.from,
                                         user.email,
                                         "validation-email",
@@ -260,7 +262,6 @@ module.exports = function (app, options) {
                             } else {
                                 return res.status(400).json({msg: 'Wrong recovery code.'});
                             }
-                            ;
                         });
                     }
                     else {

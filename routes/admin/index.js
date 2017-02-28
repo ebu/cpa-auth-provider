@@ -82,7 +82,7 @@ module.exports = function (router) {
         db.User.findAll({include: [{model: db.Permission}]})
             .then(
                 function (resultset) {
-                    var head = ['email', 'permission_id', 'permission'];
+                    var head = ['email', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
                     var lines = [];
                     lines.push(head);
                     for (var i = 0; i < resultset.length; i++) {
@@ -92,7 +92,10 @@ module.exports = function (router) {
                             id = resultset[i].Permission.id;
                             label = resultset[i].Permission.label;
                         }
-                        lines.push([resultset[i].email, id, label]);
+                        var createdAt = resultset[i].created_at;
+                        var passwordChangedAt = new Date(resultset[i].password_changed_at);
+                        var lastLoginAt = resultset[i].last_login_at ? new Date(resultset[i].last_login_at) : '';
+						lines.push([resultset[i].email, id, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 
                     var toDownload = csv.stringify(lines);

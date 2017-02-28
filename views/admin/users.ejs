@@ -24,6 +24,9 @@
             <tr>
                 <th>Email</th>
                 <th>Permissions</th>
+                <th>Created</th>
+                <th>Password Changed</th>
+                <th>Last Login</th>
             </tr>
             </thead>
             <tbody>
@@ -41,6 +44,13 @@
                         </option>
                         <% } %>
                     </select>
+                </td>
+                <td><%= users[i].created_at %></td>
+                <td><%= new Date(users[i].password_changed_at) %></td>
+                <td>
+                    <% if(users[i].last_login_at) { %>
+                    <%= new Date(users[i].last_login_at) %>
+                    <% } %>
                 </td>
             </tr>
             <% } %>
