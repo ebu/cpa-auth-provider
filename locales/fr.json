@@ -34,7 +34,7 @@
   "ADMIN_USERS_PERMISSIONS_TABLE_COL_TITLE": "Permissions",
   "ADMIN_USERS_CREATED_TABLE_COL_TITLE": "Créé le",
   "ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE": "Password changé le",
-  "ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Dernière connexion"
+  "ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Dernière connexion",
 
   "AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Providers disponible",
   "AUTH_MAIN_LOGIN_FB_LINK": "Se connecter avec Facebook",
