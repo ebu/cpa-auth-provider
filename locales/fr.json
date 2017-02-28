@@ -40,5 +40,9 @@
   "AUTH_MAIN_LOGIN_FB_LINK": "Se connecter avec Facebook",
   "AUTH_MAIN_LOGIN_GITHUB_LINK": "Se connecter avec Github",
   "AUTH_MAIN_LOGIN_EBU_LINK": "Se connecter avec EBU",
-  "AUTH_MAIN_LOGIN_USER_LINK": "Se connecter avec un login et un mots de passe"
+  "AUTH_MAIN_LOGIN_USER_LINK": "Se connecter avec un login et un mots de passe",
+
+  "OAUTH_DIALOG_TITLE": "demande l'accès à votre compte.",
+  "OAUTH_DIALOG_ALLOW": "Authoriser",
+  "OAUTH_DIALOG_DENY": "Refuser"
 }
