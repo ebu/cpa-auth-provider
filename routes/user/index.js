@@ -43,13 +43,8 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
-                    var tpl = './user/profile.ejs';
                     console.log("PARAMS", req.params);
-                    var broadcaster = req.params.broadcaster || false;
-                    var brandingMode = broadcaster !== false;
                     var data = {
-                        broadcaster: broadcaster,
-                        brandingMode: brandingMode,
                         profile: {
                             firstname: profile.firstname,
                             lastname: profile.lastname,
@@ -61,11 +56,8 @@ var routes = function (router) {
                         }
                     };
 
-                    if (broadcaster && fs.existsSync(__dirname + '/../../views/user/broadcaster/profile-' + broadcaster + '.ejs')) {
-                        tpl = './user/broadcaster/profile-' + broadcaster + '.ejs';
-                    }
+                    res.render('./user/profile.ejs', data);
 
-                    res.render(tpl, data);
                 });
             }
         }, function (err) {
