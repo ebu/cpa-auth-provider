@@ -83,7 +83,6 @@ describe('POST /i18n', function () {
         });
 
         before(function (done) {
-            console.log("cookie:", self.cookie);
             requestHelper.sendRequest(self, '/i18n/profile', {
                 cookie: self.cookie,
                 method: 'post',

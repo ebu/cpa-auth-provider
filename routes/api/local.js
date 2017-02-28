@@ -174,7 +174,7 @@ module.exports = function (app, options) {
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    config.mail.local
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language: req.getLocale()
                 ).then(
                     function() {},
                     function(err) {}

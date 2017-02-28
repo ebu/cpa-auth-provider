@@ -4,7 +4,8 @@ module.exports = {
 
   i18n: {
       cookie_name:'language',
-      cookie_duration: 365 * 24 * 60 * 60 * 1000
+      cookie_duration: 365 * 24 * 60 * 60 * 1000,
+      default_locale: 'en'
   },
 
   identity_providers: {
@@ -38,7 +39,6 @@ module.exports = {
       password: 'HalloEBU',
     },
     from:'no-reply@rts.ch',
-    locale:'ch_fr',
     host:'http://localhost:3000'
   },
 

@@ -4,7 +4,8 @@ module.exports = {
 
   i18n: {
       cookie_name:'language',
-      cookie_duration: 365 * 24 * 60 * 60 * 1000
+      cookie_duration: 365 * 24 * 60 * 60 * 1000,
+      default_locale: process.env.DEFAULT_LOCALE
   },
 
   identity_providers: {
@@ -37,7 +38,6 @@ module.exports = {
       // secure: true
     },
     from: process.env.MAIL_FROM,
-    locale: process.env.MAIL_LOCALE,
     host: process.env.IDP_HOST
   },
 

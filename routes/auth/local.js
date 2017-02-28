@@ -26,7 +26,9 @@ var localStrategyCallback = function (req, username, password, done) {
 
                 user.verifyPassword(password).then(function (isMatch) {
                         if (isMatch) {
-                            user.logLogin().then(function() {}, function() {});
+                            user.logLogin().then(function () {
+                            }, function () {
+                            });
                             done(null, user);
                         } else {
                             done(null, false, req.flash('loginMessage', loginError));
@@ -71,9 +73,17 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                     user = _user;
                                     return user.setPassword(req.body.password);
                                 }).then(function () {
+                                    return db.UserProfile.findOrCreate({
+                                        where: {user_id: user.id}
+                                    });
+                                }).spread(function (user_profile) {
+                                    return user_profile.updateAttributes(
+                                        {
+                                            language: req.getLocale()
+                                        })
+                                }).then(function () {
                                     return codeHelper.getOrGenereateEmailVerificationCode(user);
                                 }).then(function (code) {
-                                    console.log("dqdssqfsqdfdsf");
                                     return emailHelper.send(
                                         config.mail.from,
                                         user.email,
@@ -85,7 +95,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                             mail: encodeURIComponent(user.email),
                                             code: encodeURIComponent(code)
                                         },
-                                        config.mail.locale
+                                        req.getLocale() ? req.getLocale() : config.mail.local
                                     );
                                 }).then(function () {
                                     return done(null, user);
@@ -221,7 +231,7 @@ module.exports = function (app, options) {
                                     mail: user.email,
                                     code: code
                                 },
-                                config.mail.local
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
                             ).then(
                                 function () {
                                 },
