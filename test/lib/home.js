@@ -34,11 +34,11 @@ describe('GET /', function() {
       requestHelper.sendRequest(this, '/', { cookie: this.cookie }, done);
     });
 
-    it('should redirect to /verify', function() {
+    it('should redirect to /home', function() {
       var urlPrefix = requestHelper.urlPrefix;
       expect(this.res.statusCode).to.equal(302);
       expect(this.res.headers).to.have.property('location');
-      expect(this.res.headers.location).to.equal(urlPrefix + '/verify');
+      expect(this.res.headers.location).to.equal(urlPrefix + '/home');
     });
   });
 

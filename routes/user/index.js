@@ -11,6 +11,7 @@ var USER_NOT_FOUND = 'User not found';
 var SUCESS_PASS_CHANGED = 'Successfully changing password';
 
 var routes = function (router) {
+
     router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
         db.Client
             .findAll({
