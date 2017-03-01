@@ -133,5 +133,17 @@
   "SIGNUP_SIGNUP_BUTTON": "Signup",
   "SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL": "Already have an account?",
   "SIGNUP_LOGIN_BUTTON": "Login",
-  "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Passwords are different"
+  "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Passwords are different",
+
+  "VERIFY_TITLE": "Device Association",
+  "VERIFY_USER_CODE_LABEL": "User Code",
+  "VERIFY_VERIFY_BUTTON": "Verify",
+
+  "VERIFY_LIST_TITLE": "Pending Authorization",
+  "VERIFY_LIST_DEVICE_ID_LABEL": "Device id",
+  "VERIFY_LIST_DOMAIN_LABEL": "Domain",
+  "VERIFY_LIST_ACCEPT_LABEL": "Accept?",
+  "VERIFY_YES_RADIO": " Yes",
+  "VERIFY_NO_RADIO": " No",
+  "VERIFY_VERIFY_BUTTON": "Verify"
 }

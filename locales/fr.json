@@ -132,8 +132,19 @@
   "SIGNUP_SIGNUP_BUTTON": "Enregistrement",
   "SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL": "Vous avez déjà un compte ?",
   "SIGNUP_LOGIN_BUTTON": "Se connecter",
-  "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Les 2 mots de passe sont différents"
+  "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Les 2 mots de passe sont différents",
 
+  "VERIFY_TITLE": "Association d'appareils",
+  "VERIFY_USER_CODE_LABEL": "Code utilisateur",
+  "VERIFY_VERIFY_BUTTON": "Vérifier",
+
+  "VERIFY_LIST_TITLE": "Autorisation en attente",
+  "VERIFY_LIST_DEVICE_ID_LABEL": "Appareil id",
+  "VERIFY_LIST_DOMAIN_LABEL": "Domaine",
+  "VERIFY_LIST_ACCEPT_LABEL": "Accepter ?",
+  "VERIFY_YES_RADIO": " Oui",
+  "VERIFY_NO_RADIO": " Non",
+  "VERIFY_VERIFY_BUTTON": "Vérifier"
 
 }
 
