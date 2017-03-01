@@ -1,5 +1,42 @@
 /*
 ************
+************ GENERAL
+************
+*/
+html {
+    height: 100%;
+    min-height: 100%;
+}
+body {
+    padding: 0; margin: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main {
+    flex: 1;
+}
+header, footer {
+    background-color: #abc;
+}
+.panel {
+    margin: 15px 0;
+}
+.panel .panel-body {
+    padding: 20px 15px;
+}
+.panel .panel-body > h1 {
+    margin: 0 0 20px 0;
+    font-size: 30px;
+}
+.panel .last-link {
+    margin: 15px 0 0 0;
+}
+.error-message {
+    display: none;
+}
+/*
+************
 ************ SPINNER
 ************
 */
@@ -51,27 +88,6 @@
 */
 .alert .glyphicon{
     vertical-align: -1px;
-}
-/*
-************
-************ GENERAL
-************
-*/
-.panel {
-    margin: 15px 0;
-}
-.panel .panel-body {
-    padding: 20px 15px;
-}
-.panel .panel-body > h1 {
-    margin: 0 0 20px 0;
-    font-size: 30px;
-}
-.panel .last-link {
-    margin: 15px 0 0 0;
-}
-.error-message {
-    display: none;
 }
 /*
 ************
@@ -202,3 +218,8 @@ nav .lang ul.dropdown-menu{
     -moz-box-shadow: 3px 0 15px 0 rgba(204,204,204,1);
     box-shadow: 3px 0 15px 0 rgba(204,204,204,1);
 }
+/*
+************
+************ MEDIA QUERIES
+************
+*/
