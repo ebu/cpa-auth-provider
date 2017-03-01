@@ -2,15 +2,15 @@
 
 <div></div>
 
-<p>Hi <%= user.display_name || user.email %>!</p>
-<p><b><%= client.name %></b> <%= __('OAUTH_DIALOG_TITLE')%>is requesting access to your account.</p>
-<p>Do you approve?</p>
+<p><%= __('OAUTH_DIALOG_TITLE_HI')%> <%= user.display_name || user.email %>!</p>
+<p><b><%= client.name %></b> <%= __('OAUTH_DIALOG_TITLE')%></p>
+<p><%= __('OAUTH_DIALOG_APPROVAL')%></p>
 
 <form action="<%= link('/oauth2/dialog/authorize/decision') %>" method="post">
   <input name="transaction_id" type="hidden" value="<%= transactionID %>">
   <div>
-  <input type="submit" value="<%= __('OAUTH_DIALOG_ALLOW')%>Allow" id="allow">
-  <input type="submit" value="<%= __('OAUTH_DIALOG_DENY')%>Deny" name="cancel" id="deny">
+  <input type="submit" value="<%= __('OAUTH_DIALOG_ALLOW')%>" id="allow">
+  <input type="submit" value="<%= __('OAUTH_DIALOG_DENY')%>" name="cancel" id="deny">
   </div>
 </form>
 

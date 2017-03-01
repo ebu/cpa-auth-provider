@@ -40,9 +40,19 @@
   "AUTH_MAIN_LOGIN_FB_LINK": "Se connecter avec Facebook",
   "AUTH_MAIN_LOGIN_GITHUB_LINK": "Se connecter avec Github",
   "AUTH_MAIN_LOGIN_EBU_LINK": "Se connecter avec EBU",
-  "AUTH_MAIN_LOGIN_USER_LINK": "Se connecter avec un login et un mots de passe",
+  "AUTH_MAIN_LOGIN_USER_LINK": "Se connecter avec un login et un mot de passe",
 
+  "OAUTH_DIALOG_TITLE_HI": "Bonjour",
   "OAUTH_DIALOG_TITLE": "demande l'accès à votre compte.",
+  "OAUTH_DIALOG_APPROVAL": "Etes-vous d'accord?",
   "OAUTH_DIALOG_ALLOW": "Authoriser",
-  "OAUTH_DIALOG_DENY": "Refuser"
+  "OAUTH_DIALOG_DENY": "Refuser",
+
+  "USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE": "Client Id",
+  "USER_DEVICES_NAME_TABLE_COL_TITLE": "Nom",
+  "USER_DEVICES_OWNER_TABLE_COL_TITLE": "Propriétaire",
+  "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Domaines authorisés",
+  "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil"
+
 }
+

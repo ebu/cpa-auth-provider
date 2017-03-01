@@ -43,8 +43,16 @@
   "AUTH_MAIN_LOGIN_EBU_LINK": "Login with EBU",
   "AUTH_MAIN_LOGIN_USER_LINK": "Login with Username and Password",
 
+  "OAUTH_DIALOG_TITLE_HI": "Hi",
   "OAUTH_DIALOG_TITLE": "is requesting access to your account.",
+  "OAUTH_DIALOG_APPROVAL": "Do you approve?",
   "OAUTH_DIALOG_ALLOW": "Allow",
-  "OAUTH_DIALOG_DENY": "Deny"
+  "OAUTH_DIALOG_DENY": "Deny",
+
+  "USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE": "Client Id",
+  "USER_DEVICES_NAME_TABLE_COL_TITLE": "Name",
+  "USER_DEVICES_OWNER_TABLE_COL_TITLE": "Owner",
+  "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Authorized domains",
+  "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associate a device"
 
 }
