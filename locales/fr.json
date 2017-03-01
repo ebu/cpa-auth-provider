@@ -52,7 +52,13 @@
   "USER_DEVICES_NAME_TABLE_COL_TITLE": "Nom",
   "USER_DEVICES_OWNER_TABLE_COL_TITLE": "Propriétaire",
   "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Domaines authorisés",
-  "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil"
+  "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
+
+  "HOME_MY_PROFILE_TITLE": "Mon profile",
+  "HOME_PERSONNAL_DATA_LINK": "Accéder à vos information personne et les mettre à jour",
+  "HOME_MY_DEVICES_TITLE": "Mes appareils",
+  "HOME_DEVICES_LINK": "Gérer vos appareils et en ajouter"
+
 
 }
 
