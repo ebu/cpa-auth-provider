@@ -145,5 +145,20 @@
   "VERIFY_LIST_ACCEPT_LABEL": "Accept?",
   "VERIFY_YES_RADIO": " Yes",
   "VERIFY_NO_RADIO": " No",
-  "VERIFY_VERIFY_BUTTON": "Verify"
+  "VERIFY_VERIFY_BUTTON": "Verify",
+
+  "VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Email validation",
+  "VERIFY_MAIL_SUCCESS_LABEL": "Your account has been verified successfully.",
+  "VERIFY_MAIL_SUCCESS_THX_LABEL": "Thank you",
+  "VERIFY_MAIL_GO_TO_LINK_PREFIX": "Go to",
+  "VERIFY_MAIL_GO_TO_LINK_SUFFIX": "profile page",
+  "VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Email validation",
+  "VERIFY_MAIL_ERR_LABEL_1": "Unfortunately we could not validate your account.",
+  "VERIFY_MAIL_ERR_LABEL_2": "Please go to your",
+  "VERIFY_MAIL_ERR_LABEL_3": "profile page",
+  "VERIFY_MAIL_ERR_LABEL_4": "and hit the send verification link to try again.",
+  "VERIFY_MAIL_OR_LABEL": "OR",
+  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL_PREFIX": "Go back to",
+  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "login page"
+
 }

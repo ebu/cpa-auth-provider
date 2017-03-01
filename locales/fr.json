@@ -144,7 +144,21 @@
   "VERIFY_LIST_ACCEPT_LABEL": "Accepter ?",
   "VERIFY_YES_RADIO": " Oui",
   "VERIFY_NO_RADIO": " Non",
-  "VERIFY_VERIFY_BUTTON": "Vérifier"
+  "VERIFY_VERIFY_BUTTON": "Vérifier",
+
+  "VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Validation Email",
+  "VERIFY_MAIL_SUCCESS_LABEL": "Votre compte a été vérifié avec succès.",
+  "VERIFY_MAIL_SUCCESS_THX_LABEL": "Merci",
+  "VERIFY_MAIL_GO_TO_LINK_PREFIX": "Aller à",
+  "VERIFY_MAIL_GO_TO_LINK_SUFFIX": "la page de profile",
+  "VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Validation Email",
+  "VERIFY_MAIL_ERR_LABEL_1": "Malheureusement nous nous ne pouvons valider votre compte.",
+  "VERIFY_MAIL_ERR_LABEL_2": "S'il vous plait, allez à",
+  "VERIFY_MAIL_ERR_LABEL_3": "votre page de profile",
+  "VERIFY_MAIL_ERR_LABEL_4": "et appuyez sur envoyer le lien de validation à nouveau.",
+  "VERIFY_MAIL_OR_LABEL": "OU",
+  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL_PREFIX": "Retour à",
+  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "la page de connection"
 
 }
 
