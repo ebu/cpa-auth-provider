@@ -264,8 +264,12 @@
             date = new Date(parseInt("<%= profile.birthdate %>"));
             $datepicker.prev(".data-value").text(formatDate(date));
         }
+
+        var locale = '<%= language %>';
+
         $datepicker.datepicker({
             format: 'dd/mm/yyyy',
+            language: locale,
             endDate: "0d"
         });
 
