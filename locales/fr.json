@@ -107,7 +107,16 @@
   "AUTHORIZE_FORM_LABEL_PREFIX": "Souhaitez-vous autoriser",
   "AUTHORIZE_FORM_LABEL_SUFFIX": "à agir en votre nom ?",
   "AUTHORIZE_ALLOW_BUTTON": "Autoriser",
-  "AUTHORIZE_DENY_BUTTON": "Refuser"
+  "AUTHORIZE_DENY_BUTTON": "Refuser",
+
+  "PASSWORD_EDIT_TITLE": "Changement de mot de passe",
+  "PASSWORD_EDIT_BACK_TO_LOGIN_LINK": "Retour à la page de connexion",
+  "PASSWORD_EDIT_LOGIN_WITH_NEW_PASSWORD_LINK_PREFIX": "Votre mot de passe a été changé. Vous pouvez maintenant",
+  "PASSWORD_EDIT_LOGIN_WITH_NEW_PASSWORD_LINK": "vous connecter avec votre nouveau mot de passe",
+  "PASSWORD_EDIT_NEW_PASSWORD_FORM_LABEL": "Nouveau mot de passe",
+  "PASSWORD_EDIT_CONFIRM_PASSWORD_FORM_LABEL": "Confirmer le mot de passe",
+  "PASSWORD_EDIT_CONFIRM_FORM_BUTTON": "Confirmer",
+  "PASSWORD_EDIT_JS_ERROR_MSG": "Une erreur s'est produite, merci de rééssayer ultéirieurement"
 
 
 }

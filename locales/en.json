@@ -108,6 +108,15 @@
   "AUTHORIZE_FORM_LABEL_PREFIX": "Would you like to authorize ",
   "AUTHORIZE_FORM_LABEL_SUFFIX": "act on your behalf?",
   "AUTHORIZE_ALLOW_BUTTON": "Allow",
-  "AUTHORIZE_DENY_BUTTON": "Deny"
+  "AUTHORIZE_DENY_BUTTON": "Deny",
+
+  "PASSWORD_EDIT_TITLE": "Change password",
+  "PASSWORD_EDIT_BACK_TO_LOGIN_LINK": "Back to login",
+  "PASSWORD_EDIT_LOGIN_WITH_NEW_PASSWORD_LINK_PREFIX": "Your password has been changed. You can now",
+  "PASSWORD_EDIT_LOGIN_WITH_NEW_PASSWORD_LINK": "log in with your new password",
+  "PASSWORD_EDIT_NEW_PASSWORD_FORM_LABEL": "New password",
+  "PASSWORD_EDIT_CONFIRM_PASSWORD_FORM_LABEL": "Confirm password",
+  "PASSWORD_EDIT_CONFIRM_FORM_BUTTON": "Confirm",
+  "PASSWORD_EDIT_JS_ERROR_MSG": "An error occurred during the process, please try again later"
 
 }
