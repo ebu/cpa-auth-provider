@@ -124,6 +124,14 @@
   "PASSWORD_RECOVERY_EMAIL_LABEL": "Your email",
   "PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Reset password",
   "PASSWORD_RECOVERY_JS_ERROR_MSG": "An error occurred during the process, please try again later",
-  "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "A password reset link has been sent successfully to your email address"
+  "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "A password reset link has been sent successfully to your email address",
 
+  "SIGNUP_BACK_TO_IDP_LIST_LINK": "Back to Identity Providers",
+  "SIGNUP_EMAIL_LABEL": "Email",
+  "SIGNUP_PASSWORD_LABEL": "Password",
+  "SIGNUP_CONFIRM_PASSWORD_LABEL": "Confirm password",
+  "SIGNUP_SIGNUP_BUTTON": "Signup",
+  "SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL": "Already have an account?",
+  "SIGNUP_LOGIN_BUTTON": "Login",
+  "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Passwords are different"
 }

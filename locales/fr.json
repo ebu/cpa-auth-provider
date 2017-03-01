@@ -123,7 +123,16 @@
   "PASSWORD_RECOVERY_EMAIL_LABEL": "Votre email",
   "PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Réinitialiser votre mot de passe",
   "PASSWORD_RECOVERY_JS_ERROR_MSG": "Une erreur est survenue, merci de réessayer plus tard",
-  "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "Un email contenant un lien pour réinitialiser votre mot de passe a été envoyé"
+  "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "Un email contenant un lien pour réinitialiser votre mot de passe a été envoyé",
+
+  "SIGNUP_BACK_TO_IDP_LIST_LINK": "Retour à la liste des fournisseurs d'identité",
+  "SIGNUP_EMAIL_LABEL": "Email",
+  "SIGNUP_PASSWORD_LABEL": "Mot de passe",
+  "SIGNUP_CONFIRM_PASSWORD_LABEL": "Confirmez le mot de passe",
+  "SIGNUP_SIGNUP_BUTTON": "Enregistrement",
+  "SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL": "Vous avez déjà un compte ?",
+  "SIGNUP_LOGIN_BUTTON": "Se connecter",
+  "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Les 2 mots de passe sont différents"
 
 
 }
