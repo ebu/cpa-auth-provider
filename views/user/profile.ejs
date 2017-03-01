@@ -316,7 +316,7 @@
                     $spinner.hide();
                     $label.show();
                     if(!result.responseJSON.msg)
-                        $verifError.find(".text").first().text("An error occurred during the process, please try again later");
+                        $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION')%>");
                     else
                         $verifError.find(".text").first().text(result.responseJSON.msg);
 
@@ -324,7 +324,7 @@
                 },
                 success: function (response) {
                     $btnVerificationLink.remove();
-                    $verifSuccess.find(".text").first().text("Successfully sent a verification email to your mailbox");
+                    $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION')%>");
                     $verifSuccess.show();
                 }
             });
