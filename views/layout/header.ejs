@@ -8,10 +8,9 @@
          "current file" is changing for each page so the path actually change. So as we can not say that include
          must look for paths in views instead of current file, we can not do a dynamic include.
      */%>
+    <%- include default/head %>
     <% if ( broadcaster && broadcaster.name === "rts" ) { %>
         <%- include rts/head %>
-    <% } else { %>
-        <%- include default/head %>
     <% } %>
 
 </head>
