@@ -100,5 +100,8 @@
   "PROFILE_DELETE_YOUR_ACCOUNT_LINK": "Delete account",
   "PROFILE_ERROR_MSG": "Please verify that the fields below are filled in and valid before submitting the form",
   "PROFILE_JS_ERROR_RESEND_VALIDATION": "An error occurred during the process, please try again later",
-  "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Successfully sent a verification email to your mailbox"
+  "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Successfully sent a verification email to your mailbox",
+
+  "ACCESS_DENIED_TITLE": "Access Denied",
+  "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content"
 }
