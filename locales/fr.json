@@ -164,7 +164,11 @@
   "VERIFY_MAIN_LABEL_PREFIX": "demande votre autorisation pour agir en votre nom sur",
   "VERIFY_MAIN_LABEL_SUFFIX": ". Est-ce que vous acceptez ?",
   "ERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
-  "VERIFY_MAIN_DENY_BUTTON": "Refuser"
+  "VERIFY_MAIN_DENY_BUTTON": "Refuser",
+
+  "BACK_SIGNUP_EMAIL_TAKEN": "Cet email existe déjà dans le système",
+  "BACK_SIGNUP_PB_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
+  "BACK_SIGNUP_INVALID_EMAIL": "Email invalide"
 
 
 }

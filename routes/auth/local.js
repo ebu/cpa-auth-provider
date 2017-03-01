@@ -15,6 +15,8 @@ var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
 
+var i18n = require('i18n');
+
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
     db.User.findOne({where: {email: username}})
@@ -48,17 +50,17 @@ var localSignupStrategyCallback = function (req, username, password, done) {
     req.checkBody('email', 'Invalid email').isEmail();
     req.getValidationResult().then(function (result) {
         if (!result.isEmpty()) {
-            done(null, false, req.flash('signupMessage', 'Invalid email'));
+            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
             return;
         } else {
             if (req.recaptcha.error) {
-                done(null, false, req.flash('signupMessage', 'Something went wrong with the reCAPTCHA'));
+                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
                 return;
             }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
-                        done(null, false, req.flash('signupMessage', 'That email is already taken'));
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
                     } else {
                         db.sequelize.sync().then(function () {
                             db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
