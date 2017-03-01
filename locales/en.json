@@ -159,6 +159,13 @@
   "VERIFY_MAIL_ERR_LABEL_4": "and hit the send verification link to try again.",
   "VERIFY_MAIL_OR_LABEL": "OR",
   "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL_PREFIX": "Go back to",
-  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "login page"
+  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "login page",
+
+  "VERIFY_PREFILLED_CODE_TITLE": "Authorization",
+  "VERIFY_MAIN_LABEL_PREFIX": "is requesting your authorization to act on your behalf on",
+  "VERIFY_MAIN_LABEL_PREFIX": ". Do you accept?",
+  "ERIFY_MAIN_ALLOW_BUTTON": "Allow",
+  "VERIFY_MAIN_DENY_BUTTON": "Deny"
+
 
 }
