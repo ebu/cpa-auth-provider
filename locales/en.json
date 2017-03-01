@@ -103,5 +103,11 @@
   "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Successfully sent a verification email to your mailbox",
 
   "ACCESS_DENIED_TITLE": "Access Denied",
-  "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content"
+  "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content",
+
+  "AUTHORIZE_FORM_LABEL_PREFIX": "Would you like to authorize ",
+  "AUTHORIZE_FORM_LABEL_SUFFIX": "act on your behalf?",
+  "AUTHORIZE_ALLOW_BUTTON": "Allow",
+  "AUTHORIZE_DENY_BUTTON": "Deny"
+
 }

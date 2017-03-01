@@ -102,6 +102,13 @@
   "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Un email de validation a été envoyé",
 
   "ACCESS_DENIED_TITLE": "Accès refusé",
-  "ACCESS_DENIED_MSG": "Nous sommes désolé, mais vous n'avez pas la permission d'accéder à ce contenu"
+  "ACCESS_DENIED_MSG": "Nous sommes désolé, mais vous n'avez pas la permission d'accéder à ce contenu",
+
+  "AUTHORIZE_FORM_LABEL_PREFIX": "Souhaitez-vous autoriser",
+  "AUTHORIZE_FORM_LABEL_SUFFIX": "à agir en votre nom ?",
+  "AUTHORIZE_ALLOW_BUTTON": "Autoriser",
+  "AUTHORIZE_DENY_BUTTON": "Refuser"
+
+
 }
 
