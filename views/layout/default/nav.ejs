@@ -29,16 +29,40 @@
                         <% } %>
                         <b class="caret"></b> </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<%= link('/user/devices') %>">My Devices</a></li>
-                        <li><a href="<%= link('/user/profile') %>">Edit Profile</a></li>
+                        <li><a href="<%= link('/user/devices') %>"><%= __('LAYOUT_HEAD_NAV_MY_DEVICES')%></a></li>
+                        <li><a href="<%= link('/user/profile') %>"><%= __('LAYOUT_HEAD_NAV_EDIT_PROFILE') %></a></li>
                         <% if (userCan(permissionName.ADMIN_PERMISSION)) { %>
-                        <li><a href="<%= link('/admin') %>">Admin</a></li>
+                        <li><a href="<%= link('/admin') %>"><%= __('LAYOUT_HEAD_NAV_ADMIN') %></a></li>
                         <% } %>
-                        <li><a href="<%= link('/logout') %>">Logout</a></li>
+                        <li><a href="<%= link('/logout') %>"><%= __('LAYOUT_HEAD_NAV_LOGOUT') %></a></li>
                     </ul>
                 </li>
             </ul>
             <% } %>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown selectable lang">
+
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <%if (language === 'en'){%>EN<%}%>
+                        <%if (language === 'de'){%>DE<%}%>
+                        <%if (language === 'fr'){%>FR<%}%>
+                        <span class="caret"></span></a>
+
+                    <ul class="dropdown-menu dropdown-menu-lang">
+                        <li>
+                            <a href="#">EN</a>
+                        </li>
+                        <li>
+                            <a href="#">FR</a>
+                        </li>
+                        <li>
+                            <a href="#">DE</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
