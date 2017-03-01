@@ -117,6 +117,13 @@
   "PASSWORD_EDIT_NEW_PASSWORD_FORM_LABEL": "New password",
   "PASSWORD_EDIT_CONFIRM_PASSWORD_FORM_LABEL": "Confirm password",
   "PASSWORD_EDIT_CONFIRM_FORM_BUTTON": "Confirm",
-  "PASSWORD_EDIT_JS_ERROR_MSG": "An error occurred during the process, please try again later"
+  "PASSWORD_EDIT_JS_ERROR_MSG": "An error occurred during the process, please try again later",
+
+  "PASSWORD_RECOVERY_BACK_TO_LOGIN_LINK": "Back to login",
+  "PASSWORD_RECOVERY_TITLE": "Password recovery",
+  "PASSWORD_RECOVERY_EMAIL_LABEL": "Your email",
+  "PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Reset password",
+  "PASSWORD_RECOVERY_JS_ERROR_MSG": "An error occurred during the process, please try again later",
+  "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "A password reset link has been sent successfully to your email address"
 
 }

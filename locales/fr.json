@@ -116,7 +116,14 @@
   "PASSWORD_EDIT_NEW_PASSWORD_FORM_LABEL": "Nouveau mot de passe",
   "PASSWORD_EDIT_CONFIRM_PASSWORD_FORM_LABEL": "Confirmer le mot de passe",
   "PASSWORD_EDIT_CONFIRM_FORM_BUTTON": "Confirmer",
-  "PASSWORD_EDIT_JS_ERROR_MSG": "Une erreur s'est produite, merci de rééssayer ultéirieurement"
+  "PASSWORD_EDIT_JS_ERROR_MSG": "Une erreur s'est produite, merci de rééssayer ultéirieurement",
+
+  "PASSWORD_RECOVERY_BACK_TO_LOGIN_LINK": "Retour à la page de connexion",
+  "PASSWORD_RECOVERY_TITLE": "Récupération de mot de passe",
+  "PASSWORD_RECOVERY_EMAIL_LABEL": "Votre email",
+  "PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Réinitialiser votre mot de passe",
+  "PASSWORD_RECOVERY_JS_ERROR_MSG": "Une erreur est survenue, merci de réessayer plus tard",
+  "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "Un email contenant un lien pour réinitialiser votre mot de passe a été envoyé"
 
 
 }
