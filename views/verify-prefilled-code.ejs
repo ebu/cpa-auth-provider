@@ -8,7 +8,7 @@
   <div class="panel-body">
     <form method="POST" action="<%= link('/verify') %>">
       <div class="form-group has-success">
-        <%= client_name %> <%= __('VERIFY_MAIN_LABEL_PREFIX')%> <%= domain %><%= __('VERIFY_MAIN_LABEL_PREFIX')%>
+        <%= client_name %> <%= __('VERIFY_MAIN_LABEL_PREFIX')%> <%= domain %><%= __('VERIFY_MAIN_LABEL_SUFFIX')%>
       </div>
 
       <input type="hidden" name="verification_type" value="prefilled_user_code">

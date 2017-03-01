@@ -162,7 +162,7 @@
 
   "VERIFY_PREFILLED_CODE_TITLE": "Autorisation",
   "VERIFY_MAIN_LABEL_PREFIX": "demande votre autorisation pour agir en votre nom sur",
-  "VERIFY_MAIN_LABEL_PREFIX": ". Est-ce que vous acceptez ?",
+  "VERIFY_MAIN_LABEL_SUFFIX": ". Est-ce que vous acceptez ?",
   "ERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
   "VERIFY_MAIN_DENY_BUTTON": "Refuser"
 
