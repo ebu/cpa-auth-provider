@@ -8,16 +8,16 @@ var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
-
+var i18n = require('i18n');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
         var userId = authHelper.getAuthenticatedUser(req).id;
-        req.checkBody('firstname', '"Firstname" is empty or invalid').notEmpty().isString();
-        req.checkBody('lastname', '"Lastname" is empty or invalid').notEmpty().isString();
-        req.checkBody('birthdate', '"Birthdate" is empty or invalid').notEmpty().isInt();
-        req.checkBody('gender', '"Sex" is empty or is invalid').notEmpty().isHuman();
-        req.checkBody('language', '"language" is empty or is invalid').notEmpty().isString();
+        req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).notEmpty().isString();
+        req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).notEmpty().isString();
+        req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).notEmpty().isInt();
+        req.checkBody('gender', req.__('BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID')).notEmpty().isHuman();
+        req.checkBody('language', req.__('BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID')).notEmpty().isString();
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -38,10 +38,10 @@ var routes = function (router) {
                         })
                         .then(function (user_profile) {
                                 res.cookie(config.i18n.cookie_name,  user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
-                                res.json({msg: 'Successfully updated user_profile.'});
+                                res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
                             },
                             function (err) {
-                                res.status(500).json({msg: 'Cannot update user_profile. Err:' + err});
+                                res.status(500).json({msg: req.__('BACK_PROFILE_UPDATE_FAIL') + err});
                             });
                 }
             );
@@ -54,7 +54,7 @@ var routes = function (router) {
 
         var user = authHelper.getAuthenticatedUser(req);
         if (!user) {
-            return res.status(403).send({success: false, msg: "not authenticated"});
+            return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
         } else {
             codeHelper.getOrGenereateEmailVerificationCode(user).then(function(code){
                 emailHelper.send(

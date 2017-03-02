@@ -191,6 +191,13 @@
   "BACK_USER_NOT_FOUND": "User not found",
   "BACK_SUCESS_PASS_CHANGED": "Successfully changing password",
 
+  "BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "'Firstname' is empty or invalid",
+  "BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "'Lastname' is empty or invalid",
+  "BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID": "'Birthdate' is empty or invalid",
+  "BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID": "'Sex' is empty or is invalid",
+  "BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID": "'language' is empty or is invalid",
+  "BACK_PROFILE_UPDATE_FAIL": "Cannot update user_profile. Err:",
+  "BACK_PROFILE_REQ_VERIF_MAIL": "not authenticated",
 
   "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Something went wrong with the reCAPTCHA",
   "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Please pass email and password.",
