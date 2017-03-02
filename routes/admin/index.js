@@ -114,7 +114,7 @@ module.exports = function (router) {
     router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
             if (!permission) {
-                return res.status(400).send({success: false, msg: 'wrong permission id'});
+                return res.status(400).send({success: false, msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')});
             }
             db.User.findOne({where: {id: req.params.user_id}})
                 .then(

@@ -166,7 +166,7 @@
   "VERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
   "VERIFY_MAIN_DENY_BUTTON": "Refuser",
 
-  "BACK_SIGNUP_EMAIL_TAKEN": "Cet email existe déjà dans le système",
+  "BACK_SIGNUP_EMAIL_TAKEN": "Cet email existe déjà utilisé",
   "BACK_SIGNUP_PB_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
   "BACK_SIGNUP_INVALID_EMAIL": "Email invalide",
   "BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "Utilisateur non trouvé.",
@@ -175,8 +175,9 @@
   "BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "Email vide ou invalide",
   "BACK_SIGNUP_USER_NOT_FOUND": "Utilisateur non trouvé.",
   "BACK_PWD_UPDATE_USER_NOT_FOUND": "Utilisateur non trouvé.",
-  "BACK_PWD_WRONG_RECOVERY_CODE": "De de récupération de mots de passe érroné."
+  "BACK_PWD_WRONG_RECOVERY_CODE": "De de récupération de mots de passe érroné.",
 
+  "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Mauvais id de permission"
 
 
 }
