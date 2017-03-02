@@ -7,6 +7,7 @@ $(document).ready(function () {
         setLanguage(text.toLocaleLowerCase(), userLogged);
         $(this).parents('.lang').find('.dropdown-toggle').html(text + ' <span class="caret"></span>').dropdown('toggle');
     });
+
 });
 
 function setLanguage(language, logged) {
@@ -17,10 +18,10 @@ function setLanguage(language, logged) {
     }
 
     $.ajax({
-        url: url,
+        url: urlPrefix +  url,
         type: 'POST',
         data: {
-            language: language,
+            language: language
         },
         success: function (result) {
             location.reload();

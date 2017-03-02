@@ -30,7 +30,8 @@
 <script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js" charset="UTF-8"></script>
 
 <script>
-    var userLogged = <% if (user) { %>true<%} else {%>false<%}%>;
+    var userLogged = <% if (user) { %>true<%} else {%>false<%}%>,
+        urlPrefix = '<%= config.urlPrefix %>';
 </script>
 
 <script type="text/javascript" src="/assets/js/lang.js"></script>
