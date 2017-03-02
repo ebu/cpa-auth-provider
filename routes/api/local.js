@@ -47,17 +47,17 @@ module.exports = function (app, options) {
     app.post('/api/local/signup', cors, recaptcha.middleware.verify, function (req, res) {
 
         if (req.recaptcha.error) {
-            res.json({success: false, msg: 'Something went wrong with the reCAPTCHA'});
+            res.json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
             return;
         }
 
         if (!req.body.email || !req.body.password) {
-            res.json({success: false, msg: 'Please pass email and password.'});
+            res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
-                        return res.status(400).json({success: false, msg: 'email already exists.'});
+                        return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
                     } else {
                         db.sequelize.sync().then(function () {
                             db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
@@ -70,16 +70,16 @@ module.exports = function (app, options) {
                                 var user = db.User.create(userParams).then(function (user) {
                                     return user.setPassword(req.body.password);
                                 }).then(function() {
-                                    res.json({success: true, msg: 'Successfully created new user.'});
+                                    res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
                                 }).catch(function (err) {
                                     console.log("ERROR", err);
-                                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                                    res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
                                 });
                             });
                         });
                     }
                 }, function (error) {
-                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + error});
+                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
                 });
         }
     });
@@ -105,11 +105,11 @@ module.exports = function (app, options) {
                             }
                         },
                         function (err) {
-                            res.status(500).json({success: false, msg: 'Oops, something went wrong :' + err});
+                            res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
                         });
                 },
                 function (error) {
-                    res.status(500).json({success: false, msg: 'Oops, something went wrong :' + error});
+                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
                 });
     });
 
@@ -150,7 +150,7 @@ module.exports = function (app, options) {
                 }
             });
         } else {
-            return res.status(403).send({success: false, msg: 'No token provided.'});
+            return res.status(403).send({success: false, msg: req.__('API_INFO_NO_TOKEN')});
         }
     });
 
@@ -159,7 +159,7 @@ module.exports = function (app, options) {
         var user = authHelper.getAuthenticatedUser(req);
 
         if (!user) {
-            return res.status(403).send({success: false, msg: "not authenticated"});
+            return res.status(403).send({success: false, msg: req.__('API_VERIF_MAIL_NOT_AUTH')});
         } else {
             return codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code){
 
@@ -179,7 +179,7 @@ module.exports = function (app, options) {
                     function() {},
                     function(err) {}
                 );
-                return res.status(204).send({success: true, msg: "email sent"});
+                return res.status(204).send({success: true, msg: req.__('API_VERIF_MAIL_SENT')});
             });
         }
     });

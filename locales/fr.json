@@ -177,7 +177,19 @@
   "BACK_PWD_UPDATE_USER_NOT_FOUND": "Utilisateur non trouvé.",
   "BACK_PWD_WRONG_RECOVERY_CODE": "De de récupération de mots de passe érroné.",
 
-  "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Mauvais id de permission"
+  "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Mauvais id de permission",
+
+  "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un probème avec reCAPTCHA",
+  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe.",
+  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email existe déjà utilisé.",
+  "API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé.",
+
+  "API_INFO_NO_TOKEN": "Aucun token fourni.",
+
+  "API_VERIF_MAIL_NOT_AUTH": "Non autentifié",
+  "API_VERIF_MAIL_SENT": "email envoyé",
+
+  "API_ERROR": "Oops, une erreur s'est produite :"
 
 
 }

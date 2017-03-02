@@ -179,7 +179,18 @@
   "BACK_PWD_UPDATE_USER_NOT_FOUND": "User not found.",
   "BACK_PWD_WRONG_RECOVERY_CODE": "Wrong recovery code.",
 
-  "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "wrong permission id"
+  "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "wrong permission id",
 
+  "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Something went wrong with the reCAPTCHA",
+  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Please pass email and password.",
+  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "email already exists.",
+  "API_SIGNUP_SUCCESS": "Successfully created new user.",
+
+  "API_INFO_NO_TOKEN": "No token provided.",
+
+  "API_VERIF_MAIL_NOT_AUTH": "not authenticated",
+  "API_VERIF_MAIL_SENT": "email sent",
+
+  "API_ERROR": "Oops, something went wrong:"
 
 }
