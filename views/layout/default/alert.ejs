@@ -4,7 +4,13 @@
 <div class="container">
     <div class="alert alert-warning alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        Votre langue par défaut est différente de celle de votre profil, <a id="updateProfileLanguage" data-cookie-lang="<%= language %>" data-profile-lang="<%= user.UserProfile.language %>" href="#" class="alert-link">cliquez ici pour le mettre à jour</a>
+            Votre langue par défaut est différente de celle de votre profil,
+        <a id="updateProfileLanguage" class="link-set-language" data-lang="<%= language %>" href="#" class="alert-link">
+            cliquez ici pour le mettre à jour
+        </a>
+        ou <a id="updateCookieLanguage" class="link-set-language" data-lang="<%= user.UserProfile.language %>" href="#" class="alert-link">
+            ici revenir à celle par défaut
+        </a>
     </div>
 </div>
 <% } %>
