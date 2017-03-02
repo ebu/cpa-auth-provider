@@ -8,8 +8,8 @@ var authHelper = require('../../lib/auth-helper');
 var util = require('util');
 var xssFilters = require('xss-filters');
 
-
 var jwtHelpers = require('../../lib/jwt-helper');
+var i18n = require('i18n');
 
 module.exports = function (app, options) {
 
@@ -25,7 +25,7 @@ module.exports = function (app, options) {
         var user = authHelper.getAuthenticatedUser(req);
 
         if (!user) {
-            return res.status(401).send({success: false, msg: 'Authentication failed. user profile not found.'});
+            return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
         } else {
             db.UserProfile.findOrCreate({
                 where: {user_id: user.id}
@@ -50,19 +50,19 @@ module.exports = function (app, options) {
 
         // Data validation
         if (req.body.firstname) {
-            req.checkBody('firstname', 'firstname, invalide format. Must be a string').isString();
+            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).isString();
         }
         if (req.body.lastname) {
-            req.checkBody('lastname', 'lastname, invalide format. Must be a string').isString();
+            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).isString();
         }
         if (req.body.birthdate) {
-            req.checkBody('birthdate', 'birthdate, invalide format. Must be a timestamp').isInt();
+            req.checkBody('birthdate', req.__('API_PROFILE_BIRTHDATE_INVALIDE')).isInt();
         }
         if (req.body.gender) {
-            req.checkBody('gender', 'gender, invalide value. Must be a "male" or "female"').isHuman();
+            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isHuman();
         }
         if (req.body.language) {
-            req.checkBody('language', 'language, invalide value.').isString();
+            req.checkBody('language', req.__('API_PROFILE_LANGUAGE_INVALIDE')).isString();
         }
 
         req.getValidationResult().then(function (result) {
@@ -71,7 +71,7 @@ module.exports = function (app, options) {
                     // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
-                        msg: 'There have been validation errors: ' + result.array,
+                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array,
                     });
                 }
 
@@ -95,12 +95,12 @@ module.exports = function (app, options) {
                                     })
                                     .then(function () {
                                             res.cookie(config.i18n.cookie_name, user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
-                                            res.json({success: true, msg: 'Successfully updated user_profile.'});
+                                            res.json({success: true, msg: req.__('API_PROFILE_SUCCESS')});
                                         },
                                         function (err) {
                                             res.status(500).json({
                                                 success: false,
-                                                msg: 'Cannot update user_profile. Err:' + err
+                                                msg: req.__('API_PROFILE_FAIL') + err
                                             });
                                         });
                             }
