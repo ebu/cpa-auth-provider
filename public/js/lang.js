@@ -12,6 +12,11 @@ $(document).ready(function () {
         setLanguage($(this).attr("data-lang").toLocaleLowerCase(), true);
     });
 
+    $('.language-error .close').on('click', function(){
+        //Set a cookie to hide error for 24 hours
+        Cookies.set("languageError", true, { expires: 1 });
+    });
+
 });
 
 function setLanguage(language, logged) {
