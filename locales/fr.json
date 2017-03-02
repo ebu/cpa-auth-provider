@@ -179,6 +179,16 @@
 
   "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Mauvais id de permission",
 
+  "BACK_PROFILE_AUTH_FAIL": "Echec de l'autentification. Profile non trouvé",
+  "BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Le champs 'Mot de passe précédent' est vide",
+  "BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Le champs 'Nouveau mot de passe' est vide",
+  "BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Le champs 'Confirmer votre mots de passe' est vide",
+  "BACK_CHANGE_PWD_PASS_DONT_MATCH": "Le champs 'nouveau mot de passe' ne correspond pas au champs 'confirmation du mot de passe'",
+
+  "BACK_INCORRECT_PREVIOUS_PASS": "Le précédent mot de passe est incorrect",
+  "BACK_USER_NOT_FOUND": "Utilisateur non trouvé",
+  "BACK_SUCESS_PASS_CHANGED": "Mots de passe mi à jour",
+
   "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un probème avec reCAPTCHA",
   "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe.",
   "API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email existe déjà utilisé.",

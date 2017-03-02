@@ -4,9 +4,8 @@ var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
-var INCORRECT_PREVIOUS_PASS = 'The previous password is incorrect';
-var USER_NOT_FOUND = 'User not found';
-var SUCESS_PASS_CHANGED = 'Successfully changing password';
+var i18n = require('i18n');
+
 
 var routes = function (router) {
 
@@ -35,7 +34,7 @@ var routes = function (router) {
             }
         }).then(function (user) {
             if (!user) {
-                return res.status(401).send({msg: 'Authentication failed. user profile not found.'});
+                return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
             } else {
                 db.UserProfile.findOrCreate({
                     where: {
@@ -65,10 +64,10 @@ var routes = function (router) {
     });
 
     router.post('/user/:user_id/password', authHelper.ensureAuthenticated, function (req, res) {
-        req.checkBody('previous_password', '"Previous Password" field  is empty').notEmpty();
-        req.checkBody('password', '"New Password" field is empty').notEmpty();
-        req.checkBody('confirm_password', '"Confirm Password" field is empty').notEmpty();
-        req.checkBody('password', '"New Password" field does not match the confirmation password').equals(req.body.confirm_password);
+        req.checkBody('previous_password', req.__('BACK_CHANGE_PWD_PREV_PASS_EMPTY')).notEmpty();
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_NEW_PASS_EMPTY')).notEmpty();
+        req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -80,21 +79,21 @@ var routes = function (router) {
                     }
                 }).then(function (user) {
                     if (!user) {
-                        return res.status(401).send({errors: [{msg: USER_NOT_FOUND}]});
+                        return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
                     } else {
                         user.verifyPassword(req.body.previous_password).then(function (isMatch) {
                             // if user is found and password is right change password
                             if (isMatch) {
                                 user.setPassword(req.body.password).then(
                                     function() {
-										res.json({msg: SUCESS_PASS_CHANGED});
+										res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
                                     },
                                     function(err) {
 										res.status(500).json({errors: [err]});
                                     }
                                 );
                             } else {
-                                res.status(401).json({errors: [{msg: INCORRECT_PREVIOUS_PASS}]});
+                                res.status(401).json({errors: [{msg: req.__('BACK_INCORRECT_PREVIOUS_PASS')}]});
                             }
                         });
                     }
