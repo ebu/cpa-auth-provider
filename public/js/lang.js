@@ -8,6 +8,10 @@ $(document).ready(function () {
         $(this).parents('.lang').find('.dropdown-toggle').html(text + ' <span class="caret"></span>').dropdown('toggle');
     });
 
+    $('#updateProfileLanguage').on('click', function(){
+        setLanguage($(this).attr("data-cookie-lang").toLocaleLowerCase(), true);
+    });
+
 });
 
 function setLanguage(language, logged) {

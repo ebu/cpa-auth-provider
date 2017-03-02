@@ -1,0 +1,10 @@
+<!-- views/layout/default/alert.ejs -->
+
+<% if(user && user.UserProfile && user.UserProfile.language && user.UserProfile.language !== language) { %>
+<div class="container">
+    <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Votre langue par défaut est différente de celle de votre profil, <a id="updateProfileLanguage" data-cookie-lang="<%= language %>" data-profile-lang="<%= user.UserProfile.language %>" href="#" class="alert-link">cliquez ici pour le mettre à jour</a>
+    </div>
+</div>
+<% } %>
