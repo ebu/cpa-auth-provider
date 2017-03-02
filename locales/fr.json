@@ -10,7 +10,7 @@
   "LOGIN_SIGNUP_LINK": "S'enregistrer",
   "LOGIN_EMAIL_LABEL": "Email",
   "LOGIN_PASSWORD_LABEL": "Mot de passe",
-  "LOGIN_LOGIN_BUTTON": "Connection",
+  "LOGIN_LOGIN_BUTTON": "Connexion",
 
   "ADMIN_ADD_DOMAIN_ADD_SERVICE_PROVIDER_TITLE" :"Ajouter un Service Provider",
   "ADMIN_ADD_DOMAIN_NAME_LABEL": "Nom",
@@ -158,17 +158,25 @@
   "VERIFY_MAIL_ERR_LABEL_4": "et appuyez sur envoyer le lien de validation à nouveau.",
   "VERIFY_MAIL_OR_LABEL": "OU",
   "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL_PREFIX": "Retour à",
-  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "la page de connection",
+  "VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "la page de connexion",
 
   "VERIFY_PREFILLED_CODE_TITLE": "Autorisation",
   "VERIFY_MAIN_LABEL_PREFIX": "demande votre autorisation pour agir en votre nom sur",
   "VERIFY_MAIN_LABEL_SUFFIX": ". Est-ce que vous acceptez ?",
-  "ERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
+  "VERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
   "VERIFY_MAIN_DENY_BUTTON": "Refuser",
 
   "BACK_SIGNUP_EMAIL_TAKEN": "Cet email existe déjà dans le système",
   "BACK_SIGNUP_PB_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
-  "BACK_SIGNUP_INVALID_EMAIL": "Email invalide"
+  "BACK_SIGNUP_INVALID_EMAIL": "Email invalide",
+  "BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "Utilisateur non trouvé.",
+  "BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG": "Le reCaptcha est vide ou érroné.",
+  "BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "reCaptcha is empty or wrong.",
+  "BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "Email vide ou invalide",
+  "BACK_SIGNUP_USER_NOT_FOUND": "Utilisateur non trouvé.",
+  "BACK_PWD_UPDATE_USER_NOT_FOUND": "Utilisateur non trouvé.",
+  "BACK_PWD_WRONG_RECOVERY_CODE": "De de récupération de mots de passe érroné."
+
 
 
 }

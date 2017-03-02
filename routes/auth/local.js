@@ -170,7 +170,7 @@ module.exports = function (app, options) {
                         }
                     );
                 } else {
-                    return res.status(400).json({msg: 'User not found.'});
+                    return res.status(400).json({msg: req.__('BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND')});
                 }
             }, function (error) {
                 done(error);
@@ -185,7 +185,7 @@ module.exports = function (app, options) {
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
-            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+            return res.status(400).json({msg: req.__('BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG')});
         }
 
         passport.authenticate('local-signup', function (err, user, info) {
@@ -209,10 +209,10 @@ module.exports = function (app, options) {
     app.post('/password/code', recaptcha.middleware.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
-            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+            return res.status(400).json({msg: req.__('BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG')});
         }
 
-        req.checkBody('email', 'Email is empty or invalid').isEmail();
+        req.checkBody('email', req.__('BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID')).isEmail();
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -245,7 +245,7 @@ module.exports = function (app, options) {
                             return res.status(200).send();
                         });
                     } else {
-                        return res.status(400).json({msg: 'User not found.'});
+                        return res.status(400).json({msg: req.__('BACK_SIGNUP_USER_NOT_FOUND')});
                     }
                 }, function (error) {
                     next(error);
@@ -272,12 +272,12 @@ module.exports = function (app, options) {
                             if (sucess) {
                                 return res.status(200).send();
                             } else {
-                                return res.status(400).json({msg: 'Wrong recovery code.'});
+                                return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});
                             }
                         });
                     }
                     else {
-                        return res.status(400).json({msg: 'User not found.'});
+                        return res.status(400).json({msg: req.__('BACK_PWD_UPDATE_USER_NOT_FOUND')});
                     }
                 }, function (error) {
                     done(error);

@@ -164,12 +164,19 @@
   "VERIFY_PREFILLED_CODE_TITLE": "Authorization",
   "VERIFY_MAIN_LABEL_PREFIX": "is requesting your authorization to act on your behalf on",
   "VERIFY_MAIN_LABEL_PREFIX": ". Do you accept?",
-  "ERIFY_MAIN_ALLOW_BUTTON": "Allow",
+  "VERIFY_MAIN_ALLOW_BUTTON": "Allow",
   "VERIFY_MAIN_DENY_BUTTON": "Deny",
 
   "BACK_SIGNUP_EMAIL_TAKEN": "That email is already taken",
   "BACK_SIGNUP_PB_RECAPTCHA": "Something went wrong with the reCAPTCHA",
-  "BACK_SIGNUP_INVALID_EMAIL": "Invalid email"
+  "BACK_SIGNUP_INVALID_EMAIL": "Invalid email",
+  "BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "User not found.",
+  "BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG": "reCaptcha is empty or wrong.",
+  "BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "reCaptcha is empty or wrong.",
+  "BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "Email is empty or invalid",
+  "BACK_SIGNUP_USER_NOT_FOUND": "User not found.",
+  "BACK_PWD_UPDATE_USER_NOT_FOUND": "User not found.",
+  "BACK_PWD_WRONG_RECOVERY_CODE": "Wrong recovery code."
 
 
 }
