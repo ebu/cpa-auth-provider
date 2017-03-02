@@ -8,15 +8,16 @@ var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
-
+var i18n = require('i18n');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
         var userId = authHelper.getAuthenticatedUser(req).id;
-        req.checkBody('firstname', '"Firstname" is empty or invalid').notEmpty().isString();
-        req.checkBody('lastname', '"Lastname" is empty or invalid').notEmpty().isString();
-        req.checkBody('birthdate', '"Birthdate" is empty or invalid').notEmpty().isInt();
-        req.checkBody('gender', '"Sex" empty or is invalid').notEmpty().isHuman();
+        req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).notEmpty().isString();
+        req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).notEmpty().isString();
+        req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).notEmpty().isInt();
+        req.checkBody('gender', req.__('BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID')).notEmpty().isHuman();
+        req.checkBody('language', req.__('BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID')).notEmpty().isString();
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -32,13 +33,15 @@ var routes = function (router) {
                             firstname: xssFilters.inHTMLData(req.body.firstname),
                             lastname: xssFilters.inHTMLData(req.body.lastname),
                             gender: xssFilters.inHTMLData(req.body.gender),
-                            birthdate: xssFilters.inHTMLData(req.body.birthdate)
+                            birthdate: xssFilters.inHTMLData(req.body.birthdate),
+                            language: xssFilters.inHTMLData(req.body.language)
                         })
-                        .then(function () {
-                                res.json({msg: 'Successfully updated user_profile.'});
+                        .then(function (user_profile) {
+                                res.cookie(config.i18n.cookie_name,  user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
+                                res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
                             },
                             function (err) {
-                                res.status(500).json({msg: 'Cannot update user_profile. Err:' + err});
+                                res.status(500).json({msg: req.__('BACK_PROFILE_UPDATE_FAIL') + err});
                             });
                 }
             );
@@ -51,7 +54,7 @@ var routes = function (router) {
 
         var user = authHelper.getAuthenticatedUser(req);
         if (!user) {
-            return res.status(403).send({success: false, msg: "not authenticated"});
+            return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
         } else {
             codeHelper.getOrGenereateEmailVerificationCode(user).then(function(code){
                 emailHelper.send(
@@ -60,7 +63,7 @@ var routes = function (router) {
                     "validation-email",
                     {log:true},
                     {confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code), host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)},
-                    config.mail.local
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language: req.getLocale()
                 ).then(
                     function() {},
                     function() {}

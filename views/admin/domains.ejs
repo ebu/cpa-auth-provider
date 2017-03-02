@@ -5,9 +5,9 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Domain</th>
-      <th>Access Token</th>
+      <th><%= __('ADMIN_DOMAIN_NAME_TABLE_COL_TITLE')%></th>
+      <th><%= __('ADMIN_DOMAIN_DOMAIN_TABLE_COL_TITLE')%></th>
+      <th><%= __('ADMIN_DOMAIN_ACCESS_TOKEN_TABLE_COL_TITLE')%></th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +21,6 @@
   </tbody>
 </table>
 
-<p><a href="<%= link('/admin/domains/add') %>">Add a Service Provider</a></p>
+<p><a href="<%= link('/admin/domains/add') %>"><%= __('ADMIN_DOMAIN_ADD_A_SERVICE_PROVIDER_LINK')%></a></p>
 
 <% include ../layout/foot %>

@@ -3,11 +3,23 @@
 var db = require('../../models');
 var codeHelper = require('../../lib/code-helper');
 var config = require('../../config');
+var dbHelper = require('../db-helper');
 
+var resetDatabase = function (done) {
+    dbHelper.clearDatabase(function (err) {
+        if (err) {
+            done(err);
+        }
+        done();
+    });
+};
 
 describe('Test password recovery code', function () {
     context('When tries to recover password', function () {
         var self = this;
+
+        before(resetDatabase);
+
         before(function (done) {
             db.User.create({
                 id: 1,
@@ -51,6 +63,9 @@ describe('Test password recovery code', function () {
 
     context('When tries to recover password several time', function () {
         var self = this;
+
+        before(resetDatabase);
+
         before(function (done) {
             db.User.create({
                 id: 2,
@@ -79,6 +94,9 @@ describe('Test password recovery code', function () {
 
     context('When tries to recover password with expired code', function () {
         var self = this;
+
+        before(resetDatabase);
+
         before(function (done) {
             db.User.create({
                 id: 3,
@@ -115,6 +133,9 @@ describe('Test password recovery code', function () {
 
     context('When tries to recover password with multiple user in db', function () {
         var self = this;
+
+        before(resetDatabase);
+
         before(function (done) {
             db.User.create({
                 id: 5,

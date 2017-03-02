@@ -4,13 +4,13 @@
 
 <div class="panel panel-info">
     <div class="panel-heading">
-        <div class="panel-title">Device Association</div>
+        <div class="panel-title"><%= __('VERIFY_TITLE')%></div>
     </div>
 
     <form method="POST" action="<%= link('/verify') %>">
         <div class="panel-body">
             <div class="form-group <% if (error) { %>has-error<% } else { %> <% } %>">
-                <label class="control-label" for="inputUserCode">User Code</label>
+                <label class="control-label" for="inputUserCode"><%= __('VERIFY_USER_CODE_LABEL')%></label>
                 <input type="text" class="form-control" id="inputUserCode" placeholder="Enter your user code" name="user_code"
                         <% if (user_code) { %>
                        value="<%= user_code %>"
@@ -21,7 +21,7 @@
                 <% } %>
             </div>
             <input type="hidden" name="verification_type" value="user_code">
-            <input type="submit" class="btn btn-default" name="submit" value="Verify">
+            <input type="submit" class="btn btn-default" name="submit" value="<%= __('VERIFY_VERIFY_BUTTON')%>">
         </div>
     </form>
 </div>

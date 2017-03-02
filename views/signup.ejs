@@ -5,7 +5,7 @@
 
 <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
 
-    <a class="" href="<%= link('/auth') %>"><span class="glyphicon glyphicon-chevron-left"></span>Back to Identity Providers</a>
+    <a class="" href="<%= link('/auth') %>"><span class="glyphicon glyphicon-chevron-left"></span><%= __('SIGNUP_BACK_TO_IDP_LIST_LINK')%></a>
 
     <div id="signup-panel" class="panel panel-default">
         <div class="panel-body">
@@ -20,15 +20,15 @@
             <!-- LOGIN FORM -->
             <form action="<%= link('/signup') %>" method="post">
                 <div class="form-group">
-                    <label>Email</label>
+                    <label><%= __('SIGNUP_EMAIL_LABEL')%></label>
                     <input type="email" class="form-control" name="email" <% if(email) { %> value="<%= email %>" <% } %> required>
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
+                    <label><%= __('SIGNUP_PASSWORD_LABEL')%></label>
                     <input id="password" type="password" class="form-control" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label>Confirm password</label>
+                    <label><%= __('SIGNUP_CONFIRM_PASSWORD_LABEL')%></label>
                     <input id="password2" type="password" class="form-control" name="password2" required>
                 </div>
 
@@ -36,10 +36,10 @@
                     <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">Signup</button>
+                <button type="submit" class="btn btn-primary btn-block"><%= __('SIGNUP_SIGNUP_BUTTON')%></button>
             </form>
 
-            <p class="last-link text-center">Already have an account? <a href="<%= link('/auth/local') %>">Login</a></p>
+            <p class="last-link text-center"><%= __('SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL')%> <a href="<%= link('/auth/local') %>"><%= __('SIGNUP_LOGIN_BUTTON')%></a></p>
 
         </div>
     </div>
@@ -52,7 +52,7 @@
 
         function validatePassword(){
             if(password.value != confirm_password.value) {
-                confirm_password.setCustomValidity("Passwords Don't Match");
+                confirm_password.setCustomValidity('<%= __('SIGNUP_JS_PASSWORD_MISSMATCH_MSG')%>');
             } else {
                 confirm_password.setCustomValidity('');
             }

@@ -29,6 +29,7 @@ describe('Test user profile', function () {
                     lastname: 'lastname',
                     gender: 'gender',
                     birthdate: 'birthdate',
+                    language: 'en',
                     user_id: 1
                 });
 
@@ -39,6 +40,7 @@ describe('Test user profile', function () {
                     firstname: 'firstname',
                     gender: 'gender',
                     birthdate: 'birthdate',
+                    language: 'en',
                     user_id: 1
                 });
 
@@ -48,6 +50,7 @@ describe('Test user profile', function () {
                     lastname: 'lastname',
                     gender: 'gender',
                     birthdate: 'birthdate',
+                    language: 'en',
                     user_id: 1
                 });
 
@@ -58,6 +61,7 @@ describe('Test user profile', function () {
                     firstname: 'firstname',
                     gender: 'gender',
                     birthdate: 'birthdate',
+                    language: 'en',
                     user_id: 1
                 });
 
@@ -69,6 +73,7 @@ describe('Test user profile', function () {
                     lastname: 'lastname',
                     gender: 'gender',
                     birthdate: 'birthdate',
+                    language: 'en',
                     user_id: 1
                 });
 

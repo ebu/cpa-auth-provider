@@ -15,6 +15,8 @@ var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
 
+var i18n = require('i18n');
+
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
     db.User.findOne({where: {email: username}})
@@ -26,7 +28,9 @@ var localStrategyCallback = function (req, username, password, done) {
 
                 user.verifyPassword(password).then(function (isMatch) {
                         if (isMatch) {
-                            user.logLogin().then(function() {}, function() {});
+                            user.logLogin().then(function () {
+                            }, function () {
+                            });
                             done(null, user);
                         } else {
                             done(null, false, req.flash('loginMessage', loginError));
@@ -43,20 +47,20 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
-    req.checkBody('email', 'Invalid email').isEmail();
+    req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
     req.getValidationResult().then(function (result) {
         if (!result.isEmpty()) {
-            done(null, false, req.flash('signupMessage', 'Invalid email'));
+            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
             return;
         } else {
             if (req.recaptcha.error) {
-                done(null, false, req.flash('signupMessage', 'Something went wrong with the reCAPTCHA'));
+                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
                 return;
             }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
-                        done(null, false, req.flash('signupMessage', 'That email is already taken'));
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
                     } else {
                         db.sequelize.sync().then(function () {
                             db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
@@ -71,11 +75,19 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                     user = _user;
                                     return user.setPassword(req.body.password);
                                 }).then(function () {
+                                    return db.UserProfile.findOrCreate({
+                                        where: {user_id: user.id}
+                                    });
+                                }).spread(function (user_profile) {
+                                    return user_profile.updateAttributes(
+                                        {
+                                            language: req.getLocale()
+                                        })
+                                }).then(function () {
                                     return codeHelper.getOrGenereateEmailVerificationCode(user);
                                 }).then(function (code) {
                                     // Async
                                     user.logLogin().then(function() {}, function() {});
-                                    console.log("dqdssqfsqdfdsf");
                                     emailHelper.send(
                                         config.mail.from,
                                         user.email,
@@ -87,7 +99,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                             mail: encodeURIComponent(user.email),
                                             code: encodeURIComponent(code)
                                         },
-                                        config.mail.locale
+                                        req.getLocale() ? req.getLocale() : config.mail.local
                                     );
                                 }).then(function () {
                                     return done(null, user);
@@ -158,7 +170,7 @@ module.exports = function (app, options) {
                         }
                     );
                 } else {
-                    return res.status(400).json({msg: 'User not found.'});
+                    return res.status(400).json({msg: req.__('BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND')});
                 }
             }, function (error) {
                 done(error);
@@ -173,7 +185,7 @@ module.exports = function (app, options) {
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
-            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+            return res.status(400).json({msg: req.__('BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG')});
         }
 
         passport.authenticate('local-signup', function (err, user, info) {
@@ -197,10 +209,10 @@ module.exports = function (app, options) {
     app.post('/password/code', recaptcha.middleware.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
-            return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
+            return res.status(400).json({msg: req.__('BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG')});
         }
 
-        req.checkBody('email', 'Email is empty or invalid').isEmail();
+        req.checkBody('email', req.__('BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID')).isEmail();
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -223,7 +235,7 @@ module.exports = function (app, options) {
                                     mail: user.email,
                                     code: code
                                 },
-                                config.mail.local
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
                             ).then(
                                 function () {
                                 },
@@ -233,7 +245,7 @@ module.exports = function (app, options) {
                             return res.status(200).send();
                         });
                     } else {
-                        return res.status(400).json({msg: 'User not found.'});
+                        return res.status(400).json({msg: req.__('BACK_SIGNUP_USER_NOT_FOUND')});
                     }
                 }, function (error) {
                     next(error);
@@ -244,9 +256,9 @@ module.exports = function (app, options) {
 
     app.post('/password/update', function (req, res, next) {
 
-        req.checkBody('password', 'New Password is empty').notEmpty();
-        req.checkBody('confirm-password', 'Confirm password is empty').notEmpty();
-        req.checkBody('confirm-password', 'Passwords do not match').equals(req.body.password);
+        req.checkBody('password', req.__('BACK_PWD_UPDATE_PWD_EMPTY')).notEmpty();
+        req.checkBody('confirm-password', req.__('BACK_PWD_UPDATE_CONF_PWD_EMPTY')).notEmpty();
+        req.checkBody('confirm-password', req.__('BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY')).equals(req.body.password);
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -260,12 +272,12 @@ module.exports = function (app, options) {
                             if (sucess) {
                                 return res.status(200).send();
                             } else {
-                                return res.status(400).json({msg: 'Wrong recovery code.'});
+                                return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});
                             }
                         });
                     }
                     else {
-                        return res.status(400).json({msg: 'User not found.'});
+                        return res.status(400).json({msg: req.__('BACK_PWD_UPDATE_USER_NOT_FOUND')});
                     }
                 }, function (error) {
                     done(error);

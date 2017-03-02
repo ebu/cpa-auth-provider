@@ -13,13 +13,13 @@
 
                     <h1 class="title text-success">
                         <span class="glyphicon glyphicon-ok-circle"></span>
-                        Email validation
+                        <%= __('VERIFY_MAIL_EMAIL_VALIDATION_LABEL')%>
                     </h1>
 
-                    <p>Your account has been verified successfully.</p>
-                    <p>Thank you <span class="glyphicon glyphicon-thumbs-up"></span></p>
+                    <p><%= __('VERIFY_MAIL_SUCCESS_LABEL')%></p>
+                    <p><%= __('VERIFY_MAIL_SUCCESS_THX_LABEL')%> <span class="glyphicon glyphicon-thumbs-up"></span></p>
 
-                    <span class="link">Go to <a href="<%= link('/user/profile') %>" class="btn-link">profile page</a></span>
+                    <span class="link"><%= __('VERIFY_MAIL_GO_TO_LINK_PREFIX')%> <a href="<%= link('/user/profile') %>" class="btn-link"><%= __('VERIFY_MAIL_GO_TO_LINK_SUFFIX')%></a></span>
                 </div>
             </div>
 
@@ -30,18 +30,18 @@
 
                     <h1 class="title text-danger">
                         <span class="glyphicon glyphicon-remove-circle"></span>
-                        Email validation
+                        <%= __('VERIFY_MAIL_EMAIL_VALIDATION_LABEL')%>
                     </h1>
 
-                    <p>Unfortunately we could not validate your account.</p>
-                    <p>Please go to your <a href="<%= link('/user/profile') %>">profile page</a> and hit the send verification link to try again.</p>
+                    <p><%= __('VERIFY_MAIL_ERR_LABEL_1')%></p>
+                    <p><%= __('VERIFY_MAIL_ERR_LABEL_2')%> <a href="<%= link('/user/profile') %>"><%= __('VERIFY_MAIL_ERR_LABEL_3')%></a> <%= __('VERIFY_MAIL_ERR_LABEL_4')%></p>
 
                     <div class="separator row">
-                        <div class="line"></div> <span>OR</span> <div class="line"></div>
+                        <div class="line"></div> <span><%= __('VERIFY_MAIL_OR_LABEL')%></span> <div class="line"></div>
                     </div>
 
 
-                    <span class="link">Go back to <a href="<%= link('/auth/local') %>" class="btn-link">login page</a></span>
+                    <span class="link"><%= __('VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL_PREFIX')%> <a href="<%= link('/auth/local') %>" class="btn-link"><%= __('VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL')%></a></span>
                 </div>
             </div>
 

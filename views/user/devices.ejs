@@ -4,10 +4,10 @@
 <div class="table-responsive">
   <table class="table">
     <tr>
-      <th>Client Id</th>
-      <th>Name</th>
-      <th>Owner</th>
-      <th>Authorized domains</th>
+      <th><%= __('USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE')%></th>
+      <th><%= __('USER_DEVICES_NAME_TABLE_COL_TITLE')%></th>
+      <th><%= __('USER_DEVICES_OWNER_TABLE_COL_TITLE')%></th>
+      <th><%= __('USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE')%></th>
       <th></th>
     </tr>
 
@@ -46,7 +46,7 @@
     </tr>
     <% }); %>
   </table>
-  <a href="<%= link('/verify') %>" class="pull-right text"><i class='glyphicon glyphicon-plus small'></i> Associate a device</a>
+  <a href="<%= link('/verify') %>" class="pull-right text"><i class='glyphicon glyphicon-plus small'></i> <%= __('USER_DEVICES_ASSOCIATE_DEVICE_LINK')%></a>
 </div>
 
 <script>

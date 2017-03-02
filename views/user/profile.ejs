@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-sm-12">
             <h2>
-                Settings
+                <%= __('PROFILE_MAIN_TITLE')%>
             </h2>
 
         </div>
@@ -12,41 +12,41 @@
     <hr/>
     <div class="row">
         <div class="col-sm-3">
-            <h4 class="hidden-xs">Personal data</h4>
-            <h4 class="visible-xs-inline-block hidden-sm mobile-title">Personal data</h4>
-            <button id="modify-data" type="button" class="btn btn-link">Edit</button>
+            <h4 class="hidden-xs"><%= __('PROFILE_PERSONAL_DATA_TITLE')%></h4>
+            <h4 class="visible-xs-inline-block hidden-sm mobile-title"><%= __('PROFILE_PERSONAL_DATA_TITLE_MOBILE')%></h4>
+            <button id="modify-data" type="button" class="btn btn-link"><%= __('PROFILE_EDIT_LINK')%></button>
             <hr class="visible-xs-block hidden-sm"/>
         </div>
         <div class="col-sm-9">
 
             <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <span class="title">Please verify that the fields below are filled in and valid before submitting the form</span>
+                <span class="title"><%= __('PROFILE_ERROR_MSG')%></span>
                 <span id="personnal-data-errors" class="content"></span>
             </div>
 
             <div id="personnal-data">
                 <form id="form-personnal-data">
                     <div class="panel">
-                        <h4>Firstname</h4>
+                        <h4><%= __('PROFILE_FIRST_NAME_LABEL')%></h4>
                         <% if (profile.firstname) { %>
                         <span class="data-value"><%= profile.firstname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
-                        <input id="firstname" name="firstname" class="form-control personnal-data-input" placeholder="Firstname"/>
+                        <input id="firstname" name="firstname" class="form-control personnal-data-input" placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER')%>"/>
                     </div>
                     <div class="panel">
-                        <h4>Lastname</h4>
+                        <h4><%= __('PROFILE_LAST_NAME_LABEL')%></h4>
                         <% if (profile.lastname) { %>
                         <span class="data-value"><%= profile.lastname %></span>
                         <% } else { %>
                         <span class="data-value"></span>
                         <% } %>
-                        <input id="lastname" name="lastname" class="form-control personnal-data-input" placeholder="Lastname"/>
+                        <input id="lastname" name="lastname" class="form-control personnal-data-input" placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER')%>"/>
                     </div>
                     <div class="panel">
-                        <h4>Birthdate</h4>
+                        <h4><%= __('PROFILE_BIRTHDATE_LABEL')%></h4>
                         <span class="data-value"></span>
                         <div class="input-group date personnal-data-input" data-provide="datepicker" data-language="en">
                             <input id="birthday" name="birthday" class="form-control" type="text">
@@ -56,23 +56,43 @@
                         </div>
                     </div>
                     <div class="panel">
-                        <h4>Sexe</h4>
+                        <h4><%= __('PROFILE_SEXE_LABEL')%></h4>
                         <% if (profile.gender) { %>
                         <% if (profile.gender === "female") { %>
-                        <span class="data-value" data-selected="<%= profile.gender %>">Woman</span>
+                        <span class="data-value" data-selected="<%= profile.gender %>"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION')%></span>
                         <% } else { %>
-                        <span class="data-value" data-selected="<%= profile.gender %>">Man</span>
+                        <span class="data-value" data-selected="<%= profile.gender %>"><%= __('PROFILE_MAN_SEXE_FORM_OPTION')%></span>
                         <% } %>
                         <% } else { %>
                         <span class="data-value" data-selected="male"></span>
                         <% } %>
                         <select id="gender" name="gender" class="form-control personnal-data-input">
-                            <option value="male">Man</option>
-                            <option value="female">Woman</option>
+                            <option value="male"><%= __('PROFILE_MAN_SEXE_FORM_OPTION')%></option>
+                            <option value="female"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION')%></option>
                         </select>
                     </div>
                     <div class="panel">
-                        <h4>Email</h4>
+                        <h4><%= __('PROFILE_LANGUAGE_LABEL')%></h4>
+                        <% if (profile.language) { %>
+                        <% if (profile.language === "fr") { %>
+                        <span class="data-value" data-selected="<%= profile.language %>"><%= __('PROFILE_LANGUAGE_FR_FORM_OPTION')%></span>
+                        <% } else { if (profile.language === "de") {%>
+                        <span class="data-value" data-selected="<%= profile.language %>"><%= __('PROFILE_LANGUAGE_EN_FORM_OPTION')%></span>
+                        <% } else { %>
+                        <span class="data-value" data-selected="<%= profile.language %>"><%= __('PROFILE_LANGUAGE_DE_FORM_OPTION')%></span>
+                        <% } %>
+                        <% } %>
+                        <% } else { %>
+                        <span class="data-value" data-selected="fr"></span>
+                        <% } %>
+                        <select id="language" name="language" class="form-control personnal-data-input">
+                            <option value="en"><%= __('PROFILE_LANGUAGE_EN_FORM_OPTION')%></option>
+                            <option value="fr"><%= __('PROFILE_LANGUAGE_FR_FORM_OPTION')%></option>
+                            <option value="de"><%= __('PROFILE_LANGUAGE_DE_FORM_OPTION')%></option>
+                        </select>
+                    </div>
+                    <div class="panel">
+                        <h4><%= __('PROFILE_EMAIL_LABEL')%></h4>
                         <% if (profile.email !== null) { %>
                         <span><%= profile.email %></span>
                         <% } else { %>
@@ -80,8 +100,8 @@
                         <% } %>
                     </div>
                     <div id="btn-container">
-                        <button id="btn-save-data" type="submit" class="btn btn-primary">Save</button>
-                        <button id="btn-cancel-save" type="submit" class="btn btn-link">Cancel</button>
+                        <button id="btn-save-data" type="submit" class="btn btn-primary"><%= __('PROFILE_SAVE_BUTTON')%></button>
+                        <button id="btn-cancel-save" type="submit" class="btn btn-link"><%= __('PROFILE_CANCEL_BUTTON')%></button>
                     </div>
                 </form>
             </div>
@@ -91,8 +111,8 @@
     <hr class="hidden-xs"/>
     <div class="row">
         <div class="col-sm-3">
-            <h4 class="hidden-xs">Security</h4>
-            <h4 class="visible-xs-inline-block hidden-sm mobile-title">Security</h4>
+            <h4 class="hidden-xs"><%= __('PROFILE_SECURITY_TITLE')%></h4>
+            <h4 class="visible-xs-inline-block hidden-sm mobile-title"><%= __('PROFILE_SECURITY_TITLE_MOBILE')%></h4>
             <hr class="visible-xs-block hidden-sm"/>
         </div>
         <div class="col-sm-9">
@@ -102,24 +122,24 @@
                 <span id="security-errors" class="content"></span>
             </div>
 
-            <h4>Password</h4>
-            <button id="btn-modify-password" type="button" class="btn btn-link">Edit your password</button>
+            <h4><%= __('PROFILE_PASSWORD_TITLE')%></h4>
+            <button id="btn-modify-password" type="button" class="btn btn-link"><%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK')%></button>
             <form id="form-modify-pass">
                 <div class="form-group">
-                    <label for="old-password">Previous password</label>
-                    <input type="password" class="form-control" id="previous-password" placeholder="Password">
+                    <label for="old-password"><%= __('PROFILE_PREVIOUS_PASSWORD_LABEL')%></label>
+                    <input type="password" class="form-control" id="previous-password" placeholder="<%= __('PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER')%>">
                 </div>
                 <div class="form-group">
-                    <label for="new-password">New password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Password">
+                    <label for="new-password"><%= __('PROFILE_NEW_PASSWORD_LABEL')%></label>
+                    <input type="password" class="form-control" id="password" placeholder="<%= __('PROFILE_NEW_PASSWORD_PLACEHOLDER')%>">
                 </div>
                 <div class="form-group">
-                    <label for="confirm-password">Confirm password</label>
-                    <input type="password" class="form-control" id="confirm-password" placeholder="Password">
+                    <label for="confirm-password"><%= __('PROFILE_CONFIRM_PASSWORD_LABEL')%></label>
+                    <input type="password" class="form-control" id="confirm-password" placeholder="<%= __('PROFILE_CONFIRM_PASSWORD_PLACEHOLDER')%>">
                 </div>
                 <div>
-                    <button id="btn-save-password" type="submit" class="btn btn-primary">Save</button>
-                    <button id="btn-cancel-password" class="btn btn-link">Cancel</button>
+                    <button id="btn-save-password" type="submit" class="btn btn-primary"><%= __('PROFILE_SAVE_PASSWORD_BUTTON')%></button>
+                    <button id="btn-cancel-password" class="btn btn-link"><%= __('PROFILE_CANCEL_PASSWORD_BUTTON')%></button>
                 </div>
             </form>
         </div>
@@ -129,16 +149,16 @@
     <div class="row">
         <div class="col-sm-3">
             <h4 class="account-title">
-                Account
+                <%= __('PROFILE_ACCOUNT_TITLE')%>
             </h4>
 
             <% if (profile.verified) { %>
             <span class="text-success status">
-            <span class="glyphicon glyphicon-ok"></span> verified
+            <span class="glyphicon glyphicon-ok"></span> <%= __('PROFILE_VERIFIED_LABEL')%>
         </span>
             <% } else { %>
             <span class="text-danger status">
-            <span class="glyphicon glyphicon-remove"></span> not verified
+            <span class="glyphicon glyphicon-remove"></span> <%= __('PROFILE_NOT_VERIFIED_LABEL')%>
         </span>
             <% } %>
 
@@ -148,12 +168,12 @@
         <% if (!profile.verified) { %>
         <div class="col-sm-9">
             <div class="verification-link-container">
-                <p>Fill the verification field below and resend your account verification link</p>
+                <p><%= __('PROFILE_FILL_VERIFICATION_LABEL')%></p>
                 <form id="verification-link-form" action='<%= link('/user/profile/request_verification_email') %>' method="post">
                     <div class="form-group">
                         <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
                     </div>
-                    <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span class="button-label">Resend</span>
+                    <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK')%></span>
                         <div class="spinner">
                             <div class="bounce1"></div>
                             <div class="bounce2"></div>
@@ -168,13 +188,12 @@
         <% } %>
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
-                <p>Click the button below to delete your account</p>
-                <a class="btn btn-danger" disabled="disabled">Delete account</a>
+                <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL')%></p>
+                <a class="btn btn-danger" disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK')%></a>
             </div>
         </div>
 
 
-    </div>
 </div>
 
 <!-- TODO move it to an appropriate file -->
@@ -195,6 +214,7 @@
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
         var $gender = $("#gender");
+        var $language = $("#language");
         var $previousPassword = $("#previous-password");
         var $password = $("#password");
         var $confirmPassword = $("#confirm-password");
@@ -244,8 +264,12 @@
             date = new Date(parseInt("<%= profile.birthdate %>"));
             $datepicker.prev(".data-value").text(formatDate(date));
         }
+
+        var locale = '<%= language %>';
+
         $datepicker.datepicker({
             format: 'dd/mm/yyyy',
+            language: locale,
             endDate: "0d"
         });
 
@@ -296,7 +320,7 @@
                     $spinner.hide();
                     $label.show();
                     if(!result.responseJSON.msg)
-                        $verifError.find(".text").first().text("An error occurred during the process, please try again later");
+                        $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION')%>");
                     else
                         $verifError.find(".text").first().text(result.responseJSON.msg);
 
@@ -304,7 +328,7 @@
                 },
                 success: function (response) {
                     $btnVerificationLink.remove();
-                    $verifSuccess.find(".text").first().text("Successfully sent a verification email to your mailbox");
+                    $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION')%>");
                     $verifSuccess.show();
                 }
             });
@@ -323,6 +347,7 @@
                     firstname: $firstname.val(),
                     lastname: $lastname.val(),
                     gender: $gender.val(),
+                    language: $language.val(),
                     birthdate: date
                 },
                 type: 'PUT',
@@ -334,12 +359,16 @@
                     $gender.prev(".data-value").text($gender.find("option:selected").text());
                     $gender.prev(".data-value").attr("data-selected", $gender.val());
 
+                    $language.prev(".data-value").text($language.find("option:selected").text());
+                    $language.prev(".data-value").attr("data-selected", $language.val());
+
                     closeEditMode();
+                    // Reload in case the user has changed the local
+                    location.reload();
                 },
                 error: function(result) {
-                    console.log(result);
                     $.each(result.responseJSON.errors, function(index, error){
-                        $("#personnal-data-errors").append($('<span>').text(error.msg));
+                        $("#personnal-data-errors").append($('<p>').text(error.msg));
                     });
                     $("#form-personnal-data-errors").show("fast");
                     $('html, body').animate({

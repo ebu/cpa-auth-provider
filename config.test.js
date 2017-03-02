@@ -14,6 +14,12 @@ module.exports = {
     issuer: 'cpa'
   },
 
+  i18n: {
+      cookie_name:'language',
+      cookie_duration: 365 * 24 * 60 * 60 * 1000,
+      default_locale: 'en'
+  },
+
   identity_providers: {
     facebook: {
       enabled: false
