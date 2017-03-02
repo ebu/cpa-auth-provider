@@ -189,7 +189,9 @@
   "API_VERIF_MAIL_NOT_AUTH": "Non autentifié",
   "API_VERIF_MAIL_SENT": "email envoyé",
 
-  "API_ERROR": "Oops, une erreur s'est produite :"
+  "API_ERROR": "Oops, une erreur s'est produite :",
+  "API_INCORRECT_LOGIN_OR_PASS": "Nom d'utilisateur ou mot de passe incorrect"
+
 
 
 }

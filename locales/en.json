@@ -191,6 +191,7 @@
   "API_VERIF_MAIL_NOT_AUTH": "not authenticated",
   "API_VERIF_MAIL_SENT": "email sent",
 
-  "API_ERROR": "Oops, something went wrong:"
+  "API_ERROR": "Oops, something went wrong:",
+  "API_INCORRECT_LOGIN_OR_PASS": "The user name or password is incorrect"
 
 }

@@ -19,8 +19,7 @@ var permissionName = require('../../lib/permission-name');
 
 var codeHelper = require('../../lib/code-helper');
 
-
-var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+var i18n = require('i18n');
 
 // Google reCAPTCHA
 recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
@@ -88,7 +87,7 @@ module.exports = function (app, options) {
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                     if (!user) {
-                        res.status(401).json({success: false, msg: INCORRECT_LOGIN_OR_PASS});
+                        res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                         return;
                     }
 
@@ -100,7 +99,7 @@ module.exports = function (app, options) {
                                 // return the information including token as JSON
                                 res.json({success: true, token: 'JWT ' + token});
                             } else {
-                                res.status(401).json({success: false, msg: INCORRECT_LOGIN_OR_PASS});
+                                res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                                 return;
                             }
                         },
@@ -130,7 +129,7 @@ module.exports = function (app, options) {
                 }
             }).then(function (user) {
                 if (!user) {
-                    return res.status(403).send({success: false, msg: INCORRECT_LOGIN_OR_PASS});
+                    return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
 
                     db.UserProfile.findOrCreate({
