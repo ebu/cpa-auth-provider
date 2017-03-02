@@ -47,7 +47,7 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
-    req.checkBody('email', 'Invalid email').isEmail();
+    req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
     req.getValidationResult().then(function (result) {
         if (!result.isEmpty()) {
             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
@@ -256,9 +256,9 @@ module.exports = function (app, options) {
 
     app.post('/password/update', function (req, res, next) {
 
-        req.checkBody('password', 'New Password is empty').notEmpty();
-        req.checkBody('confirm-password', 'Confirm password is empty').notEmpty();
-        req.checkBody('confirm-password', 'Passwords do not match').equals(req.body.password);
+        req.checkBody('password', req.__('BACK_PWD_UPDATE_PWD_EMPTY')).notEmpty();
+        req.checkBody('confirm-password', req.__('BACK_PWD_UPDATE_CONF_PWD_EMPTY')).notEmpty();
+        req.checkBody('confirm-password', req.__('BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY')).equals(req.body.password);
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {

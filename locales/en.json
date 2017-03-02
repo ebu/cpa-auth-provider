@@ -178,6 +178,9 @@
 
   "BACK_PWD_UPDATE_USER_NOT_FOUND": "User not found.",
   "BACK_PWD_WRONG_RECOVERY_CODE": "Wrong recovery code.",
+  "BACK_PWD_UPDATE_PWD_EMPTY": "New Password is empty",
+  "BACK_PWD_UPDATE_CONF_PWD_EMPTY": "Confirm password is empty",
+  "BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY": "Passwords do not match",
 
   "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "wrong permission id",
 
