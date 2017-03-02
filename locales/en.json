@@ -2,7 +2,6 @@
   "LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_MAIN_TITLE": "Cross Platform Authentication: OAuth2 Clients",
   "LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_MAIN_SUBTITLE": "Cross Platform Authentication: OAuth2.0 Client",
 
-
   "LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE": "Cross Platform Authentication: Authorization Provider",
 
   "LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE": "Cross Platform Authentication",
@@ -45,7 +44,6 @@
   "ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE": "Password Changed",
   "ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Last Login",
 
-
   "AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Available providers",
   "AUTH_MAIN_LOGIN_FB_LINK": "Login with Facebook",
   "AUTH_MAIN_LOGIN_GITHUB_LINK": "Login with Github",
@@ -63,6 +61,11 @@
   "USER_DEVICES_OWNER_TABLE_COL_TITLE": "Owner",
   "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Authorized domains",
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associate a device",
+
+  "ALERT_LANGUAGE_1": "Your default language is different from the one in your profile",
+  "ALERT_LANGUAGE_2": "clic here to update your profile",
+  "ALERT_LANGUAGE_3": "or",
+  "ALERT_LANGUAGE_4": "here to use default one",
 
   "HOME_MY_PROFILE_TITLE": "My profile",
   "HOME_PERSONNAL_DATA_LINK": "Access your personal details and update them",

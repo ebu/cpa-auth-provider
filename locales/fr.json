@@ -62,6 +62,11 @@
   "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Domaines authorisés",
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
 
+  "ALERT_LANGUAGE_1": "Votre langue par défaut est différente de celle de votre profil",
+  "ALERT_LANGUAGE_2": "cliquez ici pour le mettre à jour",
+  "ALERT_LANGUAGE_3": "ou",
+  "ALERT_LANGUAGE_4": "ici revenir à celle par défaut",
+
   "HOME_MY_PROFILE_TITLE": "Mon profile",
   "HOME_PERSONNAL_DATA_LINK": "Accéder à vos information personne et les mettre à jour",
   "HOME_MY_DEVICES_TITLE": "Mes appareils",
