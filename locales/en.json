@@ -163,7 +163,7 @@
 
   "VERIFY_PREFILLED_CODE_TITLE": "Authorization",
   "VERIFY_MAIN_LABEL_PREFIX": "is requesting your authorization to act on your behalf on",
-  "VERIFY_MAIN_LABEL_PREFIX": ". Do you accept?",
+  "VERIFY_MAIN_LABEL_SUFFIX": ". Do you accept?",
   "VERIFY_MAIN_ALLOW_BUTTON": "Allow",
   "VERIFY_MAIN_DENY_BUTTON": "Deny",
 
