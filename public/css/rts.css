@@ -77,3 +77,7 @@ h4 {
     color: #666666
 }
 
+/*TODO remove this when user login btn will be in production on hummingbird*/
+.rts-hp-header .about {
+    display: none;
+}
