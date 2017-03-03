@@ -13,7 +13,7 @@ var resetDatabase = function (done) {
     });
 };
 
-var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+var INCORRECT_LOGIN_OR_PASS = 'The username or password is incorrect';
 
 // Test signup
 
