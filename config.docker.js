@@ -2,6 +2,10 @@
 
 module.exports = {
 
+  broadcasterLayout: '',
+
+  broadcaster: '',
+
   i18n: {
       cookie_name:'language',
       cookie_duration: 365 * 24 * 60 * 60 * 1000,
