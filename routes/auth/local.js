@@ -82,7 +82,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                     return user_profile.updateAttributes(
                                         {
                                             language: req.getLocale()
-                                        })
+                                        });
                                 }).then(function () {
                                     return codeHelper.getOrGenereateEmailVerificationCode(user);
                                 }).then(function (code) {
@@ -157,7 +157,7 @@ module.exports = function (app, options) {
         res.redirect('/');
     });
 
-    app.get('/email_verify', function (req, res) {
+    app.get('/email_verify', function (req, res, next) {
         db.User.findOne({where: {email: req.query.email}})
             .then(function (user) {
                 if (user) {
@@ -173,7 +173,7 @@ module.exports = function (app, options) {
                     return res.status(400).json({msg: req.__('BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND')});
                 }
             }, function (error) {
-                done(error);
+                next(error);
             });
     });
 
@@ -280,7 +280,7 @@ module.exports = function (app, options) {
                         return res.status(400).json({msg: req.__('BACK_PWD_UPDATE_USER_NOT_FOUND')});
                     }
                 }, function (error) {
-                    done(error);
+                    next(error);
                 });
         });
 
