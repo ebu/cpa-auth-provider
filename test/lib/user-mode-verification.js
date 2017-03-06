@@ -81,108 +81,108 @@ var resetDatabase = function(opts, done) {
   });
 };
 
-// describe('GET /verify', function() {
-//   context('When requesting the form to validate a user code', function() {
-//     context('while providing the user_code and a redirect_uri as GET parameter', function() {
-//       context('and the user is authenticated', function() {
-//         before(resetDatabase);
-//         before(function(done) {
-//           requestHelper.login(this, done);
-//         });
-//
-//         before(function(done) {
-//           requestHelper.sendRequest(this, '/verify?user_code=1234&redirect_uri=' + encodeURI('example://cpa_callback'), {
-//             cookie:   this.cookie,
-//             parseDOM: true
-//           }, done);
-//         });
-//
-//         it('should return a status 200', function() {
-//           expect(this.res.statusCode).to.equal(200);
-//         });
-//
-//         it('should return HTML', function() {
-//           expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-//         });
-//
-//         describe('the response body', function() {
-//           it('should contain a hidden input with user_code', function() {
-//             expect(this.$('input[name="user_code"]').length).to.equal(1);
-//             expect(this.$('input[name="user_code"]')[0].attribs.type).to.equal('hidden');
-//             expect(this.$('input[name="user_code"]')[0].attribs.value).to.equal('1234');
-//           });
-//
-//           it('should contain a hidden input with redirect_uri', function() {
-//             expect(this.$('input[name="redirect_uri"]').length).to.equal(1);
-//             expect(this.$('input[name="redirect_uri"]')[0].attribs.type).to.equal('hidden');
-//             expect(this.$('input[name="redirect_uri"]')[0].attribs.value).to.equal('example://cpa_callback');
-//           });
-//
-//           it('should contain a submit button with value "Allow"', function() {
-//             expect(this.$('input[name="authorization"][value="Allow"]').length).to.equal(1);
-//             expect(this.$('input[name="authorization"][value="Allow"]')[0].attribs.type).to.equal('submit');
-//           });
-//         });
-//       });
-//
-//       context('and the user is not authenticated', function() {
-//         before(function(done) {
-//           requestHelper.sendRequest(this, '/verify?user_code=1234&redirect_uri=' + encodeURI('example://cpa_callback'), null, done);
-//         });
-//
-//         it('should redirect to the login page', function() {
-//           var urlPrefix = requestHelper.urlPrefix;
-//           expect(this.res.statusCode).to.equal(302);
-//           expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
-//           // TODO: check redirect location and page to return to after login
-//         });
-//       });
-//     });
-//
-//     context('without providing the user_code as parameter', function() {
-//       context('and the user is authenticated', function() {
-//         before(resetDatabase);
-//         before(function(done) {
-//           requestHelper.login(this, done);
-//         });
-//
-//         before(function(done) {
-//           requestHelper.sendRequest(this, '/verify', {
-//             cookie:   this.cookie,
-//             parseDOM: true
-//           }, done);
-//         });
-//
-//         it('should return a status 200', function() {
-//           expect(this.res.statusCode).to.equal(200);
-//         });
-//
-//         it('should return HTML', function() {
-//           expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
-//         });
-//
-//         describe('the response body', function() {
-//           it('should display an input with name', function() {
-//             expect(this.$('input[name="user_code"]').length).to.equal(1);
-//           });
-//         });
-//       });
-//
-//       context('and the user is not authenticated', function() {
-//         before(function(done) {
-//           requestHelper.sendRequest(this, '/verify', null, done);
-//         });
-//
-//         it('should redirect to the login page', function() {
-//           var urlPrefix = requestHelper.urlPrefix;
-//           expect(this.res.statusCode).to.equal(302);
-//           expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
-//           // TODO: check redirect location and page to return to after login
-//         });
-//       });
-//     });
-//   });
-// });
+describe('GET /verify', function() {
+  context('When requesting the form to validate a user code', function() {
+    context('while providing the user_code and a redirect_uri as GET parameter', function() {
+      context('and the user is authenticated', function() {
+        before(resetDatabase);
+        before(function(done) {
+          requestHelper.login(this, done);
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify?user_code=1234&redirect_uri=' + encodeURI('example://cpa_callback'), {
+            cookie:   this.cookie,
+            parseDOM: true
+          }, done);
+        });
+
+        it('should return a status 200', function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should contain a hidden input with user_code', function() {
+            expect(this.$('input[name="user_code"]').length).to.equal(1);
+            expect(this.$('input[name="user_code"]')[0].attribs.type).to.equal('hidden');
+            expect(this.$('input[name="user_code"]')[0].attribs.value).to.equal('1234');
+          });
+
+          it('should contain a hidden input with redirect_uri', function() {
+            expect(this.$('input[name="redirect_uri"]').length).to.equal(1);
+            expect(this.$('input[name="redirect_uri"]')[0].attribs.type).to.equal('hidden');
+            expect(this.$('input[name="redirect_uri"]')[0].attribs.value).to.equal('example://cpa_callback');
+          });
+
+          it('should contain a submit button with value "Allow"', function() {
+            expect(this.$('input[name="authorization"][value="Allow"]').length).to.equal(1);
+            expect(this.$('input[name="authorization"][value="Allow"]')[0].attribs.type).to.equal('submit');
+          });
+        });
+      });
+
+      context('and the user is not authenticated', function() {
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify?user_code=1234&redirect_uri=' + encodeURI('example://cpa_callback'), null, done);
+        });
+
+        it('should redirect to the login page', function() {
+          var urlPrefix = requestHelper.urlPrefix;
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
+          // TODO: check redirect location and page to return to after login
+        });
+      });
+    });
+
+    context('without providing the user_code as parameter', function() {
+      context('and the user is authenticated', function() {
+        before(resetDatabase);
+        before(function(done) {
+          requestHelper.login(this, done);
+        });
+
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', {
+            cookie:   this.cookie,
+            parseDOM: true
+          }, done);
+        });
+
+        it('should return a status 200', function() {
+          expect(this.res.statusCode).to.equal(200);
+        });
+
+        it('should return HTML', function() {
+          expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
+        });
+
+        describe('the response body', function() {
+          it('should display an input with name', function() {
+            expect(this.$('input[name="user_code"]').length).to.equal(1);
+          });
+        });
+      });
+
+      context('and the user is not authenticated', function() {
+        before(function(done) {
+          requestHelper.sendRequest(this, '/verify', null, done);
+        });
+
+        it('should redirect to the login page', function() {
+          var urlPrefix = requestHelper.urlPrefix;
+          expect(this.res.statusCode).to.equal(302);
+          expect(this.res.headers.location).to.equal(urlPrefix + "/auth");
+          // TODO: check redirect location and page to return to after login
+        });
+      });
+    });
+  });
+});
 
 describe('POST /verify', function() {
   before(function() {
