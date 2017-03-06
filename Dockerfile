@@ -2,9 +2,14 @@ FROM node:7
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-  libsqlite3-dev
+  libsqlite3-dev apt-transport-https
 
-RUN npm install --global yarn
+# Install yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y yarn
+
+RUN npm install -g node-gyp
 
 ADD bin /src/bin
 ADD lib /src/lib
