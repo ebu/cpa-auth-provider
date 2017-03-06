@@ -73,11 +73,11 @@ module.exports = {
     password: '',
 
     // The database type, 'mysql', 'sqlite', etc.
-    type: '',
+    type: 'sqlite',
     database: '',
 
     // Database filename for SQLite.
-    filename: '',
+    filename: 'db.db',
 
     // If true, SQL statements are logged to the console.
     debug: true
