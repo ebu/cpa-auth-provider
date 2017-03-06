@@ -26,7 +26,7 @@ module.exports = {
       enabled: false
     },
     local: {
-      enabled: false
+      enabled: true
     }
   },
 
