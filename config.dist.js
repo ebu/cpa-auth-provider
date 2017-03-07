@@ -8,6 +8,13 @@ module.exports = {
       default_locale: 'en'
   },
 
+
+  jwtSecret:'bigsecret',
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
+  },
+
   identity_providers: {
     // Details : http://passportjs.org/guide/facebook/
     facebook: {
@@ -17,7 +24,7 @@ module.exports = {
       callback_url: ''
     },
     github: {
-      enabled: true,
+      enabled: false,
       client_id: '',
       client_secret: '',
       callback_url: ''
@@ -55,9 +62,11 @@ module.exports = {
     // name: 'TrackingId',
     duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
   },
+
+  // recaptcha test keys
   recaptcha: {
-    site_key: '6Lf8JhIUAAAAAOpDYjfIZnlxmjhPQblCiwwfSPHc',
-    secret_key: '6Lf8JhIUAAAAADblMNVnlvE0Sbg8_P_NwM87IncZ'
+    site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+    secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
   },
 
   // When accessing the home page, if defined, users are automatically
@@ -132,15 +141,15 @@ module.exports = {
     }
   ],
 
-    // users: [
-    //     {
-    //         id:           -1,
-    //         email:        "admin@admin.com",
-    //         display_name: "Admin",
-    //         verified:     true,
-    //         permission_id:      1
-    //     }
-    // ],
+  // users: [
+  //   {
+  //     id:           1,
+  //     email:        "admin@admin.com",
+  //     display_name: "Admin",
+  //     verified:     true,
+  //     permission_id:1
+  //   }
+  // ],
 
   // This option controls how the authorization server responds to requests to
   // associate an existing client with a new domain:

@@ -15,7 +15,7 @@ Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM in
 
 ## Getting started
 
-    $ git clone https://github.com/ebu/cpa-auth-provider.git
+    $ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
     $ cd cpa-auth-provider
     $ npm install
     $ NODE_ENV=development bin/init-db

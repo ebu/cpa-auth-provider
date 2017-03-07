@@ -38,30 +38,32 @@ db.sequelize
                     .then(function () {
                         console.log('[PERMISSION] Database populated');
                     });
-                db.User
-                    .bulkCreate(config.users)
-                    .then(function () {
-                        db.User.findOne({where: {id: 1}})
-                            .then(function (user) {
-                                return user.setPassword("admin");
-                            });
-                        console.log('[USER] Database populated');
-                    });
-                db.Domain
-                    .bulkCreate(config.domains)
-                    .then(function () {
-                        console.log('[DOMAIN] Database populated');
 
-                        if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
-                            db.OAuth2Client.bulkCreate(config.oauth2_clients).then(function () {
-                                console.log('[OAUTH2_CLIENT] Database populated');
-                            });
-                        }
-                        else {
-                            console.log("No server clients configured");
-                        }
-                    });
+                if (config.users) {
+                    db.User
+                        .bulkCreate(config.users)
+                        .then(function () {
+                            db.User.findOne({where: {id: 1}})
+                                .then(function (user) {
+                                    return user.setPassword("admin");
+                                });
+                            console.log('[USER] Database populated');
+                        });
+                    db.Domain
+                        .bulkCreate(config.domains)
+                        .then(function () {
+                            console.log('[DOMAIN] Database populated');
 
+                            if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
+                                db.OAuth2Client.bulkCreate(config.oauth2_clients).then(function () {
+                                    console.log('[OAUTH2_CLIENT] Database populated');
+                                });
+                            }
+                            else {
+                                console.log("No server clients configured");
+                            }
+                        });
+                }
             }
         },
         function (err) {
