@@ -78,13 +78,13 @@ The file `config.dist.js` contains a sample configuration. **This configuration 
 You can customize css, header and footer.
 
 - Declare your layout name in your [config file](#configuration) in property `broadcasterLayout` (sample: ebu)
-- Create a folder in `views/layout` for your custom files (sample: `views/layout/ebu')
-- Add your css file in `public/css" (sample ebu.css) \[Optional\]
+- Create a folder in `views/layout` for your custom files (sample: `views/layout/ebu`)
+- Add your css file in `public/css` (sample ebu.css)
 - Add your custom files in the created folder: 
-	- `views/layout/ebu/footer.ejs': custom footer
-	- `views/layout/ebu/header.ejs': custom header (include a reference to your custom css in that file)
-	- `views/layout/ebu/nav.ejs': custom navigation
-- Update `views/layout/head.ejs` and `views/layout/foot.ejs' to include previous files
+	- `views/layout/ebu/footer.ejs`: custom footer
+	- `views/layout/ebu/header.ejs`: custom header (include a reference to your custom css in that file)
+	- `views/layout/ebu/nav.ejs`: custom navigation
+- Update `views/layout/head.ejs` and `views/layout/foot.ejs` to include previous files
 
 
 ##Demo site for OAuth 2.0 implementation
