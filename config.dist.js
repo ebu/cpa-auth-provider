@@ -110,7 +110,7 @@ module.exports = {
   urlPrefix: '',
 
   // Broadcaster specific layout
-  broadcasterLayout: 'rts',
+  broadcasterLayout: '',
 
   // The end-user verification URI on the authorization server. The URI should
   // be short and easy to remember as end-users will be asked to manually type
