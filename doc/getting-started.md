@@ -27,6 +27,30 @@ You can reach those as [http://localhost:3000](http://localhost:3000) and [http:
 
 [http://localhost:3001](http://localhost:3001) demonstrates [the OAuth 2.0 implementation](#demo-site-for-oauth-20-implementation). It will redirect and use the identity service.
 
+To stop both services, run `docker-compose down`
+
+Note: if you want to start only the IDP, you should remove `oauth2-client section` and `depend_on`+ links under `cpa-auth-provider` in `docker-compose.yaml` before running `docker-compose up`. So you file should looks like the following:
+```
+ersion: '2'
+services:
+  cpa-auth-provider:
+    build: .
+    ports:
+    - 3000:3000
+    environment:
+    - MAIL_FROM=no-reply@rts.ch
+    - MAIL_LOCALE=de_de
+    - IDP_HOST=http://localhost/email
+    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    environment:
+      - DB_DATABASE=cpa
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=dockercpa
+      - DB_PASSWORD=SchiefesHausBautFalsch
+```
 
 ##Starting the identity provider outside of docker
 
