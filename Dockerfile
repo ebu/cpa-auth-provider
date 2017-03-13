@@ -18,6 +18,7 @@ ADD public /src/public
 ADD routes /src/routes
 ADD views /src/views
 ADD templates /src/templates
+ADD locales /src/locales
 ADD package.json /src/package.json
 ADD config.js /src/config.js
 # TODO find better way to run tests without adding test file to the image
@@ -33,9 +34,10 @@ ADD config.docker.js /src/config.local.js
 
 ENV NODE_ENV development
 
-ENV CPA_RECAPCHA_SITEKEY 6Lf8JhIUAAAAAOpDYjfIZnlxmjhPQblCiwwfSPHc
-ENV CPA_RECAPCHA_SECRETKEY 6Lf8JhIUAAAAADblMNVnlvE0Sbg8_P_NwM87IncZ
+ENV CPA_RECAPCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+ENV CPA_RECAPCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ENV JWT_SECRET AlteredCarbonFly
+ENV DEFAULT_LOCALE fr
 
 # default settings for database
 ENV DB_TYPE sqlite

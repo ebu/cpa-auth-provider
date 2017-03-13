@@ -39,10 +39,10 @@ services:
     - 3000:3000
     environment:
     - MAIL_FROM=no-reply@rts.ch
-    - MAIL_LOCALE=de_de
     - IDP_HOST=http://localhost/email
     - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
     - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+	- DEFAULT_LOCALE:fr
     environment:
       - DB_DATABASE=cpa
       - DB_TYPE=postgres
