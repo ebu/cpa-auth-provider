@@ -31,7 +31,7 @@ To stop both services, run `docker-compose down`
 
 Note: if you want to start only the IDP, you should remove `oauth2-client section` and `depend_on`+ links under `cpa-auth-provider` in `docker-compose.yaml` before running `docker-compose up`. So you file should looks like the following:
 ```
-ersion: '2'
+version: '2'
 services:
   cpa-auth-provider:
     build: .
