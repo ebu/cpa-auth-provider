@@ -6,6 +6,8 @@ var authHelper    = require('../lib/auth-helper');
 var messages      = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
 var urlHelper     = require('../lib/url-helper');
+var i18n          = require('i18n');
+
 
 var async = require('async');
 
@@ -289,7 +291,7 @@ var routes = function(router) {
       return;
     }
 
-    var denied = ('authorization' in req.body && req.body.authorization === 'Deny');
+    var denied = ('authorization' in req.body && req.body.authorization === req.__('VERIFY_MAIN_DENY_BUTTON'));
     if (denied) {
       denyUserCode(userCode, req.user.id, function(err, errorMessage, result) {
         var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
