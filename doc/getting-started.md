@@ -9,7 +9,7 @@ This software implements version 1.0 of the Cross-Platform Authentication Protoc
 
 More information on the [EBU Cross-Platform Authentication project](http://tech.ebu.ch/cpa).
 
-##Getting (quick) started using docker
+## Getting (quick) started using docker
 
 First run [docker](https://www.docker.com/) on you machine.
 Then execute the following commands:
@@ -29,13 +29,13 @@ You can reach those as [http://localhost:3000](http://localhost:3000) and [http:
 
 To stop both services, run `docker-compose down`
 
-##Other docker configurations
+## Other docker configurations
 
-###Identity provider only
+### Identity provider only
 
 There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up -d`
 
-###Identity provider with postgres
+### Identity provider with postgres
 
 By default, the IDP uses a SQLite database. 
 A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
@@ -45,7 +45,7 @@ A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
 To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
 
 
-##Starting the identity provider outside of docker
+## Starting the identity provider outside of docker
 
 Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
 
@@ -60,7 +60,7 @@ $ bin/server
 
 Now you have an identity provider listening on http://localhost:3000/
 
-##Starting the sample site outside of docker
+## Starting the sample site outside of docker
 
 Using a bash shell
 
