@@ -1,0 +1,32 @@
+version: '2'
+services:
+  cpa-auth-provider:
+    build: .
+    ports:
+    - 3000:3000
+    environment:
+    - MAIL_FROM=no-reply@rts.ch
+    - IDP_HOST=http://localhost/email
+    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    - DEFAULT_LOCALE:fr
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    environment:
+      - DB_DATABASE=cpa
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=dockercpa
+      - DB_PASSWORD=SchiefesHausBautFalsch
+  postgres:
+    build: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
+      - DOCKER_USER=dockercpa
+      - DOCKER_PASSWORD=SchiefesHausBautFalsch

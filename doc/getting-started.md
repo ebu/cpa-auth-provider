@@ -29,28 +29,21 @@ You can reach those as [http://localhost:3000](http://localhost:3000) and [http:
 
 To stop both services, run `docker-compose down`
 
-Note: if you want to start only the IDP, you should remove `oauth2-client section` and `depend_on`+ links under `cpa-auth-provider` in `docker-compose.yaml` before running `docker-compose up`. So you file should looks like the following:
-```
-version: '2'
-services:
-  cpa-auth-provider:
-    build: .
-    ports:
-    - 3000:3000
-    environment:
-    - MAIL_FROM=no-reply@rts.ch
-    - IDP_HOST=http://localhost/email
-    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
-	- DEFAULT_LOCALE:fr
-    environment:
-      - DB_DATABASE=cpa
-      - DB_TYPE=postgres
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=dockercpa
-      - DB_PASSWORD=SchiefesHausBautFalsch
-```
+##Other docker configurations
+
+###Identity provider only
+
+There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up -d`
+
+###Identity provider with postgres
+
+By default the IDP uses a SQLite database. 
+A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
+- start a docker container with a postgres database
+- configure the main container to use the postgres database.
+
+To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following commande in the shell: `NODE_ENV=development bin/init-db`
+
 
 ##Starting the identity provider outside of docker
 
@@ -83,7 +76,7 @@ $ export HTTP_PORT=3001
 $ node oauth2-client/app.js
 ```
 
-Now you have a [demo site for oAuth 2.0](#demo-site-for-oauth-20-implementation) listening on http://localhost:3001/
+Now you have a [demo site for oAuth 2.0](#demo-site-for-oauth-20-implementation) listening on [http://localhost:3000](http://localhost:3000)
 
 
 ## Configuration
@@ -93,9 +86,10 @@ The file `config.dist.js` contains a sample configuration. **This configuration 
 | File | Description |
 | ----------------- | ----------- |
 | config.local.js   | Configuration used when [running the identity provider outside docker](#starting-the-identitiy-provider-outside-of-docker)  |
-| config.docker.js  | Configuration used when [running the identity provider inside docker](#getting-quick-started-using-docker) |
+| config.docker.js\*  | Configuration used when [running the identity provider inside docker](#getting-quick-started-using-docker) |
 | config.test.js    | Configuration used for unit tests |
 
+\*config.docker.local contains some environnement variable that are defined in the Dockerfile or in docker-compose\[-xxx\].yaml.
 
 ## Customise layout
 
