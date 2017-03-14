@@ -131,15 +131,15 @@ module.exports = {
       label:    "other"
     }
   ],
-	users: [
-		{
-			id:           1,
-			email:        "admin@admin.com",
-			display_name: "Admin",
-			verified:     true,
-			permission_id:      1
-		}
-	],
+	// users: [
+	// 	{
+	// 		id:           1,
+	// 		email:        "admin@admin.com",
+	// 		display_name: "Admin",
+	// 		verified:     true,
+	// 		permission_id:      1
+	// 	}
+	// ],
   oauth2_clients: [
     {
       id: 1,
