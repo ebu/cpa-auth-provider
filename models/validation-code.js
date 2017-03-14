@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
             autoIncrement: true
         },
         date: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             validate: {
                 notEmpty: true
             }

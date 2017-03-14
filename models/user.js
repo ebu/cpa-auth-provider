@@ -17,8 +17,8 @@ module.exports = function (sequelize, DataTypes) {
         display_name: DataTypes.STRING,
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
-        password_changed_at: DataTypes.INTEGER,
-        last_login_at: DataTypes.INTEGER
+        password_changed_at: DataTypes.BIGINT,
+        last_login_at: DataTypes.BIGINT
     }, {
         underscored: true,
         instanceMethods: {

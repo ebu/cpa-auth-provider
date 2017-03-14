@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
 				}
 			},
 			expires_at: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.BIGINT,
 				validate: {
 					notEmpty: true
 				}
