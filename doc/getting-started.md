@@ -37,12 +37,12 @@ There is a custom docker-compose file (docker-compose-idp-only.yaml) to start on
 
 ###Identity provider with postgres
 
-By default the IDP uses a SQLite database. 
+By default, the IDP uses a SQLite database. 
 A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
 - start a docker container with a postgres database
 - configure the main container to use the postgres database.
 
-To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following commande in the shell: `NODE_ENV=development bin/init-db`
+To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
 
 
 ##Starting the identity provider outside of docker
@@ -89,7 +89,7 @@ The file `config.dist.js` contains a sample configuration. **This configuration 
 | config.docker.js\*  | Configuration used when [running the identity provider inside docker](#getting-quick-started-using-docker) |
 | config.test.js    | Configuration used for unit tests |
 
-\*config.docker.local contains some environnement variable that are defined in the Dockerfile or in docker-compose\[-xxx\].yaml.
+\*config.docker.local contains some environment variables that are defined in the Dockerfile or in docker-compose\[-xxx\].yaml.
 
 ## Customise layout
 
@@ -105,8 +105,9 @@ You can customize css, header and footer.
 - Update `views/layout/head.ejs` and `views/layout/foot.ejs` to include previous files
 
 
-##Demo site for OAuth 2.0 implementation
+## Demo site for OAuth 2.0 implementation
 
-
+The project came with a demo web application that could be started (see [Getting quick started using Docker](#getting-quick-started-using-docker)).
+IDP support the 3 mains authentications flow (see [oAuth big picture](./oAuthBigPicture.md)). Those can be tested on [http://localhost:3001](http://localhost:3001).
 
 
