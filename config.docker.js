@@ -31,9 +31,9 @@ module.exports = {
     sending: {
       // transport: 'sendmail'
       // transport: 'stream'
-      transport: 'gmail',
-      username: 'ebuidp@gmail.com',
-      password: 'HalloEBU',
+      transport: 'test',
+      username: 'username',
+      password: 'password',
       // transport: 'smtp',
       // username: '',
       // password: '',
