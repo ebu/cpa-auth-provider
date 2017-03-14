@@ -62,7 +62,7 @@ var routes = function (router) {
 					user.email,
                     "validation-email",
                     {log:true},
-                    {confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code), host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)},
+                    {confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code), host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)},
                     (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language: req.getLocale()
                 ).then(
                     function() {},
