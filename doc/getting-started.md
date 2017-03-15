@@ -62,18 +62,11 @@ Now you have an identity provider listening on http://localhost:3000/
 
 ## Starting the sample site outside of docker
 
-Using a bash shell
+Using provided bash shell script
 
 ```
-$ cd cpa-auth-provider
-$ export DEMO_HOST=http://localhost
-$ export OAUTH2_CLIENT_ID=db05acb0c6ed902e5a5b7f5ab79e7144
-$ export OAUTH2_CLIENT_SECRET=49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98
-$ export OAUTH2_SERVER=\$DEMO_HOST:3000
-$ export OAUTH2_CALLBACK=\$DEMO_HOST:3001
-$ export OAUTH2_INTERNAL_SERVER=\$DEMO_HOST:3000
-$ export HTTP_PORT=3001
-$ node oauth2-client/app.js
+$ chmod u+x start_demo.sh
+$ ./start_demo.sh
 ```
 
 Now you have a [demo site for oAuth 2.0](#demo-site-for-oauth-20-implementation) listening on [http://localhost:3000](http://localhost:3000)
