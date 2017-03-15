@@ -85,6 +85,6 @@ describe('Test user profile', function () {
 
                 done();
             });
-        })
-    })
+        });
+    });
 });

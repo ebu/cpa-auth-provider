@@ -1,3 +1,4 @@
+/*jshint expr:true */
 "use strict";
 
 var generate = require('../../lib/generate');
@@ -52,7 +53,7 @@ var initDatabase = function (done) {
                     function (error) {
                         done(new Error(error));
                     });
-        })
+        });
     });
 
 
@@ -79,7 +80,7 @@ describe('GET /admin', function () {
 
         before(function (done) {
             db.User.findOne({where: {id: 5}}).then(function (user) {
-                user.updateAttributes({permission_id: 2}).then(done())
+                user.updateAttributes({permission_id: 2}).then(done());
             });
         });
 
@@ -115,7 +116,7 @@ describe('GET /admin', function () {
             }).then(function (user) {
                 user.setPassword('admin').then(function () {
                     done();
-                })
+                });
             });
         });
 
@@ -155,7 +156,7 @@ describe('GET /admin', function () {
             }).then(function (user) {
                 user.setPassword('admin').then(function () {
                     done();
-                })
+                });
             });
         });
 
@@ -193,7 +194,7 @@ describe('GET /admin', function () {
             }).then(function (user) {
                 user.setPassword('admin').then(function () {
                     done();
-                })
+                });
             });
         });
 

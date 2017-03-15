@@ -1,3 +1,4 @@
+/*jshint expr:true */
 "use strict";
 
 var db = require('../../models');
@@ -22,7 +23,7 @@ describe('Test verification code', function () {
                     }
                 );
             });
-        })
+        });
         it('should return false when validation code is empty', function (done) {
             codeHelper.verifyEmail(self.user, 'this is a wrong code').then(function (res) {
                 expect(self.user.verified).to.be.undefined;
@@ -44,5 +45,5 @@ describe('Test verification code', function () {
                 done();
             });
         });
-    })
+    });
 });
