@@ -32,7 +32,7 @@ var initDatabase = function (done) {
                     id: 6,
                     email: 'user@user.ch',
                     provider_uid: 'testuser'
-                })
+                });
             })
 
             .then(function () {
@@ -62,7 +62,7 @@ var initDatabase = function (done) {
                         function (error) {
                             done(new Error(error));
                         });
-            })
+            });
     });
 
 
@@ -263,7 +263,7 @@ describe('POST /admin/users/<id>/permission ', function () {
                 .then(function (user) {
                     self.user = user;
                     done();
-                })
+                });
         });
 
         it('should return status 200 and permission_id should be 2', function () {
@@ -294,7 +294,7 @@ describe('POST /admin/users/<id>/permission ', function () {
                 .then(function (user) {
                     self.user = user;
                     done();
-                })
+                });
         });
 
         it('should return status 200', function () {
@@ -332,7 +332,7 @@ describe('POST /admin/users/<id>/permission ', function () {
                 .then(function (user) {
                     self.user = user;
                     done();
-                })
+                });
         });
 
         it('should return status 200 and permission id shoud be 1', function () {
@@ -364,7 +364,7 @@ describe('POST /admin/users/<id>/permission ', function () {
                 .then(function (user) {
                     self.user = user;
                     done();
-                })
+                });
         });
 
         it('should return status 200 and permission id shoud be 1', function () {
