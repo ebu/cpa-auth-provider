@@ -89,7 +89,7 @@ The file `config.dist.js` contains a sample configuration. **This configuration 
 | config.docker.js\*  | Configuration used when [running the identity provider inside docker](#getting-quick-started-using-docker) |
 | config.test.js    | Configuration used for unit tests |
 
-\*config.docker.local contains some environment variables that are defined in the Dockerfile or in docker-compose\[-xxx\].yaml.
+\*config.docker.js contains some environment variables that are defined in the Dockerfile or in docker-compose\[-xxx\].yaml.
 
 ## Customise layout
 
