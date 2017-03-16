@@ -173,16 +173,24 @@ app.get('/', function (req, res) {
 });
 
 app.get('/implicit', function (req, res) {
-    redirect_uri = callbackServer + '/implicit';
-    loginUrl = oauth2_config.authorizationURL + '?response_type=token&client_id=' + oauth2_config.clientID + '&redirect_uri=' + encodeURIComponent(redirect_uri);
-    res.render('implicit', {loginUrl: loginUrl, profileUrl: oauth2_config.publicProfileUrl});
+    var redirect_uri = callbackServer + '/implicit';
+    var loginUrl = oauth2_config.authorizationURL + '?response_type=token&client_id=' + oauth2_config.clientID + '&redirect_uri=' + encodeURIComponent(redirect_uri);
+    res.render('implicit', { loginUrl: loginUrl, profileUrl: options.publicProfileUrl });
 });
 
 app.get(
     '/rop',
     function (req, res) {
-        var ropUrl = oauth2_config.publicTokenUrl;
-        res.render('rop', {ropUrl: ropUrl, profileUrl: oauth2_config.publicProfileUrl});
+        var ropUrl = options.publicTokenUrl;
+        res.render(
+            'rop',
+            {
+                client_id: oauth2_config.clientID,
+                client_secret: oauth2_config.clientSecret,
+                ropUrl: ropUrl,
+                profileUrl: options.publicProfileUrl
+            }
+            );
     }
 );
 
