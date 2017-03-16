@@ -1,6 +1,7 @@
-# Cross-Platform Authentication - Authorization Provider
+[![build status](https://git.ebu.io/pipe/cpa-auth-provider/badges/develop/build.svg)](https://git.ebu.io/pipe/cpa-auth-provider/commits/develop)
+[![coverage report](https://git.ebu.io/pipe/cpa-auth-provider/badges/develop/coverage.svg)](https://git.ebu.io/pipe/cpa-auth-provider/commits/develop)
 
-[![Build Status](https://travis-ci.org/ebu/cpa-auth-provider.svg?branch=develop)](https://travis-ci.org/ebu/cpa-auth-provider)
+# Cross-Platform Authentication - Authorization Provider
 
 This project contains a reference implementation of the Cross-Platform
 Authentication Authorization Provider.
