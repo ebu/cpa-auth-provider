@@ -5,4 +5,6 @@ stages:
 
 job1:
   stage: test
-  script: make all
+  script: 
+    - npm install -g jshint
+    - make all
