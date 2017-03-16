@@ -9,5 +9,5 @@ npm_test:
     - npm install -g jshint node-gyp istanbul
     - yarn install
     - make lint
-    - yarn test
+    - npm test
     - make coverage
