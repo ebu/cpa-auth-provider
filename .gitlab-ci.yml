@@ -2,7 +2,6 @@ image: node:7
 
 stages:
   - test
-  - coverage
 
 cache:   
   paths:   
@@ -11,12 +10,7 @@ cache:
 npm_test:
   stage: test
   script: 
-    - npm install -g jshint node-gyp
+    - npm install -g jshint node-gyp istanbul
     - yarn install
     - make all
-
-coverage:
-  stage: coverage
-  script:
-    - npm install -g istanbul
     - make coverage
