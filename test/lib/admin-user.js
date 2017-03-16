@@ -107,7 +107,7 @@ describe('GET /admin/users security', function () {
                 requestHelper.sendRequest(self, '/admin/users/5/permission', {
                     cookie: self.cookie,
                     method: 'post',
-                    data: {permission : 1}
+                    data: {permission: 1}
                 }, done);
             });
 
@@ -164,8 +164,8 @@ describe('GET /admin/users security', function () {
                 requestHelper.sendRequest(self, '/admin/users/5/permission', {
                     cookie: self.cookie,
                     method: 'post',
-                    data: {permission : 1}
-            }, done);
+                    data: {permission: 1}
+                }, done);
             });
 
             it('should return status 200', function () {
@@ -179,8 +179,8 @@ describe('GET /admin/users security', function () {
                 requestHelper.sendRequest(self, '/admin/users/5/permission', {
                     cookie: self.cookie,
                     method: 'post',
-                    data: {permission : 2}
-            }, done);
+                    data: {permission: 2}
+                }, done);
             });
 
             it('should return status 200', function () {
@@ -255,7 +255,7 @@ describe('POST /admin/users/<id>/permission ', function () {
             requestHelper.sendRequest(self, '/admin/users/5/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {permission : 2}
+                data: {permission: 2}
             }, done);
         });
 
@@ -286,7 +286,7 @@ describe('POST /admin/users/<id>/permission ', function () {
             requestHelper.sendRequest(self, '/admin/users/6/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {permission : 2}
+                data: {permission: 2}
             }, done);
         });
 
@@ -324,7 +324,7 @@ describe('POST /admin/users/<id>/permission ', function () {
             requestHelper.sendRequest(self, '/admin/users/6/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {permission : 1}
+                data: {permission: 1}
             }, done);
         });
 
@@ -356,7 +356,7 @@ describe('POST /admin/users/<id>/permission ', function () {
             requestHelper.sendRequest(self, '/admin/users/5/permission', {
                 cookie: self.cookie,
                 method: 'post',
-                data: {permission : 1}
+                data: {permission: 1}
             }, done);
         });
 
@@ -447,12 +447,12 @@ describe('GET /admin/users/csv', function () {
 
     var self = this;
 
-    before(function() {
+    before(function () {
         self.clock = sinon.useFakeTimers(new Date("Jan 29 2017 11:11:00 GMT+0000").getTime(), "Date");
     });
-    after(function() {
+    after(function () {
         self.clock.restore();
-	});
+    });
 
     before(resetDatabase);
 
@@ -473,8 +473,8 @@ describe('GET /admin/users/csv', function () {
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
         expect(self.res).to.have.header('content-length', '303'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
-		expect(self.res.text).match(/email,permission_id,permission,created,password_changed,last_login\r\ntestuser,1,admin,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\nuser@user.ch,,,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\n/);
-		// expect(self.res.text).to.equal('email,permission_id,permission\r\ntestuser,1,admin\r\nuser@user.ch,,\r\n');
+        expect(self.res.text).match(/email,permission_id,permission,created,password_changed,last_login\r\ntestuser,1,admin,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\nuser@user.ch,,,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\n/);
+        // expect(self.res.text).to.equal('email,permission_id,permission\r\ntestuser,1,admin\r\nuser@user.ch,,\r\n');
     });
 
 

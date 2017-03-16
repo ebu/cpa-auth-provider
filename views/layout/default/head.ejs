@@ -1,6 +1,6 @@
 <!-- views/layout/default/head.ejs -->
 
-<title><%= __('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE')%></title>
+<title><%= __('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE') %></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
@@ -27,11 +27,13 @@
 <script src="/cookie/src/js.cookie.js"></script>
 
 <script type="text/javascript" src="/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr.js" charset="UTF-8"></script>
-<script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr.js"
+        charset="UTF-8"></script>
+<script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js"
+        charset="UTF-8"></script>
 
 <script>
-    var userLogged = <% if (user) { %>true<%} else {%>false<%}%>,
+    var userLogged = <% if (user) { %>true<% } else { %>false<% } %>,
         urlPrefix = '<%= config.urlPrefix %>';
 </script>
 

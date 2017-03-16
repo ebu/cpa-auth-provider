@@ -27,7 +27,7 @@ exports.authorization_code = function (client, redirectURI, user, ares, done) {
         redirect_uri: redirectURI,
         user_id: user.id
     }).then(function () {
-		logger.debug('[OAuth2][AuthorizationCode][create][code', code, '][client_id', client.id, ']');
+        logger.debug('[OAuth2][AuthorizationCode][create][code', code, '][client_id', client.id, ']');
         done(null, code);
     }).catch(function (err) {
         return done(err);

@@ -11,11 +11,11 @@ var jwtHelper = require('../../../lib/jwt-helper');
 // values.
 
 exports.token = function (client, user, ares, done) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60, { cli: client.id });
+    var token = jwtHelper.generate(user.id, 10 * 60 * 60, {cli: client.id});
     return done(null, token);
 
     // var token = generate.accessToken();
-	//
+    //
     // db.AccessToken.create({ token: token, user_id: user.id, oauth2_client_id: client.id })
     //     .then(function() {
     //         done(null, token);

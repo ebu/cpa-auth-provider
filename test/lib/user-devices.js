@@ -187,7 +187,7 @@ describe('GET /user/devices', function () {
             describe('the response body', function () {
                 it('should display a title containing the number of devices', function () {
                     expect(this.$('h1').length).to.equal(1);
-                    expect(this.$('h1').text()).to.equal('Devices (' + 3 + ')');
+                    expect(this.$('h1').text()).to.equal('Devices\n    (3)\n');
                 });
 
                 it('should contain a table with 3 elements (+ header)', function () {

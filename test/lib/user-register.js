@@ -14,10 +14,10 @@ describe('Test verification code', function () {
                 email: 'user1@earth.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User 1'
-            }).then(function (user){
+            }).then(function (user) {
                 self.user = user;
                 codeHelper.getOrGenereateEmailVerificationCode(user).then(
-                    function(verificationCode){
+                    function (verificationCode) {
                         self.verificationCode = verificationCode;
                         done();
                     }

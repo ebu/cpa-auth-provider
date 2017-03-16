@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
         underscored: true,
         instanceMethods: {
             getDisplayName: function (user, policy) {
-                if (!policy){
+                if (!policy) {
                     return user.email;
                 }
                 if (policy === "FIRSTNAME") {

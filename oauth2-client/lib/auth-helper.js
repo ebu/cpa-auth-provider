@@ -2,14 +2,14 @@
 
 var authHelper = {};
 
-authHelper.ensureAuthenticated = function(req, res, next) {
+authHelper.ensureAuthenticated = function (req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
     res.send(401);
 };
 
-authHelper.authenticateFirst = function(req, res, next) {
+authHelper.authenticateFirst = function (req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
@@ -18,8 +18,8 @@ authHelper.authenticateFirst = function(req, res, next) {
     res.redirect(res, '/');
 };
 
-authHelper.getAuthenticatedUser = function(req) {
-    if(req.isAuthenticated()){
+authHelper.getAuthenticatedUser = function (req) {
+    if (req.isAuthenticated()) {
         return req.user;
     }
     return null;

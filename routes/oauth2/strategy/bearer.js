@@ -7,10 +7,10 @@ var logger = require('../../../lib/logger');
 
 exports.bearer = new BearerStrategy(function (accessToken, done) {
     var userId = jwtHelper.getUserId(accessToken);
-	logger.debug('[BearerStrategy][user_id', userId, ']');
+    logger.debug('[BearerStrategy][user_id', userId, ']');
     if (userId) {
         db.User.findOne({where: {id: userId}}).then(
-            function(user) {
+            function (user) {
                 if (!user) {
                     return done(null, false);
                 }
@@ -22,7 +22,7 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
     } else {
         var clientId = jwtHelper.decode(accessToken).cli;
         db.OAuth2Client.findOne({where: {id: clientId}}).then(
-            function(client) {
+            function (client) {
                 if (!client) {
                     return done(null, false);
                 }
@@ -37,7 +37,7 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
     //     if (!token) {
     //         return done(null, false);
     //     }
-	//
+    //
     //     if (token.user_id !== null) {
     //         db.User.findOne({where: {id: token.user_id}}).then(function (user) {
     //             if (!user) {

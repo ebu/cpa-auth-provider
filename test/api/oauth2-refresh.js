@@ -129,8 +129,8 @@ describe('POST /oauth2/token', function () {
             );
         });
 
-        it('should use a refresh token', function() {
-           expect(this.refresh_token).match(/[a-zA-Z0-9-]+/);
+        it('should use a refresh token', function () {
+            expect(this.refresh_token).match(/[a-zA-Z0-9-]+/);
         });
 
         it('should return a success', function () {
@@ -194,7 +194,7 @@ describe('POST /oauth2/token', function () {
             );
         });
 
-        it('should use a refresh token', function() {
+        it('should use a refresh token', function () {
             expect(this.refresh_token).match(/[a-zA-Z0-9-]+/);
         });
 
@@ -247,7 +247,7 @@ describe('POST /oauth2/token', function () {
                 expect(this.res.statusCode).equal(400);
             });
 
-            it('should deliver error invalid refresh token', function() {
+            it('should deliver error invalid refresh token', function () {
                 expect(this.res.body.error_description).equal('INVALID_REFRESH_TOKEN');
             });
         }

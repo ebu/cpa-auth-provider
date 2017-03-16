@@ -2,25 +2,25 @@
 <html>
 <head>
 
-    <%/* For now, conditions are broadcaster specific :
-         The problem we face is that using a variable in include() like include(broadcaster.name + "/head ")
-         is looking for the path to that file regarding the current one. Thus, as we are in the header, the
-         "current file" is changing for each page so the path actually change. So as we can not say that include
-         must look for paths in views instead of current file, we can not do a dynamic include.
-     */%>
+    <% /* For now, conditions are broadcaster specific :
+     The problem we face is that using a variable in include() like include(broadcaster.name + "/head ")
+     is looking for the path to that file regarding the current one. Thus, as we are in the header, the
+     "current file" is changing for each page so the path actually change. So as we can not say that include
+     must look for paths in views instead of current file, we can not do a dynamic include.
+     */ %>
     <%- include default/head %>
     <% if ( broadcaster && broadcaster.name === "rts" ) { %>
-        <%- include rts/head %>
+    <%- include rts/head %>
     <% } %>
 
 </head>
 <body>
-    <% if ( broadcaster && broadcaster.name === "rts" ) { %>
-        <%- include rts/nav %>
-    <% } %>
-    <%- include default/nav %>
+<% if ( broadcaster && broadcaster.name === "rts" ) { %>
+<%- include rts/nav %>
+<% } %>
+<%- include default/nav %>
 
-    <%- include default/alert %>
+<%- include default/alert %>
 
-    <main>
-        <div class="container">
+<main>
+    <div class="container">

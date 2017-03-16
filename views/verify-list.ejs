@@ -3,36 +3,38 @@
 <div></div>
 
 <form method="POST" action="<%= link('/verify') %>">
-  <div class="panel panel-info">
-    <div class="panel-heading">
-      <div class="panel-title"><%= __('VERIFY_LIST_TITLE')%></div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="panel-title"><%= __('VERIFY_LIST_TITLE') %></div>
+        </div>
+        <table class="table">
+            <tr>
+                <th><%= __('VERIFY_LIST_DEVICE_ID_LABEL') %></th>
+                <th><%= __('VERIFY_LIST_DOMAIN_LABEL') %></th>
+                <th><%= __('VERIFY_LIST_ACCEPT_LABEL') %></th>
+            </tr>
+            <% for(var i = 0; i < pairing_codes.length; i++) { %>
+            <tr>
+                <td>
+                    <%= pairing_codes[i].client_id %>
+                </td>
+                <td>
+                    <%= pairing_codes[i].Domain.display_name %>
+                </td>
+                <td width="20%">
+                    <input type="radio" name="pairing_code_<%= pairing_codes[i].id %>" value="yes"
+                           checked><%= __('VERIFY_YES_RADIO') %>
+                    <input type="radio" name="pairing_code_<%= pairing_codes[i].id %>"
+                           value="no"> <%= __('VERIFY_NO_RADIO') %>
+                </td>
+            </tr>
+            <% } %>
+        </table>
+        <div class="panel-footer">
+            <input type="hidden" name="verification_type" value="domain_list">
+            <input type="submit" class="btn btn-default" name="submit" value="<%= __('VERIFY_VERIFY_BUTTON') %>">
+        </div>
     </div>
-    <table class="table">
-      <tr>
-        <th><%= __('VERIFY_LIST_DEVICE_ID_LABEL')%></th>
-        <th><%= __('VERIFY_LIST_DOMAIN_LABEL')%></th>
-        <th><%= __('VERIFY_LIST_ACCEPT_LABEL')%></th>
-      </tr>
-      <% for(var i=0; i<pairing_codes.length; i++) { %>
-      <tr>
-        <td>
-          <%= pairing_codes[i].client_id %>
-        </td>
-        <td>
-          <%= pairing_codes[i].Domain.display_name %>
-        </td>
-        <td width="20%">
-          <input type="radio" name="pairing_code_<%= pairing_codes[i].id %>" value="yes" checked><%= __('VERIFY_YES_RADIO')%>
-          <input type="radio" name="pairing_code_<%= pairing_codes[i].id %>" value="no"> <%= __('VERIFY_NO_RADIO')%>
-        </td>
-      </tr>
-      <% } %>
-    </table>
-    <div class="panel-footer">
-      <input type="hidden" name="verification_type" value="domain_list">
-      <input type="submit" class="btn btn-default" name="submit" value="<%= __('VERIFY_VERIFY_BUTTON')%>">
-    </div>
-  </div>
 </form>
 
 <% include layout/foot %>

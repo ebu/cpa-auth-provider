@@ -100,28 +100,28 @@ module.exports = function (router) {
 
     var authorization = [
         server.authorization(function (clientID, redirectURI, done) {
-			db.OAuth2Client.findOne({where: {client_id: clientID}}).then(
-				function (client) {
-					if (!client) {
-						return done(new Error('unknown client' + clientID));
-					}
-					// WARNING: For security purposes, it is highly advisable to check that
-					//          redirectURI provided by the client matches one registered with
-					//          the server.  For simplicity, this example does not.  You have
-					//          been warned.
-					if (!client.redirect_uri || (redirectURI && redirectURI.startsWith(client.redirect_uri))) {
-						return done(null, client, redirectURI);
-					}
-					if (logger && typeof(logger.error) == 'function') {
-						logger.error('client', client.id, 'not allowed with redirection', redirectURI);
-					}
-					return done(new Error('bad redirection'));
-				},
-				function (err) {
-					return done(err);
-				});
+            db.OAuth2Client.findOne({where: {client_id: clientID}}).then(
+                function (client) {
+                    if (!client) {
+                        return done(new Error('unknown client' + clientID));
+                    }
+                    // WARNING: For security purposes, it is highly advisable to check that
+                    //          redirectURI provided by the client matches one registered with
+                    //          the server.  For simplicity, this example does not.  You have
+                    //          been warned.
+                    if (!client.redirect_uri || (redirectURI && redirectURI.startsWith(client.redirect_uri))) {
+                        return done(null, client, redirectURI);
+                    }
+                    if (logger && typeof(logger.error) == 'function') {
+                        logger.error('client', client.id, 'not allowed with redirection', redirectURI);
+                    }
+                    return done(new Error('bad redirection'));
+                },
+                function (err) {
+                    return done(err);
+                });
         }),
-		authHelper.authenticateFirst,
+        authHelper.authenticateFirst,
         function (req, res) {
             res.render('oauth2/dialog', {
                 transactionID: req.oauth2.transactionID,
@@ -158,8 +158,8 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
-	var easyToken = [
-	    confirmOAuth2Client,
+    var easyToken = [
+        confirmOAuth2Client,
         cors_header,
         server.token(),
         server.errorHandler()
@@ -171,7 +171,7 @@ module.exports = function (router) {
     router.options('/oauth2/token', cors_header);
 
     router.options('/oauth2/login', cors_header);
-	router.post('/oauth2/login', easyToken);
+    router.post('/oauth2/login', easyToken);
 
     function corsOptionsDelegate(req, callback) {
         var options;
@@ -179,32 +179,32 @@ module.exports = function (router) {
         // TODO only allow a selected group of pages to use this with CORS!
         // MUST also require https!
         if (origin == 'http://localhost:3001') {
-            options = { origin: true };
+            options = {origin: true};
         } else {
-            options = { origin: true };
+            options = {origin: true};
         }
         return callback(null, options);
     }
 
-	/**
+    /**
      * Most basic oauth2 confirmation of client_id. Merely confirm the client_id
      * is known to the service. client_secret is not required.
      */
-	function confirmOAuth2Client(req, res, next) {
-		var clientId = req.body.client_id;
+    function confirmOAuth2Client(req, res, next) {
+        var clientId = req.body.client_id;
 
-		db.OAuth2Client.find({where: {client_id: clientId}}).then(
-			function (client) {
-			    if (client) {
-			        req.user = client;
-			        return next();
+        db.OAuth2Client.find({where: {client_id: clientId}}).then(
+            function (client) {
+                if (client) {
+                    req.user = client;
+                    return next();
                 } else {
-			        return res.status(400).json({error: 'invalid_client', error_description: 'client not found'});
+                    return res.status(400).json({error: 'invalid_client', error_description: 'client not found'});
                 }
-			},
-			function (err) {
+            },
+            function (err) {
                 return next(err);
-			}
-		);
-	}
+            }
+        );
+    }
 };

@@ -11,7 +11,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="<% if (user) { %> <%= link('/home') %> <% } else { %> <%= link('/auth') %> <% } %>"><%= __('LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE')%><span class="hidden-xs"><%= __('LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_SUBTITLE')%></span></a>
+            <a class="navbar-brand"
+               href="<% if (user) { %> <%= link('/home') %> <% } else { %> <%= link('/auth') %> <% } %>"><%= __('LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE') %>
+                <span class="hidden-xs"><%= __('LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_SUBTITLE') %></span></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -29,7 +31,7 @@
                         <% } %>
                         <b class="caret"></b> </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<%= link('/user/devices') %>"><%= __('LAYOUT_HEAD_NAV_MY_DEVICES')%></a></li>
+                        <li><a href="<%= link('/user/devices') %>"><%= __('LAYOUT_HEAD_NAV_MY_DEVICES') %></a></li>
                         <li><a href="<%= link('/user/profile') %>"><%= __('LAYOUT_HEAD_NAV_EDIT_PROFILE') %></a></li>
                         <% if (userCan(permissionName.ADMIN_PERMISSION)) { %>
                         <li><a href="<%= link('/admin') %>"><%= __('LAYOUT_HEAD_NAV_ADMIN') %></a></li>
@@ -44,9 +46,15 @@
                 <li class="dropdown selectable lang">
 
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <%if (language === 'en'){%>EN<%}%>
-                        <%if (language === 'de'){%>DE<%}%>
-                        <%if (language === 'fr'){%>FR<%}%>
+                        <% if (language === 'en'){ %>
+                        EN
+                        <% } %>
+                        <% if (language === 'de'){ %>
+                        DE
+                        <% } %>
+                        <% if (language === 'fr'){ %>
+                        FR
+                        <% } %>
                         <span class="caret"></span></a>
 
                     <ul class="dropdown-menu dropdown-menu-lang">

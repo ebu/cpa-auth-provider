@@ -85,11 +85,11 @@ var routes = function (router) {
                             // if user is found and password is right change password
                             if (isMatch) {
                                 user.setPassword(req.body.password).then(
-                                    function() {
-										res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
+                                    function () {
+                                        res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
                                     },
-                                    function(err) {
-										res.status(500).json({errors: [err]});
+                                    function (err) {
+                                        res.status(500).json({errors: [err]});
                                     }
                                 );
                             } else {
