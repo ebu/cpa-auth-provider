@@ -83,8 +83,8 @@
   "PROFILE_WOMAN_SEXE_FORM_OPTION": "Femme",
   "PROFILE_LANGUAGE_LABEL": "Langue",
   "PROFILE_LANGUAGE_FR_FORM_OPTION": "Français",
-  "PROFILE_LANGUAGE_EN_FORM_OPTION": "Deutsch",
-  "PROFILE_LANGUAGE_DE_FORM_OPTION": "English",
+  "PROFILE_LANGUAGE_EN_FORM_OPTION": "Englich",
+  "PROFILE_LANGUAGE_DE_FORM_OPTION": "Deutsch",
   "PROFILE_EMAIL_LABEL": "Email",
   "PROFILE_SAVE_BUTTON": "Sauver",
   "PROFILE_CANCEL_BUTTON": "Annuler",
@@ -209,6 +209,7 @@
   "BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID": "Le champs 'date de naissance' est vide ou invalide",
   "BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID": "Le champs 'Sexe' est vide ou invalide",
   "BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID": "Le champs 'langue' est vide ou invalide",
+  "BACK_PROFILE_UPDATE_SUCCESS": "Profile mis à jour.",
   "BACK_PROFILE_UPDATE_FAIL": "Impossible de mettre à jour le profile. Erreur :",
   "BACK_PROFILE_REQ_VERIF_MAIL": "Non authentifié",
 
