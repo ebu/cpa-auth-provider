@@ -10,10 +10,6 @@ cache:
 npm_test:
   stage: test
   script: 
-    - npm install -g jshint
-    - make lint
-    - npm install
-    - npm test
-
-after_script:
-  - ls -la
+    - npm install -g jshint node-gyp
+    - yarn install
+    - make lint coverage
