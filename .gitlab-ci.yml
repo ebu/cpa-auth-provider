@@ -6,8 +6,9 @@ stages:
 npm_test:
   stage: test
   script: 
-    - npm install -g jshint
+    - npm install jshint
     - make lint
+    - yarn install
     - yarn test
 
 after_script:
