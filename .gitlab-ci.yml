@@ -3,8 +3,12 @@ image: node:7
 stages:
   - test
 
-job1:
+npm_test:
   stage: test
   script: 
     - npm install -g jshint
-    - make all
+    - make lint
+    - yarn test
+
+after_script:
+  - ls
