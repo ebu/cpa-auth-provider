@@ -3,13 +3,17 @@ image: node:7
 stages:
   - test
 
+cache:   
+  paths:   
+    - node_modules/
+
 npm_test:
   stage: test
   script: 
     - npm install -g jshint
     - make lint
-    - yarn install
-    - yarn test
+    - npm install
+    - npm test
 
 after_script:
   - ls -la
