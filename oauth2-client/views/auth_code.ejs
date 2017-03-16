@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo OAuth2 Client: Authorization Code</title>
+    <!-- Bootstrap -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color:#eee;">
+
+<a href="/">&lt;&lt; flow selection</a>
+<div class="container">
+    <h1>OAuth 2 Client: Authorization Code</h1>
+
+    <% if (user) { %>
+    <a href="/auth_code/logout" class="btn btn-warning">Logout</a>
+    <% } else { %>
+    <a href="<%= loginUrl %>" class="btn btn-success">Login with OAuth 2 Flow</a>
+    <% } %>
+    <% if (expiresAt) { %>
+    <div style="margin: 20px 0 5px">Expires at <%= expiresAt %>.</div>
+    <% } %>
+    <% if (refreshToken) { %>
+    <a href="/auth_code/refresh" class="btn btn-info">Use Refresh Token</a>
+    <% } %>
+</div>
+</body>
+</html>

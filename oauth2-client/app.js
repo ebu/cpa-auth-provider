@@ -62,17 +62,20 @@ var serverInternal = process.env.OAUTH2_INTERNAL_SERVER;
 var callbackServer = process.env.OAUTH2_CALLBACK || 'http://192.168.99.100:3001';
 var httpPort = process.env.HTTP_PORT ? process.env.HTTP_PORT : 3000;
 
-oauth2_config = {
+var oauth2_config = {
     passReqToCallback: true,
     requestTokenURL: serverInternal + '/oauth2/request_token',
-    publicTokenUrl: server + '/oauth2/token',
     tokenURL: serverInternal + '/oauth2/token',
     authorizationURL: server + '/oauth2/dialog/authorize',
     clientID: process.env.OAUTH2_CLIENT_ID,
     clientSecret: process.env.OAUTH2_CLIENT_SECRET,
-    publicProfileUrl: server + '/oauth2/user_info',
     profileURL: serverInternal + '/oauth2/user_info',
     callbackURL: callbackServer + '/auth/oauth/callback'
+};
+
+var options = {
+	publicTokenUrl: server + '/oauth2/token',
+	publicProfileUrl: server + '/oauth2/user_info'
 };
 
 passport.use('oauth2', new OAuth2Strategy(oauth2_config,
@@ -95,6 +98,8 @@ function updateSession(session, refreshToken, expiresIn) {
     }
     session.refreshToken = refreshToken;
 }
+
+require('./routes/auth-code-flow')(app);
 
 app.get('/auth/oauth/callback',
     function (req, res, next) {
@@ -157,7 +162,7 @@ app.get('/auth/logout',
     });
 
 app.get('/', function (req, res) {
-    loginUrl = "/auth/oauth";
+    var loginUrl = "/auth/oauth";
     var expiresAt = req.session.expiresAt ? new Date(new Date().getTime(req.session.expiresAt)) : '';
     res.render('code', {
         loginUrl: loginUrl,
