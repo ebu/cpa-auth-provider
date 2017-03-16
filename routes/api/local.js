@@ -168,7 +168,7 @@ module.exports = function (app, options) {
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: req.headers.origin + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(user.verificationCode)

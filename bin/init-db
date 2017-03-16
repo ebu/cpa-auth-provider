@@ -23,7 +23,7 @@ switch (process.env.NODE_ENV) {
         break;
 }
 
-var db = require('../models');
+var db     = require('../models');
 var config = require('../config');
 
 db.sequelize
@@ -38,15 +38,18 @@ db.sequelize
                     .then(function () {
                         console.log('[PERMISSION] Database populated');
                     });
-                db.User
-                    .bulkCreate(config.users)
-                    .then(function () {
-                        db.User.findOne({where: {id: 1}})
-                            .then(function (user) {
-                                return user.setPassword("admin");
-                            });
-                        console.log('[USER] Database populated');
-                    });
+
+                if (config.users) {
+                    db.User
+                        .bulkCreate(config.users)
+                        .then(function () {
+                            db.User.findOne({where: {id: 1}})
+                                .then(function (user) {
+                                    return user.setPassword("admin");
+                                });
+                            console.log('[USER] Database populated');
+                        });
+                }
                 db.Domain
                     .bulkCreate(config.domains)
                     .then(function () {
@@ -61,7 +64,6 @@ db.sequelize
                             console.log("No server clients configured");
                         }
                     });
-
             }
         },
         function (err) {
