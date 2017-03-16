@@ -1,0 +1,8 @@
+image: node:7
+
+stages:
+  - test
+
+job1:
+  stage: test
+  script: make all
