@@ -6,7 +6,8 @@ stages:
 npm_test:
   stage: test
   script: 
-    - npm install -g jshint node-gyp # istanbul
-    - yarn install
-    - make all
+    - npm install -g jshint # node-gyp # istanbul
+    - npm install
+    - make lint
+    - npm test
 #    - make coverage
