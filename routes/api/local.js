@@ -61,14 +61,14 @@ module.exports = function (app, options) {
                         db.sequelize.sync().then(function () {
                             db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
                                 var userParams = {
-                                    email:   req.body.email
+                                    email: req.body.email
                                 };
                                 if (permission) {
-                                     userParams.permission_id = permission.id;
+                                    userParams.permission_id = permission.id;
                                 }
                                 var user = db.User.create(userParams).then(function (user) {
                                     return user.setPassword(req.body.password);
-                                }).then(function() {
+                                }).then(function () {
                                     res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
                                 }).catch(function (err) {
                                     console.log("ERROR", err);
@@ -93,7 +93,9 @@ module.exports = function (app, options) {
 
                     user.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
-                                user.logLogin().then(function() {}, function() {});
+                                user.logLogin().then(function () {
+                                }, function () {
+                                });
                                 // if user is found and password is right create a token
                                 var token = jwt.encode(user, config.jwtSecret);
                                 // return the information including token as JSON
@@ -160,7 +162,7 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(403).send({success: false, msg: req.__('API_VERIF_MAIL_NOT_AUTH')});
         } else {
-            return codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code){
+            return codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
 
                 emailHelper.send(
                     config.mail.from,
@@ -173,10 +175,12 @@ module.exports = function (app, options) {
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language: req.getLocale()
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
                 ).then(
-                    function() {},
-                    function(err) {}
+                    function () {
+                    },
+                    function (err) {
+                    }
                 );
                 return res.status(204).send({success: true, msg: req.__('API_VERIF_MAIL_SENT')});
             });

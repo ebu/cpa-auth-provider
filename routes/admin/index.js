@@ -55,7 +55,7 @@ module.exports = function (router) {
     router.get('/admin/users', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
-        if(!config.displayUsersInfos) {
+        if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
 
@@ -75,7 +75,7 @@ module.exports = function (router) {
     router.get('/admin/users/csv', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
-        if(!config.displayUsersInfos) {
+        if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
 
@@ -88,14 +88,14 @@ module.exports = function (router) {
                     for (var i = 0; i < resultset.length; i++) {
                         var id = '';
                         var label = '';
-                        if (resultset[i].Permission){
+                        if (resultset[i].Permission) {
                             id = resultset[i].Permission.id;
                             label = resultset[i].Permission.label;
                         }
                         var createdAt = resultset[i].created_at;
                         var passwordChangedAt = new Date(resultset[i].password_changed_at);
                         var lastLoginAt = resultset[i].last_login_at ? new Date(resultset[i].last_login_at) : '';
-						lines.push([resultset[i].email, id, label, createdAt, passwordChangedAt, lastLoginAt]);
+                        lines.push([resultset[i].email, id, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 
                     var toDownload = csv.stringify(lines);
@@ -114,7 +114,10 @@ module.exports = function (router) {
     router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
             if (!permission) {
-                return res.status(400).send({success: false, msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')});
+                return res.status(400).send({
+                    success: false,
+                    msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')
+                });
             }
             db.User.findOne({where: {id: req.params.user_id}})
                 .then(

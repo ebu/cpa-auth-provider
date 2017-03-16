@@ -22,7 +22,7 @@ module.exports = function (sequelize, DataTypes) {
     }, {
         underscored: true,
         instanceMethods: {
-            logLogin: function(transaction) {
+            logLogin: function (transaction) {
                 var self = this;
                 return self.updateAttributes({last_login_at: Date.now()}, {transaction: transaction});
             },
@@ -39,7 +39,7 @@ module.exports = function (sequelize, DataTypes) {
                                 } else {
                                     return self.updateAttributes(
                                         {password: hash, password_changed_at: Date.now()}
-                                        ).then(resolve, reject);
+                                    ).then(resolve, reject);
                                 }
                             }
                         );

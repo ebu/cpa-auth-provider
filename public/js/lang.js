@@ -8,13 +8,13 @@ $(document).ready(function () {
         $(this).parents('.lang').find('.dropdown-toggle').html(text + ' <span class="caret"></span>').dropdown('toggle');
     });
 
-    $('.link-set-language').on('click', function(){
+    $('.link-set-language').on('click', function () {
         setLanguage($(this).attr("data-lang").toLocaleLowerCase(), true);
     });
 
-    $('.language-error .close').on('click', function(){
+    $('.language-error .close').on('click', function () {
         //Set a cookie to hide error for 24 hours
-        Cookies.set("languageError", true, { expires: 1 });
+        Cookies.set("languageError", true, {expires: 1});
     });
 
 });
@@ -27,7 +27,7 @@ function setLanguage(language, logged) {
     }
 
     $.ajax({
-        url: urlPrefix +  url,
+        url: urlPrefix + url,
         type: 'POST',
         data: {
             language: language

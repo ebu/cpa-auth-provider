@@ -3,38 +3,49 @@
     border-bottom: 1px solid #eee;
     box-shadow: none;
 }
+
 #profile #btn-container, #profile #form-modify-pass {
     display: none;
 }
+
 #profile .personnal-data-input {
     visibility: hidden;
 }
+
 #profile .error-block {
     display: none;
 }
+
 #profile .error-block .title {
     font-weight: 500;
 }
-#profile .error-block .content p{
+
+#profile .error-block .content p {
     margin: 0;
 }
+
 #profile .account-title {
     display: inline-block;
 }
+
 #profile .btn.btn-link {
     padding: 0;
 }
+
 #profile .status {
     display: block;
     cursor: default;
     border: none;
 }
+
 #profile #btn-send-verification-link {
     min-width: 80px;
 }
+
 #profile #verification-success, #profile #verification-error {
     display: none;
 }
+
 #profile .verification-link-container {
     margin-top: 20px;
 }
@@ -47,6 +58,7 @@
     #profile .h4, #profile h4 {
         font-size: 25px;
     }
+
     #profile .status {
         display: inline-block;
         float: right;

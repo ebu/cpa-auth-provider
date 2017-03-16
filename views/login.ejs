@@ -6,13 +6,14 @@
 
         <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
 
-            <a class="" href="<%= link('/auth') %>"><span class="glyphicon glyphicon-chevron-left"></span><%= __('LOGIN_BACK_IDP_LINK')%></a>
+            <a class="" href="<%= link('/auth') %>"><span
+                        class="glyphicon glyphicon-chevron-left"></span><%= __('LOGIN_BACK_IDP_LINK') %></a>
 
             <div id="login-panel" class="panel panel-default">
                 <div class="panel-body">
                     <h1 class="title">
                         <span class="glyphicon glyphicon-log-in"></span>
-                        <%= __('LOGIN_TITLE')%>
+                        <%= __('LOGIN_TITLE') %>
                     </h1>
 
                     <!-- show any messages that come back with authentication -->
@@ -23,19 +24,21 @@
                     <!-- LOGIN FORM -->
                     <form action="<%= link('/login') %>" method="post">
                         <div class="form-group">
-                            <label><%= __('LOGIN_EMAIL_LABEL')%></label>
+                            <label><%= __('LOGIN_EMAIL_LABEL') %></label>
                             <input type="email" class="form-control" name="email">
                         </div>
                         <div class="form-group">
-                            <label><%= __('LOGIN_PASSWORD_LABEL')%></label>
+                            <label><%= __('LOGIN_PASSWORD_LABEL') %></label>
                             <input type="password" class="form-control" name="password">
-                            <a id="password-recovery" href="<%= link('/password/recovery') %>"><%= __('LOGIN_FORGOT_PASSWORD_LINK')%></a>
+                            <a id="password-recovery"
+                               href="<%= link('/password/recovery') %>"><%= __('LOGIN_FORGOT_PASSWORD_LINK') %></a>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block"><%= __('LOGIN_LOGIN_BUTTON')%></button>
+                        <button type="submit" class="btn btn-primary btn-block"><%= __('LOGIN_LOGIN_BUTTON') %></button>
                     </form>
 
-                    <p class="last-link text-center"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK')%> <a href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK')%></a></p>
+                    <p class="last-link text-center"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
+                                href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a></p>
 
                 </div>
             </div>

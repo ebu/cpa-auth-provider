@@ -94,7 +94,10 @@ module.exports = function (app, options) {
                                         language: req.body.language ? xssFilters.inHTMLData(req.body.language) + '' : user_profile.language,
                                     })
                                     .then(function () {
-                                            res.cookie(config.i18n.cookie_name, user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
+                                            res.cookie(config.i18n.cookie_name, user_profile.language, {
+                                                maxAge: config.i18n.cookie_duration,
+                                                httpOnly: true
+                                            });
                                             res.json({success: true, msg: req.__('API_PROFILE_SUCCESS')});
                                         },
                                         function (err) {

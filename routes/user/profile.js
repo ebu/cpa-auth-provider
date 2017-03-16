@@ -37,7 +37,10 @@ var routes = function (router) {
                             language: xssFilters.inHTMLData(req.body.language)
                         })
                         .then(function (user_profile) {
-                                res.cookie(config.i18n.cookie_name,  user_profile.language, {maxAge: config.i18n.cookie_duration, httpOnly: true});
+                                res.cookie(config.i18n.cookie_name, user_profile.language, {
+                                    maxAge: config.i18n.cookie_duration,
+                                    httpOnly: true
+                                });
                                 res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
                             },
                             function (err) {
@@ -56,17 +59,24 @@ var routes = function (router) {
         if (!user) {
             return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
         } else {
-            codeHelper.getOrGenereateEmailVerificationCode(user).then(function(code){
+            codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
                 emailHelper.send(
                     config.mail.from,
-					user.email,
+                    user.email,
                     "validation-email",
-                    {log:true},
-                    {confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code), host:config.mail.host, mail:encodeURIComponent(user.email), code:encodeURIComponent(code)},
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language: req.getLocale()
+                    {log: true},
+                    {
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        host: config.mail.host,
+                        mail: encodeURIComponent(user.email),
+                        code: encodeURIComponent(code)
+                    },
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
                 ).then(
-                    function() {},
-                    function() {}
+                    function () {
+                    },
+                    function () {
+                    }
                 );
             });
             return res.status(204).send();

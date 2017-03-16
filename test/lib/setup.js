@@ -10,14 +10,14 @@ var config = require('../../config');
  * schema in the in-memory SQLite database and sets the URL path prefix.
  */
 
-before(function(done) {
-  requestHelper.urlPrefix = config.urlPrefix;
+before(function (done) {
+    requestHelper.urlPrefix = config.urlPrefix;
 
-  db.sequelize.sync({ force: true }).then(
-    function() {
-      done();
-    },
-    function(err) {
-      done(err);
-    });
+    db.sequelize.sync({force: true}).then(
+        function () {
+            done();
+        },
+        function (err) {
+            done(err);
+        });
 });

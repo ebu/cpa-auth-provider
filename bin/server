@@ -2,7 +2,7 @@
 
 "use strict";
 
-var http  = require('http');
+var http = require('http');
 var yargs = require('yargs');
 
 var version = require('../package.json').version;
@@ -14,36 +14,36 @@ var DEFAULT_PORT = 3000;
 // Parse command line arguments
 
 var argv = yargs
-  .usage("CPA Authentication Provider\n\nUsage:\n  $0 [options]")
-  .help("help", "Display this help message")
-  .alias("help", "h")
-  .version(version, "version", "Display version number")
-  .alias(version, "V")
-  .options({
-    port: {
-      alias: "p",
-      description: "<number> HTTP server port (default: " + DEFAULT_PORT + ")",
-      requiresArg: true
-    },
-    "config-file": { // yargs doesn't allow us to have an option named 'config'.
-      alias: "c",
-      description: "<filename> Config file name",
-      requiresArg: true
-    }
-  })
-  .strict()
-  .showHelpOnFail(false, "Specify --help for available options")
-  .check(function(argv) {
-    if (argv._.length > 0) {
-      throw "Unexpected arguments: " + argv._.join(", ");
-    }
-  })
-  .argv;
+    .usage("CPA Authentication Provider\n\nUsage:\n  $0 [options]")
+    .help("help", "Display this help message")
+    .alias("help", "h")
+    .version(version, "version", "Display version number")
+    .alias(version, "V")
+    .options({
+        port: {
+            alias: "p",
+            description: "<number> HTTP server port (default: " + DEFAULT_PORT + ")",
+            requiresArg: true
+        },
+        "config-file": { // yargs doesn't allow us to have an option named 'config'.
+            alias: "c",
+            description: "<filename> Config file name",
+            requiresArg: true
+        }
+    })
+    .strict()
+    .showHelpOnFail(false, "Specify --help for available options")
+    .check(function (argv) {
+        if (argv._.length > 0) {
+            throw "Unexpected arguments: " + argv._.join(", ");
+        }
+    })
+    .argv;
 
 var configFilename = require('../lib/config-filename');
 
 if (argv["config-file"]) {
-  configFilename.configFilename = argv["config-file"];
+    configFilename.configFilename = argv["config-file"];
 }
 
 // Start the server
@@ -53,6 +53,6 @@ app.set('port', argv.port || process.env.PORT || DEFAULT_PORT);
 
 var server = http.createServer(app);
 
-server.listen(app.get('port'), function() {
-  logger.info('Server listening on port ' + app.get('port'));
+server.listen(app.get('port'), function () {
+    logger.info('Server listening on port ' + app.get('port'));
 });

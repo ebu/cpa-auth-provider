@@ -72,7 +72,7 @@ module.exports = {
     },
 
     login: function (context, done) {
-        this.loginCustom('testuser','testpassword', context, done);
+        this.loginCustom('testuser', 'testpassword', context, done);
     },
 
     loginCustom: function (email, password, context, done) {

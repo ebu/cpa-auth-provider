@@ -3,24 +3,25 @@
 <div></div>
 
 <div class="panel panel-info">
-  <div class="panel-heading">Authorization</div>
+    <div class="panel-heading">Authorization</div>
 
-  <div class="panel-body">
-    <form method="POST" action="<%= link('/authorize') %>">
-      <div class="form-group has-success">
-          <%= __('AUTHORIZE_FORM_LABEL_PREFIX')%> <%= client_name %> <%= __('AUTHORIZE_FORM_LABEL_SUFFIX')%>
-      </div>
+    <div class="panel-body">
+        <form method="POST" action="<%= link('/authorize') %>">
+            <div class="form-group has-success">
+                <%= __('AUTHORIZE_FORM_LABEL_PREFIX') %> <%= client_name %> <%= __('AUTHORIZE_FORM_LABEL_SUFFIX') %>
+            </div>
 
-      <input type="hidden" name="client_id" value="<%= client_id %>">
-      <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
-      <input type="hidden" name="domain" value="<%= domain %>">
-      <% if (state) { %>
-        <input type="hidden" name="state" value="<%= state %>">
-      <% } %>
-      <input type="submit" class="btn btn-success" name="authorization" value="<%= __('AUTHORIZE_ALLOW_BUTTON')%>">
-      <input type="submit" class="btn btn-danger" name="authorization" value="<%= __('AUTHORIZE_DENY_BUTTON')%>">
-    </form>
-  </div>
+            <input type="hidden" name="client_id" value="<%= client_id %>">
+            <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
+            <input type="hidden" name="domain" value="<%= domain %>">
+            <% if (state) { %>
+            <input type="hidden" name="state" value="<%= state %>">
+            <% } %>
+            <input type="submit" class="btn btn-success" name="authorization"
+                   value="<%= __('AUTHORIZE_ALLOW_BUTTON') %>">
+            <input type="submit" class="btn btn-danger" name="authorization" value="<%= __('AUTHORIZE_DENY_BUTTON') %>">
+        </form>
+    </div>
 </div>
 
 <% include layout/foot %>

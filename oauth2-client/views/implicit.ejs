@@ -10,91 +10,91 @@
 
 <script>
 
-var storeToken = function(token) {
-  if(typeof(Storage) !== "undefined") {
-      localStorage.setItem("cpa:token", token);
-  } else {
-      // Cookie
-      throw "NotImplementedError"
-  }
-}
+    var storeToken = function (token) {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem("cpa:token", token);
+        } else {
+            // Cookie
+            throw "NotImplementedError"
+        }
+    }
 
-var getToken = function(token) {
-  if(typeof(Storage) !== "undefined") {
-      return localStorage.getItem("cpa:token");
-  } else {
-      // Cookie
-      throw "NotImplementedError"
-  }
-};
+    var getToken = function (token) {
+        if (typeof(Storage) !== "undefined") {
+            return localStorage.getItem("cpa:token");
+        } else {
+            // Cookie
+            throw "NotImplementedError"
+        }
+    };
 
-var removeToken = function(token) {
-  if(typeof(Storage) !== "undefined") {
-      return localStorage.removeItem("cpa:token");
-  } else {
-      // Cookie
-      throw "NotImplementedError"
-  }
-};
+    var removeToken = function (token) {
+        if (typeof(Storage) !== "undefined") {
+            return localStorage.removeItem("cpa:token");
+        } else {
+            // Cookie
+            throw "NotImplementedError"
+        }
+    };
 
-var extractToken = function (urlHash) {
-  var hash = location.hash.substr(1);
-  var token = hash.substr(hash.indexOf('access_token=')).split('&')[0].split('=')[1];
-  return token;
-};
+    var extractToken = function (urlHash) {
+        var hash = location.hash.substr(1);
+        var token = hash.substr(hash.indexOf('access_token=')).split('&')[0].split('=')[1];
+        return token;
+    };
 
-var loadInterface = function (user) {
-  $('#user-widget').html('You are logged in as: ' + user.name);
-  $('#logout-btn').removeClass('hide').click(function() {
-    removeToken();
-    location.reload();
-  });
-};
+    var loadInterface = function (user) {
+        $('#user-widget').html('You are logged in as: ' + user.name);
+        $('#logout-btn').removeClass('hide').click(function () {
+            removeToken();
+            location.reload();
+        });
+    };
 
-var loadProfile = function (done) {
-  var token = extractToken(window.location.hash)
-  if (token) {
-    storeToken(token);
-  }
-  else {
-    token = getToken(token);
-  }
+    var loadProfile = function (done) {
+        var token = extractToken(window.location.hash)
+        if (token) {
+            storeToken(token);
+        }
+        else {
+            token = getToken(token);
+        }
 
-  if (token) {
-    jQuery.ajax({
-        url: "<%= profileUrl %>",
-        type: "GET",
-        headers: {
-            "Authorization": "Bearer "+ token,
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    })
-    .done(function(data, textStatus, jqXHR) {
-        console.log("HTTP Request Succeeded: " + jqXHR.status);
-        console.log(data);
-        done(data.user);
+        if (token) {
+            jQuery.ajax({
+                url: "<%= profileUrl %>",
+                type: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            })
+                .done(function (data, textStatus, jqXHR) {
+                    console.log("HTTP Request Succeeded: " + jqXHR.status);
+                    console.log(data);
+                    done(data.user);
 
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("HTTP Request Failed");
-        done();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log("HTTP Request Failed");
+                    done();
+                });
+        }
+        else {
+            done();
+        }
+    };
+
+    $(function () {
+        loadProfile(function (user) {
+            if (user) {
+                loadInterface(user);
+            }
+            else {
+                $('#login-btn').removeClass('hide');
+            }
+        });
     });
-  }
-  else {
-    done();
-  }
-};
-
-$(function() {
-  loadProfile(function(user) {
-    if (user) {
-      loadInterface(user);
-    }
-    else {
-      $('#login-btn').removeClass('hide');
-    }
-  });
-});
 
 </script>
 
