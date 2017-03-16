@@ -3,14 +3,11 @@ image: node:7
 stages:
   - test
 
-cache:   
-  paths:   
-    - node_modules/
-
 npm_test:
   stage: test
   script: 
     - npm install -g jshint node-gyp istanbul
     - yarn install
-    - make all
+    - make lint
+    - yarn test
     - make coverage
