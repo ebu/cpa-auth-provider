@@ -16,9 +16,11 @@ Then execute the following commands:
 
 ```
 $ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-$ cd cpa-auth-provide
+$ cd cpa-auth-provider
 $ docker-compose up --build
 ```
+*Note:If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/cpa-auth-provider.git`*
+
 
 Now you have 2 sample web servers on your machine.
 You can reach those as [http://localhost:3000](http://localhost:3000) and [http://localhost:3001](http://localhost:3001).

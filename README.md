@@ -1,6 +1,7 @@
-# Cross-Platform Authentication - Authorization Provider
+[![build status](https://git.ebu.io/pipe/cpa-auth-provider/badges/develop/build.svg)](https://git.ebu.io/pipe/cpa-auth-provider/commits/develop)
+[![coverage report](https://git.ebu.io/pipe/cpa-auth-provider/badges/develop/coverage.svg)](https://git.ebu.io/pipe/cpa-auth-provider/commits/develop)
 
-[![Build Status](https://travis-ci.org/ebu/cpa-auth-provider.svg?branch=develop)](https://travis-ci.org/ebu/cpa-auth-provider)
+# Cross-Platform Authentication - Authorization Provider
 
 This project contains a reference implementation of the Cross-Platform
 Authentication Authorization Provider.
@@ -19,6 +20,8 @@ Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM in
     $ cd cpa-auth-provider
     $ npm install
     $ NODE_ENV=development bin/init-db
+
+If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/cpa-auth-provider.git`
 
 ## Run the tests
 
