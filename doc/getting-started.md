@@ -17,7 +17,7 @@ Then execute the following commands:
 ```
 $ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
 $ cd cpa-auth-provider
-$ docker-compose up
+$ docker-compose up --build
 ```
 *Note:If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/cpa-auth-provider.git`*
 
@@ -35,7 +35,7 @@ To stop both services, run `docker-compose down`
 
 ### Identity provider only
 
-There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up -d`
+There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up --build -d`
 
 ### Identity provider with postgres
 
@@ -44,7 +44,7 @@ A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
 - start a docker container with a postgres database
 - configure the main container to use the postgres database.
 
-To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
+To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
 
 
 ## Starting the identity provider outside of docker
