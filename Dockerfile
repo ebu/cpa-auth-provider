@@ -1,11 +1,8 @@
-FROM node:7
+FROM node:7.7
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
   libsqlite3-dev
-
-# get yarn
-RUN npm install --global yarn
 
 ADD bin /src/bin
 ADD lib /src/lib

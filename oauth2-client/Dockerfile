@@ -1,6 +1,5 @@
-FROM node:7
+FROM node:7.7
 
-RUN npm install --global yarn
 # Install dependencies
 #RUN apt-get update && apt-get install -y \
 #  git \
