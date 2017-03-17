@@ -103,4 +103,20 @@ You can customize css, header and footer.
 The project came with a demo web application that could be started (see [Getting quick started using Docker](#getting-quick-started-using-docker)).
 IDP support the 3 mains authentications flow (see [oAuth big picture](./oAuthBigPicture.md)). Those can be tested on [http://localhost:3001](http://localhost:3001).
 
+### Authorization Code flow
+The Authorization Code sample implementation can be accessed at
+[http://localhost:3001/auth_code](http://localhost:3001/auth_code).
+The relevant code for it can be found in
+[auth-code-flow.js](oauth2-client/routes/auth-code-flow.js).
 
+It works like a standard OAuth 2 client would. You select to login
+with an external server. Then you are redirected to that server -
+in the example `http://localhost:3000`.
+After either creating an account, or logging into an existing one,
+the authorization server redirects back to the original server -
+`http://localhost:3001/auth_code/callback`.
+
+The redirection provides the OAuth 2 client with an authorization
+code that can be used to generate an access token for the
+authorization server. The access token represents the users
+identity. 
