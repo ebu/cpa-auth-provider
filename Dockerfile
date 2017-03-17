@@ -4,6 +4,8 @@ FROM node:7.7
 RUN apt-get update && apt-get install -y \
   libsqlite3-dev
 
+RUN npm install -g node-gyp
+
 ADD bin /src/bin
 ADD lib /src/lib
 ADD models /src/models
