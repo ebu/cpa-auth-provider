@@ -16,7 +16,7 @@ Then execute the following commands:
 
 ```
 $ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-$ cd cpa-auth-provide
+$ cd cpa-auth-provider
 $ docker-compose up
 ```
 *Note:If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/cpa-auth-provider.git`*
