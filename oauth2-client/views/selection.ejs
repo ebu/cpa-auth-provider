@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo OAuth2 Client</title>
+    <!-- Bootstrap -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color:#eee;">
+
+<div class="container">
+    <h1>OAuth 2 Client</h1>
+
+    <div style="background-color: #ddd; padding: 5px;">
+        <h2><a href="/auth_code" class="">Authorization Code Flow</a></h2>
+        <p>
+            Authorization Code provides a safe way to communicate between
+            the authorization server and the client server. The access
+            token will only be revealed to the client server.
+        </p>
+    </div>
+    <div style="background-color: #eee; padding: 5px;">
+        <h2><a href="/implicit" class="">Implicit Grant Flow</a></h2>
+        <p>
+            Implicit client flow puts the access token directly in the
+            url of callback redirect. The access token can be read by javascript
+            on the page.
+        </p>
+    </div>
+    <div style="background-color: #ddd; padding: 5px;">
+        <h2><a href="/resource-owner-password" class="">Resource Owner Password Flow</a></h2>
+        <p>
+            Resource Owner Password flow allows a login by transmitting
+            username and password from the page - typically by using a
+            script. Thus it can integrate very well into an existing design.
+            The access token will not be directly visible to the client
+            server.
+        </p>
+    </div>
+</div>
+</body>
+</html>

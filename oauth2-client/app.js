@@ -100,6 +100,8 @@ function updateSession(session, refreshToken, expiresIn) {
 }
 
 require('./routes/auth-code-flow')(app);
+require('./routes/implicit-flow')(app);
+require('./routes/resource-owner-password-flow')(app);
 
 app.get('/auth/oauth/callback',
     function (req, res, next) {
@@ -161,16 +163,22 @@ app.get('/auth/logout',
         res.redirect('/');
     });
 
-app.get('/', function (req, res) {
-    var loginUrl = "/auth/oauth";
-    var expiresAt = req.session.expiresAt ? new Date(new Date().getTime(req.session.expiresAt)) : '';
-    res.render('code', {
-        loginUrl: loginUrl,
-        user: req.user,
-        expiresAt: expiresAt,
-        refreshToken: req.session.refreshToken,
-    });
-});
+app.get(
+    '/',
+    function(req, res) {
+        res.render('selection');
+    }
+);
+// app.get('/', function (req, res) {
+//     var loginUrl = "/auth/oauth";
+//     var expiresAt = req.session.expiresAt ? new Date(new Date().getTime(req.session.expiresAt)) : '';
+//     res.render('code', {
+//         loginUrl: loginUrl,
+//         user: req.user,
+//         expiresAt: expiresAt,
+//         refreshToken: req.session.refreshToken,
+//     });
+// });
 
 app.get('/implicit', function (req, res) {
     var redirect_uri = callbackServer + '/implicit';
