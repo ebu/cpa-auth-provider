@@ -44,7 +44,7 @@ A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
 - start a docker container with a postgres database
 - configure the main container to use the postgres database.
 
-To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` then connect to the IDP container using `docker exec -it identityprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
+To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` then connect to the IDP container using `docker exec -it identityprovider_identity-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
 
 
 ## Starting the identity provider outside of docker
