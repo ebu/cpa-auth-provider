@@ -1,13 +1,13 @@
 version: '2'
 services:
-  cpa-auth-provider:
+  identity-provider:
     build: .
     ports:
     - 3000:3000
     environment:
     - MAIL_FROM=no-reply@rts.ch
     - IDP_HOST=http://localhost:3000
-    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - IDP_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
     - DEFAULT_LOCALE=fr
 

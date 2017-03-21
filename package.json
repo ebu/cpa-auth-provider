@@ -1,6 +1,6 @@
 {
-  "name": "cpa-authorization-server",
-  "description": "CPA Authorization Server",
+  "name": "identity-provider-server",
+  "description": "Identity provider Server",
   "version": "0.0.1",
   "private": true,
   "contributors": [

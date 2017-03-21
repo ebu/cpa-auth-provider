@@ -15,8 +15,8 @@ module.exports = {
     identity_providers: {
         github: {
             enabled: false,
-            client_id: process.env.CPA_GITHUB_CLIENT_ID,
-            client_secret: process.env.CPA_GITHUB_CLIENT_SECRET,
+            client_id: process.env.IDP_GITHUB_CLIENT_ID,
+            client_secret: process.env.IDP_GITHUB_CLIENT_SECRET,
             callback_url: '/auth/github/callback'
         },
         local: {
@@ -65,8 +65,8 @@ module.exports = {
     },
 
     recaptcha: {
-        site_key: process.env.CPA_RECAPCHA_SITEKEY,
-        secret_key: process.env.CPA_RECAPCHA_SECRETKEY
+        site_key: process.env.IDP_RECAPCHA_SITEKEY,
+        secret_key: process.env.IDP_RECAPCHA_SECRETKEY
     },
 
     // When accessing the home page, if defined, users are automatically
@@ -84,7 +84,7 @@ module.exports = {
         database: process.env.DB_DATABASE,
 
         // Database filename for SQLite.
-        filename: process.env.DB_FILENAME,//'data/cpa-auth-provider.sqlite',
+        filename: process.env.DB_FILENAME,
 
         // If true, SQL statements are logged to the console.
         debug: true
@@ -100,7 +100,7 @@ module.exports = {
     cors: {
         enabled: true,
         allowed_domains: [
-            process.env.CPA_CLIENT_URL
+            process.env.IDP_CLIENT_URL
         ]
     },
 
