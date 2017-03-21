@@ -10,4 +10,4 @@ npm_test:
     - npm --silent install
     - make all
     - make coverage
-#  coverage: /Lines        : \d+(.\d*)?%.*/
+  coverage: /Lines\s+: \d+(\.\d*)?%.*/
