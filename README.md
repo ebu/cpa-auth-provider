@@ -1,5 +1,5 @@
-[![build status](https://git.ebu.io/pipe/cpa-auth-provider/badges/develop/build.svg)](https://git.ebu.io/pipe/cpa-auth-provider/commits/develop)
-[![coverage report](https://git.ebu.io/pipe/cpa-auth-provider/badges/develop/coverage.svg)](https://git.ebu.io/pipe/cpa-auth-provider/commits/develop)
+[![build status](https://git.ebu.io/pipe/identity-provider/badges/develop/build.svg)](https://git.ebu.io/pipe/identity-provider/commits/develop)
+[![coverage report](https://git.ebu.io/pipe/identity-provider/badges/develop/coverage.svg)](https://git.ebu.io/pipe/identity-provider/commits/develop)
 
 # Cross-Platform Authentication - Authorization Provider
 
