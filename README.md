@@ -16,12 +16,12 @@ Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM in
 
 ## Getting started
 
-    $ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-    $ cd cpa-auth-provider
+    $ git clone https://git.ebu.io/pipe/identity-provider.git
+    $ cd identity-provider
     $ npm install
     $ NODE_ENV=development bin/init-db
 
-If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/cpa-auth-provider.git`
+If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/identity-provider.git`
 
 ## Run the tests
 

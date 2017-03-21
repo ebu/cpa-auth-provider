@@ -15,11 +15,11 @@ First run [docker](https://www.docker.com/) on you machine.
 Then execute the following commands:
 
 ```
-$ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-$ cd cpa-auth-provider
+$ git clone https://git.ebu.io/pipe/identity-provider.git
+$ cd identity-provider
 $ docker-compose up --build
 ```
-*Note:If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/cpa-auth-provider.git`*
+*Note:If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/identity-provider.git`*
 
 
 Now you have 2 sample web servers on your machine.
@@ -44,7 +44,7 @@ A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
 - start a docker container with a postgres database
 - configure the main container to use the postgres database.
 
-To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
+To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` then connect to the IDP container using `docker exec -it identityprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
 
 
 ## Starting the identity provider outside of docker
@@ -52,8 +52,8 @@ To use the postgres database first run `docker-compose --file docker-compose-idp
 Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
 
 ```
-$ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-$ cd cpa-auth-provider
+$ git clone https://git.ebu.io/pipe/identity-provider.git
+$ cd identity-provider
 $ npm install
 $ cp config.dist.js config.local.js
 $ NODE_ENV=development bin/init-db

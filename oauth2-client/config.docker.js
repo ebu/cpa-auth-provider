@@ -22,7 +22,7 @@ module.exports = {
         type: 'sqlite',
 
         // Database filename for SQLite.
-        filename: 'data/cpa-auth-provider.sqlite',
+        filename: 'data/identity.sqlite',
 
         // If true, SQL statements are logged to the console.
         debug: true
