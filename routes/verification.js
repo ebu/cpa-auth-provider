@@ -293,8 +293,9 @@ var routes = function (router) {
             return;
         }
 
-        var denied = ('authorization' in req.body && req.body.authorization === req.__('VERIFY_MAIN_DENY_BUTTON'));
-        if (denied) {
+        var authorized = req.body.authorized ? req.body.authorized : false;
+
+        if (!authorized) {
             denyUserCode(userCode, req.user.id, function (err, errorMessage, result) {
                 var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
                 res.redirect(redirectUri);
@@ -315,7 +316,7 @@ var routes = function (router) {
         }
 
         var verificationType = req.body.verification_type;
-
+        
         switch (verificationType) {
             case 'domain_list': // Domain authorization (No automatic provisioning)
                 authorizeDomains(req, res, next);
