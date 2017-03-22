@@ -275,40 +275,6 @@ var routes = function (router) {
         });
     };
 
-
-    /**
-     * verifyPrefilledUserCode
-     * handles the process of associating a user with a device without entering manually the code.
-     * This case covers when the browser is running on the same device as the device/app being paired.
-     *
-     * @param req
-     * @param res
-     * @param next
-     */
-
-    var verifyPrefilledUserCode = function (req, res, next) {
-        var userCode = req.body.user_code;
-        if (!userCode) {
-            renderVerificationPage(req, res, messages.INVALID_USERCODE);
-            return;
-        }
-
-        var authorized = req.body.authorized ? req.body.authorized : false;
-
-        if (!authorized) {
-            denyUserCode(userCode, req.user.id, function (err, errorMessage, result) {
-                var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
-                res.redirect(redirectUri);
-            });
-            return;
-        }
-
-        associateUserCodeWithUser(userCode, req.user.id, function (err, errorMessage, result) {
-            var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
-            res.redirect(redirectUri);
-        });
-    };
-
     router.post('/verify', authHelper.ensureAuthenticated, function (req, res, next) {
         if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
             res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
@@ -316,7 +282,7 @@ var routes = function (router) {
         }
 
         var verificationType = req.body.verification_type;
-        
+
         switch (verificationType) {
             case 'domain_list': // Domain authorization (No automatic provisioning)
                 authorizeDomains(req, res, next);
@@ -326,15 +292,65 @@ var routes = function (router) {
                 verifyUserCode(req, res, next);
                 return;
 
-            case 'prefilled_user_code':
-                verifyPrefilledUserCode(req, res, next);
-                return;
-
             default:
                 res.statusCode = 400;
                 renderVerificationInfo(res, messages.UNKNOWN_VERIFICATION_TYPE, 'danger');
                 return;
         }
+    });
+
+    /**
+     * /verify/allow
+     * Allow the association with a device without entering manually the code.
+     * This case covers when the browser is running on the same device as the device/app being paired.
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    router.post('/verify/allow', authHelper.ensureAuthenticated, function (req, res, next) {
+        if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
+            res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
+            return;
+        }
+
+        var userCode = req.body.user_code;
+        if (!userCode) {
+            renderVerificationPage(req, res, messages.INVALID_USERCODE);
+            return;
+        }
+
+        associateUserCodeWithUser(userCode, req.user.id, function (err, errorMessage, result) {
+            var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
+            res.redirect(redirectUri);
+        });
+    });
+
+    /**
+     * /verify/deny
+     * Deny the association with a device without entering manually the code.
+     * This case covers when the browser is running on the same device as the device/app being paired.
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    router.post('/verify/deny', authHelper.ensureAuthenticated, function (req, res, next) {
+        if (!requestHelper.isContentType(req, 'application/x-www-form-urlencoded')) {
+            res.sendInvalidRequest("Invalid content type: " + req.get('Content-Type'));
+            return;
+        }
+
+        var userCode = req.body.user_code;
+        if (!userCode) {
+            renderVerificationPage(req, res, messages.INVALID_USERCODE);
+            return;
+        }
+
+        denyUserCode(userCode, req.user.id, function (err, errorMessage, result) {
+            var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
+            res.redirect(redirectUri);
+        });
     });
 };
 

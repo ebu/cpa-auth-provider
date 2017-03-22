@@ -29,10 +29,8 @@
             event.preventDefault();
 
             $.ajax({
-                url: "<%= link('/verify') %>",
+                url: "<%= link('/verify/allow') %>",
                 data: {
-                    authorized:        true,
-                    verification_type: 'prefilled_user_code',
                     user_code:         '<%= user_code %>',
                     redirect_uri:      '<%= redirect_uri %>'
                 },
@@ -44,10 +42,8 @@
             event.preventDefault();
 
             $.ajax({
-                url: "<%= link('/verify') %>",
+                url: "<%= link('/verify/deny') %>",
                 data: {
-                    authorized:        false,
-                    verification_type: 'prefilled_user_code',
                     user_code:         '<%= user_code %>',
                     redirect_uri:      '<%= redirect_uri %>'
                 },
