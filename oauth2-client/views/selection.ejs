@@ -2,102 +2,87 @@
 <html>
 <head>
     <title>Demo OAuth2 Client</title>
-    <!-- Bootstrap -->
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- material design lite -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.grey-amber.min.css">
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+
 </head>
 <!--<body style="background-color:#eee;">-->
 <body>
-<div>
-    <div class="mdl-card mdl-shadow--2dp" style="margin: 20px;">
-        <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">Authorization Code Flow</h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-            Authorization Code provides a safe way to communicate between
-            the authorization server and the client server. The access
-            token will only be revealed to the client server.
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-            <a href="/auth_code" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                Try now
-            </a>
-        </div>
-    </div>
 
-    <div class="mdl-card mdl-shadow--2dp">
-        <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">Implicit Grant Flow</h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-            Implicit client flow puts the access token directly in the
-            url of callback redirect. The access token can be read by javascript
-            on the page.
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-            <a href="/implicit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                Try now
-            </a>
-        </div>
-    </div>
+<nav class="orange" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="#" class="brand-logo">OAuth 2 Client</a>
 
-    <div class="mdl-card mdl-shadow--2dp">
-        <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">Resource Owner Password Flow</h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-            Resource Owner Password flow allows a login by transmitting
-            username and password from the page - typically by using a
-            script. Thus it can integrate very well into an existing design.
-            The access token will not be directly visible to the client
-            server.
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-            <a href="/auth_code" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                Try now
-            </a>
-        </div>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/auth_code">AO Password</a></li>
+            <li><a href="/auth_code">RO Password</a></li>
+            <li><a href="/implicit">Implicit Password</a></li>
+        </ul>
     </div>
-</div>
+</nav>
 
 <div class="container">
-    <h1>OAuth 2 Client</h1>
 
+    <!-- Page Content goes here -->
+    <div class="row">
 
-    <div style="background-color: #ddd; padding: 5px;">
-        <h2><a href="/auth_code" class="">Authorization Code Flow</a></h2>
-        <p>
-            Authorization Code provides a safe way to communicate between
-            the authorization server and the client server. The access
-            token will only be revealed to the client server.
-        </p>
-    </div>
-    <div style="background-color: #eee; padding: 5px;">
-        <h2><a href="/implicit" class="">Implicit Grant Flow</a></h2>
-        <p>
-            Implicit client flow puts the access token directly in the
-            url of callback redirect. The access token can be read by javascript
-            on the page.
-        </p>
-    </div>
-    <div style="background-color: #ddd; padding: 5px;">
-        <h2><a href="/resource-owner-password" class="">Resource Owner Password Flow</a></h2>
-        <p>
-            Resource Owner Password flow allows a login by transmitting
-            username and password from the page - typically by using a
-            script. Thus it can integrate very well into an existing design.
-            The access token will not be directly visible to the client
-            server.
-        </p>
+        <div class="col s12 m4">
+            <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">Authorization Code Flow</span>
+                    <p>Authorization Code provides a safe way to communicate between
+                        the authorization server and the client server. The access
+                        token will only be revealed to the client server.</p>
+                </div>
+                <div class="card-action">
+                    <a href="/auth_code" class="">
+                        Try now
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">Resource Owner Password Flow</span>
+                    <p>Resource Owner Password flow allows a login by transmitting
+                        username and password from the page - typically by using a
+                        script. Thus it can integrate very well into an existing design.
+                        The access token will not be directly visible to the client
+                        server.</p>
+                </div>
+                <div class="card-action">
+                    <a href="/auth_code" class="">
+                        Try now
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">Implicit Grant Flow</span>
+                    <p>Implicit client flow puts the access token directly in the
+                        url of callback redirect. The access token can be read by javascript
+                        on the page.</p>
+                </div>
+                <div class="card-action">
+                    <a href="/implicit" class="">
+                        Try now
+                    </a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
 </body>
 </html>
