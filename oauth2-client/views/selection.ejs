@@ -9,11 +9,68 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- material design lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.grey-amber.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 </head>
-<body style="background-color:#eee;">
+<!--<body style="background-color:#eee;">-->
+<body>
+<div>
+    <div class="mdl-card mdl-shadow--2dp" style="margin: 20px;">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Authorization Code Flow</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Authorization Code provides a safe way to communicate between
+            the authorization server and the client server. The access
+            token will only be revealed to the client server.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a href="/auth_code" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                Try now
+            </a>
+        </div>
+    </div>
+
+    <div class="mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Implicit Grant Flow</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Implicit client flow puts the access token directly in the
+            url of callback redirect. The access token can be read by javascript
+            on the page.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a href="/implicit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                Try now
+            </a>
+        </div>
+    </div>
+
+    <div class="mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Resource Owner Password Flow</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Resource Owner Password flow allows a login by transmitting
+            username and password from the page - typically by using a
+            script. Thus it can integrate very well into an existing design.
+            The access token will not be directly visible to the client
+            server.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a href="/auth_code" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                Try now
+            </a>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <h1>OAuth 2 Client</h1>
+
 
     <div style="background-color: #ddd; padding: 5px;">
         <h2><a href="/auth_code" class="">Authorization Code Flow</a></h2>
