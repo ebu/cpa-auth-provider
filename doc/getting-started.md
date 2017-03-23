@@ -11,6 +11,9 @@ More information on the [EBU Cross-Platform Authentication project](http://tech.
 
 ## Getting (quick) started using docker
 
+This section presents how to start a demo with an idenitty provider and a sample client application.
+This demo uses a SQLite database. If you want to start only the Identity provider with a production ready database you can go to [Identity provider with postgres section](#identity-provider-with-postgres) 
+
 First run [docker](https://www.docker.com/) on you machine.
 Then execute the following commands:
 
@@ -19,7 +22,7 @@ $ git clone https://git.ebu.io/pipe/identity-provider.git
 $ cd identity-provider
 $ docker-compose up --build
 ```
-*Note:If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/identity-provider.git`*
+*Note: If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/identity-provider.git`*
 
 
 Now you have 2 sample web servers on your machine.
@@ -35,44 +38,26 @@ To stop both services, run `docker-compose down`
 
 ### Identity provider only
 
+This section presents how to start an identity provider without the sample client application.
+Note that the identity provider uses a SQLite database. If you want to use a production ready database you can go next section: [Identity provider with postgres](#identity-provider-with-postgres)
+
 There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up --build -d`
 
 ### Identity provider with postgres
 
-By default, the IDP uses a SQLite database. 
-A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
-- start a docker container with a postgres database
-- configure the main container to use the postgres database.
+This section presents how to start the identity provider with a postgress database.
+Since this setup could be used to build a production setup, there is an additionnal step to manualy initialize the database.
 
-To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` then connect to the IDP container using `docker exec -it identityprovider_identity-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
+That setup is based on a specific docker-compose file: `docker-compose-idp-only.yaml`
 
+To start only the IDP uses the following command: `docker-compose --file docker-compose-idp-only.yaml up --build -d`
 
-## Starting the identity provider outside of docker
+The first time you run that configuration you should initialize the database by executing a commande on the idp docker container.
+Connect to the container using `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` in the container shell run the following command to initialize the database `NODE_ENV=development bin/init-db`
 
-Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
+## Running without docker
 
-```
-$ git clone https://git.ebu.io/pipe/identity-provider.git
-$ cd identity-provider
-$ npm install
-$ cp config.dist.js config.local.js
-$ NODE_ENV=development bin/init-db
-$ bin/server
-```
-
-Now you have an identity provider listening on http://localhost:3000/
-
-## Starting the sample site outside of docker
-
-Using provided bash shell script
-
-```
-$ chmod u+x start_demo.sh
-$ ./start_demo.sh
-```
-
-Now you have a [demo site for oAuth 2.0](#demo-site-for-oauth-20-implementation) listening on [http://localhost:3000](http://localhost:3000)
-
+If you want to run the identity provider outside of docker (for development or if you cannot use docker in production) [this page](no-docker.md) present how to run the identity provider and the demo app.
 
 ## Configuration
 
@@ -80,7 +65,7 @@ The file `config.dist.js` contains a sample configuration. **This configuration 
 
 | File | Description |
 | ----------------- | ----------- |
-| config.local.js   | Configuration used when [running the identity provider outside docker](#starting-the-identitiy-provider-outside-of-docker)  |
+| config.local.js   | Configuration used when [running the identity provider outside docker](no-docker.md)  |
 | config.docker.js\*  | Configuration used when [running the identity provider inside docker](#getting-quick-started-using-docker) |
 | config.test.js    | Configuration used for unit tests |
 
