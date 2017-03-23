@@ -16,6 +16,20 @@ module.exports = function (router) {
         res.render('./admin/index.ejs');
     });
 
+
+    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.findAll()
+            .then(
+                function (oAuth2Clients) {
+                    res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
+                },
+                function (err) {
+                    res.send(500);
+                    logger.debug('[Admins][get /admin/clients][error', err, ']');
+                });
+    });
+
+
     router.get('/admin/domains', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Domain.findAll()
             .then(
