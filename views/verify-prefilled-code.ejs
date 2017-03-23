@@ -6,20 +6,51 @@
     <div class="panel-heading"><%= __('VERIFY_PREFILLED_CODE_TITLE') %></div>
 
     <div class="panel-body">
-        <form method="POST" action="<%= link('/verify') %>">
+        <form id="authorization-form">
             <div class="form-group has-success">
                 <%= client_name %> <%= __('VERIFY_MAIN_LABEL_PREFIX') %> <%= domain %><%= __('VERIFY_MAIN_LABEL_SUFFIX') %>
             </div>
 
-            <input type="hidden" name="verification_type" value="prefilled_user_code">
-            <input type="hidden" name="user_code" value="<%= user_code %>">
-            <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
-            <input type="submit" class="btn btn-success" name="authorization"
+            <input id="allow-auth" type="button" class="btn btn-success"
                    value="<%= __('VERIFY_MAIN_ALLOW_BUTTON') %>">
-            <input type="submit" class="btn btn-danger" name="authorization"
+
+            <input id="deny-auth" type="button" class="btn btn-danger"
                    value="<%= __('VERIFY_MAIN_DENY_BUTTON') %>">
         </form>
     </div>
 </div>
+
+<script type="text/javascript">
+    (function () {
+        var $allowButton = $('#allow-auth');
+        var $denyButton = $('#deny-auth');
+
+        $allowButton.on('click', function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: "<%= link('/verify/allow') %>",
+                data: {
+                    user_code:         '<%= user_code %>',
+                    redirect_uri:      '<%= redirect_uri %>'
+                },
+                type: 'POST'
+            });
+        });
+
+        $denyButton.on('click', function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: "<%= link('/verify/deny') %>",
+                data: {
+                    user_code:         '<%= user_code %>',
+                    redirect_uri:      '<%= redirect_uri %>'
+                },
+                type: 'POST'
+            });
+        });
+    })();
+</script>
 
 <% include layout/foot %>

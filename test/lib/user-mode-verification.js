@@ -104,25 +104,6 @@ describe('GET /verify', function () {
                 it('should return HTML', function () {
                     expect(this.res.headers['content-type']).to.equal('text/html; charset=utf-8');
                 });
-
-                describe('the response body', function () {
-                    it('should contain a hidden input with user_code', function () {
-                        expect(this.$('input[name="user_code"]').length).to.equal(1);
-                        expect(this.$('input[name="user_code"]')[0].attribs.type).to.equal('hidden');
-                        expect(this.$('input[name="user_code"]')[0].attribs.value).to.equal('1234');
-                    });
-
-                    it('should contain a hidden input with redirect_uri', function () {
-                        expect(this.$('input[name="redirect_uri"]').length).to.equal(1);
-                        expect(this.$('input[name="redirect_uri"]')[0].attribs.type).to.equal('hidden');
-                        expect(this.$('input[name="redirect_uri"]')[0].attribs.value).to.equal('example://cpa_callback');
-                    });
-
-                    it('should contain a submit button with value "Allow"', function () {
-                        expect(this.$('input[name="authorization"][value="Allow"]').length).to.equal(1);
-                        expect(this.$('input[name="authorization"][value="Allow"]')[0].attribs.type).to.equal('submit');
-                    });
-                });
             });
 
             context('and the user is not authenticated', function () {
@@ -219,15 +200,13 @@ describe('POST /verify', function () {
                     });
 
                     before(function (done) {
-                        requestHelper.sendRequest(this, '/verify', {
+                        requestHelper.sendRequest(this, '/verify/allow', {
                             method: 'post',
                             cookie: this.cookie,
                             type: 'form',
                             data: {
                                 'user_code': '1234',
-                                'redirect_uri': 'example://cpa_callback',
-                                'verification_type': 'prefilled_user_code',
-                                'authorization': 'Allow'
+                                'redirect_uri': 'example://cpa_callback'
                             }
                         }, done);
                     });
@@ -322,15 +301,13 @@ describe('POST /verify', function () {
                     });
 
                     before(function (done) {
-                        requestHelper.sendRequest(this, '/verify', {
+                        requestHelper.sendRequest(this, '/verify/deny', {
                             method: 'post',
                             cookie: this.cookie,
                             type: 'form',
                             data: {
                                 'user_code': '1234',
-                                'redirect_uri': 'example://cpa_callback',
-                                'verification_type': 'prefilled_user_code',
-                                'authorization': 'Deny'
+                                'redirect_uri': 'example://cpa_callback'
                             }
                         }, done);
                     });
