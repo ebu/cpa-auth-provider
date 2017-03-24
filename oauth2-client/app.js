@@ -14,7 +14,9 @@ app.use(require('body-parser').urlencoded({extended: true}));
 app.use(require('express-session')({secret: 'keyboard cat', resave: true, saveUninitialized: true}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static('public'));
+
+// redirect public files
+app.use('/assets', express.static(__dirname + '/../oauth2-client/public'));
 
 app.use(function (req, res, next) {
     // Add user object to the template scope if authenticated
