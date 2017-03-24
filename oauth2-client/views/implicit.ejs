@@ -9,106 +9,128 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- material design lite -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
 </head>
-<body style="background-color:#eee;">
+<body>
 
-<a href="/">&lt;&lt; flow selection</a>
+<nav class="blue-grey" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="/" class="brand-logo">OAuth 2 Client</a>
+
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+        </ul>
+    </div>
+</nav>
+
 <div class="container">
-    <h1>OAuth 2 Client: Implicit</h1>
+    <section class="flows">
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title blue-grey-text">Implicit Grant Flow</span>
 
-    <a href="<%= loginUrl %>" class="btn btn-info hide" id="login-btn">Login implicit</a>
-    <a href="#logout" class="btn btn-warning hide" id="logout-btn">Logout implicit</a>
+                        <a href="<%= loginUrl %>" class="btn waves-effect waves-light orange hide" id="login-btn">Login implicit</a>
+                        <a href="#logout" class="btn waves-effect waves-light orange hide" id="logout-btn">Logout implicit</a>
 
-    <div id="user-widget" style="margin: 20px 0 5px;"></div>
+                        <div id="user-widget" style="margin: 20px 0 5px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
-    <script>
-		(function () {
-			// fail if we can't use local storage
-			if (typeof(Storage) === 'undefined') {
-				throw "NotImplementedError";
-			}
+<script>
+	(function () {
+		// fail if we can't use local storage
+		if (typeof(Storage) === 'undefined') {
+			throw "NotImplementedError";
+		}
 
-			var TOKEN_STORAGE = 'cpa:token';
+		var TOKEN_STORAGE = 'cpa:token';
 
-			$(function () {
-				loadProfile(
-					function (user) {
-						if (user) {
-							loadInterface(user);
-						} else {
-							$('#login-btn').removeClass('hide');
-						}
+		$(function () {
+			loadProfile(
+				function (user) {
+					if (user) {
+						loadInterface(user);
+					} else {
+						$('#login-btn').removeClass('hide');
 					}
-				);
-			});
-
-			// parse url to get token as sent from callback
-			function extractToken() {
-				var hash = location.hash.substr(1);
-				var token = hash.substr(hash.indexOf('access_token=')).split('&')[0].split('=')[1];
-				return token;
-			}
-
-			function loadInterface(user) {
-				$('#user-widget').html('You are logged in as: ' + user.name);
-				$('#logout-btn').removeClass('hide').click(function () {
-					removeToken();
-					location.reload();
-				});
-			}
-
-			function loadProfile(done) {
-				var token = extractToken();
-				if (token) {
-					storeToken(token);
-				} else {
-					token = getToken(token);
 				}
+			);
+		});
 
-				if (token) {
-					return callServer(token, done);
-				} else {
+		// parse url to get token as sent from callback
+		function extractToken() {
+			var hash = location.hash.substr(1);
+			var token = hash.substr(hash.indexOf('access_token=')).split('&')[0].split('=')[1];
+			return token;
+		}
+
+		function loadInterface(user) {
+			$('#user-widget').html('You are logged in as: ' + user.name);
+			$('#logout-btn').removeClass('hide').click(function () {
+				removeToken();
+				location.reload();
+			});
+		}
+
+		function loadProfile(done) {
+			var token = extractToken();
+			if (token) {
+				storeToken(token);
+			} else {
+				token = getToken(token);
+			}
+
+			if (token) {
+				return callServer(token, done);
+			} else {
+				return done();
+			}
+		}
+
+		function callServer(token, done) {
+			jQuery.ajax(
+				{
+					url: "<%= profileUrl %>",
+					type: "GET",
+					headers: {
+						"Authorization": "Bearer " + token,
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+				}
+			).done(
+				function (data, textStatus, jqXHR) {
+					console.log("HTTP Request Succeeded: " + jqXHR.status);
+					console.log(data);
+					return done(data.user);
+				}
+			).fail(
+				function (jqXHR, textStatus, errorThrown) {
+					console.log("HTTP Request Failed");
 					return done();
 				}
-			}
+			);
+		}
 
-			function callServer(token, done) {
-				jQuery.ajax(
-					{
-						url: "<%= profileUrl %>",
-						type: "GET",
-						headers: {
-							"Authorization": "Bearer " + token,
-							"Content-Type": "application/x-www-form-urlencoded",
-						},
-					}
-				).done(
-					function (data, textStatus, jqXHR) {
-						console.log("HTTP Request Succeeded: " + jqXHR.status);
-						console.log(data);
-						return done(data.user);
-					}
-				).fail(
-					function (jqXHR, textStatus, errorThrown) {
-						console.log("HTTP Request Failed");
-						return done();
-					}
-				);
-			}
+		function storeToken(token) {
+			localStorage.setItem(TOKEN_STORAGE, token);
+		}
 
-			function storeToken(token) {
-				localStorage.setItem(TOKEN_STORAGE, token);
-			}
+		function getToken() {
+			return localStorage.getItem(TOKEN_STORAGE);
+		}
 
-			function getToken() {
-				return localStorage.getItem(TOKEN_STORAGE);
-			}
-
-			function removeToken() {
-				return localStorage.removeItem(TOKEN_STORAGE);
-			}
-		})();
-    </script>
-</div>
+		function removeToken() {
+			return localStorage.removeItem(TOKEN_STORAGE);
+		}
+	})();
+</script>
 </body>
 </html>

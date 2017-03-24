@@ -9,24 +9,44 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- material design lite -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
 </head>
-<body style="background-color:#eee;">
+<body>
+<nav class="blue-grey" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="/" class="brand-logo">OAuth 2 Client</a>
 
-<a href="/">&lt;&lt; flow selection</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+        </ul>
+    </div>
+</nav>
+
 <div class="container">
-    <h1>OAuth 2 Client: Authorization Code</h1>
-
-    <% if (user) { %>
-    <a href="/auth_code/logout" class="btn btn-warning">Logout</a>
-    <% } else { %>
-    <a href="<%= loginUrl %>" class="btn btn-success">Login with OAuth 2 Flow</a>
-    <% } %>
-    <% if (expiresAt) { %>
-    <div style="margin: 20px 0 5px">Expires at <%= expiresAt %>.</div>
-    <% } %>
-    <% if (refreshToken) { %>
-    <a href="/auth_code/refresh" class="btn btn-info">Use Refresh Token</a>
-    <% } %>
+    <section class="flows">
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title blue-grey-text">Authorization Code Flow</span>
+                        <% if (user) { %>
+                        <a href="/auth_code/logout" class="btn waves-effect waves-light orange">Logout</a>
+                        <% } else { %>
+                        <a href="<%= loginUrl %>" class="btn waves-effect waves-light orange">Login</a>
+                        <% } %>
+                        <% if (expiresAt) { %>
+                        <div style="margin: 20px 0 5px">Expires at <%= expiresAt %>.</div>
+                        <% } %>
+                        <% if (refreshToken) { %>
+                        <a href="/auth_code/refresh" class="btn waves-effect waves-light orange">Use Refresh Token</a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 </body>
 </html>
