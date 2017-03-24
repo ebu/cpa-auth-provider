@@ -23,3 +23,10 @@ $ ./start_demo.sh
 ```
 
 Now you have a [demo site for oAuth 2.0](#demo-site-for-oauth-20-implementation) listening on [http://localhost:3000](http://localhost:3000)
+
+## Configuration
+
+IDP uses the configuration for `config.local.js`
+The file `config.dist.js` contains a sample configuration. **This configuration is not supposed to be used as is in production.**
+
+Note that `config.test.js` is the configuration used for tests.
