@@ -29,6 +29,31 @@ module.exports = function (router) {
                 });
     });
 
+    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        var client = req.body;
+        if (client.id) {
+            db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
+                if (oAuhtClient) {
+                    oAuhtClient.updateAttributes({
+                        client_id: client.client_id,
+                        client_secret: client.client_secret,
+                        name: client.name,
+                        redirect_uri: client.redirect_uri
+                    }).then(function () {
+                        res.sendStatus(200);
+                    });
+                } else {
+                    res.sendStatus(404);
+                }
+            });
+        } else {
+            db.OAuth2Client.create(client).then(function (clientFromDb) {
+                res.json(clientFromDb);
+            });
+        }
+
+    });
+
 
     router.get('/admin/domains', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Domain.findAll()
