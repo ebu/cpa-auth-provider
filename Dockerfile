@@ -34,14 +34,14 @@ ADD config.docker.js /src/config.local.js
 
 ENV NODE_ENV development
 
-ENV CPA_RECAPCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-ENV CPA_RECAPCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+ENV IDP_RECAPCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+ENV IDP_RECAPCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ENV JWT_SECRET AlteredCarbonFly
 ENV DEFAULT_LOCALE fr
 
 # default settings for database
 ENV DB_TYPE sqlite
-ENV DB_FILENAME "data/cpa-auth-provider.sqlite"
+ENV DB_FILENAME "data/identity-provider.sqlite"
 
 # Create the sqlite database
 RUN mkdir data

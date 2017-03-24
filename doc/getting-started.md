@@ -2,23 +2,35 @@
 
 [![Build Status](https://travis-ci.org/ebu/cpa-auth-provider.svg?branch=develop)](https://travis-ci.org/ebu/cpa-auth-provider)
 
-This project contains a reference implementation of the Cross-Platform
-Authentication Authorization Provider.
+This tutorial will help you start the identity provider on a local machine. It is the prerequisite for the next guides.
 
-This software implements version 1.0 of the Cross-Platform Authentication Protocol ([ETSI TS 103 407](https://portal.etsi.org/webapp/WorkProgram/Report_WorkItem.asp?WKI_ID=47970)).
+The identity provider offers the following features:
 
-More information on the [EBU Cross-Platform Authentication project](http://tech.ebu.ch/cpa).
+- User login using the OAuth2 authorization code grant such as Authorization Code, Implicit and Resource Owner Password Credentials.
+- Identity Federation using Passport.js
+- Association of media devices with user identity using ETSI TS 103 407\*.
+- Templates for branding.
+
+
+\* *This software implements version 1.0 of the Cross-Platform Authentication Protocol ([ETSI TS 103 407](https://portal.etsi.org/webapp/WorkProgram/Report_WorkItem.asp?WKI_ID=47970)). More information on the [EBU Cross-Platform Authentication project](http://tech.ebu.ch/cpa).*
 
 ## Getting (quick) started using docker
+
+### Quick start
+
+This section presents how to start a demo with an idenitty provider and a sample client application.
+This demo uses a SQLite database. If you want to start only the Identity provider with a production ready database you can go to [Identity provider with postgres section](#identity-provider-with-postgres) 
 
 First run [docker](https://www.docker.com/) on you machine.
 Then execute the following commands:
 
 ```
-$ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-$ cd cpa-auth-provide
-$ docker-compose up
+$ git clone https://git.ebu.io/pipe/identity-provider.git
+$ cd identity-provider
+$ docker-compose up --build
 ```
+*Note: If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/identity-provider.git`*
+
 
 Now you have 2 sample web servers on your machine.
 You can reach those as [http://localhost:3000](http://localhost:3000) and [http://localhost:3001](http://localhost:3001).
@@ -27,62 +39,59 @@ You can reach those as [http://localhost:3000](http://localhost:3000) and [http:
 
 [http://localhost:3001](http://localhost:3001) demonstrates [the OAuth 2.0 implementation](#demo-site-for-oauth-20-implementation). It will redirect and use the identity service.
 
+### Stop
+
 To stop both services, run `docker-compose down`
+
+### Available parameters
+
+The following parameters can be configured in `docker-compose.yaml` file.
+
+#### IDP parameters 
+
+| Parameter 				| Sample 									 | Description 																	  |
+| ------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------ |
+| MAIL_FROM			 		| no-reply@rts.ch    						 | The origin for email that'd be send by the plateform 						  |
+| IDP_HOST 					| http://localhost:3000 				     | The IDP server url. Might be used in email. 								      |
+| IDP_RECAPCHA_SITEKEY 		| 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI	 | ReCaptcha site key  														   	  |
+| IDP_RECAPCHA_SECRETKEY 	| 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe	 | ReCaptcha site secret 														  |
+| DEFAULT_LOCALE 			| fr 										 | Default locale. Used if no local could be found in the browser or user setting |
+
+#### Demo parameters 
+
+| Parameter 				| Sample 													   | Description 									   	|
+| ------------------------- | ------------------------------------------------------------ | -------------------------------------------------- |
+| OAUTH2_CLIENT_ID 			| db05acb0c6ed902e5a5b7f5ab79e7144							   | oAuth client id 								   	|
+| OAUTH2_CLIENT_SECRET 		| 49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98 | oAuth client secret 							   	|
+| OAUTH2_SERVER 			| http://localhost:3000										   | The IDP server url 								|
+| OAUTH2_CALLBACK 			| http://localhost:3001										   | The demo server url 							 	|
+| OAUTH2_INTERNAL_SERVER 	| http://identity-provider:3000								   | The internal IDP server (inside docker container ) |
+
 
 ## Other docker configurations
 
 ### Identity provider only
 
-There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up -d`
+This section presents how to start an identity provider without the sample client application.
+Note that the identity provider uses a SQLite database. If you want to use a production ready database you can go next section: [Identity provider with postgres](#identity-provider-with-postgres)
+
+There is a custom docker-compose file (docker-compose-idp-only.yaml) to start only the IDP. Use it via the following command: `docker-compose --file docker-compose-idp-only.yaml up --build -d`
 
 ### Identity provider with postgres
 
-By default, the IDP uses a SQLite database. 
-A custom docker-compose file (docker-compose-idp-postgres.yaml) can be used to:
-- start a docker container with a postgres database
-- configure the main container to use the postgres database.
+This section presents how to start the identity provider with a postgress database.
+Since this setup could be used to build a production setup, there is an additionnal step to manualy initialize the database.
 
-To use the postgres database first run `docker-compose --file docker-compose-idp-postgres.yaml up -d` then connect to the IDP container using `docker exec -it cpaauthprovider_cpa-auth-provider_1 /bin/bash` and run the following command in the shell: `NODE_ENV=development bin/init-db`
+That setup is based on a specific docker-compose file: `docker-compose-idp-only.yaml`
 
+To start only the IDP uses the following command: `docker-compose --file docker-compose-idp-only.yaml up --build -d`
 
-## Starting the identity provider outside of docker
+The first time you run that configuration you should initialize the database by executing a commande on the idp docker container.
+Connect to the container using `docker-compose --file docker-compose-idp-postgres.yaml up --build -d` in the container shell run the following command to initialize the database `NODE_ENV=development bin/init-db`
 
-Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
+## Running without docker
 
-```
-$ git clone https://git.ebu.io/pipe/cpa-auth-provider.git
-$ cd cpa-auth-provider
-$ npm install
-$ cp config.dist.js config.local.js
-$ NODE_ENV=development bin/init-db
-$ bin/server
-```
-
-Now you have an identity provider listening on http://localhost:3000/
-
-## Starting the sample site outside of docker
-
-Using provided bash shell script
-
-```
-$ chmod u+x start_demo.sh
-$ ./start_demo.sh
-```
-
-Now you have a [demo site for oAuth 2.0](#demo-site-for-oauth-20-implementation) listening on [http://localhost:3000](http://localhost:3000)
-
-
-## Configuration
-
-The file `config.dist.js` contains a sample configuration. **This configuration is not supposed to be used as is in production.**
-
-| File | Description |
-| ----------------- | ----------- |
-| config.local.js   | Configuration used when [running the identity provider outside docker](#starting-the-identitiy-provider-outside-of-docker)  |
-| config.docker.js\*  | Configuration used when [running the identity provider inside docker](#getting-quick-started-using-docker) |
-| config.test.js    | Configuration used for unit tests |
-
-\*config.docker.js contains some environment variables that are defined in the Dockerfile or in docker-compose\[-xxx\].yaml.
+If you want to run the identity provider outside of docker (for development or if you cannot use docker in production) [this page](no-docker.md) present how to run the identity provider and the demo app.
 
 ## Customise layout
 

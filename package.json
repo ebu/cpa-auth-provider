@@ -1,6 +1,6 @@
 {
-  "name": "cpa-authorization-server",
-  "description": "CPA Authorization Server",
+  "name": "identity-provider-server",
+  "description": "Identity provider Server",
   "version": "0.0.1",
   "private": true,
   "contributors": [
@@ -63,6 +63,7 @@
     "passport-http-bearer": "~1.0.1",
     "passport-jwt": "^1.2.1",
     "passport-local": "~0.1.6",
+    "passport-oauth2": "^1.4.0",
     "passport-oauth2-client-password": "~0.1.2",
     "passport-twitter": "~1.0.2",
     "pg": "6.1.0",

@@ -1,0 +1,13 @@
+image: node:7
+
+stages:
+  - test
+
+npm_test:
+  stage: test
+  script: 
+    - npm install --silent -g jshint istanbul
+    - npm --silent install
+    - make all
+    - make coverage
+#  coverage: /Lines\s+: \d+(\.\d*)?%.*/
