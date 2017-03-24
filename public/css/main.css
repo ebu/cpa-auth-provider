@@ -250,6 +250,15 @@ nav .lang ul.dropdown-menu {
 
 /*
 ************
+************ CLIENT
+************
+*/
+#client .btn-group{
+    display: flex;
+}
+
+/*
+************
 ************ MEDIA QUERIES
 ************
 */

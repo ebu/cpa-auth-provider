@@ -1,32 +1,51 @@
 <% include ../layout/header %>
 
-<h1><%= __('ADMIN_CLIENT_PAGE_TITLE') %></h1>
+<div id="client">
 
-<table class="table">
-    <thead>
-    <tr>
-        <th><%= __('ADMIN_CLIENT_NAME_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_CREATED_AT_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_UPDATED_AT_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_CLIENT_SECRET_TABLE_COL_TITLE') %></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <% for (var i = 0; i < oAuth2Clients.length; i++) { %>
-    <tr>
-        <td><%= oAuth2Clients[i].name %></td>
-        <td><%= oAuth2Clients[i].created_at %></td>
-        <td><%= oAuth2Clients[i].updated_at %></td>
-        <td><%= oAuth2Clients[i].client_id %></td>
-        <td><%= oAuth2Clients[i].client_secret %></td>
-        <td></td>
-    </tr>
-    <% } %>
-    </tbody>
-</table>
+    <h1><%= __('ADMIN_CLIENT_PAGE_TITLE') %></h1>
 
-<p><a href="<%= link('/admin/clients/add') %>"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></a></p>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th><%= __('ADMIN_CLIENT_NAME_TABLE_COL_TITLE') %></th>
+                <th class="hidden-xs"><%= __('ADMIN_CLIENT_CREATED_AT_TABLE_COL_TITLE') %></th>
+                <th class="hidden-xs"><%= __('ADMIN_CLIENT_UPDATED_AT_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_CLIENT_SECRET_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_ACTIONS_TABLE_COL_TITLE') %></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (var i = 0; i < oAuth2Clients.length; i++) { %>
+            <tr>
+                <td><%= oAuth2Clients[i].name %></td>
+                <td class="hidden-xs"><%= oAuth2Clients[i].created_at %></td>
+                <td class="hidden-xs"><%= oAuth2Clients[i].updated_at %></td>
+                <td><%= oAuth2Clients[i].client_id %></td>
+                <td><%= oAuth2Clients[i].client_secret %></td>
+                <td>
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default" aria-label="<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>" title="<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default" aria-label="<%= __('ADMIN_CLIENT_ACTIONS_DELETE_CLIENT') %>" title="<%= __('ADMIN_CLIENT_ACTIONS_DELETE_CLIENT') %>">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default" aria-label="<%= __('ADMIN_CLIENT_ACTIONS_REGENERATE_CLIENT_SECRET') %>" title="<%= __('ADMIN_CLIENT_ACTIONS_REGENERATE_CLIENT_SECRET') %>">
+                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
 
+    <p><a href="<%= link('/admin/clients/add') %>"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></a></p>
+
+</div>
 <% include ../layout/foot %>
