@@ -9,11 +9,14 @@ var request = require('request');
 // id->user map for serialization/deserialization
 var users = {};
 
-// oauth 2 configuration for the passport strategy
-var server = process.env.OAUTH2_SERVER || 'http://192.168.99.100:3000';
+// how the identity provider can be reached from the users browser
+var server = process.env.OAUTH2_SERVER;
+// how the identity provider can be reached from this service - could be a docker instance name
 var serverInternal = process.env.OAUTH2_INTERNAL_SERVER;
-var callbackServer = process.env.OAUTH2_CALLBACK || 'http://192.168.99.100:3001';
+// how this service is reachable from the users browser
+var callbackServer = process.env.OAUTH2_CALLBACK;
 
+// oauth 2 configuration for the passport strategy
 var oauth2_config = {
 	passReqToCallback: true,
 	requestTokenURL: serverInternal + '/oauth2/request_token',
@@ -41,7 +44,6 @@ OAuth2Strategy.prototype.userProfile = function (accessToken, done) {
 		var info = JSON.parse(body);
 
 		done(null, info.user);
-
 	}
 
 	request(options, callback);
