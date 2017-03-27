@@ -50,6 +50,8 @@
   "ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_FAIL": "Erreur lors de la suppression du client. Veuillez réessayer",
   "ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS": "Le secret a été rafraichi avec succès",
   "ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL": "Le secret n'a pu être rafraichi. Veuillez réessayer",
+  "ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS": "Le client a été créée avec succès. Le secret est {{ secret }} veuillez le conserver.",
+  "ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL": "Erreur lors de la création du client. Veuillez réessayer",
   "ADMIN_CLIENT_ADD_CLIENT_MODALE_CLOSE": "Fermer",
   "ADMIN_CLIENT_ADD_CLIENT_MODALE_SUBMIT": "Ajouter",
   "ADMIN_CLIENT_ADD_CLIENT_MODALE_TITLE": "Ajouter un client",
