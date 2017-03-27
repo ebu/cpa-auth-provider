@@ -10,6 +10,10 @@ var generate = require('../../lib/generate');
 var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
+var promise = require('bluebird');
+var bcrypt = promise.promisifyAll(require('bcrypt'));
+var generate = require('../../lib/generate');
+
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
@@ -17,7 +21,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/clients/all', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -25,9 +29,22 @@ module.exports = function (router) {
                 },
                 function (err) {
                     res.send(500);
+                    logger.debug('[Admins][get /admin/clients/all][error', err, ']');
+                });
+    });
+
+    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.findAll()
+            .then(
+                function (oAuth2Clients) {
+                    res.send(oAuth2Clients);
+                },
+                function (err) {
+                    res.send(500);
                     logger.debug('[Admins][get /admin/clients][error', err, ']');
                 });
     });
+
 
     router.post('/admin/clients', /*[authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)],*/ function (req, res) {
 
@@ -59,11 +76,22 @@ module.exports = function (router) {
                     }
                 });
             } else {
-                // TODO Generate secret
+                var secret = generate.cryptoCode(30);
 
-                db.OAuth2Client.create(client).then(function (clientFromDb) {
-                    res.json(clientFromDb);
-                });
+                // Hash token
+                return bcrypt.hash(
+                    secret,
+                    60,
+                    function (err, hash) {
+                        if (err) {
+                            return reject(err);
+                        } else {
+                            client.client_secret =  hash;
+                            return db.OAuth2Client.create(client).then(function () {
+                                return res.json(secret);
+                            });
+                        }
+                    });
             }
 
         });
@@ -77,17 +105,28 @@ module.exports = function (router) {
                 function (client) {
                     if (client) {
                         // Generate token
+                        var secret = generate.cryptoCode(30);
 
-                        // Hask token
-
-                        // Save token
-
-                        // return generated token
-                        res.send("this is a secret");
+                        // Hash token
+                        return bcrypt.hash(
+                            secret,
+                            60,
+                            function (err, hash) {
+                                if (err) {
+                                    return reject(err);
+                                } else {
+                                    // Save token
+                                    return client.updateAttributes(
+                                        {client_secret: hash}
+                                    ).then(function () {
+                                        // return generated token
+                                        res.json(secret);
+                                    });
+                                }
+                            });
                     } else {
                         res.sendStatus(404);
                     }
-
                 });
     });
 
