@@ -29,29 +29,75 @@ module.exports = function (router) {
                 });
     });
 
-    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.post('/admin/clients', /*[authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)],*/ function (req, res) {
+
         var client = req.body;
-        if (client.id) {
-            db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
-                if (oAuhtClient) {
-                    oAuhtClient.updateAttributes({
-                        client_id: client.client_id,
-                        client_secret: client.client_secret,
-                        name: client.name,
-                        redirect_uri: client.redirect_uri
-                    }).then(function () {
-                        res.sendStatus(200);
-                    });
-                } else {
-                    res.sendStatus(404);
-                }
-            });
-        } else {
-            db.OAuth2Client.create(client).then(function (clientFromDb) {
-                res.json(clientFromDb);
-            });
+
+        req.checkBody('client_id', req.__('API_ADMIN_CLIENT_CLIENT_ID_IS_MISSING')).notEmpty().isString();
+        req.checkBody('name', req.__('API_ADMIN_CLIENT_NAME_IS_MISSING')).notEmpty().isString();
+        if (client.redirect_uri) {
+            req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
         }
 
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+            if (client.id) {
+                db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
+                    if (oAuhtClient) {
+                        oAuhtClient.updateAttributes({
+                            client_id: client.client_id,
+                            name: client.name,
+                            redirect_uri: client.redirect_uri
+                        }).then(function () {
+                            res.sendStatus(200);
+                        });
+                    } else {
+                        res.sendStatus(404);
+                    }
+                });
+            } else {
+                // TODO Generate secret
+
+                db.OAuth2Client.create(client).then(function (clientFromDb) {
+                    res.json(clientFromDb);
+                });
+            }
+
+        });
+
+
+    });
+
+    router.get('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.findOne({where: {id: req.params.clientId}})
+            .then(
+                function (client) {
+                    if (client) {
+                        // Generate token
+
+                        // Hask token
+
+                        // Save token
+
+                        // return generated token
+                        res.send("this is a secret");
+                    } else {
+                        res.sendStatus(404);
+                    }
+
+                });
+    });
+
+
+    router.delete('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.destroy({where: {id: req.params.clientId}})
+            .then(
+                function () {
+                    res.sendStatus(200);
+                });
     });
 
 
