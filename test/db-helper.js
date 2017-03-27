@@ -9,13 +9,14 @@ module.exports = {
         var tables = [
             'AccessTokens',
             'OAuth2AuthorizationCodes',
+            'OAuth2Clients',
             'Clients',
             'Domains',
             'IdentityProviders',
             'PairingCodes',
             'Users',
             'Permissions',
-            'UserProfiles'
+            'UserProfiles',
         ];
 
         var deleteData = function (table, done) {

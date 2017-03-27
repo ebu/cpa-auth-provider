@@ -22,14 +22,14 @@ module.exports = function (router) {
 
 
     router.get('/admin/clients/all', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
-        db.OAuth2Client.findAll()
+        return db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
-                    res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
+                    return res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
                 },
                 function (err) {
-                    res.send(500);
                     logger.debug('[Admins][get /admin/clients/all][error', err, ']');
+                    return res.send(500);
                 });
     });
 
@@ -45,8 +45,21 @@ module.exports = function (router) {
                 });
     });
 
+    router.get('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        return db.OAuth2Client.findOne({
+            id: req.params.id
+        }).then(
+            function (client) {
+                if (client) {
+                    return res.send(client);
+                } else {
+                    return res.sendStatus(404);
+                }
+            });
+    });
 
-    router.post('/admin/clients', /*[authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)],*/ function (req, res) {
+
+    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         var client = req.body;
 
@@ -56,42 +69,36 @@ module.exports = function (router) {
             req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
         }
 
-        req.getValidationResult().then(function (result) {
+        return req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
-                res.status(400).json({errors: result.array()});
-                return;
+                return res.status(400).json({errors: result.array()});
             }
             if (client.id) {
-                db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
+                return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
                     if (oAuhtClient) {
                         oAuhtClient.updateAttributes({
                             client_id: client.client_id,
                             name: client.name,
                             redirect_uri: client.redirect_uri
                         }).then(function () {
-                            res.sendStatus(200);
+                            return res.sendStatus(200);
                         });
                     } else {
-                        res.sendStatus(404);
+                        return res.sendStatus(404);
                     }
                 });
             } else {
                 var secret = generate.cryptoCode(30);
 
-                // Hash token
-                return bcrypt.hash(
-                    secret,
-                    60,
-                    function (err, hash) {
-                        if (err) {
-                            return reject(err);
-                        } else {
-                            client.client_secret =  hash;
-                            return db.OAuth2Client.create(client).then(function () {
-                                return res.json(secret);
-                            });
-                        }
-                    });
+                // // Hash token
+                var salt = bcrypt.genSaltSync(60);
+                var hash = bcrypt.hashSync(secret, salt);
+
+                client.client_secret = hash;
+                return db.OAuth2Client.create(client).then(function () {
+                    return res.json(secret);
+                });
+
             }
 
         });
@@ -131,8 +138,8 @@ module.exports = function (router) {
     });
 
 
-    router.delete('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
-        db.OAuth2Client.destroy({where: {id: req.params.clientId}})
+    router.delete('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.destroy({where: {id: req.params.id}})
             .then(
                 function () {
                     res.sendStatus(200);
