@@ -95,7 +95,7 @@ module.exports = function (router) {
     router.delete('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.destroy({where: {id: req.params.clientId}})
             .then(
-                function (client) {
+                function () {
                     res.sendStatus(200);
                 });
     });
