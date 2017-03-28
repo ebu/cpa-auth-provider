@@ -96,7 +96,7 @@ module.exports = function (router) {
                     5,
                     function (err, hash) {
                         if (err) {
-                            return reject(err);
+                            return res.status(500).send(err);
                         } else {
                             // Save token
                             client.client_secret = hash;
@@ -107,7 +107,6 @@ module.exports = function (router) {
                             });
                         }
                     });
-
             }
 
         });
@@ -129,7 +128,7 @@ module.exports = function (router) {
                             5,
                             function (err, hash) {
                                 if (err) {
-                                    return reject(err);
+                                    return res.status(500).send(err);
                                 } else {
                                     // Save token
                                     return client.updateAttributes(
