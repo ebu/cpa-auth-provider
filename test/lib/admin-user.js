@@ -565,7 +565,9 @@ describe('GET /admin/clients', function () {
             var res = JSON.parse(self.res.text);
             expect(res[0].id).to.equal(1);
             expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
-            expect(res[0].client_secret).to.equal("49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98");
+            expect(res[0].client_secret).to.be.undefined;
+            expect(res[0].created_at).to.be.defined;
+            expect(res[0].updated_at).to.be.defined;
             expect(res[0].name).to.equal("OAuth 2.0 Client");
         });
 
@@ -639,7 +641,9 @@ describe('GET /admin/clients/id', function () {
             var res = JSON.parse(self.res.text);
             expect(res.id).to.equal(1);
             expect(res.client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
-            expect(res.client_secret).to.equal("49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98");
+            expect(res.client_secret).to.be.undefined;
+            expect(res.created_at).to.be.defined;
+            expect(res.updated_at).to.be.defined;
             expect(res.name).to.equal("OAuth 2.0 Client");
         });
 
@@ -722,7 +726,9 @@ describe('DELETE /admin/clients/id', function () {
             var res = JSON.parse(self.res.text);
             expect(res[0].id).to.equal(1);
             expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
-            expect(res[0].client_secret).to.equal("49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98");
+            expect(res[0].client_secret).to.be.undefined;
+            expect(res[0].created_at).to.be.defined;
+            expect(res[0].updated_at).to.be.defined;
             expect(res[0].name).to.equal("OAuth 2.0 Client");
             expect(res.length).to.equal(1);
         });
@@ -732,41 +738,118 @@ describe('DELETE /admin/clients/id', function () {
 
 describe('POST /admin/clients', function () {
 
-    var self = this;
+    context('when creating a new client', function () {
 
-    before(resetDatabase);
 
-    before(function (done) {
-        // Login with an admin login
-        requestHelper.login(self, done);
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with an admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+                    name: "OAuth 2.0 Client"
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'get'
+            }, done);
+        });
+
+        before(function (done) {
+            db.OAuth2Client.findAll().then(
+                function (clients) {
+                    self.clientsInDb = clients;
+                    done();
+                });
+        });
+
+        it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
+            expect(self.res.statusCode).to.equal(200);
+            var res = JSON.parse(self.res.text);
+            expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
+            expect(res[0].name).to.equal("OAuth 2.0 Client");
+            expect(res[0].client_secret).to.be.undefined;
+            expect(res[0].created_at).to.be.defined;
+            expect(res[0].updated_at).to.be.defined;
+            expect(self.clientsInDb[0].client_secret.length).to.equal(60);
+        });
     });
 
-    before(function (done) {
-        requestHelper.sendRequest(self, '/admin/clients', {
-            cookie: self.cookie,
-            method: 'post',
-            data: {
-                client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-                // client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
-                name: "OAuth 2.0 Client"
-            }
-        }, done);
-    });
+    context('when updating a client', function () {
 
-    before(function (done) {
-        requestHelper.sendRequest(self, '/admin/clients', {
-            cookie: self.cookie,
-            method: 'get'
-        }, done);
-    });
 
-    it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
-        expect(self.res.statusCode).to.equal(200);
-        var res = JSON.parse(self.res.text);
-        console.log(res);
-        expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
-        expect(res[0].name).to.equal("OAuth 2.0 Client");
-        expect(res[0].client_secret.length).to.equal(60);
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with an admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+                    name: "OAuth 2.0 Client"
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            var id = JSON.parse(self.res.text).id;
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    id: id,
+                    client_id: "aaa",
+                    name: "bbb"
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'get'
+            }, done);
+        });
+
+        before(function (done) {
+            db.OAuth2Client.findAll().then(
+                function (clients) {
+                    self.clientsInDb = clients;
+                    done();
+                });
+        });
+
+        it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
+            expect(self.res.statusCode).to.equal(200);
+            var res = JSON.parse(self.res.text);
+            expect(res[0].client_id).to.equal("aaa");
+            expect(res[0].name).to.equal("bbb");
+            expect(res[0].client_secret).to.be.undefined;
+            expect(res[0].created_at).to.be.defined;
+            expect(res[0].updated_at).to.be.defined;
+            expect(self.clientsInDb[0].client_secret.length).to.equal(60);
+
+        });
     });
 
 });

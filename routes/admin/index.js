@@ -25,6 +25,7 @@ module.exports = function (router) {
         return db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
+
                     return res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
                 },
                 function (err) {
@@ -37,7 +38,7 @@ module.exports = function (router) {
         db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
-                    res.send(oAuth2Clients);
+                    res.send(buildJsonClients(oAuth2Clients));
                 },
                 function (err) {
                     res.send(500);
@@ -45,13 +46,14 @@ module.exports = function (router) {
                 });
     });
 
+
     router.get('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findOne({
             id: req.params.id
         }).then(
             function (client) {
                 if (client) {
-                    return res.send(client);
+                    return res.send(buildJsonClient(client));
                 } else {
                     return res.sendStatus(404);
                 }
@@ -81,7 +83,7 @@ module.exports = function (router) {
                             name: client.name,
                             redirect_uri: client.redirect_uri
                         }).then(function () {
-                            return res.sendStatus(200);
+                            res.json({'id': client.id});
                         });
                     } else {
                         return res.sendStatus(404);
@@ -101,9 +103,9 @@ module.exports = function (router) {
                             // Save token
                             client.client_secret = hash;
                             return db.OAuth2Client.create(client
-                            ).then(function () {
+                            ).then(function (createClient) {
                                 // return generated token
-                                res.json(secret);
+                                return res.json({'secret': secret, 'id': createClient.id});
                             });
                         }
                     });
@@ -135,7 +137,7 @@ module.exports = function (router) {
                                         {client_secret: hash}
                                     ).then(function () {
                                         // return generated token
-                                        res.json(secret);
+                                        res.json({'secret': secret});
                                     });
                                 }
                             });
@@ -269,5 +271,32 @@ module.exports = function (router) {
 
 
     });
+
+
+    // use to return only relevant attribute to front end.
+    // MUST BE USED if you don't want to return client_secret.
+    function buildJsonClient(client) {
+        return {
+            id: client.id,
+            client_id: client.client_id,
+            name: client.name,
+            redirect_uri: client.redirect_uri,
+            created_at: client.created_at,
+            udpated_at: client.udpated_at
+
+        };
+    }
+
+    // use to return only relevant attribute to front end.
+    // MUST BE USED if you don't want to return client_secret.
+    function buildJsonClients(clients) {
+        var toReturn = [];
+        if (clients) {
+            for (var i = 0; i < clients.length; i++) {
+                toReturn.push(buildJsonClient(clients[i]));
+            }
+        }
+        return toReturn;
+    }
 
 };
