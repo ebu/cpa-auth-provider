@@ -730,46 +730,45 @@ describe('DELETE /admin/clients/id', function () {
     });
 });
 
-// describe('POST /admin/clients', function () {
-//
-//     var self = this;
-//
-//     before(resetDatabase);
-//
-//     before(function (done) {
-//         // Login with an admin login
-//         requestHelper.login(self, done);
-//     });
-//
-//     before(function (done) {
-//         requestHelper.sendRequest(self, '/admin/clients', {
-//             cookie: self.cookie,
-//             method: 'post',
-//             data: {
-//                 client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-//                 // client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
-//                 name: "OAuth 2.0 Client"
-//             }
-//         }, done);
-//     });
-//
-//     before(function (done) {
-//         requestHelper.sendRequest(self, '/admin/clients', {
-//             cookie: self.cookie,
-//             method: 'get'
-//         }, done);
-//     });
-//
-//     it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
-//         expect(self.res.statusCode).to.equal(200);
-//         var res = JSON.parse(self.res.text);
-//         console.log(res);
-//         expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
-//         expect(res[0].client_secret).to.equal("49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98");
-//         expect(res[0].name).to.equal("OAuth 2.0 Client");
-//         expect(res[0].client_secret.length).to.equal(60);
-//     });
-//
-// });
+describe('POST /admin/clients', function () {
+
+    var self = this;
+
+    before(resetDatabase);
+
+    before(function (done) {
+        // Login with an admin login
+        requestHelper.login(self, done);
+    });
+
+    before(function (done) {
+        requestHelper.sendRequest(self, '/admin/clients', {
+            cookie: self.cookie,
+            method: 'post',
+            data: {
+                client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+                // client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
+                name: "OAuth 2.0 Client"
+            }
+        }, done);
+    });
+
+    before(function (done) {
+        requestHelper.sendRequest(self, '/admin/clients', {
+            cookie: self.cookie,
+            method: 'get'
+        }, done);
+    });
+
+    it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
+        expect(self.res.statusCode).to.equal(200);
+        var res = JSON.parse(self.res.text);
+        console.log(res);
+        expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
+        expect(res[0].name).to.equal("OAuth 2.0 Client");
+        expect(res[0].client_secret.length).to.equal(60);
+    });
+
+});
 
 

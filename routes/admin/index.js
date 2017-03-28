@@ -90,14 +90,23 @@ module.exports = function (router) {
             } else {
                 var secret = generate.cryptoCode(30);
 
-                // // Hash token
-                var salt = bcrypt.genSaltSync(60);
-                var hash = bcrypt.hashSync(secret, salt);
-
-                client.client_secret = hash;
-                return db.OAuth2Client.create(client).then(function () {
-                    return res.json(secret);
-                });
+                // Hash token
+                return bcrypt.hash(
+                    secret,
+                    5,
+                    function (err, hash) {
+                        if (err) {
+                            return reject(err);
+                        } else {
+                            // Save token
+                            client.client_secret = hash;
+                            return db.OAuth2Client.create(client
+                            ).then(function () {
+                                // return generated token
+                                res.json(secret);
+                            });
+                        }
+                    });
 
             }
 
@@ -117,7 +126,7 @@ module.exports = function (router) {
                         // Hash token
                         return bcrypt.hash(
                             secret,
-                            60,
+                            5,
                             function (err, hash) {
                                 if (err) {
                                     return reject(err);
