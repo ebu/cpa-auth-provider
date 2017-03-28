@@ -13,6 +13,9 @@ var chai = require('chai');
 var chaiJquery = require('chai-jquery');
 var chaiHttp = require('chai-http');
 
+var promise = require('bluebird');
+var bcrypt = promise.promisifyAll(require('bcrypt'));
+
 chai.use(chaiHttp);
 
 var initDatabase = function (done) {
@@ -648,6 +651,50 @@ describe('GET /admin/clients/id', function () {
         });
 
     });
+});
+
+describe('GET /admin/clients/:clientId/secret', function () {
+    var self = this;
+
+    before(resetDatabase);
+
+    before(function (done) {
+        db.OAuth2Client.create({
+            id: 1,
+            client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+            client_secret: "secret",
+            name: "OAuth 2.0 Client"
+        }).then(function () {
+            done();
+        });
+    });
+
+    before(function (done) {
+        // Login with an admin login
+        requestHelper.login(self, done);
+    });
+
+    before(function (done) {
+        requestHelper.sendRequest(self, '/admin/clients/1/secret', {
+            cookie: self.cookie,
+            method: 'get'
+        }, done);
+    });
+
+    before(function (done) {
+        db.OAuth2Client.findOne({id: 1}).then(
+            function (client) {
+                self.clientInDb = client;
+                done();
+            });
+    });
+
+    it('should return status 200, change the password hash, and be validated via bcrypt', function () {
+        expect(self.res.statusCode).to.equal(200);
+        expect(self.clientInDb.client_secret).to.not.equal("secret");
+        expect(bcrypt.compareSync(JSON.parse(self.res.text).secret, self.clientInDb.client_secret)).to.be.true;
+    });
+
 });
 
 
