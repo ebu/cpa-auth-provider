@@ -10,6 +10,10 @@ var generate = require('../../lib/generate');
 var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
+var promise = require('bluebird');
+var bcrypt = promise.promisifyAll(require('bcrypt'));
+var generate = require('../../lib/generate');
+
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
@@ -17,11 +21,24 @@ module.exports = function (router) {
     });
 
 
+    router.get('/admin/clients/all', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        return db.OAuth2Client.findAll()
+            .then(
+                function (oAuth2Clients) {
+
+                    return res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
+                },
+                function (err) {
+                    logger.debug('[Admins][get /admin/clients/all][error', err, ']');
+                    return res.send(500);
+                });
+    });
+
     router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
-                    res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
+                    res.send(buildJsonClients(oAuth2Clients));
                 },
                 function (err) {
                     res.send(500);
@@ -29,7 +46,22 @@ module.exports = function (router) {
                 });
     });
 
-    router.post('/admin/clients', /*[authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)],*/ function (req, res) {
+
+    router.get('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        return db.OAuth2Client.findOne({
+            id: req.params.id
+        }).then(
+            function (client) {
+                if (client) {
+                    return res.send(buildJsonClient(client));
+                } else {
+                    return res.sendStatus(404);
+                }
+            });
+    });
+
+
+    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         var client = req.body;
 
@@ -39,31 +71,44 @@ module.exports = function (router) {
             req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
         }
 
-        req.getValidationResult().then(function (result) {
+        return req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
-                res.status(400).json({errors: result.array()});
-                return;
+                return res.status(400).json({errors: result.array()});
             }
             if (client.id) {
-                db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
+                return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
                     if (oAuhtClient) {
                         oAuhtClient.updateAttributes({
                             client_id: client.client_id,
                             name: client.name,
                             redirect_uri: client.redirect_uri
                         }).then(function () {
-                            res.sendStatus(200);
+                            res.json({'id': client.id});
                         });
                     } else {
-                        res.sendStatus(404);
+                        return res.sendStatus(404);
                     }
                 });
             } else {
-                // TODO Generate secret
+                var secret = generate.cryptoCode(30);
 
-                db.OAuth2Client.create(client).then(function (clientFromDb) {
-                    res.json(clientFromDb);
-                });
+                // Hash token
+                return bcrypt.hash(
+                    secret,
+                    5,
+                    function (err, hash) {
+                        if (err) {
+                            return res.status(500).send(err);
+                        } else {
+                            // Save token
+                            client.client_secret = hash;
+                            return db.OAuth2Client.create(client
+                            ).then(function (createClient) {
+                                // return generated token
+                                return res.json({'secret': secret, 'id': createClient.id});
+                            });
+                        }
+                    });
             }
 
         });
@@ -77,23 +122,34 @@ module.exports = function (router) {
                 function (client) {
                     if (client) {
                         // Generate token
+                        var secret = generate.cryptoCode(30);
 
-                        // Hask token
-
-                        // Save token
-
-                        // return generated token
-                        res.send("this is a secret");
+                        // Hash token
+                        return bcrypt.hash(
+                            secret,
+                            5,
+                            function (err, hash) {
+                                if (err) {
+                                    return res.status(500).send(err);
+                                } else {
+                                    // Save token
+                                    return client.updateAttributes(
+                                        {client_secret: hash}
+                                    ).then(function () {
+                                        // return generated token
+                                        res.json({'secret': secret});
+                                    });
+                                }
+                            });
                     } else {
                         res.sendStatus(404);
                     }
-
                 });
     });
 
 
-    router.delete('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
-        db.OAuth2Client.destroy({where: {id: req.params.clientId}})
+    router.delete('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.destroy({where: {id: req.params.id}})
             .then(
                 function () {
                     res.sendStatus(200);
@@ -215,5 +271,32 @@ module.exports = function (router) {
 
 
     });
+
+
+    // use to return only relevant attribute to front end.
+    // MUST BE USED if you don't want to return client_secret.
+    function buildJsonClient(client) {
+        return {
+            id: client.id,
+            client_id: client.client_id,
+            name: client.name,
+            redirect_uri: client.redirect_uri,
+            created_at: client.created_at,
+            udpated_at: client.udpated_at
+
+        };
+    }
+
+    // use to return only relevant attribute to front end.
+    // MUST BE USED if you don't want to return client_secret.
+    function buildJsonClients(clients) {
+        var toReturn = [];
+        if (clients) {
+            for (var i = 0; i < clients.length; i++) {
+                toReturn.push(buildJsonClient(clients[i]));
+            }
+        }
+        return toReturn;
+    }
 
 };
