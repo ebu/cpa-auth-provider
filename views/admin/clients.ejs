@@ -29,10 +29,11 @@
             <tbody>
             <% for (var i = 0; i < oAuth2Clients.length; i++) { %>
             <tr>
-                <td><%= oAuth2Clients[i].name %></td>
-                <td><%= oAuth2Clients[i].client_id %></td>
-                <td><%= oAuth2Clients[i].redirect_uri %></td>
+                <td class="client-name"><%= oAuth2Clients[i].name %></td>
+                <td class="client-id"><%= oAuth2Clients[i].client_id %></td>
+                <td class="client-redirect"><%= oAuth2Clients[i].redirect_uri %></td>
                 <td>
+                    <span class="hidden real-id"><%= oAuth2Clients[i].id %></span>
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default edit-client" aria-label="<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>" title="<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>">
@@ -106,30 +107,77 @@
         });
         $('.delete-client').on('click', function (event) {
             refreshMessages();
-            $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_SUCCESS') %>");
-            $alertSuccess.show();
-            $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_FAIL') %>");
-            $alertError.show();
+            var realId = getRealId(this);
+            $.ajax({
+                url: '/admin/clients/' + encodeURIComponent(realId),
+                method: 'DELETE'
+			}).then(
+				function(data, status, jqXHR) {
+					$successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_SUCCESS') %>");
+					$alertSuccess.show();
+                },
+                function(jqXHR, status, error) {
+					console.log(error);
+					$errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_FAIL') %>");
+					$alertError.show();
+                }
+            );
         });
         $('.refresh-secret').on('click', function (event) {
             refreshMessages();
-            $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>");
-            $alertSuccess.show();
-            $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL') %>");
-            $alertError.show();
+            var realId = getRealId(this);
+            $.ajax('/admin/clients/'+encodeURIComponent(realId)+'/secret').then(
+            	function(data, status, jqXHR) {
+            		console.log(data);
+					$successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>", data.secret);
+					$alertSuccess.show();
+                },
+                function(jqXHR, status, error) {
+            		console.log(error);
+					$errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL') %>");
+					$alertError.show();
+                }
+            );
         });
         $('#add-client').on('click', function (event) {
             refreshMessages();
-            $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS', {secret: 'mon secret qui marche'}) %>");
-            $alertSuccess.show();
-            $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL', {secret: 'mon secret qui ne marche pas'}) %>");
-            $alertError.show();
-            $addClientModal.modal('toggle');
+
+            var $dialog = $(this).closest('.modal-dialog');
+            var name = $dialog.find('#name').val();
+            var clientId = $dialog.find('#clientID').val();
+            var redirectUri = $dialog.find('#redirectURI').val();
+
+            $.ajax({
+                url: '/admin/clients',
+                method: 'POST',
+                data: { name: name, client_id: clientId, redirect_uri: redirectUri }
+			}).then(
+				function(data, status, jqXHR) {
+					console.log(data);
+					$successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS') %>", data.secret);
+					$alertSuccess.show();
+					$addClientModal.modal('toggle');
+                },
+                function(jqXHR, status, error) {
+					console.log(error);
+					$errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL', {secret: 'mon secret qui ne marche pas'}) %>");
+					$alertError.show();
+					$addClientModal.modal('toggle');
+                }
+            );
         });
 
         refreshMessages = function() {
             $successMessage.html('');
             $errorMessage.html('');
+            $alertError.hide();
+            $alertSuccess.hide();
+        }
+
+        function getRealId(target) {
+        	var row = $(target).closest('tr');
+        	var cell = row.find('.real-id');
+        	return cell.text();
         }
     })();
 </script>
