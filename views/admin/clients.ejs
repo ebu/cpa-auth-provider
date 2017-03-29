@@ -129,12 +129,12 @@
             $.ajax('/admin/clients/'+encodeURIComponent(realId)+'/secret').then(
             	function(data, status, jqXHR) {
             		console.log(data);
-					$successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>", data.secret);
+					$successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %> ", data.secret);
 					$alertSuccess.show();
                 },
                 function(jqXHR, status, error) {
             		console.log(error);
-					$errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL') %>");
+					$errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL') %> ");
 					$alertError.show();
                 }
             );
