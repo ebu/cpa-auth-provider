@@ -193,7 +193,7 @@
                 },
                 function (jqXHR, status, error) {
                     console.log(error);
-                    $errorMessage.append("TODO ERROR MESSAGE"); //TODO
+                    $errorMessage.append("<%= __('ADMIN_CLIENT_ERROR_CANNOT_LOAD_CLIENT_LIST') %>");
                     $alertError.show();
                 }
             );
