@@ -482,7 +482,7 @@ describe('GET /admin/users/csv', function () {
 });
 
 
-describe('GET /admin/clients/all', function () {
+describe('GET /admin/clients', function () {
 
     var self = this;
 
@@ -494,7 +494,7 @@ describe('GET /admin/clients/all', function () {
     });
 
     before(function (done) {
-        requestHelper.sendRequest(self, '/admin/clients/all', {
+        requestHelper.sendRequest(self, '/admin/clients', {
             cookie: self.cookie,
             method: 'get'
         }, done);
@@ -507,7 +507,7 @@ describe('GET /admin/clients/all', function () {
 });
 
 
-describe('GET /admin/clients', function () {
+describe('GET /api/admin/clients', function () {
 
     context('When no clients in db', function () {
 
@@ -522,7 +522,7 @@ describe('GET /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -557,7 +557,7 @@ describe('GET /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -577,7 +577,7 @@ describe('GET /admin/clients', function () {
     });
 });
 
-describe('GET /admin/clients/id', function () {
+describe('GET /api/admin/clients/id', function () {
 
     context('When no clients in db', function () {
 
@@ -592,7 +592,7 @@ describe('GET /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/1', {
+            requestHelper.sendRequest(self, '/api/admin/clients/1', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -633,7 +633,7 @@ describe('GET /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/1', {
+            requestHelper.sendRequest(self, '/api/admin/clients/1', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -653,7 +653,7 @@ describe('GET /admin/clients/id', function () {
     });
 });
 
-describe('GET /admin/clients/:clientId/secret', function () {
+describe('GET /api/admin/clients/:clientId/secret', function () {
     var self = this;
 
     before(resetDatabase);
@@ -675,7 +675,7 @@ describe('GET /admin/clients/:clientId/secret', function () {
     });
 
     before(function (done) {
-        requestHelper.sendRequest(self, '/admin/clients/1/secret', {
+        requestHelper.sendRequest(self, '/api/admin/clients/1/secret', {
             cookie: self.cookie,
             method: 'get'
         }, done);
@@ -698,7 +698,7 @@ describe('GET /admin/clients/:clientId/secret', function () {
 });
 
 
-describe('DELETE /admin/clients/id', function () {
+describe('DELETE /api/admin/clients/id', function () {
 
     context('When no clients in db', function () {
 
@@ -713,7 +713,7 @@ describe('DELETE /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/1', {
+            requestHelper.sendRequest(self, '/api/admin/clients/1', {
                 cookie: self.cookie,
                 method: 'delete'
             }, done);
@@ -754,7 +754,7 @@ describe('DELETE /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/2', {
+            requestHelper.sendRequest(self, '/api/admin/clients/2', {
                 cookie: self.cookie,
                 method: 'delete'
             }, done);
@@ -762,7 +762,7 @@ describe('DELETE /admin/clients/id', function () {
 
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -783,7 +783,7 @@ describe('DELETE /admin/clients/id', function () {
     });
 });
 
-describe('POST /admin/clients', function () {
+describe('POST /api/admin/clients', function () {
 
     context('when creating a new client', function () {
 
@@ -798,7 +798,7 @@ describe('POST /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
@@ -809,7 +809,7 @@ describe('POST /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -848,7 +848,7 @@ describe('POST /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
@@ -860,7 +860,7 @@ describe('POST /admin/clients', function () {
 
         before(function (done) {
             var id = JSON.parse(self.res.text).id;
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
@@ -872,7 +872,7 @@ describe('POST /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);

@@ -21,7 +21,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/clients/all', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -34,7 +34,7 @@ module.exports = function (router) {
                 });
     });
 
-    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/api/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -47,7 +47,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findOne({
             id: req.params.id
         }).then(
@@ -61,7 +61,7 @@ module.exports = function (router) {
     });
 
 
-    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.post('/api/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         var client = req.body;
 
@@ -116,7 +116,7 @@ module.exports = function (router) {
 
     });
 
-    router.get('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/api/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findOne({where: {id: req.params.clientId}})
             .then(
                 function (client) {
@@ -148,7 +148,7 @@ module.exports = function (router) {
     });
 
 
-    router.delete('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.delete('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.destroy({where: {id: req.params.id}})
             .then(
                 function () {

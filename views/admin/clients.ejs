@@ -106,7 +106,7 @@
                 refreshMessages();
                 var realId = getRealId(this);
                 $.ajax({
-                    url: '/admin/clients/' + encodeURIComponent(realId),
+                    url: '/api/admin/clients/' + encodeURIComponent(realId),
                     method: 'DELETE'
                 }).then(
                     function (data, status, jqXHR) {
@@ -125,7 +125,7 @@
             $('.refresh-secret').on('click', function (event) {
                 refreshMessages();
                 var realId = getRealId(this);
-                $.ajax('/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
+                $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
                     function (data, status, jqXHR) {
                         console.log(data);
                         $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %> ", data.secret);
@@ -151,7 +151,7 @@
             var redirectUri = $dialog.find('#redirectURI').val();
 
             $.ajax({
-                url: '/admin/clients',
+                url: '/api/admin/clients',
                 method: 'POST',
                 data: {name: name, client_id: clientId, redirect_uri: redirectUri}
             }).then(
@@ -180,7 +180,7 @@
 
         var displayList = function () {
             $.ajax({
-                url: '/admin/clients/',
+                url: '/api/admin/clients/',
                 method: 'GET'
             }).then(
                 function (data, status, jqXHR) {
