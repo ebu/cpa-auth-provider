@@ -40,7 +40,7 @@
 </div>
 
 <!-- Add client Modal -->
-<div class="modal fade" id="addClientModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="addClientModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -77,6 +77,44 @@
     </div>
 </div>
 
+<!-- Update client Modal -->
+<div class="modal fade" id="updateClientModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"><%= __('ADMIN_CLIENT_UPDATE_CLIENT_MODALE_TITLE') %></h4>
+            </div>
+            <div class="modal-body">
+                <form id="addClientForm">
+                    <div class="form-group">
+                        <label for="name"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %></label>
+                        <input type="text" class="form-control" id="update-name"
+                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientID"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %></label>
+                        <input type="text" class="form-control" id="update-clientID"
+                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="redirectURI"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %></label>
+                        <input type="text" class="form-control" id="update-redirectURI"
+                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %>">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_CLOSE') %></button>
+                <button id="update-client" type="button"
+                        class="btn btn-primary"><%= __('ADMIN_CLIENT_UPDATE_CLIENT_MODALE_SUBMIT') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
 
     var eventListeners = function () {
@@ -95,13 +133,6 @@
         });
 
         eventListeners = function () {
-            $('.edit-client').on('click', function (event) {
-                refreshMessages();
-                $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
-                $alertSuccess.show();
-                $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
-                $alertError.show();
-            });
             $('.delete-client').on('click', function (event) {
                 refreshMessages();
                 var realId = getRealId(this);
@@ -121,7 +152,6 @@
                     }
                 );
             });
-
             $('.refresh-secret').on('click', function (event) {
                 refreshMessages();
                 var realId = getRealId(this);
@@ -145,7 +175,7 @@
         $('#add-client').on('click', function (event) {
             refreshMessages();
 
-            var $dialog = $(this).closest('.modal-dialog');
+            var $dialog = $('#addClientModal');
             var name = $dialog.find('#name').val();
             var clientId = $dialog.find('#clientID').val();
             var redirectUri = $dialog.find('#redirectURI').val();
@@ -169,6 +199,18 @@
                     $addClientModal.modal('toggle');
                 }
             );
+        });
+
+        $('#update-client').on('click', function (event) {
+            refreshMessages();
+            var $dialog = $('#updateClientModal');
+
+            $dialog.modal('toggle');
+
+            $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
+            $alertSuccess.show();
+            $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
+            $alertError.show();
         });
 
         refreshMessages = function () {
@@ -213,7 +255,7 @@
             row = row + '                    <span class="hidden real-id">' + id + '</span>\n';
             row = row + '                    <div class="btn-toolbar" role="toolbar">\n';
             row = row + '                        <div class="btn-group">\n';
-            row = row + '                            <button type="button" class="btn btn-default edit-client" aria-label="' + edit + '" title="' + edit + '">\n';
+            row = row + '                            <button type="button" class="btn btn-default edit-client" data-toggle="modal" data-target="#updateClientModal" aria-label="' + edit + '" title="' + edit + '">\n';
             row = row + '                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n';
             row = row + '                            </button>\n';
             row = row + '                            <button type="button" class="btn btn-default delete-client" aria-label="' + del + '" title="' + del + '">\n';
