@@ -51,6 +51,7 @@
         var $errorMessage = $('#alert-error .message');
         var $successMessage = $('#alert-success .message');
         var $addClientModal = $('#addClientModal');
+        var $updateClientModal = $('#updateClientModal');
 
         $( document ).ready(function() {
             displayList();
@@ -105,11 +106,11 @@
                 var clientId = row.find('.client-id').text() !== "null" ? row.find('.client-id').text() : '';
                 var clientRedirect = row.find('.client-redirect').text() !== "null" ? row.find('.client-redirect').text() : '';
 
-                $dialog.modal('toggle');
-
                 $dialog.find('#update-name').first().val(clientName);
                 $dialog.find('#update-clientID').first().val(clientId);
                 $dialog.find('#update-redirectURI').first().val(clientRedirect);
+                $dialog.find('#update-id').first().val(id);
+                $updateClientModal.modal('toggle');
             });
         };
 
@@ -118,10 +119,9 @@
         $('#add-client').on('click', function (event) {
             refreshMessages();
 
-            var $dialog = $('#addClientModal');
-            var name = $dialog.find('#name').val();
-            var clientId = $dialog.find('#clientID').val();
-            var redirectUri = $dialog.find('#redirectURI').val();
+            var name = $addClientModal.find('#name').val();
+            var clientId = $addClientModal.find('#clientID').val();
+            var redirectUri = $addClientModal.find('#redirectURI').val();
 
             $.ajax({
                 url: '/api/admin/clients',
@@ -145,14 +145,30 @@
         });
         $('#update-client').on('click', function (event) {
             refreshMessages();
-            var $dialog = $('#updateClientModal');
+            var id = $updateClientModal.find('#update-id').val();
+            var name = $updateClientModal.find('#update-name').val();
+            var clientId = $updateClientModal.find('#update-clientID').val();
+            var redirectUri = $updateClientModal.find('#update-redirectURI').val();
 
-            $dialog.modal('toggle');
-
-            $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
-            $alertSuccess.show();
-            $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
-            $alertError.show();
+            $.ajax({
+                url: '/api/admin/clients/',
+                method: 'POST',
+                data: {id: encodeURIComponent(id), name: name, client_id: clientId, redirect_uri: redirectUri}
+            }).then(
+                function (data, status, jqXHR) {
+                    console.log(data);
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
+                    $alertSuccess.show();
+                    $updateClientModal.modal('toggle');
+                    displayList();
+                },
+                function (jqXHR, status, error) {
+                    console.log(error);
+                    $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
+                    $alertError.show();
+                    $updateClientModal.modal('toggle');
+                }
+            );
         });
         //Reset all error/success messages
         refreshMessages = function () {
@@ -162,7 +178,7 @@
             $alertSuccess.hide();
         }
         //Clear fields on modal shown
-        $('#addClientModal').on('shown.bs.modal', function() {
+        $addClientModal.on('shown.bs.modal', function() {
             $(this).find('#name').first().val('');
             $(this).find('#clientID').first().val('');
             $(this).find('#redirectURI').first().val('');
