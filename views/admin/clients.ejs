@@ -9,8 +9,7 @@
     </div>
 
     <div id="alert-success" class="alert alert-success alert-dismissible error-block" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-hide="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <span class="message"></span>
     </div>
 
@@ -33,93 +32,18 @@
     </div>
 
     <p>
-        <button class="btn-link" data-toggle="modal"
-                data-target="#addClientModal"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></button>
+        <button class="btn-link" data-toggle="modal" data-target="#addClientModal"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></button>
     </p>
 
 </div>
 
 <!-- Add client Modal -->
-<div class="modal fade" id="addClientModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_TITLE') %></h4>
-            </div>
-            <div class="modal-body">
-                <form id="addClientForm">
-                    <div class="form-group">
-                        <label for="name"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %></label>
-                        <input type="text" class="form-control" id="name"
-                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="clientID"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %></label>
-                        <input type="text" class="form-control" id="clientID"
-                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="redirectURI"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %></label>
-                        <input type="text" class="form-control" id="redirectURI"
-                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %>">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default"
-                        data-dismiss="modal"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_CLOSE') %></button>
-                <button id="add-client" type="button"
-                        class="btn btn-primary"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_SUBMIT') %></button>
-            </div>
-        </div>
-    </div>
-</div>
+<% include ./modales/clients-add.ejs %>
 
 <!-- Update client Modal -->
-<div class="modal fade" id="updateClientModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel"><%= __('ADMIN_CLIENT_UPDATE_CLIENT_MODALE_TITLE') %></h4>
-            </div>
-            <div class="modal-body">
-                <form id="addClientForm">
-                    <div class="form-group">
-                        <label for="name"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %></label>
-                        <input type="text" class="form-control" id="update-name"
-                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="clientID"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %></label>
-                        <input type="text" class="form-control" id="update-clientID"
-                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="redirectURI"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %></label>
-                        <input type="text" class="form-control" id="update-redirectURI"
-                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %>">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default"
-                        data-dismiss="modal"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_CLOSE') %></button>
-                <button id="update-client" type="button"
-                        class="btn btn-primary"><%= __('ADMIN_CLIENT_UPDATE_CLIENT_MODALE_SUBMIT') %></button>
-            </div>
-        </div>
-    </div>
-</div>
+<% include ./modales/clients-update.ejs %>
 
 <script type="text/javascript">
-
-    var eventListeners = function () {
-    };
-
 
     (function () {
         var $alertError = $('#alert-error');
@@ -127,9 +51,14 @@
         var $errorMessage = $('#alert-error .message');
         var $successMessage = $('#alert-success .message');
         var $addClientModal = $('#addClientModal');
+        var $updateClientModal = $('#updateClientModal');
 
         $( document ).ready(function() {
             displayList();
+
+            $("[data-hide]").on("click", function(){
+                $(this).closest("." + $(this).attr("data-hide")).hide();
+            });
         });
 
         eventListeners = function () {
@@ -158,7 +87,7 @@
                 $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
                     function (data, status, jqXHR) {
                         console.log(data);
-                        $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %> ", data.secret);
+                        $successMessage.append(data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>");
                         $alertSuccess.show();
                     },
                     function (jqXHR, status, error) {
@@ -168,6 +97,21 @@
                     }
                 );
             });
+            $('.edit-client').on('click', function (event) {
+                refreshMessages();
+                var id = getRealId(this);
+                var $dialog = $('#updateClientModal');
+                var row = $(this).closest('tr');
+                var clientName = row.find('.client-name').text() !== "null" ? row.find('.client-name').text() : '';
+                var clientId = row.find('.client-id').text() !== "null" ? row.find('.client-id').text() : '';
+                var clientRedirect = row.find('.client-redirect').text() !== "null" ? row.find('.client-redirect').text() : '';
+
+                $dialog.find('#update-name').first().val(clientName);
+                $dialog.find('#update-clientID').first().val(clientId);
+                $dialog.find('#update-redirectURI').first().val(clientRedirect);
+                $dialog.find('#update-id').first().val(id);
+                $updateClientModal.modal('toggle');
+            });
         };
 
         eventListeners();
@@ -175,10 +119,9 @@
         $('#add-client').on('click', function (event) {
             refreshMessages();
 
-            var $dialog = $('#addClientModal');
-            var name = $dialog.find('#name').val();
-            var clientId = $dialog.find('#clientID').val();
-            var redirectUri = $dialog.find('#redirectURI').val();
+            var name = $addClientModal.find('#name').val();
+            var clientId = $addClientModal.find('#clientID').val();
+            var redirectUri = $addClientModal.find('#redirectURI').val();
 
             $.ajax({
                 url: '/api/admin/clients',
@@ -187,39 +130,60 @@
             }).then(
                 function (data, status, jqXHR) {
                     console.log(data);
-                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS') %>", data.secret);
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_PREFIX') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_SUFFIX') %>");
                     $alertSuccess.show();
                     $addClientModal.modal('toggle');
                     displayList();
                 },
                 function (jqXHR, status, error) {
                     console.log(error);
-                    $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL', {secret: 'mon secret qui ne marche pas'}) %>");
+                    $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL') %>");
                     $alertError.show();
                     $addClientModal.modal('toggle');
                 }
             );
         });
-
         $('#update-client').on('click', function (event) {
             refreshMessages();
-            var $dialog = $('#updateClientModal');
+            var id = $updateClientModal.find('#update-id').val();
+            var name = $updateClientModal.find('#update-name').val();
+            var clientId = $updateClientModal.find('#update-clientID').val();
+            var redirectUri = $updateClientModal.find('#update-redirectURI').val();
 
-            $dialog.modal('toggle');
-
-            $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
-            $alertSuccess.show();
-            $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
-            $alertError.show();
+            $.ajax({
+                url: '/api/admin/clients/',
+                method: 'POST',
+                data: {id: encodeURIComponent(id), name: name, client_id: clientId, redirect_uri: redirectUri}
+            }).then(
+                function (data, status, jqXHR) {
+                    console.log(data);
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
+                    $alertSuccess.show();
+                    $updateClientModal.modal('toggle');
+                    displayList();
+                },
+                function (jqXHR, status, error) {
+                    console.log(error);
+                    $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
+                    $alertError.show();
+                    $updateClientModal.modal('toggle');
+                }
+            );
         });
-
+        //Reset all error/success messages
         refreshMessages = function () {
             $successMessage.html('');
             $errorMessage.html('');
             $alertError.hide();
             $alertSuccess.hide();
         }
-
+        //Clear fields on modal shown
+        $addClientModal.on('shown.bs.modal', function() {
+            $(this).find('#name').first().val('');
+            $(this).find('#clientID').first().val('');
+            $(this).find('#redirectURI').first().val('');
+        })
+        //Get all clients and rebuild the view
         var displayList = function () {
             $.ajax({
                 url: '/api/admin/clients/',
@@ -240,8 +204,9 @@
                 }
             );
         }
-
+        //build the html for each row which is added to client table
         var buildRow = function (id, name, client_id, redirect_uri) {
+            redirect_uri = redirect_uri !== null ? redirect_uri : '';
             var edit = "<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>";
             var del = "<%= __('ADMIN_CLIENT_ACTIONS_DELETE_CLIENT') %>";
             var reg = "<%= __('ADMIN_CLIENT_ACTIONS_REGENERATE_CLIENT_SECRET') %>";
@@ -255,7 +220,7 @@
             row = row + '                    <span class="hidden real-id">' + id + '</span>\n';
             row = row + '                    <div class="btn-toolbar" role="toolbar">\n';
             row = row + '                        <div class="btn-group">\n';
-            row = row + '                            <button type="button" class="btn btn-default edit-client" data-toggle="modal" data-target="#updateClientModal" aria-label="' + edit + '" title="' + edit + '">\n';
+            row = row + '                            <button type="button" class="btn btn-default edit-client" aria-label="' + edit + '" title="' + edit + '">\n';
             row = row + '                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n';
             row = row + '                            </button>\n';
             row = row + '                            <button type="button" class="btn btn-default delete-client" aria-label="' + del + '" title="' + del + '">\n';
@@ -271,7 +236,7 @@
 
             return row;
         }
-
+        //Get the DB id corresponding to a single row
         function getRealId(target) {
             var row = $(target).closest('tr');
             var cell = row.find('.real-id');
