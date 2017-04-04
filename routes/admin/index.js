@@ -90,25 +90,40 @@ module.exports = function (router) {
                     }
                 });
             } else {
-                var secret = generate.cryptoCode(30);
 
-                // Hash token
-                return bcrypt.hash(
-                    secret,
-                    5,
-                    function (err, hash) {
-                        if (err) {
-                            return res.status(500).send(err);
-                        } else {
-                            // Save token
-                            client.client_secret = hash;
-                            return db.OAuth2Client.create(client
-                            ).then(function (createClient) {
-                                // return generated token
-                                return res.json({'secret': secret, 'id': createClient.id});
+                // Check if the client_id allready exists
+                return db.OAuth2Client.findOne({
+                    client_id: client.client_id
+                }).then(function (clientInDb) {
+                    if (clientInDb) {
+                        return res.status(400).send({
+                            success: false,
+                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
+                        });
+                    } else {
+                        var secret = generate.cryptoCode(30);
+
+                        // Hash token
+                        return bcrypt.hash(
+                            secret,
+                            5,
+                            function (err, hash) {
+                                if (err) {
+                                    return res.status(500).send(err);
+                                } else {
+                                    // Save token
+                                    client.client_secret = hash;
+                                    return db.OAuth2Client.create(client
+                                    ).then(function (createClient) {
+                                        // return generated token
+                                        return res.json({'secret': secret, 'id': createClient.id});
+                                    });
+                                }
                             });
-                        }
-                    });
+                    }
+                });
+
+
             }
 
         });

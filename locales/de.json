@@ -205,6 +205,7 @@
 	"BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY": "Passwörter stimmen nicht überein",
 
 	"BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Falsche Berechtigungs-ID",
+	"BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "Client Id  existiert bereits",
 
 	"BACK_PROFILE_AUTH_FAIL": "Authentifizierung fehlgeschlagen. Benutzerprofil nicht gefunden",
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Feld 'Vorheriges Passwort' ist leer",
