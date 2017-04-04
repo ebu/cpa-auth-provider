@@ -1,0 +1,36 @@
+<div class="modal fade" id="updateClientModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="updateClientModalTitle"><%= __('ADMIN_CLIENT_UPDATE_CLIENT_MODALE_TITLE') %></h4>
+            </div>
+            <div class="modal-body">
+                <form id="addClientForm">
+                    <div class="form-group">
+                        <label for="name"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %></label>
+                        <input type="text" class="form-control" id="update-name"
+                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_NAME') %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientID"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %></label>
+                        <input type="text" class="form-control" id="update-clientID"
+                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_ID') %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="redirectURI"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %></label>
+                        <input type="text" class="form-control" id="update-redirectURI"
+                               placeholder="<%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_REDIRECT_URI') %>">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal"><%= __('ADMIN_CLIENT_ADD_CLIENT_MODALE_CLOSE') %></button>
+                <button id="update-client" type="button"
+                        class="btn btn-primary"><%= __('ADMIN_CLIENT_UPDATE_CLIENT_MODALE_SUBMIT') %></button>
+            </div>
+        </div>
+    </div>
+</div>
