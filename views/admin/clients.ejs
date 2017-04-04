@@ -9,7 +9,7 @@
     </div>
 
     <div id="alert-success" class="alert alert-success alert-dismissible error-block" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-hide="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <span class="message"></span>
     </div>
 
@@ -45,10 +45,6 @@
 
 <script type="text/javascript">
 
-    var eventListeners = function () {
-    };
-
-
     (function () {
         var $alertError = $('#alert-error');
         var $alertSuccess = $('#alert-success');
@@ -58,6 +54,10 @@
 
         $( document ).ready(function() {
             displayList();
+
+            $("[data-hide]").on("click", function(){
+                $(this).closest("." + $(this).attr("data-hide")).hide();
+            });
         });
 
         eventListeners = function () {
@@ -86,7 +86,7 @@
                 $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
                     function (data, status, jqXHR) {
                         console.log(data);
-                        $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %> ", data.secret);
+                        $successMessage.append(data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>");
                         $alertSuccess.show();
                     },
                     function (jqXHR, status, error) {
@@ -130,20 +130,19 @@
             }).then(
                 function (data, status, jqXHR) {
                     console.log(data);
-                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS') %>", data.secret);
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_PREFIX') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_SUFFIX') %>");
                     $alertSuccess.show();
                     $addClientModal.modal('toggle');
                     displayList();
                 },
                 function (jqXHR, status, error) {
                     console.log(error);
-                    $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL', {secret: 'mon secret qui ne marche pas'}) %>");
+                    $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL') %>");
                     $alertError.show();
                     $addClientModal.modal('toggle');
                 }
             );
         });
-
         $('#update-client').on('click', function (event) {
             refreshMessages();
             var $dialog = $('#updateClientModal');
@@ -155,14 +154,20 @@
             $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
             $alertError.show();
         });
-
+        //Reset all error/success messages
         refreshMessages = function () {
             $successMessage.html('');
             $errorMessage.html('');
             $alertError.hide();
             $alertSuccess.hide();
         }
-
+        //Clear fields on modal shown
+        $('#addClientModal').on('shown.bs.modal', function() {
+            $(this).find('#name').first().val('');
+            $(this).find('#clientID').first().val('');
+            $(this).find('#redirectURI').first().val('');
+        })
+        //Get all clients and rebuild the view
         var displayList = function () {
             $.ajax({
                 url: '/api/admin/clients/',
@@ -183,7 +188,7 @@
                 }
             );
         }
-
+        //build the html for each row which is added to client table
         var buildRow = function (id, name, client_id, redirect_uri) {
             redirect_uri = redirect_uri !== null ? redirect_uri : '';
             var edit = "<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>";
@@ -215,7 +220,7 @@
 
             return row;
         }
-
+        //Get the DB id corresponding to a single row
         function getRealId(target) {
             var row = $(target).closest('tr');
             var cell = row.find('.real-id');
