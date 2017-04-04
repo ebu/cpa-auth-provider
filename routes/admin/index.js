@@ -98,7 +98,7 @@ module.exports = function (router) {
                     if (clientInDb) {
                         return res.status(400).send({
                             success: false,
-                            errors: [req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')]
+                            errors: [{msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')}]
                         });
                     } else {
                         var secret = generate.cryptoCode(30);
