@@ -226,6 +226,7 @@
   "BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY": "Passwords do not match",
 
   "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "wrong permission id",
+  "BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "Client Id Already exists",
 
   "BACK_PROFILE_AUTH_FAIL": "Authentication failed. user profile not found.",
   "BACK_CHANGE_PWD_PREV_PASS_EMPTY": "'Previous Password' field  is empty",

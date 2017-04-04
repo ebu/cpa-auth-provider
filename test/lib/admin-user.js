@@ -835,6 +835,45 @@ describe('POST /api/admin/clients', function () {
         });
     });
 
+    context('when creating 2 clients with the same client id', function () {
+
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with an admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+                    name: "OAuth 2.0 Client"
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+                    name: "OAuth 2.0 Client"
+                }
+            }, done);
+        });
+
+        it('should return status 400 ', function () {
+            expect(self.res.statusCode).to.equal(400);
+        });
+    });
+
     context('when updating a client', function () {
 
 
