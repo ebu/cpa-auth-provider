@@ -76,25 +76,43 @@ module.exports = function (router) {
                 return res.status(400).json({errors: result.array()});
             }
             if (client.id) {
-                return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
-                    if (oAuhtClient) {
-                        oAuhtClient.updateAttributes({
-                            client_id: client.client_id,
-                            name: client.name,
-                            redirect_uri: client.redirect_uri
-                        }).then(function () {
-                            res.json({'id': client.id});
+
+                return db.OAuth2Client.findOne({
+                    where: {
+                        client_id: client.client_id,
+                        $not: {id: client.id}
+                    }
+                }).then(function (clientInDb) {
+                    if (clientInDb) {
+                        return res.status(400).send({
+                            success: false,
+                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
                         });
                     } else {
-                        return res.sendStatus(404);
+                        return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
+                            if (oAuhtClient) {
+                                oAuhtClient.updateAttributes({
+                                    client_id: client.client_id,
+                                    name: client.name,
+                                    redirect_uri: client.redirect_uri
+                                }).then(function () {
+                                    res.json({'id': client.id});
+                                });
+                            } else {
+                                return res.sendStatus(404);
+                            }
+                        });
                     }
                 });
             } else {
 
                 // Check if the client_id allready exists
-                return db.OAuth2Client.findOne({
-                    client_id: client.client_id
-                }).then(function (clientInDb) {
+                return db.OAuth2Client.findOne(
+                    {
+                        where: {
+                            client_id: client.client_id
+                        }
+                    }).then(function (clientInDb) {
                     if (clientInDb) {
                         return res.status(400).send({
                             success: false,
