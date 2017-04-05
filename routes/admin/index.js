@@ -92,9 +92,9 @@ module.exports = function (router) {
             } else {
 
                 // Check if the client_id allready exists
-                return db.OAuth2Client.findOne({
-                    client_id: client.client_id
-                }).then(function (clientInDb) {
+                return db.OAuth2Client.findOne(
+                {where: {client_id: client.client_id
+                }}).then(function (clientInDb) {
                     if (clientInDb) {
                         return res.status(400).send({
                             success: false,
