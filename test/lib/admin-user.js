@@ -888,7 +888,7 @@ describe('POST /api/admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
@@ -899,7 +899,7 @@ describe('POST /api/admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
@@ -918,7 +918,7 @@ describe('POST /api/admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
