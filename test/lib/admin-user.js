@@ -874,6 +874,66 @@ describe('POST /admin/clients', function () {
         });
     });
 
+
+    context('when updating a client with the same client id as another client', function () {
+
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            // Login with an admin login
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    client_id: "1",
+                    name: "OAuth 2.0 Client 1"
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    client_id: "2",
+                    name: "OAuth 2.0 Client 2"
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            db.OAuth2Client.findOne({where:{client_id:"2"}}).then(
+                function (client) {
+                    self.client = client;
+                    done();
+                });
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/admin/clients', {
+                cookie: self.cookie,
+                method: 'post',
+                data: {
+                    id: self.client.id,
+                    client_id: "1",
+                    name: "OAuth 2.0 Client 2"
+                }
+            }, done);
+        });
+
+        it('should return status 400 ', function () {
+            expect(self.res.statusCode).to.equal(400);
+        });
+    });
+
     context('when updating a client', function () {
 
 
