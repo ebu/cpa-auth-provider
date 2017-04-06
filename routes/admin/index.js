@@ -86,7 +86,7 @@ module.exports = function (router) {
                     if (clientInDb) {
                         return res.status(400).send({
                             success: false,
-                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
+                            errors: [{msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')}]
                         });
                     } else {
                         return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
