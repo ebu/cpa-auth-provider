@@ -5,6 +5,7 @@ var authHelper = require('../../lib/auth-helper');
 var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
+var xssFilters = require('xss-filters');
 var csv = require('csv-string');
 var generate = require('../../lib/generate');
 var permissionHelper = require('../../lib/permission-helper');
@@ -76,10 +77,9 @@ module.exports = function (router) {
                 return res.status(400).json({errors: result.array()});
             }
             if (client.id) {
-
                 return db.OAuth2Client.findOne({
                     where: {
-                        client_id: client.client_id,
+                        client_id: xssFilters.inHTMLData(client.client_id),
                         $not: {id: client.id}
                     }
                 }).then(function (clientInDb) {
@@ -92,9 +92,9 @@ module.exports = function (router) {
                         return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
                             if (oAuhtClient) {
                                 oAuhtClient.updateAttributes({
-                                    client_id: client.client_id,
-                                    name: client.name,
-                                    redirect_uri: client.redirect_uri
+                                    client_id: xssFilters.inHTMLData(client.client_id),
+                                    name: xssFilters.inHTMLData(client.name),
+                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri)
                                 }).then(function () {
                                     res.json({'id': client.id});
                                 });
@@ -105,12 +105,11 @@ module.exports = function (router) {
                     }
                 });
             } else {
-
-                // Check if the client_id allready exists
+                // Check if the client_id already exists
                 return db.OAuth2Client.findOne(
                     {
                         where: {
-                            client_id: client.client_id
+                            client_id: xssFilters.inHTMLData(client.client_id)
                         }
                     }).then(function (clientInDb) {
                     if (clientInDb) {
@@ -120,7 +119,6 @@ module.exports = function (router) {
                         });
                     } else {
                         var secret = generate.cryptoCode(30);
-
                         // Hash token
                         return bcrypt.hash(
                             secret,
@@ -129,10 +127,12 @@ module.exports = function (router) {
                                 if (err) {
                                     return res.status(500).send(err);
                                 } else {
-                                    // Save token
-                                    client.client_secret = hash;
-                                    return db.OAuth2Client.create(client
-                                    ).then(function (createClient) {
+                                    return db.OAuth2Client.create({
+                                            client_id: xssFilters.inHTMLData(client.client_id),
+                                            name: xssFilters.inHTMLData(client.name),
+                                            redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                            client_secret: hash
+                                        }).then(function (createClient) {
                                         // return generated token
                                         return res.json({'secret': secret, 'id': createClient.id});
                                     });
