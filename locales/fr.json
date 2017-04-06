@@ -30,7 +30,19 @@
 
   "ADMIN_TITLE": "Administration",
   "ADMIN_SERVICE_PROVIDER_LINK": "Service Providers",
+  "ADMIN_CLIENT_LINK": "Clients",
   "ADMIN_USERS_LINK": "Utilisateurs",
+
+  "ADMIN_CLIENT_PAGE_TITLE": "Clients",
+  "ADMIN_CLIENT_NAME_TABLE_COL_TITLE": "Clients",
+  "ADMIN_CLIENT_CREATED_AT_TABLE_COL_TITLE": "Créé le",
+  "ADMIN_CLIENT_UPDATED_AT_TABLE_COL_TITLE": "Mis à jour le",
+  "ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE": "Identifiant",
+  "ADMIN_CLIENT_CLIENT_SECRET_TABLE_COL_TITLE": "Secret",
+  "ADMIN_CLIENT_ADD_A_CLIENT_LINK": "Ajouter un client",
+  "API_ADMIN_CLIENT_CLIENT_ID_IS_MISSING": "L'identifiant du client est manquant",
+  "API_ADMIN_CLIENT_NAME_IS_MISSING": "Le nom du client est manquant",
+  "API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID": "L'adresse de redirection est invalide",
 
   "ADMIN_USERS_CSV_DOWNLOAD_LINK": "CSV",
 
@@ -193,6 +205,7 @@
   "BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY": "Le nouveau mot de passe et la confirmation ne correspondent pas",
 
   "BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Mauvais id de permission",
+  "BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "L'identifiant de client existe déjà",
 
   "BACK_PROFILE_AUTH_FAIL": "Echec de l'authentification. Profil inconnu",
   "BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Le champs 'Ancien mot de passe' est vide",

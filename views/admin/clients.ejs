@@ -1,0 +1,32 @@
+<% include ../layout/header %>
+
+<h1><%= __('ADMIN_CLIENT_PAGE_TITLE') %></h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th><%= __('ADMIN_CLIENT_NAME_TABLE_COL_TITLE') %></th>
+        <th><%= __('ADMIN_CLIENT_CREATED_AT_TABLE_COL_TITLE') %></th>
+        <th><%= __('ADMIN_CLIENT_UPDATED_AT_TABLE_COL_TITLE') %></th>
+        <th><%= __('ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE') %></th>
+        <th><%= __('ADMIN_CLIENT_CLIENT_SECRET_TABLE_COL_TITLE') %></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (var i = 0; i < oAuth2Clients.length; i++) { %>
+    <tr>
+        <td><%= oAuth2Clients[i].name %></td>
+        <td><%= oAuth2Clients[i].created_at %></td>
+        <td><%= oAuth2Clients[i].updated_at %></td>
+        <td><%= oAuth2Clients[i].client_id %></td>
+        <td><%= oAuth2Clients[i].client_secret %></td>
+        <td></td>
+    </tr>
+    <% } %>
+    </tbody>
+</table>
+
+<p><a href="<%= link('/admin/clients/add') %>"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></a></p>
+
+<% include ../layout/foot %>
