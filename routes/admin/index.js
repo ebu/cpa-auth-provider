@@ -10,11 +10,185 @@ var generate = require('../../lib/generate');
 var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
+var promise = require('bluebird');
+var bcrypt = promise.promisifyAll(require('bcrypt'));
+var generate = require('../../lib/generate');
+
 
 module.exports = function (router) {
     router.get('/admin', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         res.render('./admin/index.ejs');
     });
+
+
+    router.get('/admin/clients/all', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        return db.OAuth2Client.findAll()
+            .then(
+                function (oAuth2Clients) {
+
+                    return res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
+                },
+                function (err) {
+                    logger.debug('[Admins][get /admin/clients/all][error', err, ']');
+                    return res.send(500);
+                });
+    });
+
+    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.findAll()
+            .then(
+                function (oAuth2Clients) {
+                    res.send(buildJsonClients(oAuth2Clients));
+                },
+                function (err) {
+                    res.send(500);
+                    logger.debug('[Admins][get /admin/clients][error', err, ']');
+                });
+    });
+
+
+    router.get('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        return db.OAuth2Client.findOne({
+            id: req.params.id
+        }).then(
+            function (client) {
+                if (client) {
+                    return res.send(buildJsonClient(client));
+                } else {
+                    return res.sendStatus(404);
+                }
+            });
+    });
+
+
+    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+
+        var client = req.body;
+
+        req.checkBody('client_id', req.__('API_ADMIN_CLIENT_CLIENT_ID_IS_MISSING')).notEmpty().isString();
+        req.checkBody('name', req.__('API_ADMIN_CLIENT_NAME_IS_MISSING')).notEmpty().isString();
+        if (client.redirect_uri) {
+            req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
+        }
+
+        return req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                return res.status(400).json({errors: result.array()});
+            }
+            if (client.id) {
+
+                return db.OAuth2Client.findOne({
+                    where: {
+                        client_id: client.client_id,
+                        $not: {id: client.id}
+                    }
+                }).then(function (clientInDb) {
+                    if (clientInDb) {
+                        return res.status(400).send({
+                            success: false,
+                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
+                        });
+                    } else {
+                        return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
+                            if (oAuhtClient) {
+                                oAuhtClient.updateAttributes({
+                                    client_id: client.client_id,
+                                    name: client.name,
+                                    redirect_uri: client.redirect_uri
+                                }).then(function () {
+                                    res.json({'id': client.id});
+                                });
+                            } else {
+                                return res.sendStatus(404);
+                            }
+                        });
+                    }
+                });
+            } else {
+
+                // Check if the client_id allready exists
+                return db.OAuth2Client.findOne(
+                    {
+                        where: {
+                            client_id: client.client_id
+                        }
+                    }).then(function (clientInDb) {
+                    if (clientInDb) {
+                        return res.status(400).send({
+                            success: false,
+                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
+                        });
+                    } else {
+                        var secret = generate.cryptoCode(30);
+
+                        // Hash token
+                        return bcrypt.hash(
+                            secret,
+                            5,
+                            function (err, hash) {
+                                if (err) {
+                                    return res.status(500).send(err);
+                                } else {
+                                    // Save token
+                                    client.client_secret = hash;
+                                    return db.OAuth2Client.create(client
+                                    ).then(function (createClient) {
+                                        // return generated token
+                                        return res.json({'secret': secret, 'id': createClient.id});
+                                    });
+                                }
+                            });
+                    }
+                });
+
+
+            }
+
+        });
+
+
+    });
+
+    router.get('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.findOne({where: {id: req.params.clientId}})
+            .then(
+                function (client) {
+                    if (client) {
+                        // Generate token
+                        var secret = generate.cryptoCode(30);
+
+                        // Hash token
+                        return bcrypt.hash(
+                            secret,
+                            5,
+                            function (err, hash) {
+                                if (err) {
+                                    return res.status(500).send(err);
+                                } else {
+                                    // Save token
+                                    return client.updateAttributes(
+                                        {client_secret: hash}
+                                    ).then(function () {
+                                        // return generated token
+                                        res.json({'secret': secret});
+                                    });
+                                }
+                            });
+                    } else {
+                        res.sendStatus(404);
+                    }
+                });
+    });
+
+
+    router.delete('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+        db.OAuth2Client.destroy({where: {id: req.params.id}})
+            .then(
+                function () {
+                    res.sendStatus(200);
+                });
+    });
+
 
     router.get('/admin/domains', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Domain.findAll()
@@ -130,5 +304,32 @@ module.exports = function (router) {
 
 
     });
+
+
+    // use to return only relevant attribute to front end.
+    // MUST BE USED if you don't want to return client_secret.
+    function buildJsonClient(client) {
+        return {
+            id: client.id,
+            client_id: client.client_id,
+            name: client.name,
+            redirect_uri: client.redirect_uri,
+            created_at: client.created_at,
+            udpated_at: client.udpated_at
+
+        };
+    }
+
+    // use to return only relevant attribute to front end.
+    // MUST BE USED if you don't want to return client_secret.
+    function buildJsonClients(clients) {
+        var toReturn = [];
+        if (clients) {
+            for (var i = 0; i < clients.length; i++) {
+                toReturn.push(buildJsonClient(clients[i]));
+            }
+        }
+        return toReturn;
+    }
 
 };

@@ -10,10 +10,13 @@ var dbHelper = require('../db-helper');
 
 var config = require('../../config');
 
+var promise = require('bluebird');
+var bcrypt = promise.promisifyAll(require('bcrypt'));
+
 var CLIENT = {
     id: 1,
     client_id: "ClientA",
-    client_secret: "ClientSecret",
+    client_secret: bcrypt.hashSync("ClientSecret", 5),
     name: "OAuth 2.0 Client",
     redirect_uri: 'http://localhost'
 };
