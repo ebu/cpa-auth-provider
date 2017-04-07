@@ -21,6 +21,12 @@ module.exports = {
         },
         local: {
             enabled: true
+        },
+        // TODO use parameter to enable it + to set url
+        openam: {
+            enabled: true,
+            callback_url: 'http://cpa.rts.ch:3000/auth/openam/callback',
+            service_url: 'https://sso.rts.ch/'
         }
 
     },
