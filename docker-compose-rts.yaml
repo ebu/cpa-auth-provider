@@ -21,9 +21,3 @@ services:
     ports:
     - "80:80"
     - "443:443"
-    volumes:
-    - /www/public
-    volumes_from:
-    - identity-provider
-    links:
-    - identity-provider:identity-provider
