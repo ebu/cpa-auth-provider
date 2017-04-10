@@ -1,4 +1,4 @@
-# run using: docker-compose -f docker-compose-nginx.yaml up
+# run using: docker-compose -f docker-compose-rts.yaml up
 version: '2'
 services:
   identity-provider:

@@ -2,7 +2,7 @@
 var db = require('../../models/index');
 var rtsConfig = require('../../config.js').identity_providers.openam;
 var passport = require('passport');
-var OpenAMStrategy = require('./passport-openam').Strategy;
+var OpenAMStrategy = require('passport-openam').Strategy;
 passport.use(new OpenAMStrategy(
     {
         openAmBaseUrl: rtsConfig.service_url,
