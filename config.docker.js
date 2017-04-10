@@ -19,6 +19,11 @@ module.exports = {
             client_secret: process.env.IDP_GITHUB_CLIENT_SECRET,
             callback_url: '/auth/github/callback'
         },
+        // openam: {
+        //     enabled: ('true' == process.env.OPEN_AM_ENABLED),
+        //     callback_url: process.env.OPEN_AM_CALL_BACK_URL, //'https://cpa.rts.ch/auth/openam/callback',
+        //     service_url: process.env.OPEN_AM_SERVICE_URL //'https://sso.rts.ch/'
+        // },
         local: {
             enabled: true
         },
