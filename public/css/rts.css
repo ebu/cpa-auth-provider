@@ -68,7 +68,7 @@ h4 {
     background-color: #bf0020;
 }
 
-.btn-primary:active, .btn-primary:focus, .btn-danger:active, .btn-danger:focus {
+.btn-primary:active, .btn-primary:focus, .btn-danger:active, .btn-danger:focus, .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover {
     background-color: #bf0020;
 }
 

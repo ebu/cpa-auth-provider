@@ -54,6 +54,10 @@ header, footer {
     padding: 10px;
 }
 
+form.connect-forms {
+    margin: 20px 0;
+}
+
 /*
 ************
 ************ SPINNER
@@ -147,9 +151,6 @@ nav .lang ul.dropdown-menu {
     margin: auto;
     text-align: center;
 }
-#login form.login-form {
-    margin: 20px 0;
-}
 
 #login #password-recovery {
     font-size: 1.4rem;
@@ -164,11 +165,7 @@ nav .lang ul.dropdown-menu {
 */
 
 #signup .signup-fields {
-    margin: 25px 0 50px 0;
-}
-
-#signup form {
-    margin-bottom: 20px;
+    margin: 0 0 50px 0;
 }
 
 /*
