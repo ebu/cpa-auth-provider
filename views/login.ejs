@@ -35,6 +35,23 @@
                             <button type="submit" class="btn btn-primary btn-block btn-large-submit"><%= __('LOGIN_LOGIN_BUTTON') %></button>
                         </form>
 
+                        <% if(config.broadcasterLayout) { %>
+                        <div class="row social">
+                            <div class="col-sm-4 text-center">
+                                <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec facebook</p>
+                            </div>
+                            <div class="col-sm-4 text-center">
+                                <img class="login-images" src="/assets/img/logoroundg+.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec Google+</p>
+                            </div>
+                            <div class="col-sm-4 text-center">
+                                <img class="login-images" src="/assets/img/logoroundtwitter.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec Twitter</p>
+                            </div>
+                        </div>
+                        <% } %>
+
                         <p class="last-link"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
                                     class="btn-link" href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a></p>
                     </div>

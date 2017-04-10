@@ -158,6 +158,21 @@ nav .lang ul.dropdown-menu {
     margin-top: 5px;
 }
 
+#login .login-images {
+    width: 35px;
+    cursor: pointer;
+}
+
+#login .login-social-labels {
+    font-size: 1.1rem;
+    margin-top: 5px;
+}
+
+#login .social {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
 /*
 ************
 ************ SIGNUP
