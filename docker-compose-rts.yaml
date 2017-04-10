@@ -2,6 +2,7 @@
 version: '2'
 services:
   identity-provider:
+    restart: always
     build: .
     ports:
     - 3000:3000
