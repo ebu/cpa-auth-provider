@@ -156,6 +156,9 @@
 	"SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL": "Hast du schon ein Konto?",
 	"SIGNUP_LOGIN_BUTTON": "Anmeldung",
 	"SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Passwörter sind anders",
+	"SIGNUP_RECAPTCHA_NOT_A_ROBOT" : "I'm not a Robot.",
+	"SIGNUP_RECAPTCHA_PRIVACY" : "Privacy",
+	"SIGNUP_RECAPTCHA_TERMS" : "Terms",
 
 	"VERIFY_TITLE": "Gerätevereinigung",
 	"VERIFY_USER_CODE_LABEL": "Benutzercode",

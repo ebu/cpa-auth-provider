@@ -156,6 +156,9 @@
   "SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL": "Already have an account?",
   "SIGNUP_LOGIN_BUTTON": "Login",
   "SIGNUP_JS_PASSWORD_MISSMATCH_MSG": "Passwords are different",
+  "SIGNUP_RECAPTCHA_NOT_A_ROBOT" : "I'm not a Robot.",
+  "SIGNUP_RECAPTCHA_PRIVACY" : "Privacy",
+  "SIGNUP_RECAPTCHA_TERMS" : "Terms",
 
   "VERIFY_TITLE": "Device Association",
   "VERIFY_USER_CODE_LABEL": "User Code",

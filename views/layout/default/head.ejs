@@ -17,7 +17,7 @@
 <![endif]-->
 
 <!-- Google reCAPTCHA -->
-<script src='https://www.google.com/recaptcha/api.js?hl=<%= language %>'></script>
+<script src='https://www.google.com/recaptcha/api.js?onload=recaptchaReady&&render=explicit&&hl=<%= language %>'></script>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/js/jquery.min.js"></script>
@@ -34,7 +34,9 @@
 
 <script>
     var userLogged = <% if (user) { %>true<% } else { %>false<% } %>,
-        urlPrefix = '<%= config.urlPrefix %>';
+        urlPrefix = '<%= config.urlPrefix %>',
+        siteKey = '<%= config.recaptcha.site_key %>';
 </script>
 
 <script type="text/javascript" src="/assets/js/lang.js"></script>
+<script type="text/javascript" src="/assets/js/grecaptcha.js"></script>
