@@ -170,6 +170,16 @@ nav .lang ul.dropdown-menu {
 
 /*
 ************
+************ PASSWORD RECOVERY
+************
+*/
+
+#password-recovery .signup-fields {
+    margin: 0 0 50px 0;
+}
+
+/*
+************
 ************ VERIFY ACCOUNT
 ************
 */

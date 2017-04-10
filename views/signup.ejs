@@ -14,51 +14,55 @@
             <div class="alert alert-danger"><%= message %></div>
             <% } %>
 
-            <!-- LOGIN FORM -->
-            <form class="connect-forms" action="<%= link('/signup') %>" method="post">
+            <!-- SIGNUP FORM -->
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
+                    <form class="connect-forms" action="<%= link('/signup') %>" method="post">
 
-                <div class="signup-fields">
-                    <div class="form-group">
-                        <input type="email" class="form-control" name="email"
-                               placeholder="<%= __('SIGNUP_EMAIL_LABEL') %>"
-                                <% if(email) { %>
-                               value="<%= email %>"
-                                <% } %>
-                               required>
-                    </div>
-                    <div class="form-group">
-                        <input id="password" type="password" class="form-control" name="password"
-                               placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
-                    </div>
-                    <div class="form-group">
-                        <input id="password2" type="password" class="form-control" name="password2"
-                               placeholder="<%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %>" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="recaptcha-wrapper">
-                        <div id="myrecaptcha" class="g-recaptcha"></div>
-                        <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
-                        <div class="recaptcha-info"></div>
-                        <div class="rc-anchor-logo-text">reCAPTCHA</div>
-                        <div class="rc-anchor-pt">
-                            <a href="https://www.google.com/intl/en/policies/privacy/"
-                               target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
-                            <span aria-hidden="true" role="presentation"> - </span>
-                            <a href="https://www.google.com/intl/en/policies/terms/"
-                               target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
+                        <div class="signup-fields">
+                            <div class="form-group">
+                                <input type="email" class="form-control" name="email"
+                                       placeholder="<%= __('SIGNUP_EMAIL_LABEL') %>"
+                                        <% if(email) { %>
+                                       value="<%= email %>"
+                                        <% } %>
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <input id="password" type="password" class="form-control" name="password"
+                                       placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
+                            </div>
+                            <div class="form-group">
+                                <input id="password2" type="password" class="form-control" name="password2"
+                                       placeholder="<%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %>" required>
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="form-group">
+                            <div class="recaptcha-wrapper">
+                                <div id="myrecaptcha" class="g-recaptcha"></div>
+                                <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
+                                <div class="recaptcha-info"></div>
+                                <div class="rc-anchor-logo-text">reCAPTCHA</div>
+                                <div class="rc-anchor-pt">
+                                    <a href="https://www.google.com/intl/en/policies/privacy/"
+                                       target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
+                                    <span aria-hidden="true" role="presentation"> - </span>
+                                    <a href="https://www.google.com/intl/en/policies/terms/"
+                                       target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary btn-block btn-large-submit"><%= __('SIGNUP_SIGNUP_BUTTON') %></button>
+
+                    </form>
+
+                    <p class="last-link"><%= __('SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL') %> <a
+                                class="btn-link" href="<%= link('/auth/local') %>"><%= __('SIGNUP_LOGIN_BUTTON') %></a></p>
                 </div>
-
-                <button type="submit"
-                        class="btn btn-primary btn-block btn-large-submit"><%= __('SIGNUP_SIGNUP_BUTTON') %></button>
-
-            </form>
-
-            <p class="last-link"><%= __('SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL') %> <a
-                        class="btn-link" href="<%= link('/auth/local') %>"><%= __('SIGNUP_LOGIN_BUTTON') %></a></p>
+            </div>
 
         </div>
 
