@@ -23,17 +23,15 @@ services:
     - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
     - IDP_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
     - DEFAULT_LOCALE=fr
-
+    - OPEN_AM_ENABLED=true
+    - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
+    - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
   nginx:
     restart: always
     build: ./nginx/
     ports:
     - "80:80"
     - "443:443"
-    environment:
-    - OPEN_AM_ENABLED=true
-    - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
-    - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
     volumes:
     - /www/public
     volumes_from:
