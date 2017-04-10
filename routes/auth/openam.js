@@ -2,7 +2,7 @@
 var db = require('../../models/index');
 var rtsConfig = require('../../config.js').identity_providers.openam;
 var passport = require('passport');
-var OpenAMStrategy = require('passport-openam').Strategy;
+var OpenAMStrategy = require('./passport-openam').Strategy;
 passport.use(new OpenAMStrategy(
     {
         openAmBaseUrl: rtsConfig.service_url,
@@ -12,9 +12,11 @@ passport.use(new OpenAMStrategy(
     function (token, profile, done) {
         process.nextTick(function () {
             db.User.findOrCreate({
-                provider_uid: 'rts:' + profile.id,
-                display_name: profile.displayName
-            }).success(function (user) {
+                where: {
+                    provider_uid: 'rts:' + profile.id,
+                    display_name: profile.displayName
+                }
+            }).spread(function (user) {
                 return done(null, user);
             }).error(function (err) {
                 done(err, null);

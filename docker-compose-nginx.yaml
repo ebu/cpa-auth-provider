@@ -1,4 +1,4 @@
-# start with docker-compose -f docker-compose-nginx.yaml up
+# run using: docker-compose -f docker-compose-nginx.yaml up
 version: '2'
 services:
   oauth2-client:
@@ -28,15 +28,15 @@ services:
     restart: always
     build: ./nginx/
     ports:
-      - "80:80"
-      - "443:443"
+    - "80:80"
+    - "443:443"
     environment:
-      - OPEN_AM_ENABLED=true
-      - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
-      - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
+    - OPEN_AM_ENABLED=true
+    - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
+    - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
     volumes:
-      - /www/public
+    - /www/public
     volumes_from:
-      - identity-provider
+    - identity-provider
     links:
-      - identity-provider:identity-provider
+    - identity-provider:identity-provider
