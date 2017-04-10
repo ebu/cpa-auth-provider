@@ -8,5 +8,4 @@ MAINTAINER Anand Mani Sankar
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Add www certificates
-COPY ssl/cert.pem /etc/ssl/certs/
-COPY ssl/key.pem /etc/ssl/certs/
+COPY ssl/* /etc/ssl/certs/
