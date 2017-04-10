@@ -19,6 +19,7 @@ ADD routes /src/routes
 ADD views /src/views
 ADD templates /src/templates
 ADD locales /src/locales
+ADD passport-openam /src/passport-openam
 ADD package.json /src/package.json
 ADD config.js /src/config.js
 # TODO find better way to run tests without adding test file to the image
