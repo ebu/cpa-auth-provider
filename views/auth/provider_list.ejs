@@ -20,6 +20,11 @@
     <li><a href="<%= link('/auth/local') %>" class="identity_provider local"><%= __('AUTH_MAIN_LOGIN_USER_LINK') %></a>
     </li>
     <% } %>
+
+    <% if (identity_providers.openam) { %>
+    <li><a href="<%= link('/auth/openam') %>" class="identity_provider local"><%= __('AUTH_OPENAM_LOGIN_USER_LINK') %></a>
+    </li>
+    <% } %>
 </ul>
 
 <% include ../layout/foot %>

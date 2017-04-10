@@ -30,6 +30,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - OPEN_AM_ENABLED=true
+      - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
+      - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
     volumes:
       - /www/public
     volumes_from:
