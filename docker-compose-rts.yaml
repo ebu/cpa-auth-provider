@@ -16,13 +16,11 @@ services:
     - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
     - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
   nginx:
+    image: nginx
     restart: always
-    build: ./nginx/
     ports:
     - "80:80"
     - "443:443"
-#    volumes:
-#    - ./ssl/:/etc/ssl/certs/ ro
-#    - ./conf/:/etc/nginx/ ro
-
-
+    volumes:
+    - ./nginx/conf:/etc/nginx/:ro
+    - ./nginx/ssl:/etc/ssl/certs:ro
