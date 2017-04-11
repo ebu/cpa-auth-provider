@@ -19,28 +19,30 @@ exports.token = function (client, username, password, scope, done) {
 };
 
 function confirmUser(client, username, password, scope, done) {
+    var user;
     db.User.findOne(
         {where: {email: username}}
     ).then(
-        function (user) {
+        function (user_) {
+            user = user_;
             if (!user) {
-                done(INCORRECT_LOGIN_OR_PASS);
-                return;
+                throw new Error('Bad username');
             }
 
-            user.verifyPassword(password).then(function (isMatch) {
-                    if (isMatch) {
-                        provideAccessToken(client, user, scope, done);
-                    } else {
-                        done(INCORRECT_LOGIN_OR_PASS);
-                    }
-                },
-                function (err) {
-                    done(err);
-                });
-        },
-        function (error) {
-            done(error);
+            return user.verifyPassword(password);
+        }
+    ).then(
+        function (isMatch) {
+            if (isMatch) {
+                provideAccessToken(client, user, scope, done);
+            } else {
+                throw new Error('Password does not match');
+            }
+        }
+    ).catch(
+        function (err) {
+            logger.error('[OAuth2][ResourceOwner][FAIL][username', username, '][err', err, ']');
+            return done(err);
         }
     );
 }
