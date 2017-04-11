@@ -13,7 +13,7 @@ passport.use(new OpenAMStrategy(
         process.nextTick(function () {
             db.User.findOrCreate({
                 where: {
-                    provider_uid: 'rts:' + profile.id,
+                    provider_uid: 'openam:' + profile.id,
                     display_name: profile.displayName
                 }
             }).spread(function (user) {
