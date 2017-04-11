@@ -192,6 +192,7 @@
   "VERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
   "VERIFY_MAIN_DENY_BUTTON": "Refuser",
 
+  "BACK_SIGNUP_INVALID_EMAIL_OR_PASS": "Email ou mot de passe invalide",
   "BACK_SIGNUP_EMAIL_TAKEN": "Cet email est déjà utilisé",
   "BACK_SIGNUP_PB_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
   "BACK_SIGNUP_INVALID_EMAIL": "Email invalide",

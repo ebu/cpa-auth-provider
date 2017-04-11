@@ -17,6 +17,7 @@ h1 {
     font-size: 2.8rem;
     font-weight: 500;
     margin-top: 0;
+    color: #333333;
 }
 
 h2 {
@@ -84,11 +85,25 @@ h4 {
 
 .delete-container p {
     font-size: 1.8rem;
-    color: #666666
+    color: #666666;
 }
 
 footer.rts-footer {
     margin-top: 20px;
+}
+
+.alert-success.alert-success-custom {
+    position: relative;
+    background-color: initial;
+    border: none;
+    padding: 0;
+    margin: 25px 0;
+}
+
+.alert-success.alert-success-custom > span.glyphicon {
+    position: absolute;
+    left: -20px;
+    top: 3px;
 }
 
 /*TODO remove this when user login btn will be in production on hummingbird*/

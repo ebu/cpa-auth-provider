@@ -11,13 +11,14 @@
                     <%= __('LOGIN_TITLE') %>
                 </h1>
 
-                <!-- show any messages that come back with authentication -->
-                <% if (message.length > 0) { %>
-                <div class="alert alert-danger"><%= message %></div>
-                <% } %>
-
                 <div class="row">
                     <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
+
+                        <!-- show any messages that come back with authentication -->
+                        <% if (message.length > 0) { %>
+                        <div class="alert alert-danger"><%= message %></div>
+                        <% } %>
+
                         <!-- LOGIN FORM -->
                         <form class="connect-forms" action="<%= link('/login') %>" method="post">
                             <div class="form-group">
@@ -32,28 +33,36 @@
                                    href="<%= link('/password/recovery') %>"><%= __('LOGIN_FORGOT_PASSWORD_LINK') %></a>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-block btn-large-submit"><%= __('LOGIN_LOGIN_BUTTON') %></button>
+                            <button type="submit"
+                                    class="btn btn-primary btn-block btn-large-submit"><%= __('LOGIN_LOGIN_BUTTON') %></button>
                         </form>
 
-                        <% if(config.broadcasterLayout) { %>
+                        <% if(config.identity_providers.facebook.enabled || config.identity_providers.googleplus.enabled || config.identity_providers.twitter.enabled) { %>
                         <div class="row social">
+                            <% if(config.identity_providers.facebook.enabled) { %>
                             <div class="col-sm-4 text-center">
                                 <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
                                 <p class="login-social-labels">Connectez-vous avec facebook</p>
                             </div>
+                            <% } %>
+                            <% if(config.identity_providers.googleplus.enabled) { %>
                             <div class="col-sm-4 text-center">
                                 <img class="login-images" src="/assets/img/logoroundg+.svg"/>
                                 <p class="login-social-labels">Connectez-vous avec Google+</p>
                             </div>
+                            <% } %>
+                            <% if(config.identity_providers.twitter.enabled) { %>
                             <div class="col-sm-4 text-center">
                                 <img class="login-images" src="/assets/img/logoroundtwitter.svg"/>
                                 <p class="login-social-labels">Connectez-vous avec Twitter</p>
                             </div>
+                            <% } %>
                         </div>
                         <% } %>
 
                         <p class="last-link"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
-                                    class="btn-link" href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a></p>
+                                    class="btn-link" href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a>
+                        </p>
                     </div>
                 </div>
 
