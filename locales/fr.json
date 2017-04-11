@@ -65,10 +65,12 @@
   "OAUTH_DIALOG_ALLOW": "Autoriser",
   "OAUTH_DIALOG_DENY": "Refuser",
 
+  "USER_DEVICES_TITLE": "Mes appareils",
   "USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE": "Client Id",
   "USER_DEVICES_NAME_TABLE_COL_TITLE": "Nom",
   "USER_DEVICES_OWNER_TABLE_COL_TITLE": "Propriétaire",
   "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Domaines autorisés",
+  "USER_DEVICES_ACTIONS_TABLE_COL_TITLE": "Actions",
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
 
   "ALERT_LANGUAGE_1": "Votre langue par défaut est différente de celle de votre profil",

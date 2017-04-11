@@ -79,7 +79,7 @@ footer.rts-footer {
     display: none;
 }
 
-#profile hr {
+#profile hr, #devices hr {
     border-color: #333;
 }
 

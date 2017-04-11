@@ -65,10 +65,12 @@
 	"OAUTH_DIALOG_ALLOW": "Zulassen",
 	"OAUTH_DIALOG_DENY": "Verweigern",
 
+	"USER_DEVICES_TITLE": "My devices",
 	"USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE": "Kunden ID",
 	"USER_DEVICES_NAME_TABLE_COL_TITLE": "Name",
 	"USER_DEVICES_OWNER_TABLE_COL_TITLE": "Eigentümer",
 	"USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Autorisierte Domains",
+	"USER_DEVICES_ACTIONS_TABLE_COL_TITLE": "Actions",
 	"USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Ein Gerät zuordnen",
 
 	"ALERT_LANGUAGE_1": "Ihre Standardsprache unterscheidet sich von der in Ihrem Profil",

@@ -240,6 +240,7 @@ nav .lang ul.dropdown-menu {
 ************ USERS
 ************
 */
+
 #users .toolbar {
     background-color: #eee;
     padding: 10px;
@@ -256,6 +257,7 @@ nav .lang ul.dropdown-menu {
 ************ HOME
 ************
 */
+
 #home .home-icon {
     position: absolute;
     top: 0;
@@ -296,9 +298,31 @@ nav .lang ul.dropdown-menu {
 
 /*
 ************
+************ DEVICES
+************
+*/
+
+#devices > h1 {
+    position: relative;
+}
+
+#devices #table-devices tr th {
+    border-top: none;
+}
+
+#devices .link-add-device {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.6rem;
+}
+
+/*
+************
 ************ GOOGLE RECAPTCHA
 ************
 */
+
 .recaptcha-wrapper {
     height: 70px;
     overflow: hidden;
