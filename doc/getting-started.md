@@ -27,6 +27,7 @@ Then execute the following commands:
 ```
 $ git clone https://git.ebu.io/pipe/identity-provider.git
 $ cd identity-provider
+$ git submodule update --init
 $ docker-compose up --build
 ```
 *Note: If you're using ssh to git clone use: `git clone git@git.ebu.io:pipe/identity-provider.git`*
