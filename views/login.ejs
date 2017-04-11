@@ -38,21 +38,22 @@
                         </form>
 
                         <% if(config.identity_providers.facebook.enabled || config.identity_providers.googleplus.enabled || config.identity_providers.twitter.enabled) { %>
+
                         <div class="row social">
-                            <% if(config.identity_providers.facebook.enabled) { %>
-                            <div class="col-sm-4 text-center">
-                                <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
-                                <p class="login-social-labels">Connectez-vous avec facebook</p>
-                            </div>
-                            <% } %>
                             <% if(config.identity_providers.googleplus.enabled) { %>
-                            <div class="col-sm-4 text-center">
+                            <div class="text-center">
                                 <img class="login-images" src="/assets/img/logoroundg+.svg"/>
                                 <p class="login-social-labels">Connectez-vous avec Google+</p>
                             </div>
                             <% } %>
+                            <% if(config.identity_providers.facebook.enabled) { %>
+                            <div class="text-center">
+                                <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec facebook</p>
+                            </div>
+                            <% } %>
                             <% if(config.identity_providers.twitter.enabled) { %>
-                            <div class="col-sm-4 text-center">
+                            <div class="text-center">
                                 <img class="login-images" src="/assets/img/logoroundtwitter.svg"/>
                                 <p class="login-social-labels">Connectez-vous avec Twitter</p>
                             </div>
@@ -73,5 +74,24 @@
     </div>
 
 </div>
+
+<script type="text/javascript">
+    (function () {
+        var socials = $('.social div');
+        switch(socials.length) {
+            case 1:
+                socials.addClass('col-sm-12');
+                break;
+            case 2:
+                socials.addClass('col-sm-6');
+                break;
+            case 3:
+                socials.addClass('col-sm-4');
+                break;
+            default:
+                break;
+        }
+    })();
+</script>
 
 <% include layout/foot %>

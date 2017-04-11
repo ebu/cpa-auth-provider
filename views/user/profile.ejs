@@ -3,9 +3,9 @@
 <div id="profile">
     <div class="row">
         <div class="col-sm-12">
-            <h2>
+            <h1>
                 <%= __('PROFILE_MAIN_TITLE') %>
-            </h2>
+            </h1>
 
         </div>
     </div>
@@ -109,7 +109,7 @@
                     </div>
                     <div id="btn-container">
                         <button id="btn-save-data" type="submit"
-                                class="btn btn-primary"><%= __('PROFILE_SAVE_BUTTON') %></button>
+                                class="btn btn-primary btn-large-submit"><%= __('PROFILE_SAVE_BUTTON') %></button>
                         <button id="btn-cancel-save" type="submit"
                                 class="btn btn-link"><%= __('PROFILE_CANCEL_BUTTON') %></button>
                     </div>
@@ -154,7 +154,7 @@
                 </div>
                 <div>
                     <button id="btn-save-password" type="submit"
-                            class="btn btn-primary"><%= __('PROFILE_SAVE_PASSWORD_BUTTON') %></button>
+                            class="btn btn-primary btn-large-submit"><%= __('PROFILE_SAVE_PASSWORD_BUTTON') %></button>
                     <button id="btn-cancel-password"
                             class="btn btn-link"><%= __('PROFILE_CANCEL_PASSWORD_BUTTON') %></button>
                 </div>
@@ -210,7 +210,7 @@
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
                 <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
-                <a class="btn btn-danger" disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
+                <a class="btn btn-danger btn-large-submit" disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
             </div>
         </div>
 

@@ -28,8 +28,8 @@ h2 {
 }
 
 h4 {
-    font-size: 1.6rem;
     color: #666666;
+    font-size: 1.6rem;
     font-weight: normal;
 }
 
@@ -39,25 +39,6 @@ h4 {
 
 .btn-link:hover, .btn-link:active, .btn-link:focus {
     color: #bf0020;
-}
-
-.profile-container {
-    padding: 10px 0 40px;
-}
-
-#form-personnal-data h4 {
-    font-size: 1.6rem;
-    margin-top: 1.5rem;
-    color: #666666;
-    text-transform: uppercase;
-}
-
-#form-personnal-data span {
-    font-size: 1.4rem;
-}
-
-#form-personnal-data .panel {
-    border: 0;
 }
 
 .btn-primary, .btn-danger {
@@ -73,19 +54,6 @@ h4 {
 
 .btn-primary:active, .btn-primary:focus, .btn-danger:active, .btn-danger:focus, .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover {
     background-color: #bf0020;
-}
-
-#form-security-errors + h4 {
-
-}
-
-.delete-container {
-    padding: 16px 0;
-}
-
-.delete-container p {
-    font-size: 1.8rem;
-    color: #666666;
 }
 
 footer.rts-footer {
@@ -109,4 +77,28 @@ footer.rts-footer {
 /*TODO remove this when user login btn will be in production on hummingbird*/
 .rts-hp-header .about {
     display: none;
+}
+
+#profile hr {
+    border-color: #333;
+}
+
+#profile .delete-container p {
+    color: #666666;
+    font-size: 1.6rem;
+}
+
+#profile #form-personnal-data h4 {
+    font-size: 1.6rem;
+    margin-top: 1.5rem;
+    color: #666666;
+    text-transform: uppercase;
+}
+
+#profile #form-personnal-data span {
+    font-size: 1.4rem;
+}
+
+#profile #form-personnal-data .panel {
+    border: 0;
 }
