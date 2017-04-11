@@ -1,4 +1,4 @@
 [submodule "passport-openam"]
 	path = passport-openam
-	url = ../../barroco/passport-openam.git
+	url = git@git.ebu.io:pipe/passport-openam.git
 	branch = ebu-rts
