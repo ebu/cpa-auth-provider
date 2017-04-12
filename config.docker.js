@@ -33,7 +33,7 @@ module.exports = {
 
     mail: {
         sending: {
-            transport:  process.env.MAIL_TRANSPORT_TYPE | 'test',
+            transport:  process.env.MAIL_TRANSPORT_TYPE,
             // transport: 'sendmail'
             // transport: 'stream'
             // transport: 'test',
