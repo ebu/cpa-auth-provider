@@ -62,7 +62,6 @@
 	"ADMIN_CLIENT_UPDATE_CLIENT_MODALE_TITLE": "Edit a client",
 	"ADMIN_CLIENT_UPDATE_CLIENT_MODALE_SUBMIT": "Edit",
 	"ADMIN_CLIENT_ERROR_CANNOT_LOAD_CLIENT_LIST": "Clientliste kann nicht geladen werden",
-	"API_ADMIN_CLIENT_CLIENT_ID_IS_MISSING": "Die Client-Kennung fehlt",
 	"API_ADMIN_CLIENT_NAME_IS_MISSING": "Der Name des Kunden fehlt",
 	"API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID": "Die neue Adresse ist ungültig",
 

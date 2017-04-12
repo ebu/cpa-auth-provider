@@ -66,7 +66,6 @@ module.exports = function (router) {
 
         var client = req.body;
 
-        req.checkBody('client_id', req.__('API_ADMIN_CLIENT_CLIENT_ID_IS_MISSING')).notEmpty().isString();
         req.checkBody('name', req.__('API_ADMIN_CLIENT_NAME_IS_MISSING')).notEmpty().isString();
         if (client.redirect_uri) {
             req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
@@ -92,7 +91,6 @@ module.exports = function (router) {
                         return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
                             if (oAuhtClient) {
                                 oAuhtClient.updateAttributes({
-                                    client_id: xssFilters.inHTMLData(client.client_id),
                                     name: xssFilters.inHTMLData(client.name),
                                     redirect_uri: xssFilters.inHTMLData(client.redirect_uri)
                                 }).then(function () {
@@ -128,13 +126,17 @@ module.exports = function (router) {
                                     return res.status(500).send(err);
                                 } else {
                                     return db.OAuth2Client.create({
-                                            client_id: xssFilters.inHTMLData(client.client_id),
-                                            name: xssFilters.inHTMLData(client.name),
-                                            redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
-                                            client_secret: hash
-                                        }).then(function (createClient) {
-                                        // return generated token
-                                        return res.json({'secret': secret, 'id': createClient.id});
+                                        client_id: generate.clientId(),
+                                        name: xssFilters.inHTMLData(client.name),
+                                        redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                        client_secret: hash
+                                    }).then(function (createClient) {
+                                        // return generated token and client id
+                                        return res.json({
+                                            'secret': secret,
+                                            'id': createClient.id,
+                                            'client_id': createClient.client_id
+                                        });
                                     });
                                 }
                             });
