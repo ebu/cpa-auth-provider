@@ -482,7 +482,7 @@ describe('GET /admin/users/csv', function () {
 });
 
 
-describe('GET /admin/clients/all', function () {
+describe('GET /admin/clients', function () {
 
     var self = this;
 
@@ -494,7 +494,7 @@ describe('GET /admin/clients/all', function () {
     });
 
     before(function (done) {
-        requestHelper.sendRequest(self, '/admin/clients/all', {
+        requestHelper.sendRequest(self, '/admin/clients', {
             cookie: self.cookie,
             method: 'get'
         }, done);
@@ -507,7 +507,7 @@ describe('GET /admin/clients/all', function () {
 });
 
 
-describe('GET /admin/clients', function () {
+describe('GET /api/admin/clients', function () {
 
     context('When no clients in db', function () {
 
@@ -522,7 +522,7 @@ describe('GET /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -557,7 +557,7 @@ describe('GET /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -577,7 +577,7 @@ describe('GET /admin/clients', function () {
     });
 });
 
-describe('GET /admin/clients/id', function () {
+describe('GET /api/admin/clients/id', function () {
 
     context('When no clients in db', function () {
 
@@ -592,7 +592,7 @@ describe('GET /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/1', {
+            requestHelper.sendRequest(self, '/api/admin/clients/1', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -633,7 +633,7 @@ describe('GET /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/1', {
+            requestHelper.sendRequest(self, '/api/admin/clients/1', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -653,7 +653,7 @@ describe('GET /admin/clients/id', function () {
     });
 });
 
-describe('GET /admin/clients/:clientId/secret', function () {
+describe('GET /api/admin/clients/:clientId/secret', function () {
     var self = this;
 
     before(resetDatabase);
@@ -675,7 +675,7 @@ describe('GET /admin/clients/:clientId/secret', function () {
     });
 
     before(function (done) {
-        requestHelper.sendRequest(self, '/admin/clients/1/secret', {
+        requestHelper.sendRequest(self, '/api/admin/clients/1/secret', {
             cookie: self.cookie,
             method: 'get'
         }, done);
@@ -698,7 +698,7 @@ describe('GET /admin/clients/:clientId/secret', function () {
 });
 
 
-describe('DELETE /admin/clients/id', function () {
+describe('DELETE /api/admin/clients/id', function () {
 
     context('When no clients in db', function () {
 
@@ -713,7 +713,7 @@ describe('DELETE /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/1', {
+            requestHelper.sendRequest(self, '/api/admin/clients/1', {
                 cookie: self.cookie,
                 method: 'delete'
             }, done);
@@ -754,7 +754,7 @@ describe('DELETE /admin/clients/id', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients/2', {
+            requestHelper.sendRequest(self, '/api/admin/clients/2', {
                 cookie: self.cookie,
                 method: 'delete'
             }, done);
@@ -762,7 +762,7 @@ describe('DELETE /admin/clients/id', function () {
 
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -783,7 +783,7 @@ describe('DELETE /admin/clients/id', function () {
     });
 });
 
-describe('POST /admin/clients', function () {
+describe('POST /api/admin/clients', function () {
 
     context('when creating a new client', function () {
 
@@ -798,18 +798,17 @@ describe('POST /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
-                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
                     name: "OAuth 2.0 Client"
                 }
             }, done);
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -826,111 +825,12 @@ describe('POST /admin/clients', function () {
         it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
             expect(self.res.statusCode).to.equal(200);
             var res = JSON.parse(self.res.text);
-            expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
+            expect(res[0].client_id.length).to.equal(16);
             expect(res[0].name).to.equal("OAuth 2.0 Client");
             expect(res[0].client_secret).to.be.undefined;
             expect(res[0].created_at).to.be.defined;
             expect(res[0].updated_at).to.be.defined;
             expect(self.clientsInDb[0].client_secret.length).to.equal(60);
-        });
-    });
-
-    context('when creating 2 clients with the same client id', function () {
-
-
-        var self = this;
-
-        before(resetDatabase);
-
-        before(function (done) {
-            // Login with an admin login
-            requestHelper.login(self, done);
-        });
-
-        before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
-                cookie: self.cookie,
-                method: 'post',
-                data: {
-                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-                    name: "OAuth 2.0 Client"
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
-                cookie: self.cookie,
-                method: 'post',
-                data: {
-                    client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-                    name: "OAuth 2.0 Client"
-                }
-            }, done);
-        });
-
-        it('should return status 400 ', function () {
-            expect(self.res.statusCode).to.equal(400);
-        });
-    });
-
-
-    context('when updating a client with the same client id as another client', function () {
-
-
-        var self = this;
-
-        before(resetDatabase);
-
-        before(function (done) {
-            // Login with an admin login
-            requestHelper.login(self, done);
-        });
-
-        before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
-                cookie: self.cookie,
-                method: 'post',
-                data: {
-                    client_id: "1",
-                    name: "OAuth 2.0 Client 1"
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
-                cookie: self.cookie,
-                method: 'post',
-                data: {
-                    client_id: "2",
-                    name: "OAuth 2.0 Client 2"
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            db.OAuth2Client.findOne({where:{client_id:"2"}}).then(
-                function (client) {
-                    self.client = client;
-                    done();
-                });
-        });
-
-        before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
-                cookie: self.cookie,
-                method: 'post',
-                data: {
-                    id: self.client.id,
-                    client_id: "1",
-                    name: "OAuth 2.0 Client 2"
-                }
-            }, done);
-        });
-
-        it('should return status 400 ', function () {
-            expect(self.res.statusCode).to.equal(400);
         });
     });
 
@@ -947,7 +847,7 @@ describe('POST /admin/clients', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
@@ -959,19 +859,18 @@ describe('POST /admin/clients', function () {
 
         before(function (done) {
             var id = JSON.parse(self.res.text).id;
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {
                     id: id,
-                    client_id: "aaa",
                     name: "bbb"
                 }
             }, done);
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/clients', {
+            requestHelper.sendRequest(self, '/api/admin/clients', {
                 cookie: self.cookie,
                 method: 'get'
             }, done);
@@ -988,14 +887,16 @@ describe('POST /admin/clients', function () {
         it('should return status 200 an array with one element containing a client_secret (length 60)', function () {
             expect(self.res.statusCode).to.equal(200);
             var res = JSON.parse(self.res.text);
-            expect(res[0].client_id).to.equal("aaa");
             expect(res[0].name).to.equal("bbb");
             expect(res[0].client_secret).to.be.undefined;
+            expect(res[0].client_id.length).to.equal(16);
             expect(res[0].created_at).to.be.defined;
             expect(res[0].updated_at).to.be.defined;
             expect(self.clientsInDb[0].client_secret.length).to.equal(60);
 
         });
+
+
     });
 
 });

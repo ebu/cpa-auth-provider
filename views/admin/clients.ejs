@@ -1,32 +1,262 @@
 <% include ../layout/header %>
 
-<h1><%= __('ADMIN_CLIENT_PAGE_TITLE') %></h1>
+<div id="client">
 
-<table class="table">
-    <thead>
-    <tr>
-        <th><%= __('ADMIN_CLIENT_NAME_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_CREATED_AT_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_UPDATED_AT_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE') %></th>
-        <th><%= __('ADMIN_CLIENT_CLIENT_SECRET_TABLE_COL_TITLE') %></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <% for (var i = 0; i < oAuth2Clients.length; i++) { %>
-    <tr>
-        <td><%= oAuth2Clients[i].name %></td>
-        <td><%= oAuth2Clients[i].created_at %></td>
-        <td><%= oAuth2Clients[i].updated_at %></td>
-        <td><%= oAuth2Clients[i].client_id %></td>
-        <td><%= oAuth2Clients[i].client_secret %></td>
-        <td></td>
-    </tr>
-    <% } %>
-    </tbody>
-</table>
+    <div id="alert-error" class="alert alert-danger alert-dismissible error-message" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+        <span class="message"></span>
+    </div>
 
-<p><a href="<%= link('/admin/clients/add') %>"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></a></p>
+    <div id="alert-success" class="alert alert-success alert-dismissible error-message" role="alert">
+        <button type="button" class="close" data-hide="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <span class="message"></span>
+    </div>
+
+    <h1><%= __('ADMIN_CLIENT_PAGE_TITLE') %></h1>
+
+    <div class="table-responsive" id="clientsTable">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th><%= __('ADMIN_CLIENT_NAME_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_REDIRECT_URI_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_ACTIONS_TABLE_COL_TITLE') %></th>
+            </tr>
+            </thead>
+            <tbody id="clientsTableTbody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <p>
+        <button class="btn-link" data-toggle="modal" data-target="#addClientModal"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></button>
+    </p>
+
+</div>
+
+<!-- Add client Modal -->
+<% include ./modales/clients-add.ejs %>
+
+<!-- Update client Modal -->
+<% include ./modales/clients-update.ejs %>
+
+<script type="text/javascript">
+
+    (function () {
+        var $alertError = $('#alert-error');
+        var $alertSuccess = $('#alert-success');
+        var $errorMessage = $('#alert-error .message');
+        var $successMessage = $('#alert-success .message');
+        var $addClientModal = $('#addClientModal');
+        var $updateClientModal = $('#updateClientModal');
+
+        $( document ).ready(function() {
+            displayList();
+
+            $("[data-hide]").on("click", function(){
+                $(this).closest("." + $(this).attr("data-hide")).hide();
+            });
+        });
+
+        eventListeners = function () {
+            $('.delete-client').on('click', function (event) {
+                refreshMessages();
+                var realId = getRealId(this);
+                $.ajax({
+                    url: '/api/admin/clients/' + encodeURIComponent(realId),
+                    method: 'DELETE'
+                }).then(
+                    function (data, status, jqXHR) {
+                        $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_SUCCESS') %>");
+                        $alertSuccess.show();
+                        displayList();
+                    },
+                    function (jqXHR, status, error) {
+                        console.log(error);
+                        $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_FAIL') %>");
+                        $alertError.show();
+                    }
+                );
+            });
+            $('.refresh-secret').on('click', function (event) {
+                refreshMessages();
+                var realId = getRealId(this);
+                $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
+                    function (data, status, jqXHR) {
+                        console.log(data);
+                        $successMessage.append(data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>");
+                        $alertSuccess.show();
+                    },
+                    function (jqXHR, status, error) {
+                        console.log(error);
+                        $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL') %> ");
+                        $alertError.show();
+                    }
+                );
+            });
+            $('.edit-client').on('click', function (event) {
+                refreshMessages();
+                var id = getRealId(this);
+                var $dialog = $('#updateClientModal');
+                var row = $(this).closest('tr');
+                var clientName = row.find('.client-name').text() !== "null" ? row.find('.client-name').text() : '';
+                var clientId = row.find('.client-id').text() !== "null" ? row.find('.client-id').text() : '';
+                var clientRedirect = row.find('.client-redirect').text() !== "null" ? row.find('.client-redirect').text() : '';
+
+                $dialog.find('#update-name').first().val(clientName);
+                $dialog.find('#update-clientID').first().val(clientId);
+                $dialog.find('#update-redirectURI').first().val(clientRedirect);
+                $dialog.find('#update-id').first().val(id);
+                $updateClientModal.modal('toggle');
+            });
+        };
+
+        eventListeners();
+
+        $('#add-client').on('click', function (event) {
+            refreshMessages();
+
+            var name = $addClientModal.find('#name').val();
+            var clientId = $addClientModal.find('#clientID').val();
+            var redirectUri = $addClientModal.find('#redirectURI').val();
+
+            $.ajax({
+                url: '/api/admin/clients',
+                method: 'POST',
+                data: {name: name, client_id: clientId, redirect_uri: redirectUri}
+            }).then(
+                function (data, status, jqXHR) {
+                    console.log(data);
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_PREFIX') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_SUFFIX') %>");
+                    $alertSuccess.show();
+                    $addClientModal.modal('toggle');
+                    displayList();
+                },
+                function (errors) {
+                    var modalMessage = $addClientModal.find('.alert .message').first();
+                    modalMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL') %>");
+                    if(typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
+                        modalMessage.append('<ul>');
+                        errors.responseJSON.errors.forEach(function(error) {
+                            modalMessage.append('<li>' + error.msg + '</li>');
+                        });
+                        modalMessage.append('</ul>');
+                    }
+                    $addClientModal.find('.alert').first().show();
+                }
+            );
+        });
+        $('#update-client').on('click', function (event) {
+            refreshMessages();
+            var id = $updateClientModal.find('#update-id').val();
+            var name = $updateClientModal.find('#update-name').val();
+            var clientId = $updateClientModal.find('#update-clientID').val();
+            var redirectUri = $updateClientModal.find('#update-redirectURI').val();
+
+            $.ajax({
+                url: '/api/admin/clients/',
+                method: 'POST',
+                data: {id: encodeURIComponent(id), name: name, client_id: clientId, redirect_uri: redirectUri}
+            }).then(
+                function (data, status, jqXHR) {
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
+                    $alertSuccess.show();
+                    $updateClientModal.modal('toggle');
+                    displayList();
+                },
+                function (errors) {
+                    var modalMessage = $updateClientModal.find('.alert .message').first();
+                    modalMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
+                    if(typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
+                        modalMessage.append('<ul>');
+                        errors.responseJSON.errors.forEach(function(error) {
+                            console.log("error", error);
+                            modalMessage.append('<li>' + error.msg + '</li>');
+                        });
+                        modalMessage.append('</ul>');
+                    }
+                    $updateClientModal.find('.alert').first().show();
+                }
+            );
+        });
+        //Reset all error/success messages
+        refreshMessages = function () {
+            $successMessage.html('');
+            $errorMessage.html('');
+            $alertError.hide();
+            $alertSuccess.hide();
+            $('.alert').hide();
+            $('.alert .message').html('');
+        }
+        //Clear fields on modal shown
+        $addClientModal.on('shown.bs.modal', function() {
+            $(this).find('#name').first().val('');
+            $(this).find('#clientID').first().val('');
+            $(this).find('#redirectURI').first().val('');
+        })
+        //Get all clients and rebuild the view
+        function displayList () {
+            $.ajax({
+                url: '/api/admin/clients/',
+                method: 'GET'
+            }).then(
+                function (data, status, jqXHR) {
+                    //$("#clientsTable > tbody").html("");
+                    $("#clientsTable").find("tr:gt(0)").remove();
+                    for (var i = 0; i < data.length; i++) {
+                        $('#clientsTable tr:last').after(buildRow(data[i].id, data[i].name, data[i].client_id, data[i].redirect_uri));
+                    }
+                    eventListeners();
+                },
+                function (jqXHR, status, error) {
+                    console.log(error);
+                    $errorMessage.append("<%= __('ADMIN_CLIENT_ERROR_CANNOT_LOAD_CLIENT_LIST') %>");
+                    $alertError.show();
+                }
+            );
+        }
+        //build the html for each row which is added to client table
+        function buildRow (id, name, client_id, redirect_uri) {
+            redirect_uri = redirect_uri !== null ? redirect_uri : '';
+            var edit = "<%= __('ADMIN_CLIENT_ACTIONS_EDIT_CLIENT') %>";
+            var del = "<%= __('ADMIN_CLIENT_ACTIONS_DELETE_CLIENT') %>";
+            var reg = "<%= __('ADMIN_CLIENT_ACTIONS_REGENERATE_CLIENT_SECRET') %>";
+
+            var row = '';
+            row += '            <tr>\n';
+            row += '                <td class="client-name">' + name + '</td>\n';
+            row += '                <td class="client-id">' + client_id + '</td>\n';
+            row += '                <td class="client-redirect">' + redirect_uri + '</td>\n';
+            row += '                <td>\n';
+            row += '                    <span class="hidden real-id">' + id + '</span>\n';
+            row += '                    <div class="btn-toolbar" role="toolbar">\n';
+            row += '                        <div class="btn-group">\n';
+            row += '                            <button type="button" class="btn btn-default edit-client" aria-label="' + edit + '" title="' + edit + '">\n';
+            row += '                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>\n';
+            row += '                            </button>\n';
+            row += '                            <button type="button" class="btn btn-default delete-client" aria-label="' + del + '" title="' + del + '">\n';
+            row += '                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>\n';
+            row += '                            </button>\n';
+            row += '                            <button type="button" class="btn btn-default refresh-secret" aria-label="' + reg + '" title="' + reg + '">\n';
+            row += '                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>\n';
+            row += '                            </button>\n';
+            row += '                        </div>\n';
+            row += '                    </div>\n';
+            row += '                </td>\n';
+            row += '            </tr>\n';
+
+            return row;
+        }
+        //Get the DB id corresponding to a single row
+        function getRealId(target) {
+            var row = $(target).closest('tr');
+            var cell = row.find('.real-id');
+            return cell.text();
+        }
+    })();
+</script>
 
 <% include ../layout/foot %>
