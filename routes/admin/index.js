@@ -5,6 +5,7 @@ var authHelper = require('../../lib/auth-helper');
 var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
+var xssFilters = require('xss-filters');
 var csv = require('csv-string');
 var generate = require('../../lib/generate');
 var permissionHelper = require('../../lib/permission-helper');
@@ -21,7 +22,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/clients/all', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -34,7 +35,7 @@ module.exports = function (router) {
                 });
     });
 
-    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/api/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -47,7 +48,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findOne({
             id: req.params.id
         }).then(
@@ -61,11 +62,10 @@ module.exports = function (router) {
     });
 
 
-    router.post('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.post('/api/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         var client = req.body;
 
-        req.checkBody('client_id', req.__('API_ADMIN_CLIENT_CLIENT_ID_IS_MISSING')).notEmpty().isString();
         req.checkBody('name', req.__('API_ADMIN_CLIENT_NAME_IS_MISSING')).notEmpty().isString();
         if (client.redirect_uri) {
             req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
@@ -76,25 +76,23 @@ module.exports = function (router) {
                 return res.status(400).json({errors: result.array()});
             }
             if (client.id) {
-
                 return db.OAuth2Client.findOne({
                     where: {
-                        client_id: client.client_id,
+                        client_id: xssFilters.inHTMLData(client.client_id),
                         $not: {id: client.id}
                     }
                 }).then(function (clientInDb) {
                     if (clientInDb) {
                         return res.status(400).send({
                             success: false,
-                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
+                            errors: [{msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')}]
                         });
                     } else {
                         return db.OAuth2Client.findOne({where: {id: client.id}}).then(function (oAuhtClient) {
                             if (oAuhtClient) {
                                 oAuhtClient.updateAttributes({
-                                    client_id: client.client_id,
-                                    name: client.name,
-                                    redirect_uri: client.redirect_uri
+                                    name: xssFilters.inHTMLData(client.name),
+                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri)
                                 }).then(function () {
                                     res.json({'id': client.id});
                                 });
@@ -105,22 +103,20 @@ module.exports = function (router) {
                     }
                 });
             } else {
-
-                // Check if the client_id allready exists
+                // Check if the client_id already exists
                 return db.OAuth2Client.findOne(
                     {
                         where: {
-                            client_id: client.client_id
+                            client_id: xssFilters.inHTMLData(client.client_id)
                         }
                     }).then(function (clientInDb) {
                     if (clientInDb) {
                         return res.status(400).send({
                             success: false,
-                            msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')
+                            errors: [{msg: req.__('BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS')}]
                         });
                     } else {
                         var secret = generate.cryptoCode(30);
-
                         // Hash token
                         return bcrypt.hash(
                             secret,
@@ -129,12 +125,18 @@ module.exports = function (router) {
                                 if (err) {
                                     return res.status(500).send(err);
                                 } else {
-                                    // Save token
-                                    client.client_secret = hash;
-                                    return db.OAuth2Client.create(client
-                                    ).then(function (createClient) {
-                                        // return generated token
-                                        return res.json({'secret': secret, 'id': createClient.id});
+                                    return db.OAuth2Client.create({
+                                        client_id: generate.clientId(),
+                                        name: xssFilters.inHTMLData(client.name),
+                                        redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                        client_secret: hash
+                                    }).then(function (createClient) {
+                                        // return generated token and client id
+                                        return res.json({
+                                            'secret': secret,
+                                            'id': createClient.id,
+                                            'client_id': createClient.client_id
+                                        });
                                     });
                                 }
                             });
@@ -149,7 +151,7 @@ module.exports = function (router) {
 
     });
 
-    router.get('/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.get('/api/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findOne({where: {id: req.params.clientId}})
             .then(
                 function (client) {
@@ -181,7 +183,7 @@ module.exports = function (router) {
     });
 
 
-    router.delete('/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+    router.delete('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.destroy({where: {id: req.params.id}})
             .then(
                 function () {

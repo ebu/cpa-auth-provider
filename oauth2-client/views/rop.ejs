@@ -134,15 +134,13 @@
     }
 
     function useRefreshToken() {
-
-        var config = require('../config.docker');
         var refreshToken = getRefreshToken();
 
         var data = {
             grant_type: 'refresh_token',
             refresh_token: refreshToken,
-            client_id: identity_providers.client_id,
-            client_secret: identity_providers.client_secret
+            client_id: '<%- client_id %>',
+            client_secret: '<%- client_secret %>'
         };
 
         jQuery.ajax(

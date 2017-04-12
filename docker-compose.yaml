@@ -3,7 +3,7 @@ services:
   oauth2-client:
     build: oauth2-client
     ports:
-    - 3001:3000
+    - 3001:3001
     environment:
     - OAUTH2_CLIENT_ID=db05acb0c6ed902e5a5b7f5ab79e7144
     - OAUTH2_CLIENT_SECRET=49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98
@@ -22,3 +22,4 @@ services:
     - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
     - IDP_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
     - DEFAULT_LOCALE=fr
+    - MAIL_TRANSPORT_TYPE=test

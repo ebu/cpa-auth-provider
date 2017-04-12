@@ -415,6 +415,15 @@ g-recaptcha {
 
 /*
 ************
+************ CLIENT
+************
+*/
+#client .btn-group{
+    display: flex;
+}
+
+/*
+************
 ************ MEDIA QUERIES
 ************
 */
