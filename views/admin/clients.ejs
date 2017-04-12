@@ -22,6 +22,7 @@
                 <th><%= __('ADMIN_CLIENT_NAME_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_CLIENT_ID_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_REDIRECT_URI_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_SECRET_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_ACTIONS_TABLE_COL_TITLE') %></th>
             </tr>
             </thead>
@@ -86,8 +87,8 @@
                 var realId = getRealId(this);
                 $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
                     function (data, status, jqXHR) {
-                        console.log(data);
-                        $successMessage.append(data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS') %>");
+                        console.log("datattttaattat", data);
+                        $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_PREFIX') %>", data.client_id,  "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_SUFFIX') %>", data.secret);
                         $alertSuccess.show();
                     },
                     function (jqXHR, status, error) {
@@ -130,7 +131,7 @@
             }).then(
                 function (data, status, jqXHR) {
                     console.log(data);
-                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_PREFIX') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_SUFFIX') %>");
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_1') %>", data.client_id, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_2') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_3') %>");
                     $alertSuccess.show();
                     $addClientModal.modal('toggle');
                     displayList();
@@ -230,6 +231,7 @@
             row += '                <td class="client-name">' + name + '</td>\n';
             row += '                <td class="client-id">' + client_id + '</td>\n';
             row += '                <td class="client-redirect">' + redirect_uri + '</td>\n';
+            row += '                <td class="client-redirect">****************</td>\n';
             row += '                <td>\n';
             row += '                    <span class="hidden real-id">' + id + '</span>\n';
             row += '                    <div class="btn-toolbar" role="toolbar">\n';

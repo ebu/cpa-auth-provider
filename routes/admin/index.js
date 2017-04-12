@@ -172,7 +172,7 @@ module.exports = function (router) {
                                         {client_secret: hash}
                                     ).then(function () {
                                         // return generated token
-                                        res.json({'secret': secret});
+                                        res.json({'secret': secret, 'client_id' : client.client_id});
                                     });
                                 }
                             });
