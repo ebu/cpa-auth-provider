@@ -15,6 +15,10 @@ services:
     - OPEN_AM_ENABLED=true
     - OPEN_AM_CALL_BACK_URL=https://cpa.rts.ch/auth/openam/callback
     - OPEN_AM_SERVICE_URL=https://sso.rts.ch/
+    - MAIL_TRANSPORT_TYPE=test
+    - MAIL_USER_NAME=username
+    - MAIL_PASSWORD=password
+
   nginx:
     image: nginx
     restart: always
