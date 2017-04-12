@@ -1,7 +1,6 @@
 "use strict";
 
 var generate = require('../../lib/generate');
-var messages = require('../../lib/messages');
 var db = require('../../models');
 
 var requestHelper = require('../request-helper');
@@ -429,8 +428,8 @@ describe('POST /verify', function () {
                     });
 
                     describe('the response body', function () {
-                        it('should contain the message SUCCESSFUL_PAIRING: ' + i18n4test.__('MSG_SUCCESSFUL_PAIRING'), function () {
-                            expect(this.res.text).to.contain(i18n4test.__('MSG_SUCCESSFUL_PAIRING'));
+                        it('should contain the message SUCCESSFUL_PAIRING: ' + i18n4test.__('VERIFY_BACK_SUCCESSFUL_PAIRING'), function () {
+                            expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_SUCCESSFUL_PAIRING'));
                         });
                     });
 
@@ -546,8 +545,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message UNKNOWN_VERIFICATION_TYPE: ' + i18n4test.__('MSG_UNKNOWN_VERIFICATION_TYPE'), function () {
-                        expect(this.res.text).to.contain(i18n4test.__('MSG_UNKNOWN_VERIFICATION_TYPE'));
+                    it('should contain the message UNKNOWN_VERIFICATION_TYPE: ' + i18n4test.__('VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE'));
                     });
                 });
             });
@@ -573,8 +572,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message INVALID_USERCODE: ' + i18n4test.__('MSG_INVALID_USERCODE'), function () {
-                        expect(this.res.text).to.contain(i18n4test.__('MSG_INVALID_USERCODE'));
+                    it('should contain the message INVALID_USERCODE: ' + i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'));
                     });
                 });
             });
@@ -600,8 +599,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the error message INVALID_USERCODE: ' + i18n4test.__('MSG_INVALID_USERCODE'), function () {
-                        expect(this.res.text).to.contain(i18n4test.__('MSG_INVALID_USERCODE'));
+                    it('should contain the error message INVALID_USERCODE: ' + i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'));
                     });
                 });
             });
@@ -629,8 +628,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message OBSOLETE_USERCODE: ' + i18n4test.__('MSG_OBSOLETE_USERCODE'), function () {
-                        expect(this.res.text).to.contain(i18n4test.__('MSG_OBSOLETE_USERCODE'));
+                    it('should contain the message OBSOLETE_USERCODE: ' + i18n4test.__('VERIFY_BACK_CODE_USED'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_CODE_USED'));
                     });
                 });
             });
@@ -675,8 +674,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message EXPIRED_USERCODE: ' + i18n4test.__('MSG_EXPIRED_USERCODE'), function () {
-                        expect(this.res.text).to.contain(i18n4test.__('MSG_EXPIRED_USERCODE'));
+                    it('should contain the message EXPIRED_USERCODE: ' + i18n4test.__('VERIFY_BACK_CODE_EXPIRED'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_CODE_EXPIRED'));
                     });
                 });
             });

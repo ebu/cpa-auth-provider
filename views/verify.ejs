@@ -1,29 +1,36 @@
 <% include layout/header %>
 
-<div></div>
+<div id="verify">
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <div class="panel-title"><%= __('VERIFY_TITLE') %></div>
+    <div class="container">
+
+        <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
+
+            <h1 class="text-center"><%= __('VERIFY_TITLE') %></h1>
+
+            <% if (error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+            <% } %>
+
+            <form class="connect-forms" method="POST" action="<%= link('/verify') %>">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inputUserCode" placeholder="<%= __('VERIFY_USER_CODE_LABEL') %>"
+                           name="user_code"
+                            <% if (user_code) { %>
+                           value="<%= user_code %>"
+                            <% } %>
+                    >
+
+                </div>
+                <input type="hidden" name="verification_type" value="user_code">
+                <input type="submit" class="btn btn-primary btn-large-submit" name="submit"
+                       value="<%= __('VERIFY_VERIFY_BUTTON') %>">
+            </form>
+
+        </div>
+
     </div>
 
-    <form method="POST" action="<%= link('/verify') %>">
-        <div class="panel-body">
-            <div class="form-group <% if (error) { %>has-error<% } else { %> <% } %>">
-                <label class="control-label" for="inputUserCode"><%= __('VERIFY_USER_CODE_LABEL') %></label>
-                <input type="text" class="form-control" id="inputUserCode" placeholder="Enter your user code"
-                       name="user_code"
-                        <% if (user_code) { %>
-                       value="<%= user_code %>"
-                        <% } %>
-                >
-                <% if (error) { %>
-                <span class="text-danger"><%= error %></span>
-                <% } %>
-            </div>
-            <input type="hidden" name="verification_type" value="user_code">
-            <input type="submit" class="btn btn-default" name="submit" value="<%= __('VERIFY_VERIFY_BUTTON') %>">
-        </div>
-    </form>
 </div>
+
 <% include layout/foot %>
