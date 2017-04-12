@@ -225,20 +225,6 @@
                 </form>
             </div>
         </div>
-        <% } else { %>
-            <div class="recaptcha-wrapper" style="display: none;">
-                <div id="myrecaptcha" class="g-recaptcha"></div>
-                <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
-                <div class="recaptcha-info"></div>
-                <div class="rc-anchor-logo-text">reCAPTCHA</div>
-                <div class="rc-anchor-pt">
-                    <a href="https://www.google.com/intl/en/policies/privacy/"
-                       target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
-                    <span aria-hidden="true" role="presentation"> - </span>
-                    <a href="https://www.google.com/intl/en/policies/terms/"
-                       target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
-                </div>
-            </div>
         <% } %>
 
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
