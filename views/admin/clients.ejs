@@ -76,7 +76,6 @@
                         displayList();
                     },
                     function (jqXHR, status, error) {
-                        console.log(error);
                         $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_DELETE_CLIENT_FAIL') %>");
                         $alertError.show();
                     }
@@ -87,12 +86,10 @@
                 var realId = getRealId(this);
                 $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
                     function (data, status, jqXHR) {
-                        console.log("datattttaattat", data);
                         $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_PREFIX') %>", data.client_id,  "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_SUFFIX') %>", data.secret);
                         $alertSuccess.show();
                     },
                     function (jqXHR, status, error) {
-                        console.log(error);
                         $errorMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_FAIL') %> ");
                         $alertError.show();
                     }
@@ -130,7 +127,6 @@
                 data: {name: name, client_id: clientId, redirect_uri: redirectUri}
             }).then(
                 function (data, status, jqXHR) {
-                    console.log(data);
                     $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_1') %>", data.client_id, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_2') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_3') %>");
                     $alertSuccess.show();
                     $addClientModal.modal('toggle');
@@ -174,7 +170,6 @@
                     if(typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
                         modalMessage.append('<ul>');
                         errors.responseJSON.errors.forEach(function(error) {
-                            console.log("error", error);
                             modalMessage.append('<li>' + error.msg + '</li>');
                         });
                         modalMessage.append('</ul>');
@@ -213,7 +208,6 @@
                     eventListeners();
                 },
                 function (jqXHR, status, error) {
-                    console.log(error);
                     $errorMessage.append("<%= __('ADMIN_CLIENT_ERROR_CANNOT_LOAD_CLIENT_LIST') %>");
                     $alertError.show();
                 }
