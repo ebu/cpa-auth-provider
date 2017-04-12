@@ -16,6 +16,7 @@ services:
       - DB_PORT=5432
       - DB_USER=dockeridp
       - DB_PASSWORD=SchiefesHausBautFalsch
+      - MAIL_TRANSPORT_TYPE=test
     depends_on:
       - postgres
     links:

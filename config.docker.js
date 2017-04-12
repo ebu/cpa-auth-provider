@@ -33,14 +33,13 @@ module.exports = {
 
     mail: {
         sending: {
+            transport:  process.env.MAIL_TRANSPORT_TYPE,
             // transport: 'sendmail'
             // transport: 'stream'
-            transport: 'test',
-            username: 'username',
-            password: 'password',
+            // transport: 'test',
             // transport: 'smtp',
-            // username: '',
-            // password: '',
+            username: process.env.MAIL_USER_NAME,
+            password: process.env.MAIL_PASSWORD,
             // host: '',
             // port: 465,
             // secure: true
