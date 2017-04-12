@@ -260,14 +260,21 @@ nav .lang ul.dropdown-menu {
 
 #home .home-icon {
     position: absolute;
-    top: 0;
-    right: 0;
-    background: #fff;
+    top: 20px;
+    right: 15px;
     font-size: 2em;
-    padding: 15px 20px;
-    border: 1px solid #ccc;
-    border-radius: 50%;
-    transition: box-shadow 0.3s ease-in-out;
+}
+
+#home .home-panel .panel-body {
+    position: relative;
+}
+
+#home .home-panel .panel-body h3 {
+    margin-top: 0;
+}
+
+#home .home-panel .panel-body p {
+    margin-bottom: 0;
 }
 
 #home .panel {
@@ -285,12 +292,6 @@ nav .lang ul.dropdown-menu {
 
 #home .panel:hover {
     cursor: pointer;
-    -webkit-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
-    -moz-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
-    box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
-}
-
-#home .panel:hover .home-icon {
     -webkit-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
     -moz-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
     box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);

@@ -102,3 +102,11 @@ footer.rts-footer {
 #profile #form-personnal-data .panel {
     border: 0;
 }
+
+#home .home-panel .panel-body h3 {
+    color: #333;
+}
+
+#home .home-panel .panel-body span.glyphicon {
+    color: #af001e;
+}
