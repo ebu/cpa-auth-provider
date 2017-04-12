@@ -19,10 +19,14 @@ module.exports = {
             client_secret: process.env.IDP_GITHUB_CLIENT_SECRET,
             callback_url: '/auth/github/callback'
         },
+        openam: {
+            enabled: ('true' == process.env.OPEN_AM_ENABLED),
+            callback_url: process.env.OPEN_AM_CALL_BACK_URL,
+            service_url: process.env.OPEN_AM_SERVICE_URL
+        },
         local: {
             enabled: true
-        }
-
+        },
     },
 
     displayUsersInfos: true,

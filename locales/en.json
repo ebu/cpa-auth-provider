@@ -80,6 +80,8 @@
   "AUTH_MAIN_LOGIN_GITHUB_LINK": "Login with Github",
   "AUTH_MAIN_LOGIN_EBU_LINK": "Login with EBU",
   "AUTH_MAIN_LOGIN_USER_LINK": "Login with Username and Password",
+  "AUTH_OPENAM_LOGIN_USER_LINK" : "Login with Open AM",
+
 
   "OAUTH_DIALOG_TITLE_HI": "Hi",
   "OAUTH_DIALOG_TITLE": "is requesting access to your account.",
