@@ -166,6 +166,12 @@
   "VERIFY_USER_CODE_LABEL": "User Code",
   "VERIFY_VERIFY_BUTTON": "Verify",
 
+  "VERIFY_BACK_INVALID_USER_CODE" : "Invalid user code",
+  "VERIFY_BACK_CODE_USED" : "User code has already been used. Check your device to finish the pairing",
+  "VERIFY_BACK_CODE_EXPIRED" : "User code has expired",
+  "VERIFY_BACK_SUCCESSFUL_PAIRING" : "Your device is now paired with your identity",
+  "VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE" : "Unknown verification_type parameter",
+
   "VERIFY_LIST_TITLE": "Pending Authorization",
   "VERIFY_LIST_DEVICE_ID_LABEL": "Device id",
   "VERIFY_LIST_DOMAIN_LABEL": "Domain",

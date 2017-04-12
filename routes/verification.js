@@ -3,7 +3,6 @@
 var db = require('../models');
 var config = require('../config');
 var authHelper = require('../lib/auth-helper');
-var messages = require('../lib/messages');
 var requestHelper = require('../lib/request-helper');
 var urlHelper = require('../lib/url-helper');
 var i18n = require('i18n');
@@ -48,19 +47,19 @@ var routes = function (router) {
                 .findOne({where: {'user_code': userCode}, include: [db.Client, db.Domain]})
                 .then(function (pairingCode) {
                     if (!pairingCode) {
-                        renderVerificationPage(req, res, messages.INVALID_USERCODE);
+                        renderVerificationPage(req, res, req.__('VERIFY_BACK_INVALID_USER_CODE'));
                         return;
                     }
 
                     if (pairingCode.state === 'verified') {
                         res.status(400);
-                        renderVerificationInfo(res, messages.OBSOLETE_USERCODE, 'warning');
+                        renderVerificationInfo(res, req.__('VERIFY_BACK_CODE_USED'), 'warning');
                         return;
                     }
 
                     if (pairingCode.hasExpired()) {
                         res.status(400);
-                        renderVerificationInfo(res, messages.EXPIRED_USERCODE, 'warning');
+                        renderVerificationInfo(res, req.__('VERIFY_BACK_CODE_EXPIRED'), 'warning');
                         return;
                     }
 
@@ -134,17 +133,17 @@ var routes = function (router) {
             .findOne({where: {'user_code': userCode}, include: [db.Client]})
             .then(function (pairingCode) {
                 if (!pairingCode) {
-                    done(null, messages.INVALID_USERCODE, 'cancelled');
+                    done(null, req.__('VERIFY_BACK_INVALID_USER_CODE'), 'cancelled');
                     return;
                 }
 
                 if (pairingCode.state === 'verified') {
-                    done(null, messages.OBSOLETE_USERCODE, 'cancelled');
+                    done(null, req.__('VERIFY_BACK_CODE_USED'), 'cancelled');
                     return;
                 }
 
                 if (pairingCode.hasExpired()) {
-                    done(null, messages.EXPIRED_USERCODE, 'cancelled');
+                    done(null, req.__('VERIFY_BACK_CODE_EXPIRED'), 'cancelled');
                     return;
                 }
 
@@ -180,17 +179,17 @@ var routes = function (router) {
             .findOne({where: {'user_code': userCode}, include: [db.Client]})
             .then(function (pairingCode) {
                 if (!pairingCode) {
-                    done(null, messages.INVALID_USERCODE, 'cancelled');
+                    done(null, req.__('VERIFY_BACK_INVALID_USER_CODE'), 'cancelled');
                     return;
                 }
 
                 if (pairingCode.state === 'verified') {
-                    done(null, messages.OBSOLETE_USERCODE, 'cancelled');
+                    done(null, req.__('VERIFY_BACK_CODE_USED'), 'cancelled');
                     return;
                 }
 
                 if (pairingCode.hasExpired()) {
-                    done(null, messages.EXPIRED_USERCODE, 'cancelled');
+                    done(null, req.__('VERIFY_BACK_CODE_EXPIRED'), 'cancelled');
                     return;
                 }
 
@@ -255,7 +254,7 @@ var routes = function (router) {
     var verifyUserCode = function (req, res, next) {
         var userCode = req.body.user_code;
         if (!userCode) {
-            renderVerificationPage(req, res, messages.INVALID_USERCODE);
+            renderVerificationPage(req, res, req.__('VERIFY_BACK_INVALID_USER_CODE'));
             return;
         }
 
@@ -271,7 +270,7 @@ var routes = function (router) {
                 return;
             }
 
-            renderVerificationInfo(res, messages.SUCCESSFUL_PAIRING, 'success');
+            renderVerificationInfo(res, req.__('VERIFY_BACK_SUCCESSFUL_PAIRING'), 'success');
         });
     };
 
@@ -294,7 +293,7 @@ var routes = function (router) {
 
             default:
                 res.statusCode = 400;
-                renderVerificationInfo(res, messages.UNKNOWN_VERIFICATION_TYPE, 'danger');
+                renderVerificationInfo(res, req.__('VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE'), 'danger');
                 return;
         }
     });
@@ -316,7 +315,7 @@ var routes = function (router) {
 
         var userCode = req.body.user_code;
         if (!userCode) {
-            renderVerificationPage(req, res, messages.INVALID_USERCODE);
+            renderVerificationPage(req, res, req.__('VERIFY_BACK_INVALID_USER_CODE'));
             return;
         }
 
@@ -343,7 +342,7 @@ var routes = function (router) {
 
         var userCode = req.body.user_code;
         if (!userCode) {
-            renderVerificationPage(req, res, messages.INVALID_USERCODE);
+            renderVerificationPage(req, res, req.__('VERIFY_BACK_INVALID_USER_CODE'));
             return;
         }
 

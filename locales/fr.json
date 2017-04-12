@@ -166,6 +166,12 @@
   "VERIFY_USER_CODE_LABEL": "Code utilisateur",
   "VERIFY_VERIFY_BUTTON": "Vérifier",
 
+  "VERIFY_BACK_INVALID_USER_CODE" : "Code utilisateur non valide",
+  "VERIFY_BACK_CODE_USED" : "Ce code utilisateur a déjà été utilisé. Vérifié votre appareil pour finir l'appairage",
+  "VERIFY_BACK_CODE_EXPIRED" : "Le code utilisateur a expiré",
+  "VERIFY_BACK_SUCCESSFUL_PAIRING" : "Votre appareil est maintenant appairé avec votre identifiant",
+  "VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE" : "Paramètre verification_type inconnu",
+
   "VERIFY_LIST_TITLE": "Autorisation en attente",
   "VERIFY_LIST_DEVICE_ID_LABEL": "Appareil id",
   "VERIFY_LIST_DOMAIN_LABEL": "Domaine",
