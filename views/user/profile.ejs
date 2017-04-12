@@ -1,6 +1,7 @@
 <%- include ../layout/header %>
 
 <div id="profile">
+
     <div class="row">
         <div class="col-sm-12">
             <h1>
@@ -20,7 +21,8 @@
         </div>
         <div class="col-sm-9">
 
-            <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
+            <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible error-block"
+                 role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
                 <span class="title"><%= __('PROFILE_ERROR_MSG') %></span>
@@ -52,7 +54,8 @@
                     <div class="panel">
                         <h4><%= __('PROFILE_BIRTHDATE_LABEL') %></h4>
                         <span class="data-value"></span>
-                        <div class="input-group date personnal-data-input" data-provide="datepicker" data-language="en">
+                        <div class="input-group date personnal-data-input" data-provide="datepicker"
+                             data-language="en">
                             <input id="birthday" name="birthday" class="form-control" type="text">
                             <div class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
@@ -128,7 +131,8 @@
         </div>
         <div class="col-sm-9">
 
-            <div id="form-security-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
+            <div id="form-security-errors" class="alert alert-danger alert-dismissible error-block"
+                 role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
                 <span id="security-errors" class="content"></span>
@@ -165,6 +169,7 @@
     </div>
     <hr/>
     <div class="row">
+
         <div class="col-sm-3">
             <h4 class="account-title">
                 <%= __('PROFILE_ACCOUNT_TITLE') %>
@@ -172,25 +177,38 @@
 
             <% if (profile.verified) { %>
             <span class="text-success status">
-            <span class="glyphicon glyphicon-ok"></span> <%= __('PROFILE_VERIFIED_LABEL') %>
-        </span>
+                <span class="glyphicon glyphicon-ok"></span> <%= __('PROFILE_VERIFIED_LABEL') %>
+            </span>
             <% } else { %>
             <span class="text-danger status">
-            <span class="glyphicon glyphicon-remove"></span> <%= __('PROFILE_NOT_VERIFIED_LABEL') %>
-        </span>
+                <span class="glyphicon glyphicon-remove"></span> <%= __('PROFILE_NOT_VERIFIED_LABEL') %>
+            </span>
             <% } %>
 
             <hr class="visible-xs-block hidden-sm"/>
-
         </div>
+
         <% if (!profile.verified) { %>
         <div class="col-sm-9">
             <div class="verification-link-container">
                 <p><%= __('PROFILE_FILL_VERIFICATION_LABEL') %></p>
-                <form id="verification-link-form" action='<%= link('/user/profile/request_verification_email') %>'
+                <form id="verification-link-form"
+                      action='<%= link('/user/profile/request_verification_email') %>'
                       method="post">
                     <div class="form-group">
-                        <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
+                        <div class="recaptcha-wrapper">
+                            <div id="myrecaptcha" class="g-recaptcha"></div>
+                            <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
+                            <div class="recaptcha-info"></div>
+                            <div class="rc-anchor-logo-text">reCAPTCHA</div>
+                            <div class="rc-anchor-pt">
+                                <a href="https://www.google.com/intl/en/policies/privacy/"
+                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
+                                <span aria-hidden="true" role="presentation"> - </span>
+                                <a href="https://www.google.com/intl/en/policies/terms/"
+                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
+                            </div>
+                        </div>
                     </div>
                     <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span
                                 class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
@@ -207,254 +225,271 @@
                 </form>
             </div>
         </div>
+        <% } else { %>
+            <div class="recaptcha-wrapper" style="display: none;">
+                <div id="myrecaptcha" class="g-recaptcha"></div>
+                <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
+                <div class="recaptcha-info"></div>
+                <div class="rc-anchor-logo-text">reCAPTCHA</div>
+                <div class="rc-anchor-pt">
+                    <a href="https://www.google.com/intl/en/policies/privacy/"
+                       target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
+                    <span aria-hidden="true" role="presentation"> - </span>
+                    <a href="https://www.google.com/intl/en/policies/terms/"
+                       target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
+                </div>
+            </div>
         <% } %>
+
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
                 <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
-                <a class="btn btn-danger btn-large-submit" disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
+                <a class="btn btn-danger btn-large-submit"
+                   disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
             </div>
         </div>
 
-
     </div>
 
-    <!-- TODO move it to an appropriate file -->
-    <script type="text/javascript">
-        (function () {
+</div>
 
-            // VARIABLES AND INITIALIZATION
-            var $modifyDataBtn = $('#modify-data');
-            var $saveDataBtn = $('#btn-save-data');
-            var $cancelBtn = $('#btn-cancel-save');
-            var $savePasswordBtn = $('#btn-save-password');
-            var $cancelPasswordBtn = $('#btn-cancel-password');
-            var $modifyPassBtn = $('#btn-modify-password');
-            var $formModifyPass = $('#form-modify-pass');
-            var $btnContainer = $('#btn-container');
-            var $btnVerificationLink = $('#btn-send-verification-link');
+<!-- TODO move it to an appropriate file -->
+<script type="text/javascript">
+    (function () {
 
-            var $firstname = $("#firstname");
-            var $lastname = $("#lastname");
-            var $gender = $("#gender");
-            var $language = $("#language");
-            var $previousPassword = $("#previous-password");
-            var $password = $("#password");
-            var $confirmPassword = $("#confirm-password");
-            var $birthday = $("#birthday");
-            var $inputs = $('.personnal-data-input');
-            var $datepicker = $(".input-group.date");
-            var date = "";
+        // VARIABLES AND INITIALIZATION
+        var $modifyDataBtn = $('#modify-data');
+        var $saveDataBtn = $('#btn-save-data');
+        var $cancelBtn = $('#btn-cancel-save');
+        var $savePasswordBtn = $('#btn-save-password');
+        var $cancelPasswordBtn = $('#btn-cancel-password');
+        var $modifyPassBtn = $('#btn-modify-password');
+        var $formModifyPass = $('#form-modify-pass');
+        var $btnContainer = $('#btn-container');
+        var $btnVerificationLink = $('#btn-send-verification-link');
 
-            //Little css trick so that date input render correctly but does not appear quickly at loading
-            $inputs.hide();
-            $inputs.css('visibility', 'visible');
+        var $firstname = $("#firstname");
+        var $lastname = $("#lastname");
+        var $gender = $("#gender");
+        var $language = $("#language");
+        var $previousPassword = $("#previous-password");
+        var $password = $("#password");
+        var $confirmPassword = $("#confirm-password");
+        var $birthday = $("#birthday");
+        var $inputs = $('.personnal-data-input');
+        var $datepicker = $(".input-group.date");
+        var date = "";
 
-            // LOCAL FUNCTIONS
-            var closeEditMode = function () {
-                $("#personnal-data .panel").each(function (index, element) {
-                    var $element = $(element);
-                    var $dataField = $element.find(".data-value").first();
-                    var $inputField = $element.find('.personnal-data-input').first();
+        //Little css trick so that date input render correctly but does not appear quickly at loading
+        $inputs.hide();
+        $inputs.css('visibility', 'visible');
 
-                    //Show labels and hide fields
-                    $inputField.hide();
-                    $btnContainer.hide();
-                    $dataField.show();
-                    $modifyDataBtn.show();
-                });
-            };
+        // LOCAL FUNCTIONS
+        var closeEditMode = function () {
+            $("#personnal-data .panel").each(function (index, element) {
+                var $element = $(element);
+                var $dataField = $element.find(".data-value").first();
+                var $inputField = $element.find('.personnal-data-input').first();
 
-            var formatDate = function (date) {
-                var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-                var year = date.getFullYear();
-                return day + "/" + month + "/" + year;
-            };
+                //Show labels and hide fields
+                $inputField.hide();
+                $btnContainer.hide();
+                $dataField.show();
+                $modifyDataBtn.show();
+            });
+        };
 
-            var createDate = function (sDate) {
-                var date = sDate.substr(6, 4) + "/" + sDate.substr(3, 2) + "/" + sDate.substr(0, 2);
-                return new Date(date);
-            };
+        var formatDate = function (date) {
+            var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var year = date.getFullYear();
+            return day + "/" + month + "/" + year;
+        };
 
-            var resetErrors = function (formClass, errorsClass) {
-                $("#" + formClass).hide("fast");
-                $("#" + errorsClass).empty();
-            };
+        var createDate = function (sDate) {
+            var date = sDate.substr(6, 4) + "/" + sDate.substr(3, 2) + "/" + sDate.substr(0, 2);
+            return new Date(date);
+        };
 
-            //Init date field and datepicker
-            if ("<%= profile.birthdate %>" && "<%= profile.birthdate %>" != "null" && "<%= profile.birthdate %>" !== null && "<%= profile.birthdate %>" != "undefined") {
-                date = new Date(parseInt("<%= profile.birthdate %>"));
-                $datepicker.prev(".data-value").text(formatDate(date));
-            }
+        var resetErrors = function (formClass, errorsClass) {
+            $("#" + formClass).hide("fast");
+            $("#" + errorsClass).empty();
+        };
 
-            var locale = '<%= language %>';
+        //Init date field and datepicker
+        if ("<%= profile.birthdate %>" && "<%= profile.birthdate %>" != "null" && "<%= profile.birthdate %>" !== null && "<%= profile.birthdate %>" != "undefined") {
+            date = new Date(parseInt("<%= profile.birthdate %>"));
+            $datepicker.prev(".data-value").text(formatDate(date));
+        }
 
-            $datepicker.datepicker({
-                format: 'dd/mm/yyyy',
-                language: locale,
-                endDate: "0d"
+        var locale = '<%= language %>';
+
+        $datepicker.datepicker({
+            format: 'dd/mm/yyyy',
+            language: locale,
+            endDate: "0d"
+        });
+
+        // EVENTS
+        $modifyDataBtn.on('click', function (e) {
+            e.preventDefault();
+
+            var $this = $(this);
+            //Hide Modify button
+            $this.hide();
+
+            $("#personnal-data .panel").each(function (index, element) {
+                var $element = $(element);
+                var $dataField = $element.find(".data-value").first();
+                var value = String($dataField.text());
+                var $inputField = $element.find('.personnal-data-input').first();
+
+                //If it is date field, update it correctly
+                if ($inputField.hasClass("date")) {
+                    $inputField.find("input").first().val(value);
+                } else if ($inputField.is("select")) {
+                    $inputField.val($dataField.attr("data-selected"));
+                } else {
+                    $inputField.val(value);
+                }
+
+                //Show fields and hide labels with data values
+                $dataField.hide();
+                $inputField.show();
             });
 
-            // EVENTS
-            $modifyDataBtn.on('click', function (e) {
-                e.preventDefault();
+            $btnContainer.show();
+        });
 
-                var $this = $(this);
-                //Hide Modify button
-                $this.hide();
+        $('#verification-link-form').submit(function (e) {
+            e.preventDefault();
+            var $label = $btnVerificationLink.find(".button-label").first();
+            var $spinner = $btnVerificationLink.find(".spinner").first();
+            var $verifSuccess = $("#verification-success");
+            var $verifError = $("#verification-error");
 
-                $("#personnal-data .panel").each(function (index, element) {
-                    var $element = $(element);
-                    var $dataField = $element.find(".data-value").first();
-                    var value = String($dataField.text());
-                    var $inputField = $element.find('.personnal-data-input').first();
+            $verifError.hide();
+            $label.hide();
+            $spinner.show();
 
-                    //If it is date field, update it correctly
-                    if ($inputField.hasClass("date")) {
-                        $inputField.find("input").first().val(value);
-                    } else if ($inputField.is("select")) {
-                        $inputField.val($dataField.attr("data-selected"));
-                    } else {
-                        $inputField.val(value);
-                    }
+            $(this).ajaxSubmit({
+                error: function (result) {
+                    $spinner.hide();
+                    $label.show();
+                    if (!result.responseJSON.msg)
+                        $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION') %>");
+                    else
+                        $verifError.find(".text").first().text(result.responseJSON.msg);
 
-                    //Show fields and hide labels with data values
-                    $dataField.hide();
-                    $inputField.show();
-                });
+                    $verifError.show();
+                },
+                success: function (response) {
+                    $btnVerificationLink.remove();
+                    $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION') %>");
+                    $verifSuccess.show();
+                }
+            });
+        });
 
-                $btnContainer.show();
+        $saveDataBtn.on('click', function (e) {
+            e.preventDefault();
+            resetErrors("form-personnal-data-errors", "personnal-data-errors");
+
+            var userId = "<%= user.id %>";
+            var date = createDate($birthday.val()).getTime();
+
+            $.ajax({
+                url: "<%= link('/user/profile/') %>",
+                data: {
+                    firstname: $firstname.val(),
+                    lastname: $lastname.val(),
+                    gender: $gender.val(),
+                    language: $language.val(),
+                    birthdate: date
+                },
+                type: 'PUT',
+                success: function (result) {
+                    $firstname.prev(".data-value").text($firstname.val());
+                    $lastname.prev(".data-value").text($lastname.val());
+                    $datepicker.prev(".data-value").text($birthday.val());
+
+                    $gender.prev(".data-value").text($gender.find("option:selected").text());
+                    $gender.prev(".data-value").attr("data-selected", $gender.val());
+
+                    $language.prev(".data-value").text($language.find("option:selected").text());
+                    $language.prev(".data-value").attr("data-selected", $language.val());
+
+                    closeEditMode();
+                    // Reload in case the user has changed the local
+                    location.reload();
+                },
+                error: function (result) {
+                    $.each(result.responseJSON.errors, function (index, error) {
+                        $("#personnal-data-errors").append($('<p>').text(error.msg));
+                    });
+                    $("#form-personnal-data-errors").show("fast");
+                    $('html, body').animate({
+                        scrollTop: $("#personnal-data-errors").offset().top
+                    }, 500);
+                }
             });
 
-            $('#verification-link-form').submit(function (e) {
-                e.preventDefault();
-                var $label = $btnVerificationLink.find(".button-label").first();
-                var $spinner = $btnVerificationLink.find(".spinner").first();
-                var $verifSuccess = $("#verification-success");
-                var $verifError = $("#verification-error");
+        });
 
-                $verifError.hide();
-                $label.hide();
-                $spinner.show();
+        $cancelBtn.on('click', function (e) {
+            e.preventDefault();
+            resetErrors("form-personnal-data-errors", "personnal-data-errors");
+            closeEditMode();
+        });
 
-                $(this).ajaxSubmit({
-                    error: function (result) {
-                        $spinner.hide();
-                        $label.show();
-                        if (!result.responseJSON.msg)
-                            $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION') %>");
-                        else
-                            $verifError.find(".text").first().text(result.responseJSON.msg);
+        $modifyPassBtn.on('click', function (e) {
+            e.preventDefault();
+            $formModifyPass.show();
+            $modifyPassBtn.hide();
+        });
 
-                        $verifError.show();
-                    },
-                    success: function (response) {
-                        $btnVerificationLink.remove();
-                        $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION') %>");
-                        $verifSuccess.show();
-                    }
-                });
+        $savePasswordBtn.on('click', function (e) {
+            e.preventDefault();
+
+            resetErrors("form-security-errors", "security-errors");
+
+            var userId = "<%= user.id %>";
+
+            $.ajax({
+                url: "<%= link('/user/') %>" + userId + "/password",
+                data: {
+                    previous_password: $previousPassword.val(),
+                    password: $password.val(),
+                    confirm_password: $confirmPassword.val()
+                },
+                type: 'POST',
+                success: function (result) {
+                    $previousPassword.val("");
+                    $password.val("");
+                    $confirmPassword.val("");
+                    $formModifyPass.hide();
+                    $modifyPassBtn.show();
+                },
+                error: function (result) {
+                    $.each(result.responseJSON.errors, function (index, error) {
+                        $("#security-errors").append($('<p>').text(error.msg));
+                    });
+                    $("#form-security-errors").show("fast");
+                    $('html, body').animate({
+                        scrollTop: $("#security-errors").offset().top
+                    }, 500);
+                }
             });
+        });
 
-            $saveDataBtn.on('click', function (e) {
-                e.preventDefault();
-                resetErrors("form-personnal-data-errors", "personnal-data-errors");
+        $cancelPasswordBtn.on('click', function (e) {
+            e.preventDefault();
+            resetErrors("form-security-errors", "security-errors");
+            $formModifyPass.hide();
+            $modifyPassBtn.show();
+        });
 
-                var userId = "<%= user.id %>";
-                var date = createDate($birthday.val()).getTime();
+    })();
+</script>
 
-                $.ajax({
-                    url: "<%= link('/user/profile/') %>",
-                    data: {
-                        firstname: $firstname.val(),
-                        lastname: $lastname.val(),
-                        gender: $gender.val(),
-                        language: $language.val(),
-                        birthdate: date
-                    },
-                    type: 'PUT',
-                    success: function (result) {
-                        $firstname.prev(".data-value").text($firstname.val());
-                        $lastname.prev(".data-value").text($lastname.val());
-                        $datepicker.prev(".data-value").text($birthday.val());
-
-                        $gender.prev(".data-value").text($gender.find("option:selected").text());
-                        $gender.prev(".data-value").attr("data-selected", $gender.val());
-
-                        $language.prev(".data-value").text($language.find("option:selected").text());
-                        $language.prev(".data-value").attr("data-selected", $language.val());
-
-                        closeEditMode();
-                        // Reload in case the user has changed the local
-                        location.reload();
-                    },
-                    error: function (result) {
-                        $.each(result.responseJSON.errors, function (index, error) {
-                            $("#personnal-data-errors").append($('<p>').text(error.msg));
-                        });
-                        $("#form-personnal-data-errors").show("fast");
-                        $('html, body').animate({
-                            scrollTop: $("#personnal-data-errors").offset().top
-                        }, 500);
-                    }
-                });
-
-            });
-
-            $cancelBtn.on('click', function (e) {
-                e.preventDefault();
-                resetErrors("form-personnal-data-errors", "personnal-data-errors");
-                closeEditMode();
-            });
-
-            $modifyPassBtn.on('click', function (e) {
-                e.preventDefault();
-                $formModifyPass.show();
-                $modifyPassBtn.hide();
-            });
-
-            $savePasswordBtn.on('click', function (e) {
-                e.preventDefault();
-
-                resetErrors("form-security-errors", "security-errors");
-
-                var userId = "<%= user.id %>";
-
-                $.ajax({
-                    url: "<%= link('/user/') %>" + userId + "/password",
-                    data: {
-                        previous_password: $previousPassword.val(),
-                        password: $password.val(),
-                        confirm_password: $confirmPassword.val()
-                    },
-                    type: 'POST',
-                    success: function (result) {
-                        $previousPassword.val("");
-                        $password.val("");
-                        $confirmPassword.val("");
-                        $formModifyPass.hide();
-                        $modifyPassBtn.show();
-                    },
-                    error: function (result) {
-                        $.each(result.responseJSON.errors, function (index, error) {
-                            $("#security-errors").append($('<p>').text(error.msg));
-                        });
-                        $("#form-security-errors").show("fast");
-                        $('html, body').animate({
-                            scrollTop: $("#security-errors").offset().top
-                        }, 500);
-                    }
-                });
-            });
-
-            $cancelPasswordBtn.on('click', function (e) {
-                e.preventDefault();
-                resetErrors("form-security-errors", "security-errors");
-                $formModifyPass.hide();
-                $modifyPassBtn.show();
-            });
-
-        })();
-    </script>
-
-    <%- include ../layout/foot %>
+<%- include ../layout/foot %>
