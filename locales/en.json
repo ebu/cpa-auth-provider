@@ -96,10 +96,8 @@
   "USER_DEVICES_ACTIONS_TABLE_COL_TITLE": "Actions",
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associate a device",
 
-  "ALERT_LANGUAGE_1": "Your default language is different from the one in your profile",
-  "ALERT_LANGUAGE_2": "clic here to update your profile",
-  "ALERT_LANGUAGE_3": "or",
-  "ALERT_LANGUAGE_4": "here to use default one",
+  "ALERT_LANGUAGE_1": "Your default language is different from the one in your profile.",
+  "ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }} and switch to {{ default_language_of_the_user }}",
 
   "HOME_MY_PROFILE_TITLE": "My profile",
   "HOME_PERSONNAL_DATA_LINK": "Access your personal details and update them",

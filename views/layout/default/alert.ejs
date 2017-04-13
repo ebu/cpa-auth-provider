@@ -7,11 +7,7 @@
                     aria-hidden="true">&times;</span></button>
         <%= __('ALERT_LANGUAGE_1') %>
         <a id="updateProfileLanguage" class="link-set-language" data-lang="<%= language %>" href="#" class="alert-link">
-            <%= __('ALERT_LANGUAGE_2') %>
-        </a>
-        <%= __('ALERT_LANGUAGE_3') %> <a id="updateCookieLanguage" class="link-set-language"
-                                         data-lang="<%= user.UserProfile.language %>" href="#" class="alert-link">
-            <%= __('ALERT_LANGUAGE_4') %>
+            <%= __('ALERT_LANGUAGE_2', { default_language_of_the_idp: language, default_language_of_the_user: user.UserProfile.language }) %>
         </a>
     </div>
 </div>
