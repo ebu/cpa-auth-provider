@@ -97,7 +97,9 @@
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
 
   "ALERT_LANGUAGE_1": "Votre langue par défaut est différente de celle de votre profil.",
-  "ALERT_LANGUAGE_2": "Cliquez ici pour passer votre profil de {{ default_language_of_the_idp }} à {{ default_language_of_the_user }}",
+  "ALERT_LANGUAGE_2": "Cliquez ici pour définir {{ default_language_of_the_idp }} en langue de profil par défaut",
+  "ALERT_LANGUAGE_3": "ou",
+  "ALERT_LANGUAGE_4": "la changer pour {{ default_language_of_the_user }}",
 
   "HOME_MY_PROFILE_TITLE": "Mon profil",
   "HOME_PERSONNAL_DATA_LINK": "Accéder à vos informations personnelles et les mettre à jour",

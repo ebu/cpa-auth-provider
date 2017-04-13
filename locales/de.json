@@ -98,7 +98,9 @@
 	"USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Ein Gerät zuordnen",
 
 	"ALERT_LANGUAGE_1": "Ihre Standardsprache unterscheidet sich von der in Ihrem Profil",
-	"ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }} and switch to {{ default_language_of_the_user }}",
+	"ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }}",
+	"ALERT_LANGUAGE_3": "oder",
+	"ALERT_LANGUAGE_4": "switch to {{ default_language_of_the_user }}",
 
 	"HOME_MY_PROFILE_TITLE": "Mein Profil",
 	"HOME_PERSONNAL_DATA_LINK": "Greifen Sie auf Ihre persönlichen Daten zu und aktualisieren Sie diese",
