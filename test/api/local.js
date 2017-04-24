@@ -64,7 +64,7 @@ describe('POST /api/local/signup', function () {
             //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            expect(this.res.body.msg).to.equal("Successfully created new user.");
+            expect(this.res.body.msg).to.equal("Successfully created new user");
             expect(this.res.body.token).to.not.equal('');
         });
 
@@ -91,7 +91,7 @@ describe('POST /api/local/signup', function () {
             //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
-            expect(this.res.body.msg).to.equal("Please pass email and password.");
+            expect(this.res.body.msg).to.equal("Please pass email and password");
         });
 
     });
@@ -117,7 +117,7 @@ describe('POST /api/local/signup', function () {
             //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
-            expect(this.res.body.msg).to.equal("Please pass email and password.");
+            expect(this.res.body.msg).to.equal("Please pass email and password");
         });
 
     });
@@ -157,7 +157,7 @@ describe('POST /api/local/signup', function () {
             //console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(400);
             expect(this.res.body.success).to.equal(false);
-            expect(this.res.body.msg).to.equal("email already exists.");
+            expect(this.res.body.msg).to.equal("email already exists");
         });
 
     });
