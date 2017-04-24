@@ -83,10 +83,10 @@ module.exports = function (app, options) {
         }
     });
 
-    app.get('/api/local/password/recover', cors, recaptcha.middleware.verify, function (req, res) {
+    app.post('/api/local/password/recover', cors, recaptcha.middleware.verify, function (req, res) {
 
         if (req.recaptcha.error) {
-            res.json({success: false, msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});
+            res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});
             return;
         }
 
