@@ -257,6 +257,10 @@
 	"API_SIGNUP_EMAIL_ALREADY_EXISTS": "E-Mail existiert bereits.",
 	"API_SIGNUP_SUCCESS": "Erfolgreicher neuer Benutzer erstellt.",
 
+	"API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
+	"API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Bitte E-Mail eingeben",
+	"API_PASSWORD_RECOVER_USER_NOT_FOUND": "Benutzer nicht gefunden",
+
 	"API_INFO_NO_TOKEN": "Kein Token zur Verfügung gestellt.",
 
 	"API_VERIF_MAIL_NOT_AUTH": "nicht berechtigt",

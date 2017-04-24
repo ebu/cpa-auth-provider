@@ -252,9 +252,13 @@
   "BACK_PROFILE_REQ_VERIF_MAIL": "Non authentifié",
 
   "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
-  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe.",
-  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé.",
-  "API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé.",
+  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe",
+  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé",
+  "API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé",
+
+  "API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
+  "API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Merci d'envoyer un email valide",
+  "API_PASSWORD_RECOVER_USER_NOT_FOUND": "Utilisateur inconnu",
 
   "API_INFO_NO_TOKEN": "Aucun token fourni.",
 
