@@ -126,7 +126,7 @@ module.exports = function (app, options) {
                         return res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_USER_NOT_FOUND')});
                     }
                 }, function (error) {
-                    next(error);
+                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
                 });
         });
     });
