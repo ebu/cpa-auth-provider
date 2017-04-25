@@ -83,6 +83,54 @@ module.exports = function (app, options) {
         }
     });
 
+    app.post('/api/local/password/recover', cors, recaptcha.middleware.verify, function (req, res) {
+
+        if (req.recaptcha.error) {
+            res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});
+            return;
+        }
+
+        req.checkBody('email', req.__('API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL')).isEmail();
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+                            emailHelper.send(
+                                config.mail.from,
+                                user.email,
+                                "password-recovery-email",
+                                {log: false},
+                                {
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    host: config.mail.host,
+                                    mail: user.email,
+                                    code: code
+                                },
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                            ).then(
+                                function () {
+                                },
+                                function (err) {
+                                }
+                            );
+                            return res.status(200).send();
+                        });
+                    } else {
+                        return res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_USER_NOT_FOUND')});
+                    }
+                }, function (error) {
+                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
+                });
+        });
+    });
+
     app.post('/api/local/authenticate', cors, function (req, res) {
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
