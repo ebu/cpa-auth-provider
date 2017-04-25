@@ -64,7 +64,7 @@ var routes = function (router) {
                     config.mail.from,
                     user.email,
                     "validation-email",
-                    {log: true},
+                    {log: false},
                     {
                         confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,

@@ -94,7 +94,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                                         config.mail.from,
                                         user.email,
                                         "validation-email",
-                                        {log: true},
+                                        {log: false},
                                         {
                                             confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                                             host: config.mail.host,
@@ -230,7 +230,7 @@ module.exports = function (app, options) {
                                 config.mail.from,
                                 user.email,
                                 "password-recovery-email",
-                                {log: true},
+                                {log: false},
                                 {
                                     forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,

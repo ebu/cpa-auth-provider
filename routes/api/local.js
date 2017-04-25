@@ -106,7 +106,7 @@ module.exports = function (app, options) {
                                 config.mail.from,
                                 user.email,
                                 "password-recovery-email",
-                                {log: true},
+                                {log: false},
                                 {
                                     forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
