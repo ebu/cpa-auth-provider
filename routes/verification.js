@@ -121,6 +121,7 @@ var routes = function (router) {
 
     /**
      * Set the state of a Pairing Code identified by userCode to denied. And it associates the user who denies the Pairing Code.
+     * @param req
      * @param userCode
      * @param userId
      * @param done = function(err, errorMessage, result)
@@ -128,7 +129,7 @@ var routes = function (router) {
      *               errorMessage is the message displayed to the user
      *               result is included when redirecting after an user_code prefilled process.
      */
-    var denyUserCode = function (userCode, userId, done) {
+    var denyUserCode = function (req, userCode, userId, done) {
         db.PairingCode
             .findOne({where: {'user_code': userCode}, include: [db.Client]})
             .then(function (pairingCode) {
@@ -167,6 +168,7 @@ var routes = function (router) {
 
     /**
      * Associate a pairing code with a user. It sets the state to verified.
+     * @param req
      * @param userCode
      * @param userId
      * @param done = function(err, errorMessage, result)
@@ -346,7 +348,7 @@ var routes = function (router) {
             return;
         }
 
-        denyUserCode(userCode, req.user.id, function (err, errorMessage, result) {
+        denyUserCode(req, userCode, req.user.id, function (err, errorMessage, result) {
             var redirectUri = urlHelper.addQueryParameters(req.body.redirect_uri, {result: result});
             res.redirect(redirectUri);
         });
