@@ -50,19 +50,19 @@ module.exports = function (app, options) {
 
         // Data validation
         if (req.body.firstname) {
-            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).isString();
+            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).isAlpha();
         }
         if (req.body.lastname) {
-            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).isString();
+            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).isAlpha();
         }
         if (req.body.birthdate) {
             req.checkBody('birthdate', req.__('API_PROFILE_BIRTHDATE_INVALIDE')).isInt();
         }
         if (req.body.gender) {
-            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isHuman();
+            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male'], ['female']);
         }
         if (req.body.language) {
-            req.checkBody('language', req.__('API_PROFILE_LANGUAGE_INVALIDE')).isString();
+            req.checkBody('language', req.__('API_PROFILE_LANGUAGE_INVALIDE')).isAlpha();
         }
 
         req.getValidationResult().then(function (result) {
@@ -71,7 +71,7 @@ module.exports = function (app, options) {
                     // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
-                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array,
+                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array
                     });
                 }
 
@@ -91,7 +91,7 @@ module.exports = function (app, options) {
                                         lastname: req.body.lastname ? xssFilters.inHTMLData(req.body.lastname) : user_profile.lastname,
                                         gender: req.body.gender ? xssFilters.inHTMLData(req.body.gender) : user_profile.gender,
                                         birthdate: req.body.birthdate ? xssFilters.inHTMLData(req.body.birthdate) + '' : user_profile.birthdate,
-                                        language: req.body.language ? xssFilters.inHTMLData(req.body.language) + '' : user_profile.language,
+                                        language: req.body.language ? xssFilters.inHTMLData(req.body.language) + '' : user_profile.language
                                     })
                                     .then(function () {
                                             res.cookie(config.i18n.cookie_name, user_profile.language, {

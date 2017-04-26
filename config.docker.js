@@ -24,9 +24,30 @@ module.exports = {
             callback_url: process.env.OPEN_AM_CALL_BACK_URL,
             service_url: process.env.OPEN_AM_SERVICE_URL
         },
+        facebook: {
+            enabled: false,
+            client_id: '',
+            client_secret: '',
+            callback_url: ''
+        },
+        googleplus: {
+            enabled: false,
+            client_id: '',
+            client_secret: '',
+            callback_url: ''
+        },
+        twitter: {
+            enabled: false,
+            client_id: '',
+            client_secret: '',
+            callback_url: ''
+        },
+        ebu: {
+            enabled: false
+        },
         local: {
             enabled: true
-        },
+        }
     },
 
     displayUsersInfos: true,

@@ -103,9 +103,9 @@ describe('GET /api/local/profile', function () {
                     method: 'put',
                     type: 'json',
                     data: {
-                        firstname: 'firstname',
-                        lastname: 'lastname',
-                        gender: 'female',
+                        firstname: 'emile',
+                        lastname: 'zola',
+                        gender: 'male',
                         birthdate: birth
                     },
                     accessToken: accessToken,
@@ -121,23 +121,6 @@ describe('GET /api/local/profile', function () {
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
         });
-
-
-        // Partial update :
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/profile', {
-                    method: 'put',
-                    type: 'json',
-                    data: {
-                        firstname: 'firstname2',
-                        gender: 'male',
-                    },
-                    accessToken: accessToken,
-                    tokenType: 'JWT'
-                }, done
-            );
-        });
-
 
         before(function (done) {
             //var accessToken = this.res.body.token;
@@ -156,12 +139,12 @@ describe('GET /api/local/profile', function () {
             //console.log('get profile status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            expect(this.res.body.user_profile.firstname).to.equal('firstname2');
-            expect(this.res.body.user_profile.lastname).to.equal('lastname');
+            expect(this.res.body.user_profile.firstname).to.equal('emile');
+            expect(this.res.body.user_profile.lastname).to.equal('zola');
             expect(this.res.body.user_profile.gender).to.equal('male');
             expect(this.res.body.user_profile.birthdate).to.equals(birth);
             expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
-            expect(this.res.body.user_profile.display_name).to.equals('firstname2 lastname');
+            expect(this.res.body.user_profile.display_name).to.equals('emile zola');
         });
 
     });

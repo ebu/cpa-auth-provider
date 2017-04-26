@@ -100,7 +100,9 @@
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associate a device",
 
   "ALERT_LANGUAGE_1": "Your default language is different from the one in your profile.",
-  "ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }} and switch to {{ default_language_of_the_user }}",
+  "ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }}",
+  "ALERT_LANGUAGE_3": "or",
+  "ALERT_LANGUAGE_4": "switch to {{ default_language_of_the_user }}",
 
   "HOME_MY_PROFILE_TITLE": "My profile",
   "HOME_PERSONNAL_DATA_LINK": "Access your personal details and update them",
@@ -263,9 +265,13 @@
   "BACK_PROFILE_REQ_VERIF_MAIL": "not authenticated",
 
   "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Something went wrong with the reCAPTCHA",
-  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Please pass email and password.",
-  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "email already exists.",
-  "API_SIGNUP_SUCCESS": "Successfully created new user.",
+  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Please pass email and password",
+  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "email already exists",
+  "API_SIGNUP_SUCCESS": "Successfully created new user",
+
+  "API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Something went wrong with the reCAPTCHA",
+  "API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Please pass a valid email address",
+  "API_PASSWORD_RECOVER_USER_NOT_FOUND": "User not found",
 
   "API_INFO_NO_TOKEN": "No token provided.",
 

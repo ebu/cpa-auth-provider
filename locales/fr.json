@@ -99,7 +99,9 @@
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
 
   "ALERT_LANGUAGE_1": "Votre langue par défaut est différente de celle de votre profil.",
-  "ALERT_LANGUAGE_2": "Cliquez ici pour passer votre profil de {{ default_language_of_the_idp }} à {{ default_language_of_the_user }}",
+  "ALERT_LANGUAGE_2": "Cliquez ici pour définir {{ default_language_of_the_idp }} en langue de profil par défaut",
+  "ALERT_LANGUAGE_3": "ou",
+  "ALERT_LANGUAGE_4": "la changer pour {{ default_language_of_the_user }}",
 
   "HOME_MY_PROFILE_TITLE": "Mon profil",
   "HOME_PERSONNAL_DATA_LINK": "Accéder à vos informations personnelles et les mettre à jour",
@@ -262,9 +264,13 @@
   "BACK_PROFILE_REQ_VERIF_MAIL": "Non authentifié",
 
   "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
-  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe.",
-  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé.",
-  "API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé.",
+  "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe",
+  "API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé",
+  "API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé",
+
+  "API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
+  "API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Merci d'envoyer un email valide",
+  "API_PASSWORD_RECOVER_USER_NOT_FOUND": "Utilisateur inconnu",
 
   "API_INFO_NO_TOKEN": "Aucun token fourni.",
 

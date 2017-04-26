@@ -100,7 +100,9 @@
 	"USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Ein Gerät zuordnen",
 
 	"ALERT_LANGUAGE_1": "Ihre Standardsprache unterscheidet sich von der in Ihrem Profil",
-	"ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }} and switch to {{ default_language_of_the_user }}",
+	"ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }}",
+	"ALERT_LANGUAGE_3": "oder",
+	"ALERT_LANGUAGE_4": "switch to {{ default_language_of_the_user }}",
 
 	"HOME_MY_PROFILE_TITLE": "Mein Profil",
 	"HOME_PERSONNAL_DATA_LINK": "Greifen Sie auf Ihre persönlichen Daten zu und aktualisieren Sie diese",
@@ -266,6 +268,10 @@
 	"API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Bitte E-Mail und Passwort eingeben.",
 	"API_SIGNUP_EMAIL_ALREADY_EXISTS": "E-Mail existiert bereits.",
 	"API_SIGNUP_SUCCESS": "Erfolgreicher neuer Benutzer erstellt.",
+
+	"API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
+	"API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Bitte E-Mail eingeben",
+	"API_PASSWORD_RECOVER_USER_NOT_FOUND": "Benutzer nicht gefunden",
 
 	"API_INFO_NO_TOKEN": "Kein Token zur Verfügung gestellt.",
 
