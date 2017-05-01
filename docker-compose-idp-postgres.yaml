@@ -17,6 +17,7 @@ services:
       - DB_USER=dockeridp
       - DB_PASSWORD=SchiefesHausBautFalsch
       - MAIL_TRANSPORT_TYPE=test
+      - TRACKING_COOKIE=true
     depends_on:
       - postgres
     links:
