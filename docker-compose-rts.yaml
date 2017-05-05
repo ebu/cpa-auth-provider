@@ -19,6 +19,7 @@ services:
     - MAIL_USER_NAME=username
     - MAIL_PASSWORD=password
     - IDP_CLIENT_URL=https://cpa.rts.ch
+    - TRACKING_COOKIE=true
 
   nginx:
     image: nginx
