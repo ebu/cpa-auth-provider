@@ -18,6 +18,7 @@ services:
     - MAIL_TRANSPORT_TYPE=test
     - MAIL_USER_NAME=username
     - MAIL_PASSWORD=password
+    - IDP_CLIENT_URL=https://cpa.rts.ch
 
   nginx:
     image: nginx
