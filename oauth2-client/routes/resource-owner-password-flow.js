@@ -12,10 +12,12 @@ var options = {
 	publicProfileUrl: server + '/oauth2/user_info'
 };
 
+var cors = require('../../lib/cors');
 
 function setup(router) {
 	router.get(
 		'/resource-owner-password',
+		cors,
 		function (req, res) {
 			var ropUrl = options.publicTokenUrl;
 			res.render(
