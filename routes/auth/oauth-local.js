@@ -41,7 +41,7 @@ var localoAuthStrategyCallback = function (req, username, password, done) {
                 done(null, client, info);
             }
         ).catch(done);
-    }
+     }
 
 };
 

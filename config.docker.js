@@ -83,7 +83,7 @@ module.exports = {
     },
 
     trackingCookie: {
-        enabled: true,
+        enabled: ('true' == process.env.TRACKING_COOKIE),
         secret: 'HighWaterTurnsOff',
         duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
     },
