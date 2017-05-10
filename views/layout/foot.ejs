@@ -1,3 +1,12 @@
 </div>
+</main>
+
+<% if ( broadcaster && broadcaster.name === "rts" ) { %>
+<%- include rts/footer %>
+<% } else { %>
+<%- include default/footer %>
+<% } %>
+
 </body>
+
 </html>

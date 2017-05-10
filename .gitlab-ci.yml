@@ -1,0 +1,35 @@
+image: node:7
+
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+
+stages:
+  - test
+  - docker-publish
+
+npm_test:
+  stage: test
+  script: 
+    - npm install --silent -g jshint istanbul
+    - npm --silent install
+    - make all
+    - make coverage
+#  coverage: /Lines\s+: \d+(\.\d*)?%.*/
+
+docker_push:
+  stage: docker-publish
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+    CONTAINER_RELEASE_IMAGE: registry.ebu.io/pipe/identity-provider:develop
+  script:
+    - docker build -t identity-provider .
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD registry.ebu.io
+    - docker tag identity-provider $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - develop
+  tags:
+    - dind

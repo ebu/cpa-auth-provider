@@ -1,6 +1,6 @@
 <% include layout/head %>
 
-<h1>CPA - OAuth2 Clients</h1>
+<h1>IDP - OAuth2 Clients</h1>
 
 <div id="login-area" class="hide">
     <div><label>Resource Owner: <input class="input-lg" id="login-username"></label></div>
@@ -11,19 +11,26 @@
 
 <span id="user-widget"></span>
 
+<div id="refresh-area">
+    <div id="rop-access-info"></div>
+    <a href="javascript:useRefreshToken()" class="btn btn-info hide" id="rop-refresh-btn">Use Refresh Token</a>
+</div>
+
 <script>
 
-    var storeToken = function(token) {
-        if(typeof(Storage) !== "undefined") {
+    var storeToken = function (token, refreshToken, expires) {
+        if (typeof(Storage) !== "undefined") {
             localStorage.setItem("cpa:rop-token", token);
+            localStorage.setItem("cpa:rop-refresh-token", refreshToken);
+            localStorage.setItem("cpa:rop-expires-at", Date.now() + expires * 1000);
         } else {
             // Cookie
             throw "NotImplementedError"
         }
-    }
+    };
 
-    var getToken = function() {
-        if(typeof(Storage) !== "undefined") {
+    var getToken = function () {
+        if (typeof(Storage) !== "undefined") {
             return localStorage.getItem("cpa:rop-token");
         } else {
             // Cookie
@@ -31,8 +38,26 @@
         }
     };
 
-    var removeToken = function(token) {
-        if(typeof(Storage) !== "undefined") {
+    var getRefreshToken = function () {
+        if (typeof(Storage) !== "undefined") {
+            return localStorage.getItem("cpa:rop-refresh-token");
+        } else {
+            throw "NotImplementedError";
+        }
+    };
+
+    var getExpirationDate = function () {
+        if (typeof(Storage) !== "undefined") {
+            return new Date(new Date().setTime(localStorage.getItem("cpa:rop-expires-at")));
+        } else {
+            throw "NotImplementedError";
+        }
+    };
+
+    var removeToken = function (token) {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.removeItem("cpa:rop-refresh-token");
+            localStorage.removeItem("cpa:rop-expires-at");
             return localStorage.removeItem("cpa:rop-token");
         } else {
             // Cookie
@@ -42,10 +67,11 @@
 
     var loadInterface = function (user) {
         $('#user-widget').html('You are logged in as: ' + user.name);
-        $('#logout-btn').removeClass('hide').click(function() {
+        $('#logout-btn').removeClass('hide').click(function () {
             removeToken();
             location.reload();
         });
+        $('#rop-access-info').html('Expires at ' + getExpirationDate());
     };
 
     var loadProfile = function (done) {
@@ -53,23 +79,23 @@
 
         if (token) {
             jQuery.ajax({
-                        url: "<%= profileUrl %>",
-                        type: "GET",
-                        headers: {
-                            "Authorization": "Bearer "+ token,
-                            "Content-Type": "application/x-www-form-urlencoded",
-                        },
-                    })
-                    .done(function(data, textStatus, jqXHR) {
-                        console.log("HTTP Request Succeeded: " + jqXHR.status);
-                        console.log(data);
-                        done(data.user);
+                url: "<%= profileUrl %>",
+                type: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+                .done(function (data, textStatus, jqXHR) {
+                    console.log("HTTP Request Succeeded: " + jqXHR.status);
+                    console.log(data);
+                    done(data.user);
 
-                    })
-                    .fail(function(jqXHR, textStatus, errorThrown) {
-                        console.log("HTTP Request Failed");
-                        done();
-                    });
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log("HTTP Request Failed");
+                    done();
+                });
         }
         else {
             done();
@@ -88,35 +114,67 @@
             client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98"
         };
         jQuery.ajax(
-                {
-                    url: "<%= ropUrl %>",
-                    type: "POST",
-                    data: data,
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                }
+            {
+                url: "<%= ropUrl %>",
+                type: "POST",
+                data: data,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            }
         ).done(
-                function (data, textStatus, jqXhr){
-                    storeToken(data.access_token);
-                    location.reload();
-                }
+            function (data, textStatus, jqXhr) {
+                storeToken(data.access_token, data.refresh_token, data.expires_in);
+                location.reload();
+            }
         ).fail(
-                function (jqXhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    // location.reload();
-                }
+            function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+                // location.reload();
+            }
         );
+    }
 
+    function useRefreshToken() {
+        var refreshToken = getRefreshToken();
+
+        var data = {
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken,
+            client_id: '<%- client_id %>',
+            client_secret: '<%- client_secret %>'
+        };
+
+        jQuery.ajax(
+            {
+                url: "<%= ropUrl %>",
+                type: "POST",
+                data: data,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            }
+        ).done(
+            function (data, textStatus, jqXhr) {
+                storeToken(data.access_token, data.refresh_token, data.expires_in);
+                location.reload();
+            }
+        ).fail(
+            function (jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+                // location.reload();
+            }
+        );
     }
 
 
-    $(function() {
-        loadProfile(function(user) {
+    $(function () {
+        loadProfile(function (user) {
             if (user) {
                 loadInterface(user);
             }
             else {
                 $('#login-btn').removeClass('hide');
                 $('#login-area').removeClass('hide');
+            }
+            if (getRefreshToken()) {
+                $('#rop-refresh-btn').removeClass('hide');
             }
         });
     });

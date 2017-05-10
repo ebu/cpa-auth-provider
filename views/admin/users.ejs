@@ -1,0 +1,106 @@
+<% include ../layout/header %>
+
+<div id="users">
+
+    <h1><%= __('ADMIN_USERS_TITLE') %></h1>
+
+    <div class="toolbar">
+        <a class="btn btn-primary" id="export-csv" href="/admin/users/csv">
+            <span class="glyphicon glyphicon-download"></span><%= __('ADMIN_USERS_CSV_DOWNLOAD_LINK') %>
+        </a>
+    </div>
+
+    <div id="alert-success" class="alert alert-success alert-dismissible" role="alert">
+
+    </div>
+
+    <div id="alert-error" class="alert alert-danger alert-dismissible" role="alert">
+
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th><%= __('ADMIN_USERS_EMAIL_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_PERMISSIONS_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_CREATED_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE') %></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (var i = 0; i < users.length; i++) { %>
+            <tr id="user-<%= users[i].id %>">
+                <td><%= users[i].email %></td>
+                <td>
+                    <select class=" permission form-control">
+                        <option value="default" disabled selected>
+                            none
+                        </option>
+                        <% for (var j = 0; j < permissions.length; j++) { %>
+                        <option value="<%= users[i].id %>_<%= permissions[j].id %>"
+                                <% if(typeof users[i].permission_id !== "undefined" && permissions[j].id === users[i].permission_id){ %>
+                                selected
+                                <% } %>
+                        >
+                            <%= permissions[j].label %>
+                        </option>
+                        <% } %>
+                    </select>
+                </td>
+                <td><%= users[i].created_at %></td>
+                <td><%= new Date(users[i].password_changed_at) %></td>
+                <td>
+                    <% if(users[i].last_login_at) { %>
+                    <%= new Date(users[i].last_login_at) %>
+                    <% } %>
+                </td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- TODO move it to an appropriate file -->
+<script type="text/javascript">
+
+    (function () {
+
+        var errorSuccess = $("#alert-success");
+        var errorAlert = $("#alert-error");
+        errorSuccess.hide();
+        errorAlert.hide();
+
+        $('.permission').on('change', function () {
+
+            if ($(this).val() == "default") {
+                return;
+            }
+
+            var params = $(this).val().split("_");
+            var userId = params[0];
+            var permissionId = params[1];
+
+            $.ajax({
+                url: '/admin/users/' + userId + '/permission',
+                type: 'POST',
+                data: {
+                    permissionId: permissionId
+                }
+            }).done(function (data) {
+                errorSuccess.html("Successfully changed " + data.user.email + " permission");
+                errorSuccess.show();
+            }).fail(function (error) {
+                errorAlert.html("Error changin " + data.user.email + " permission, please try again");
+                errorAlert.show();
+            });
+        });
+
+    })();
+
+</script>
+
+<% include ../layout/foot %>

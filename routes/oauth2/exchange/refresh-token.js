@@ -7,36 +7,40 @@ var logger = require('../../../lib/logger');
 exports.issueToken = issueToken;
 
 function issueToken(client, token, scope, done) {
-	oauthTokenHelper.validateRefreshToken(token, client, scope)
-		.then(
-			function(user) {
-				if (user) {
-					try {
-						var accessToken = oauthTokenHelper.generateAccessToken(client, user);
-						var refreshToken = oauthTokenHelper.generateRefreshToken(client, user, scope);
-						var extras = oauthTokenHelper.generateTokenExtras(client, user);
-						return done(null, accessToken, refreshToken, extras);
-					} catch(e) {
-						return done(e);
-					}
-				}
-			},
-			function(error) {
-				if (logger && typeof(logger.error) == 'function') {
-					logger.error('[OAuth2][issueToken]', error);
-				}
-				console.log(error);
-				return done(new TokenError(oauthTokenHelper.ERRORS.BAD_REQUEST.message, oauthTokenHelper.ERRORS.BAD_REQUEST.code));
-			}
-		)
-		.catch(
-			function(error) {
-				if (logger && typeof(logger.error) == 'function') {
-					logger.error('[OAuth2][issueToken]', error);
-				}
-				console.log(error);
-				return done(error);
-			}
-		);
+    oauthTokenHelper.validateRefreshToken(token, client, scope)
+        .then(
+            function (user) {
+                if (user) {
+                    var accessToken, refreshToken;
+
+                    oauthTokenHelper.generateAccessToken(client, user).then(
+                        function (_accessToken) {
+                            accessToken = _accessToken;
+                            return oauthTokenHelper.generateRefreshToken(client, user, scope);
+                        }
+                    ).then(
+                        function (_refreshToken) {
+                            refreshToken = _refreshToken;
+                            return oauthTokenHelper.generateTokenExtras(client, user);
+                        }
+                    ).then(
+                        function (_extras) {
+                            return done(null, accessToken, refreshToken, _extras);
+                        }
+                    ).catch(
+                        done
+                    );
+                }
+            }
+        )
+        .catch(
+            function (error) {
+                if (logger && typeof(logger.error) == 'function') {
+                    logger.error('[OAuth2][issueToken]', error);
+                }
+                console.log(error);
+                return done(error);
+            }
+        );
 }
 

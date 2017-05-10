@@ -120,7 +120,7 @@ module.exports = function (router) {
                 return done(err);
             });
         }),
-		authHelper.authenticateFirst,
+        authHelper.authenticateFirst,
         function (req, res) {
             res.render('oauth2/dialog', {
                 transactionID: req.oauth2.transactionID,
@@ -186,9 +186,9 @@ module.exports = function (router) {
         // TODO only allow a selected group of pages to use this with CORS!
         // MUST also require https!
         if (origin == 'http://localhost:3001') {
-            options = { origin: true };
+            options = {origin: true};
         } else {
-            options = { origin: true };
+            options = {origin: true};
         }
         return callback(null, options);
     }

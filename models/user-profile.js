@@ -7,13 +7,14 @@ module.exports = function (sequelize, DataTypes) {
         firstname: DataTypes.STRING,
         lastname: DataTypes.STRING,
         gender: DataTypes.STRING,
-        birthdate: DataTypes.STRING
+        birthdate: DataTypes.STRING,
+        language: DataTypes.STRING
 
     }, {
         underscored: true,
         instanceMethods: {
             getDisplayName: function (user, policy) {
-                if (!policy){
+                if (!policy) {
                     return user.email;
                 }
                 if (policy === "FIRSTNAME") {

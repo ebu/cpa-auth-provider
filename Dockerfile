@@ -2,7 +2,9 @@ FROM node:7.7
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-  libsqlite3-dev
+  libsqlite3-dev apt-transport-https
+
+RUN npm install -g node-gyp
 
 RUN npm install -g node-gyp
 
@@ -12,6 +14,9 @@ ADD models /src/models
 ADD public /src/public
 ADD routes /src/routes
 ADD views /src/views
+ADD templates /src/templates
+ADD locales /src/locales
+ADD passport-openam /src/passport-openam
 ADD package.json /src/package.json
 ADD config.js /src/config.js
 # TODO find better way to run tests without adding test file to the image
@@ -20,20 +25,21 @@ ADD config.test.js /src/config.test.js
 
 # Install Node.js dependencies
 WORKDIR /src
-RUN yarn install
+RUN npm install
 
 # Configure
 ADD config.docker.js /src/config.local.js
 
 ENV NODE_ENV development
 
-ENV CPA_RECAPCHA_SITEKEY 6Lf8JhIUAAAAAOpDYjfIZnlxmjhPQblCiwwfSPHc
-ENV CPA_RECAPCHA_SECRETKEY 6Lf8JhIUAAAAADblMNVnlvE0Sbg8_P_NwM87IncZ
+ENV IDP_RECAPCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+ENV IDP_RECAPCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ENV JWT_SECRET AlteredCarbonFly
+ENV DEFAULT_LOCALE fr
 
 # default settings for database
 ENV DB_TYPE sqlite
-ENV DB_FILENAME "data/cpa-auth-provider.sqlite"
+ENV DB_FILENAME "data/identity-provider.sqlite"
 
 # Create the sqlite database
 RUN mkdir data

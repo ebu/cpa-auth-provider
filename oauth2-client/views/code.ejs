@@ -1,10 +1,16 @@
 <% include layout/head %>
 
-<h1>CPA - OAuth2 Clients</h1>
+<h1>IDP - OAuth2 Clients</h1>
 
 <% if (user) { %>
 <a href="/auth/logout" class="btn btn-warning">Logout</a>
 <% } else { %>
 <a href="<%= loginUrl %>" class="btn btn-success">Login using Ma RTS</a>
+<% } %>
+<% if (expiresAt) { %>
+<div>Expires at <%= expiresAt %>.</div>
+<% } %>
+<% if (refreshToken) { %>
+<a href="/auth/refresh" class="btn btn-info">Use Refresh Token</a>
 <% } %>
 <% include layout/foot %>

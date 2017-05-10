@@ -1,56 +1,67 @@
-<% include layout/head %>
+<% include layout/header %>
 
 
 <div class="container">
 
-<div class="col-sm-6 col-sm-offset-3">
+    <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
 
-    <h1><span class="fa fa-sign-in"></span> Signup</h1>
+        <a class="" href="<%= link('/auth') %>"><span
+                    class="glyphicon glyphicon-chevron-left"></span><%= __('SIGNUP_BACK_TO_IDP_LIST_LINK') %></a>
 
-    <!-- show any messages that come back with authentication -->
-    <% if (message.length > 0) { %>
-    <div class="alert alert-danger"><%= message %></div>
-    <% } %>
+        <div id="signup-panel" class="panel panel-default">
+            <div class="panel-body">
 
-    <!-- LOGIN FORM -->
-    <form action="/signup" method="post">
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" class="form-control" name="email" <% if(email) { %> value="<%= email %>" <% } %> required>
+                <h1><span class="fa fa-sign-in"></span><%= __('SIGNUP_TITLE') %></h1>
+
+                <!-- show any messages that come back with authentication -->
+                <% if (message.length > 0) { %>
+                <div class="alert alert-danger"><%= message %></div>
+                <% } %>
+
+                <!-- LOGIN FORM -->
+                <form action="<%= link('/signup') %>" method="post">
+                    <div class="form-group">
+                        <label><%= __('SIGNUP_EMAIL_LABEL') %></label>
+                        <input type="email" class="form-control" name="email"
+                                <% if(email) { %>
+                               value="<%= email %>"
+                                <% } %>
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label><%= __('SIGNUP_PASSWORD_LABEL') %></label>
+                        <input id="password" type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label><%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %></label>
+                        <input id="password2" type="password" class="form-control" name="password2" required>
+                    </div>
+
+                    <% if(config.recaptcha.enabled) { %>
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"
+                             style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+                    </div>
+                    <% } %>
+
+                    <button type="submit" class="btn btn-primary btn-block"><%= __('SIGNUP_SIGNUP_BUTTON') %></button>
+                </form>
+
+                <p class="last-link text-center"><%= __('SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL') %> <a
+                            href="<%= link('/auth/local') %>"><%= __('SIGNUP_LOGIN_BUTTON') %></a></p>
+
+            </div>
         </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input id="password" type="password" class="form-control" name="password" required>
-        </div>
-        <div class="form-group">
-            <label>Confirm password</label>
-            <input id="password2" type="password" class="form-control" name="password2" required>
-        </div>
 
-        <% if(config.recaptcha.enabled) { %>
-        <div class="form-group">
-            <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
-        </div>
-        <% } %>
-
-        <button type="submit" class="btn btn-warning btn-lg">Signup</button>
-    </form>
-
-    <hr>
-
-    <p>Already have an account? <a href="<%= link('/auth/local') %>">Login</a></p>
-    
-    <a href="<%= link('/auth') %>">Other Identity Provider</a>
-
-</div>
+    </div>
 
     <script>
         var password = document.getElementById("password")
-                , confirm_password = document.getElementById("password2");
+            , confirm_password = document.getElementById("password2");
 
-        function validatePassword(){
-            if(password.value != confirm_password.value) {
-                confirm_password.setCustomValidity("Passwords Don't Match");
+        function validatePassword() {
+            if (password.value != confirm_password.value) {
+                confirm_password.setCustomValidity('<%= __('SIGNUP_JS_PASSWORD_MISSMATCH_MSG') %>');
             } else {
                 confirm_password.setCustomValidity('');
             }
@@ -61,3 +72,5 @@
     </script>
 
 </div>
+
+<% include layout/foot %>

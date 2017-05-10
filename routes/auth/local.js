@@ -4,13 +4,18 @@ var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
+
 var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 var util = require('util');
 
-var generate = require('../../lib/generate');
+var emailHelper = require('../../lib/email-helper');
+var codeHelper = require('../../lib/code-helper');
+var permissionName = require('../../lib/permission-name');
+
+var i18n = require('i18n');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = 'Wrong email or password.';
@@ -23,6 +28,9 @@ var localStrategyCallback = function (req, username, password, done) {
 
                 user.verifyPassword(password).then(function (isMatch) {
                         if (isMatch) {
+                            user.logLogin().then(function () {
+                            }, function () {
+                            });
                             done(null, user);
                         } else {
                             done(null, false, req.flash('loginMessage', loginError));
@@ -39,27 +47,74 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
-    if (req.recaptcha.error) {
-        done(null, false, req.flash('signupMessage', 'Something went wrong with the reCAPTCHA'));
-        return;
-    }
-
-    db.User.find({ where: { email: req.body.email} })
-        .then (function (user){
-            if (user){
-                done(null, false, req.flash('signupMessage', 'That email is already taken'));
-            } else {
-                db.sequelize.sync().then(function() {
-                    var user = db.User.create({
-                        email: req.body.email,
-                        account_uid: generate.accountId(),
-                    }).then(function (user) {
-                        user.setPassword(req.body.password);
-                        done(null, user);
-                    },
-                    function(err){
-                        done(err);
-                    });
+    req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
+    req.getValidationResult().then(function (result) {
+        if (!result.isEmpty()) {
+            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
+            return;
+        } else {
+            if (req.recaptcha.error) {
+                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
+                return;
+            }
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
+                    } else {
+                        db.sequelize.sync().then(function () {
+                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
+                                var userParams = {
+                                    email: req.body.email
+                                };
+                                if (permission) {
+                                    userParams.permission_id = permission.id;
+                                }
+                                var user;
+                                db.User.create(userParams).then(function (_user) {
+                                    user = _user;
+                                    return user.setPassword(req.body.password);
+                                }).then(function () {
+                                    return db.UserProfile.findOrCreate({
+                                        where: {user_id: user.id}
+                                    });
+                                }).spread(function (user_profile) {
+                                    return user_profile.updateAttributes(
+                                        {
+                                            language: req.getLocale()
+                                        });
+                                }).then(function () {
+                                    return codeHelper.getOrGenereateEmailVerificationCode(user);
+                                }).then(function (code) {
+                                    // Async
+                                    user.logLogin().then(function () {
+                                    }, function () {
+                                    });
+                                    emailHelper.send(
+                                        config.mail.from,
+                                        user.email,
+                                        "validation-email",
+                                        {log: false},
+                                        {
+                                            confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                            host: config.mail.host,
+                                            mail: encodeURIComponent(user.email),
+                                            code: encodeURIComponent(code)
+                                        },
+                                        req.getLocale() ? req.getLocale() : config.mail.local
+                                    );
+                                }).then(function () {
+                                    return done(null, user);
+                                }).catch(
+                                    function (err) {
+                                        done(err);
+                                    }
+                                );
+                            });
+                        });
+                    }
+                }, function (error) {
+                    done(error);
                 });
         }
     });
@@ -93,25 +148,57 @@ module.exports = function (app, options) {
         res.render('signup.ejs', {email: req.query.email, message: req.flash('signupMessage')});
     });
 
+    app.get('/password/recovery', function (req, res) {
+        res.render('password-recovery.ejs', {});
+    });
+
+    app.get('/password/edit', function (req, res) {
+        res.render('password-edit.ejs', {email: req.query.email, code: req.query.code});
+    });
+
     app.get('/logout', function (req, res) {
         req.logout();
         res.redirect('/');
     });
 
+    app.get('/email_verify', function (req, res, next) {
+        db.User.findOne({where: {email: req.query.email}})
+            .then(function (user) {
+                if (user) {
+                    codeHelper.verifyEmail(user, req.query.code).then(function (success) {
+                            if (success) {
+                                res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                            } else {
+                                res.render('./verify-mail.ejs', {verified: false});
+                            }
+                        }
+                    );
+                } else {
+                    return res.status(400).json({msg: req.__('BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND')});
+                }
+            }, function (error) {
+                next(error);
+            });
+    });
 
     app.post('/login', passport.authenticate('local', {
-        failureRedirect: '/auth/local',
+        failureRedirect: config.urlPrefix + '/auth/local',
         failureFlash: true
     }), redirectOnSuccess);
 
-    app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
+    app.post('/signup', recaptchaVerify, function (req, res, next) {
+
+        if (req.recaptcha.error) {
+            return res.status(400).json({msg: req.__('BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG')});
+        }
+
         passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
                 return next(err);
             }
             // Redirect if it fails
             if (!user) {
-                return res.redirect('/signup?email=' + req.body.email);
+                return res.redirect(config.urlPrefix + '/signup?email=' + req.body.email);
             }
             req.logIn(user, function (err) {
                 if (err) {
@@ -121,6 +208,86 @@ module.exports = function (app, options) {
                 return redirectOnSuccess(req, res, next);
             });
         })(req, res, next);
+    });
+
+    app.post('/password/code', recaptchaVerify, function (req, res, next) {
+
+        if (req.recaptcha.error) {
+            return res.status(400).json({msg: req.__('BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG')});
+        }
+
+        req.checkBody('email', req.__('BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID')).isEmail();
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+                            emailHelper.send(
+                                config.mail.from,
+                                user.email,
+                                "password-recovery-email",
+                                {log: false},
+                                {
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    host: config.mail.host,
+                                    mail: user.email,
+                                    code: code
+                                },
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                            ).then(
+                                function () {
+                                },
+                                function (err) {
+                                }
+                            );
+                            return res.status(200).send();
+                        });
+                    } else {
+                        return res.status(400).json({msg: req.__('BACK_SIGNUP_USER_NOT_FOUND')});
+                    }
+                }, function (error) {
+                    next(error);
+                });
+        });
+
+    });
+
+    app.post('/password/update', function (req, res, next) {
+
+        req.checkBody('password', req.__('BACK_PWD_UPDATE_PWD_EMPTY')).notEmpty();
+        req.checkBody('confirm-password', req.__('BACK_PWD_UPDATE_CONF_PWD_EMPTY')).notEmpty();
+        req.checkBody('confirm-password', req.__('BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY')).equals(req.body.password);
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+                return;
+            }
+            db.User.findOne({where: {email: req.body.email}})
+                .then(function (user) {
+                    if (user) {
+                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (sucess) {
+                            if (sucess) {
+                                return res.status(200).send();
+                            } else {
+                                return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});
+                            }
+                        });
+                    }
+                    else {
+                        return res.status(400).json({msg: req.__('BACK_PWD_UPDATE_USER_NOT_FOUND')});
+                    }
+                }, function (error) {
+                    next(error);
+                });
+        });
+
     });
 
     function redirectOnSuccess(req, res, next) {
@@ -135,7 +302,7 @@ module.exports = function (app, options) {
     }
 };
 
-function captchaVerify(req, res, next) {
+function recaptchaVerify(req, res, next) {
     if (config.recaptcha.enabled) {
         recaptcha.middleware.verify(req, res, next);
     } else {

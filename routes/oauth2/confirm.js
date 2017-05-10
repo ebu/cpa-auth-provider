@@ -22,7 +22,7 @@ module.exports = function(app, options) {
 			getClient(clientId).then(
 				function(client) {
 					try {
-						var data = jwtHelper.decode(token, client.client_secret);
+						var data = jwtHelper.decode(token, client.jwt_code);
 						// slightly slower solution: could check database here
 						res.status(200).json({ success: true, user_id: data.sub });
 					} catch(e) {

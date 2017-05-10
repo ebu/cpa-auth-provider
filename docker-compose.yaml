@@ -3,24 +3,29 @@ services:
   oauth2-client:
     build: oauth2-client
     ports:
-    - 3001:3000
+    - 3001:3001
     environment:
     - OAUTH2_CLIENT_ID=db05acb0c6ed902e5a5b7f5ab79e7144
     - OAUTH2_CLIENT_SECRET=49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98
     - OAUTH2_SERVER=http://localhost:3000
     - OAUTH2_CALLBACK=http://localhost:3001
-    - OAUTH2_INTERNAL_SERVER=http://cpa-auth-provider:3000
+    - OAUTH2_INTERNAL_SERVER=http://identity-provider:3000
     - EMAIL_FROM=no-reply@br.de
     links:
-    - cpa-auth-provider:cpa-auth-provider
-  cpa-auth-provider:
+    - identity-provider:identity-provider
+  identity-provider:
     build: .
     ports:
     - 3000:3000
     environment:
+    - MAIL_FROM=no-reply@rts.ch
+    - IDP_HOST=http://localhost:3000
+    - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - IDP_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    - DEFAULT_LOCALE=fr
+    - MAIL_TRANSPORT_TYPE=test
+    - TRACKING_COOKIE=true
     - EMAIL_FROM=no-reply@rts.ch
-    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 #    depends_on:
 #      - postgres
 #    links:

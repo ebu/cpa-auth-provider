@@ -1,0 +1,264 @@
+/*
+************
+************ GENERAL
+************
+*/
+html {
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+header, footer {
+    background-color: #abc;
+}
+
+.panel {
+    margin: 15px 0;
+}
+
+.panel .panel-body {
+    padding: 20px 15px;
+}
+
+.panel .panel-body > h1 {
+    margin: 0 0 20px 0;
+    font-size: 30px;
+}
+
+.panel .last-link {
+    margin: 15px 0 0 0;
+}
+
+.error-message {
+    display: none;
+}
+
+/*
+************
+************ SPINNER
+************
+*/
+.spinner {
+    display: none;
+    width: auto;
+    text-align: center;
+}
+
+.spinner > div {
+    width: 10px;
+    height: 10px;
+    background-color: #FFF;
+
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+        -webkit-transform: scale(0)
+    }
+    40% {
+        -webkit-transform: scale(1.0)
+    }
+}
+
+@keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    40% {
+        -webkit-transform: scale(1.0);
+        transform: scale(1.0);
+    }
+}
+
+/*
+************
+************ BOOTSTRAP
+************
+*/
+.alert .glyphicon {
+    vertical-align: -1px;
+}
+
+/*
+************
+************ HEADER
+************
+*/
+nav .lang abbr[title], .lang abbr[data-original-title] {
+    cursor: pointer;
+    border: 0;
+}
+
+nav .lang ul.dropdown-menu {
+    min-width: inherit;
+    border: none;
+    left: 0;
+}
+
+nav .lang ul.dropdown-menu {
+    min-width: inherit;
+    border: none;
+    left: 0;
+}
+
+/*
+************
+************ LOGIN
+************
+*/
+#login .link-center {
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+#login #password-recovery {
+    font-size: 0.9em;
+}
+
+#login h1.title span.glyphicon {
+    font-size: 25px;
+}
+
+/*
+************
+************ VERIFY ACCOUNT
+************
+*/
+#verify-mail h1 {
+    margin-bottom: 30px;
+}
+
+#verify-mail p {
+    font-size: 20px;
+}
+
+#verify-mail .link {
+    display: block;
+    margin-top: 30px;
+}
+
+#verify-mail .line {
+    border-top: 1px solid #333;
+    display: inline-block;
+    height: 5px;
+    width: 40px;
+}
+
+#verify-mail .separator {
+    margin-top: 30px;
+}
+
+#verify-mail h1 span.glyphicon {
+    vertical-align: -5px;
+}
+
+@media screen and (max-height: 575px) {
+    #rc-imageselect, .g-recaptcha {
+        transform: scale(0.92);
+        -webkit-transform: scale(0.92);
+        transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+    }
+}
+
+/*
+************
+************ USERS
+************
+*/
+#users .toolbar {
+    background-color: #eee;
+    padding: 10px;
+    text-align: right;
+    margin: 20px auto;
+}
+
+#users #alert-success, #users #alert-error {
+    display: none;
+}
+
+/*
+************
+************ HOME
+************
+*/
+#home .home-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #fff;
+    font-size: 2em;
+    padding: 15px 20px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+#home .panel {
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+#home a.home-panel {
+    color: #333;
+}
+
+#home a.home-panel:hover {
+    text-decoration: none;
+    color: #333;
+}
+
+#home .panel:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
+    -moz-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
+    box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
+}
+
+#home .panel:hover .home-icon {
+    -webkit-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
+    -moz-box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
+    box-shadow: 3px 0 15px 0 rgba(204, 204, 204, 1);
+}
+
+/*
+************
+************ CLIENT
+************
+*/
+#client .btn-group{
+    display: flex;
+}
+
+/*
+************
+************ MEDIA QUERIES
+************
+*/

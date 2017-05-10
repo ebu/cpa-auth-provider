@@ -10,10 +10,21 @@ var oauthToken = require('../../../lib/oauth2-token');
 
 exports.token = function (client, user, ares, done) {
 	try {
-		var accessToken = oauthToken.generateAccessToken(client, user);
-		var refreshToken = oauthToken.generateRefreshToken(client, user, '*');
-		var extras = oauthToken.generateTokenExtras(client, user);
-		return done(null, accessToken, extras);
+		var accessToken;
+		oauthToken.generateAccessToken(client, user).then(
+			function(_accessToken) {
+				accessToken = _accessToken;
+                return oauthToken.generateTokenExtras(client, user);
+			}
+		).then(
+			function(_extras) {
+                return done(null, accessToken, _extras);
+			}
+		).catch(
+			function(e) {
+				return done(e);
+			}
+		);
 	} catch(e) {
 		return done(e);
 	}

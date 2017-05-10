@@ -1,20 +1,20 @@
-<% include ../layout/head %>
+<% include ../layout/header %>
 
-<h1>Add a Service Provider</h1>
+<h1><%= __('ADMIN_ADD_DOMAIN_ADD_SERVICE_PROVIDER_TITLE') %></h1>
 
 <form method="POST" action="<%= link('/admin/domains') %>">
-  <div class="panel-body">
-    <div class="form-group">
-      <label class="control-label" for="inputDisplayName">Name</label>
-      <input type="text" class="form-control" id="inputDisplayName" name="display_name" required>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="control-label" for="inputDisplayName"><%= __('ADMIN_ADD_DOMAIN_NAME_LABEL') %></label>
+            <input type="text" class="form-control" id="inputDisplayName" name="display_name" required>
 
-      <label class="control-label" for="inputDomain">Domain</label>
-      <input type="text" class="form-control" id="inputDomain" name="name" required>
+            <label class="control-label" for="inputDomain"><%= __('ADMIN_ADD_DOMAIN_DOMAIN_LABEL') %></label>
+            <input type="text" class="form-control" id="inputDomain" name="name" required>
+        </div>
+        <input type="submit" class="btn btn-default" name="submit" value="<%= __('ADMIN_ADD_DOMAIN_TITLE_SUBMIT') %>">
     </div>
-    <input type="submit" class="btn btn-default" name="submit" value="Add">
-  </div>
 </form>
 
-<p><a href="<%= link('/admin/domains') %>">Back</a></p>
+<p><a href="<%= link('/admin/domains') %>"><%= __('ADMIN_ADD_DOMAIN_BACK_LINK') %></a></p>
 
 <% include ../layout/foot %>

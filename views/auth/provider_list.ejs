@@ -1,22 +1,30 @@
-<% include ../layout/head %>
+<% include ../layout/header %>
 
-<h1>Available providers</h1>
+<h1><%= __('AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE') %></h1>
 <ul>
-  <% if (identity_providers.facebook) { %>
-    <li><a href="<%= link('/auth/facebook') %>" class="identity_provider facebook">Login with Facebook</a></li>
-  <% } %>
+    <% if (identity_providers.facebook) { %>
+    <li><a href="<%= link('/auth/facebook') %>"
+           class="identity_provider facebook"><%= __('AUTH_MAIN_LOGIN_FB_LINK') %></a></li>
+    <% } %>
 
-  <% if (identity_providers.github) { %>
-    <li><a href="<%= link('/auth/github') %>" class="identity_provider github">Login with Github</a></li>
-  <% } %>
+    <% if (identity_providers.github) { %>
+    <li><a href="<%= link('/auth/github') %>"
+           class="identity_provider github"><%= __('AUTH_MAIN_LOGIN_GITHUB_LINK') %></a></li>
+    <% } %>
 
-  <% if (identity_providers.ebu) { %>
-    <li><a href="<%= link('/auth/ebu') %>" class="identity_provider ebu">Login with EBU</a></li>
-  <% } %>
+    <% if (identity_providers.ebu) { %>
+    <li><a href="<%= link('/auth/ebu') %>" class="identity_provider ebu"><%= __('AUTH_MAIN_LOGIN_EBU_LINK') %></a></li>
+    <% } %>
 
-  <% if (identity_providers.local) { %>
-    <li><a href="<%= link('/auth/local') %>" class="identity_provider local">Login with Username and Password</a></li>
-  <% } %>
+    <% if (identity_providers.local) { %>
+    <li><a href="<%= link('/auth/local') %>" class="identity_provider local"><%= __('AUTH_MAIN_LOGIN_USER_LINK') %></a>
+    </li>
+    <% } %>
+
+    <% if (identity_providers.openam) { %>
+    <li><a href="<%= link('/auth/openam') %>" class="identity_provider local"><%= __('AUTH_OPENAM_LOGIN_USER_LINK') %></a>
+    </li>
+    <% } %>
 </ul>
 
 <% include ../layout/foot %>

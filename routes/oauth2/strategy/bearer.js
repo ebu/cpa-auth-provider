@@ -13,7 +13,7 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
 				return done(null, false);
 			}
 
-			var userId = jwtHelper.getUserId(accessToken, client.client_secret);
+			var userId = jwtHelper.getUserId(accessToken, client.jwt_code);
 			if (userId) {
 				db.User.find({where: {id: userId}}).then(
 					function(user) {
@@ -38,7 +38,7 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
     //     if (!token) {
     //         return done(null, false);
     //     }
-	//
+    //
     //     if (token.user_id !== null) {
     //         db.User.findOne({where: {id: token.user_id}}).then(function (user) {
     //             if (!user) {
