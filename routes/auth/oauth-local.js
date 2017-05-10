@@ -72,7 +72,8 @@ module.exports = function (app, options) {
             // to the API (e.g. in case you use sessions)
             res.setHeader('Access-Control-Allow-Credentials', true);
 
-            res.json({id: req.user.id,
+            res.json({
+                id: req.user.id,
                 email: req.user.email}
             );
         });
