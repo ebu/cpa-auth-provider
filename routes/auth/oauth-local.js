@@ -68,6 +68,10 @@ module.exports = function (app, options) {
 
     app.post('/oauth2/session/cookie/request', cors, passport.authenticate('oauth-local', {session: true}),
         function (req, res) {
+            // Set to true if you need the website to include cookies in the requests sent
+            // to the API (e.g. in case you use sessions)
+            res.setHeader('Access-Control-Allow-Credentials', true);
+
             res.json({id: req.user.id,
                 email: req.user.email}
             );
