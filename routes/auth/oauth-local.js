@@ -58,7 +58,7 @@ passport.use('oauth-local', new LocalStrategy(localStrategyConf, localoAuthStrat
 module.exports = function (app, options) {
 
     //TODO : needed
-    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // This is needed because when configuring a custom header JQuery automatically send options request to the server.
     // That following line avoid cross domain error like
     // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
     // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
@@ -72,8 +72,11 @@ module.exports = function (app, options) {
             // to the API (e.g. in case you use sessions)
             res.setHeader('Access-Control-Allow-Credentials', true);
 
-            // Might not be needed... But needed sometime...
-            res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
+            // test if we have a request origin
+            if(req.get('origin')) {
+                // Might not be needed... But needed sometime...
+                res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
+            }
 
             res.json({
                 id: req.user.id,

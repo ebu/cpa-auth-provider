@@ -539,8 +539,8 @@ describe('OAuth2 Authorization Code Flow', function () {
     });
 });
 
-describe('OAuth2 requests from cross domain', function () {
-    
+describe('OAuth2 requests from cross domain with access token', function () {
+
     before(resetDatabase);
     before(createFakeUser);
 
@@ -567,8 +567,40 @@ describe('OAuth2 requests from cross domain', function () {
     });
 
     it('should return a success', function () {
-        console.log("RESULT", this.res);
         expect(this.res.statusCode).equal(200);
+    });
+
+});
+
+describe('OAuth2 requests from cross domain without access token', function () {
+
+    before(resetDatabase);
+    before(createFakeUser);
+
+    before(function (done) {
+        requestHelper.sendRequest(this, '/oauth2/login', {
+            method: 'post',
+            data: {
+                grant_type: 'password',
+                username: USER.email,
+                password: USER.password,
+                client_id: CLIENT.client_id
+            }
+        }, done);
+    });
+
+    before(function (done) {
+        var self = this;
+        requestHelper.sendRequest(this, '/oauth2/session/cookie/request', {
+            method: 'post',
+            data: {
+                token: ''
+            }
+        }, done);
+    });
+
+    it('should return an error', function () {
+        expect(this.res.statusCode).equal(401);
     });
 
 });
