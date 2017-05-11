@@ -20,6 +20,7 @@ services:
     - MAIL_PASSWORD=password
     - TRACKING_COOKIE=true
     - IDP_CLIENT_URL=http://hummingbird-sandbox-marts.rts.ch
+    - BROADCASTER_LAYOUT=rts
 
   nginx:
     image: nginx

@@ -2,7 +2,7 @@
 
 module.exports = {
 
-    broadcasterLayout: '',
+    broadcasterLayout: process.env.BROADCASTER_LAYOUT || '',
 
     broadcaster: '',
 
