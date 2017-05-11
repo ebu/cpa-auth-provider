@@ -116,9 +116,7 @@ module.exports = function (app, options) {
                         // Set to true if you need the website to include cookies in the requests sent
                         // to the API (e.g. in case you use sessions)
                         res.setHeader('Access-Control-Allow-Credentials', true);
-
-                        console.log("req.get('origin')", req.get('origin'));
-
+                        
                         if (req.get('origin')) {
                             // Might not be needed... But needed sometime...
                             res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
