@@ -72,6 +72,9 @@ module.exports = function (app, options) {
             // to the API (e.g. in case you use sessions)
             res.setHeader('Access-Control-Allow-Credentials', true);
 
+            // Might not be needed... But needed sometime...
+            res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
+
             res.json({
                 id: req.user.id,
                 email: req.user.email}
