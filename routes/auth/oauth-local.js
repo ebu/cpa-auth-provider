@@ -81,4 +81,55 @@ module.exports = function (app, options) {
             );
         });
 
+    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // That following line avoid cross domain error like
+    // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
+    // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    // Origin 'http://localhost.rts.ch:8090' is therefore not allowed access.
+    app.options('/user/profile/display_name', cors);
+
+    app.get('/user/profile/display_name', cors, function (req, res, next) {
+        if (!req.user) {
+            // Return 200 to avoid error in browser console
+            res.status(200);
+        } else {
+            db.User.findOne({
+                where: {
+                    id: req.user.id
+                }
+            }).then(function (user) {
+                if (!user) {
+                    // Return 200 to avoid error in browser console
+                    res.status(200);
+                } else {
+                    db.UserProfile.findOrCreate({
+                        where: {
+                            user_id: req.user.id
+                        }
+                    }).spread(function (profile) {
+                        var data = {
+                            display_name: profile.getDisplayName(user, req.query.policy)
+                        };
+                        // Set to true if you need the website to include cookies in the requests sent
+                        // to the API (e.g. in case you use sessions)
+                        res.setHeader('Access-Control-Allow-Credentials', true);
+
+                        console.log("req.get('origin')", req.get('origin'));
+
+                        if (req.get('origin')) {
+                            // Might not be needed... But needed sometime...
+                            res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
+                        }
+                        res.json(data);
+
+                    });
+                }
+            }, function (err) {
+                next(err);
+            });
+        }
+
+    });
+
+
 };
