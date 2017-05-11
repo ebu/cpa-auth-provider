@@ -538,3 +538,41 @@ describe('OAuth2 Authorization Code Flow', function () {
         });
     });
 });
+
+describe('OAuth2 requests from cross domain', function () {
+
+    var token = '';
+
+    before(resetDatabase);
+    before(createFakeUser);
+
+    before(function (done) {
+        requestHelper.sendRequest(this, '/oauth2/login', {
+            method: 'post',
+            cookie: this.cookie,
+            type: 'form',
+            data: {
+                grant_type: 'password',
+                username: USER.email,
+                password: USER.password,
+                client_id: CLIENT.client_id
+            }
+        }, done);
+    });
+
+    before(function (done) {
+        requestHelper.sendRequest(this, '/oauth2/session/cookie/request', {
+            method: 'post',
+            cookie: this.cookie,
+            type: 'form',
+            data: {
+
+            }
+        }, done);
+    });
+
+    it('should return a success', function () {
+        expect(this.res.statusCode).equal(200);
+    });
+
+});
