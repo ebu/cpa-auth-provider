@@ -570,9 +570,6 @@ describe('OAuth2 requests from cross domain with access token', function () {
         var self = this;
         requestHelper.sendRequest(this, '/user/profile/display_name', {
             method: 'get',
-            data: {
-                token: self.res.body.access_token
-            },
             cookie: self.cookie,
         }, done);
     });
