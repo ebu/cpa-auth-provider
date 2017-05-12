@@ -566,8 +566,20 @@ describe('OAuth2 requests from cross domain with access token', function () {
         }, done);
     });
 
+    before(function (done) {
+        var self = this;
+        requestHelper.sendRequest(this, '/user/profile/display_name', {
+            method: 'get',
+            data: {
+                token: self.res.body.access_token
+            },
+            cookie: self.cookie,
+        }, done);
+    });
+
     it('should return a success', function () {
         expect(this.res.statusCode).equal(200);
+        expect(this.res.text).equal('{"display_name":"test@test.com"}');
     });
 
 });
@@ -604,3 +616,5 @@ describe('OAuth2 requests from cross domain without access token', function () {
     });
 
 });
+
+
