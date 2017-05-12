@@ -41,7 +41,7 @@ var localoAuthStrategyCallback = function (req, username, password, done) {
                 done(null, client, info);
             }
         ).catch(done);
-     }
+    }
 
 };
 
@@ -57,7 +57,6 @@ passport.use('oauth-local', new LocalStrategy(localStrategyConf, localoAuthStrat
 
 module.exports = function (app, options) {
 
-    //TODO : needed
     // This is needed because when configuring a custom header JQuery automatically send options request to the server.
     // That following line avoid cross domain error like
     // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
@@ -68,20 +67,8 @@ module.exports = function (app, options) {
 
     app.post('/oauth2/session/cookie/request', cors, passport.authenticate('oauth-local', {session: true}),
         function (req, res) {
-            // Set to true if you need the website to include cookies in the requests sent
-            // to the API (e.g. in case you use sessions)
-            res.setHeader('Access-Control-Allow-Credentials', true);
 
-            // test if we have a request origin
-            if(req.get('origin')) {
-                // Might not be needed... But needed sometime...
-                res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
-            }
-
-            res.json({
-                id: req.user.id,
-                email: req.user.email}
-            );
+            returnDisplayName(req, res);
         });
 
     // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
@@ -92,45 +79,55 @@ module.exports = function (app, options) {
     app.options('/user/profile/display_name', cors);
 
     app.get('/user/profile/display_name', cors, function (req, res, next) {
+
         if (!req.user) {
             // Return 200 to avoid error in browser console
-            res.status(200);
+            res.json({connected: false});
         } else {
-            db.User.findOne({
-                where: {
-                    id: req.user.id
-                }
-            }).then(function (user) {
-                if (!user) {
-                    // Return 200 to avoid error in browser console
-                    res.status(200);
-                } else {
-                    db.UserProfile.findOrCreate({
-                        where: {
-                            user_id: req.user.id
-                        }
-                    }).spread(function (profile) {
-                        var data = {
-                            display_name: profile.getDisplayName(user, req.query.policy)
-                        };
-                        // Set to true if you need the website to include cookies in the requests sent
-                        // to the API (e.g. in case you use sessions)
-                        res.setHeader('Access-Control-Allow-Credentials', true);
-                        
-                        if (req.get('origin')) {
-                            // Might not be needed... But needed sometime...
-                            res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
-                        }
-                        res.json(data);
+            returnDisplayNameForUser(req.user, req, res);
 
-                    });
-                }
-            }, function (err) {
-                next(err);
-            });
         }
 
     });
+
+    function returnDisplayNameForUser(user, req, res) {
+        if (!user) {
+            // Return 200 to avoid error in browser console
+            res.json({connected: false});
+        } else {
+            db.UserProfile.findOrCreate({
+                where: {
+                    user_id: user.id
+                }
+            }).spread(function (profile) {
+                var data = {
+                    display_name: profile.getDisplayName(user)
+                };
+                // Set to true if you need the website to include cookies in the requests sent
+                // to the API (e.g. in case you use sessions)
+                res.setHeader('Access-Control-Allow-Credentials', true);
+
+                if (req.get('origin')) {
+                    // Might not be needed... But needed sometime...
+                    res.setHeader('Access-Control-Allow-Origin', req.get('origin'));
+                }
+                res.json(data);
+
+            });
+        }
+    }
+
+    function returnDisplayName(req, res) {
+        db.User.findOne({
+            where: {
+                id: req.user.id
+            }
+        }).then(function (user) {
+            returnDisplayNameForUser(user, req, res);
+        }, function (err) {
+            next(err);
+        });
+    }
 
 
 };
