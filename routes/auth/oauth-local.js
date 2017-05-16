@@ -67,8 +67,7 @@ module.exports = function (app, options) {
 
     app.post('/oauth2/session/cookie/request', cors, passport.authenticate('oauth-local', {session: true}),
         function (req, res) {
-
-            returnDisplayName(req, res);
+            getUserInfos(req, res);
         });
 
     // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
@@ -76,18 +75,15 @@ module.exports = function (app, options) {
     // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
     // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
     // Origin 'http://localhost.rts.ch:8090' is therefore not allowed access.
-    app.options('/user/profile/display_name', cors);
+    app.options('/user/profile/menu', cors);
 
-    app.get('/user/profile/display_name', cors, function (req, res, next) {
-
+    app.get('/user/profile/menu', cors, function (req, res, next) {
         if (!req.user) {
             // Return 200 to avoid error in browser console
             res.json({connected: false});
         } else {
-            returnDisplayNameForUser(req.user, req, res);
-
+            returnMenuInfos(req.user, req, res);
         }
-
     });
 
     // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
@@ -105,35 +101,50 @@ module.exports = function (app, options) {
 
     });
 
-    function returnDisplayNameForUser(user, req, res) {
+    function returnMenuInfos(user, req, res) {
         if (!user) {
-            // Return 200 to avoid error in browser console
-            res.json({connected: false});
+            // Return 204 Success No Content
+            res.status(204).json({connected: false});
         } else {
             db.UserProfile.findOrCreate({
                 where: {
                     user_id: user.id
                 }
             }).spread(function (profile) {
+                var language = "en";
+                if(req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
+                    language = req.query.lang;
+                }
                 var data = {
-                    display_name: profile.getDisplayName(user)
+                    display_name: profile.getDisplayName(user),
+                    menu : getMenu(req, language)
                 };
                 res.json(data);
             });
         }
     }
 
-    function returnDisplayName(req, res) {
+    function getUserInfos(req, res) {
         db.User.findOne({
             where: {
                 id: req.user.id
             }
         }).then(function (user) {
-            returnDisplayNameForUser(user, req, res);
+            returnMenuInfos(user, req, res);
         }, function (err) {
             next(err);
         });
     }
 
+    function getMenu(req, lang) {
+        var menu = [
+            {
+                label: req.__({phrase: 'BACK_API_MENU_LABEL_SETTINGS', locale: lang}),
+                url: req.protocol + '://' + req.get('host') + "/user/profile",
+                directLink: true
+            }
+        ];
+        return menu;
+    }
 
 };

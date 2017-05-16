@@ -568,15 +568,15 @@ describe('OAuth2 requests from cross domain with access token', function () {
 
     before(function (done) {
         var self = this;
-        requestHelper.sendRequest(this, '/user/profile/display_name', {
+        requestHelper.sendRequest(this, '/user/profile/menu', {
             method: 'get',
-            cookie: self.cookie,
+            cookie: self.cookie
         }, done);
     });
 
     it('should return a success', function () {
         expect(this.res.statusCode).equal(200);
-        expect(this.res.text).equal('{"display_name":"test@test.com"}');
+        expect(this.res.text).to.contain('"display_name":"test@test.com"');
     });
 
 });
