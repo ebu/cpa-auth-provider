@@ -83,15 +83,7 @@ var routes = function (router) {
         }
     });
 
-    router.delete('/user/profile', [authHelper.ensureAuthenticated, recaptcha.middleware.verify], function (req, res) {
 
-        var user = authHelper.getAuthenticatedUser(req);
-        if (!user) {
-            return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
-        } else {
-
-        }
-    });
 
 
 };
