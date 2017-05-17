@@ -1,7 +1,6 @@
 "use strict";
 
 var generate = require('../../lib/generate');
-var messages = require('../../lib/messages');
 var db = require('../../models');
 var jwtHelper = require('../../lib/jwt-helper');
 
@@ -539,3 +538,80 @@ describe('OAuth2 Authorization Code Flow', function () {
         });
     });
 });
+
+describe('OAuth2 requests from cross domain with access token', function () {
+
+    before(resetDatabase);
+    before(createFakeUser);
+
+    before(function (done) {
+        requestHelper.sendRequest(this, '/oauth2/login', {
+            method: 'post',
+            data: {
+                grant_type: 'password',
+                username: USER.email,
+                password: USER.password,
+                client_id: CLIENT.client_id
+            }
+        }, done);
+    });
+
+    before(function (done) {
+        var self = this;
+        requestHelper.sendRequest(this, '/oauth2/session/cookie/request', {
+            method: 'post',
+            data: {
+                token: self.res.body.access_token
+            }
+        }, done);
+    });
+
+    before(function (done) {
+        var self = this;
+        requestHelper.sendRequest(this, '/user/profile/menu', {
+            method: 'get',
+            cookie: self.cookie
+        }, done);
+    });
+
+    it('should return a success', function () {
+        expect(this.res.statusCode).equal(200);
+        expect(this.res.text).to.contain('"display_name":"test@test.com"');
+    });
+
+});
+
+describe('OAuth2 requests from cross domain without access token', function () {
+
+    before(resetDatabase);
+    before(createFakeUser);
+
+    before(function (done) {
+        requestHelper.sendRequest(this, '/oauth2/login', {
+            method: 'post',
+            data: {
+                grant_type: 'password',
+                username: USER.email,
+                password: USER.password,
+                client_id: CLIENT.client_id
+            }
+        }, done);
+    });
+
+    before(function (done) {
+        var self = this;
+        requestHelper.sendRequest(this, '/oauth2/session/cookie/request', {
+            method: 'post',
+            data: {
+                token: ''
+            }
+        }, done);
+    });
+
+    it('should return an error', function () {
+        expect(this.res.statusCode).equal(401);
+    });
+
+});
+
+

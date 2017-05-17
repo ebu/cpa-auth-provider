@@ -6,7 +6,8 @@ var logger = require('../../../lib/logger');
 
 var jwtHelper = require('../../../lib/jwt-helper');
 
-var INCORRECT_LOGIN_OR_PASS = 'The user name or password is incorrect';
+var INCORRECT_LOGIN_OR_PASS = 'INCORRECT_LOGIN_OR_PASS';
+
 
 // Grant authorization by resource owner (user) and password credentials.
 // The user is authenticated and checked for validity - this strategy should
@@ -26,7 +27,7 @@ function confirmUser(client, username, password, scope, done) {
         function (user_) {
             user = user_;
             if (!user) {
-                throw new Error('Bad username');
+                throw new Error(INCORRECT_LOGIN_OR_PASS);
             }
 
             return user.verifyPassword(password);
@@ -36,7 +37,7 @@ function confirmUser(client, username, password, scope, done) {
             if (isMatch) {
                 provideAccessToken(client, user, scope, done);
             } else {
-                throw new Error('Password does not match');
+                throw new Error(INCORRECT_LOGIN_OR_PASS);
             }
         }
     ).catch(

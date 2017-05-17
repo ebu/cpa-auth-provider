@@ -1,8 +1,6 @@
 "use strict";
 
-var messages = require('../../lib/messages');
 var db = require('../../models');
-
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 

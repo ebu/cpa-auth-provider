@@ -4,13 +4,11 @@
 
     <div class="row">
 
-        <div class="col-sm-6">
+        <div class="col-sm-6 col-sm-offset-3">
             <a class="home-panel" href="<%= link('/user/profile') %>">
                 <div class="panel panel-default">
-                    <div class="panel-body text-center">
-                    <span class="home-icon hidden-xs">
-                        <span class="glyphicon glyphicon-user text-info"></span>
-                    </span>
+                    <div class="panel-body">
+                        <span class="glyphicon glyphicon-menu-right text-info home-icon"></span>
                         <h3 class="text-info"><%= __('HOME_MY_PROFILE_TITLE') %></h3>
                         <p>
                             <%= __('HOME_PERSONNAL_DATA_LINK') %>
@@ -19,14 +17,13 @@
                 </div>
             </a>
         </div>
-
-        <div class="col-sm-6">
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
             <a class="home-panel" href="<%= link('/user/devices') %>">
                 <div class="panel panel-default">
-                    <div class="panel-body text-center">
-                        <span class="home-icon hidden-xs">
-                            <span class="glyphicon glyphicon-hdd text-info"></span>
-                        </span>
+                    <div class="panel-body">
+                        <span class="glyphicon glyphicon-menu-right text-info home-icon"></span>
                         <h3 class="text-info"><%= __('HOME_MY_DEVICES_TITLE') %></h3>
                         <p>
                             <%= __('HOME_DEVICES_LINK') %>
