@@ -66,8 +66,8 @@ module.exports = function (app, options) {
 
 
     app.post('/oauth2/session/cookie/request', cors, passport.authenticate('oauth-local', {session: true}),
-        function (req, res) {
-            getUserInfos(req, res);
+        function (req, res, next) {
+            getUserInfos(req, res, next);
         });
 
     // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
@@ -124,7 +124,7 @@ module.exports = function (app, options) {
         }
     }
 
-    function getUserInfos(req, res) {
+    function getUserInfos(req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
