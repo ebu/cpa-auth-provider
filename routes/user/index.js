@@ -5,8 +5,6 @@ var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 
 var i18n = require('i18n');
-var recaptcha = require('express-recaptcha');
-
 
 var routes = function (router) {
 
@@ -103,7 +101,7 @@ var routes = function (router) {
         });
     });
 
-    router.delete('/user', [authHelper.ensureAuthenticated, recaptcha.middleware.verify], function (req, res) {
+    router.delete('/user', authHelper.ensureAuthenticated, function (req, res) {
 
         var user = authHelper.getAuthenticatedUser(req);
         if (!user) {
