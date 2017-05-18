@@ -70,20 +70,19 @@ describe('DELETE /user/', function () {
             before(function (done) {
                 requestHelper.sendRequest(this, '/user', {
                     method: 'delete',
-                    cookie: this.cookie,
+                    cookie: this.cookie
                 }, done);
             });
 
             before(function (done){
                 db.User.count().then(function (count){
                     self.count = count;
-                    console.log('count', count);
                     done();
                 })
             });
 
-            it('should return a status 200', function () {
-                expect(this.res.statusCode).to.equal(200);
+            it('should return a status 204 success no content', function () {
+                expect(this.res.statusCode).to.equal(204);
                 expect(self.count).to.equal(0);
             });
 

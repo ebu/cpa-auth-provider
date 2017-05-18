@@ -97,6 +97,11 @@
 	"USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Autorisierte Domains",
 	"USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Ein Gerät zuordnen",
 
+	"ADMIN_USER_DELETE_MODALE_TITLE": "Delete account",
+	"ADMIN_USER_DELETE_MODALE_TEXT": "Do you really want to delete your account? This action is irreversible and will delete all your data.",
+	"ADMIN_USER_DELETE_MODALE_CLOSE": "Cancel",
+	"ADMIN_USER_DELETE_MODALE_SUBMIT": "Confirm",
+
 	"ALERT_LANGUAGE_1": "Ihre Standardsprache unterscheidet sich von der in Ihrem Profil",
 	"ALERT_LANGUAGE_2": "Click here to update your default language to {{ default_language_of_the_idp }}",
 	"ALERT_LANGUAGE_3": "oder",
@@ -148,6 +153,7 @@
 	"PROFILE_ERROR_MSG": "Bitte überprüfen Sie, ob die untenstehenden Felder ausgefüllt und gültig sind, bevor Sie das Formular ausfüllen",
 	"PROFILE_JS_ERROR_RESEND_VALIDATION": "Ein Fehler ist während des Prozesses aufgetreten. Bitte versuchen Sie es später erneut",
 	"PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Erfolgreich eine Bestätigungs-E-Mail an Ihre Mailbox gesendet",
+	"PROFILE_JS_ERROR_DELETE_ACCOUNT": "An error occured while deleting the account.",
 
 	"ACCESS_DENIED_TITLE": "Zugriff abgelehnt",
 	"ACCESS_DENIED_MSG": "Sie haben keine Berechtigung, auf diesen Inhalt zuzugreifen",

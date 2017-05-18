@@ -89,7 +89,7 @@ var routes = function (router) {
             return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
         } else {
             return user.destroy().then(function () {
-                return res.status(200).send("ok");
+                return res.status(204).send();
             });
         }
     });

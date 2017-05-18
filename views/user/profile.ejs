@@ -209,16 +209,22 @@
         <% } %>
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
+
+                <span id="delete-error" class="text-danger"><span
+                            class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
+
                 <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
-                <form id="delete-link-form" action='<%= link('/user') %>'
-                      method="delete">
-                    <a class="btn btn-danger"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
-                </form>
+                <button class="btn btn-danger" data-toggle="modal" data-target="#deleteUserModal">
+                    <span class="button-label"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></span>
+                </button>
             </div>
         </div>
 
 
     </div>
+
+    <!-- Add client Modal -->
+    <% include ./modales/user-delete.ejs %>
 
     <!-- TODO move it to an appropriate file -->
     <script type="text/javascript">
@@ -234,6 +240,8 @@
             var $formModifyPass = $('#form-modify-pass');
             var $btnContainer = $('#btn-container');
             var $btnVerificationLink = $('#btn-send-verification-link');
+            var $btnDeleteAccount = $('#delete-user');
+            var $deleteUserModal = $('#deleteUserModal');
 
             var $firstname = $("#firstname");
             var $lastname = $("#lastname");
@@ -358,32 +366,33 @@
                 });
             });
 
-            $('delete-link-form').submit(function (e) {
-//                e.preventDefault();
-//                var $label = $btnVerificationLink.find(".button-label").first();
-//                var $spinner = $btnVerificationLink.find(".spinner").first();
-//                var $verifSuccess = $("#verification-success");
-//                var $verifError = $("#verification-error");
-//
-//                $verifError.hide();
-//                $label.hide();
-//                $spinner.show();
+            $deleteUserModal.on('show.bs.modal', function () {
+                $deleteUserModal.removeClass('fade');
+            })
 
-                $(this).ajaxSubmit({
-                    error: function (result) {
+            $btnDeleteAccount.on('click', function (e) {
+                e.preventDefault();
+                var $label = $btnDeleteAccount.find(".button-label").first();
+                var $spinner = $btnDeleteAccount.find(".spinner").first();
+                var $deleteError = $("#delete-error");
+
+                $deleteError.hide();
+                $label.hide();
+                $spinner.show();
+
+                $.ajax({
+                    url: "<%= link('/user') %>",
+                    type: 'DELETE',
+                    success: function (result) {
+                        //LOGOUT
+                        window.location = "<%= link('/logout') %>";
+                    },
+                    error: function (error) {
+                        $deleteUserModal.modal('toggle');
+                        $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
                         $spinner.hide();
                         $label.show();
-                        if (!result.responseJSON.msg)
-                            $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION') %>");
-                        else
-                            $verifError.find(".text").first().text(result.responseJSON.msg);
-
-                        $verifError.show();
-                    },
-                    success: function (response) {
-                        $btnVerificationLink.remove();
-                        $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION') %>");
-                        $verifSuccess.show();
+                        $deleteError.show();
                     }
                 });
             });

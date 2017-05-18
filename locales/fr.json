@@ -96,6 +96,11 @@
   "USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Domaines autorisés",
   "USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
 
+  "ADMIN_USER_DELETE_MODALE_TITLE": "Suppression du compte",
+  "ADMIN_USER_DELETE_MODALE_TEXT": "Souhaitez-vous vraiment supprimer votre compte? Cette action est irréversible et entrainera la suppression de toutes vos données.",
+  "ADMIN_USER_DELETE_MODALE_CLOSE": "Annuler",
+  "ADMIN_USER_DELETE_MODALE_SUBMIT": "Confirmer",
+
   "ALERT_LANGUAGE_1": "Votre langue par défaut est différente de celle de votre profil.",
   "ALERT_LANGUAGE_2": "Cliquez ici pour définir {{ default_language_of_the_idp }} en langue de profil par défaut",
   "ALERT_LANGUAGE_3": "ou",
@@ -147,6 +152,7 @@
   "PROFILE_ERROR_MSG": "Merci de vérifier que les champs ci-dessous soient remplis et valides avant de valider le formulaire",
   "PROFILE_JS_ERROR_RESEND_VALIDATION": "Une erreur est survenue, merci de réessayer plus tard",
   "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Un email de validation a été envoyé",
+  "PROFILE_JS_ERROR_DELETE_ACCOUNT": "Une erreur est survenue lors de la suppression du compte.",
 
   "ACCESS_DENIED_TITLE": "Accès refusé",
   "ACCESS_DENIED_MSG": "Nous sommes désolés, mais vous n'avez pas la permission d'accéder à ce contenu",
@@ -163,7 +169,7 @@
   "PASSWORD_EDIT_NEW_PASSWORD_FORM_LABEL": "Nouveau mot de passe",
   "PASSWORD_EDIT_CONFIRM_PASSWORD_FORM_LABEL": "Confirmer le mot de passe",
   "PASSWORD_EDIT_CONFIRM_FORM_BUTTON": "Confirmer",
-  "PASSWORD_EDIT_JS_ERROR_MSG": "Une erreur s'est produite, merci de réessayer ultérieurement",
+  "PASSWORD_EDIT_JS_ERROR_MSG": "Une erreur est survenue, merci de réessayer ultérieurement",
 
   "PASSWORD_RECOVERY_BACK_TO_LOGIN_LINK": "Retour à la page de connexion",
   "PASSWORD_RECOVERY_TITLE": "Récupération de mot de passe",
