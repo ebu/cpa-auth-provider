@@ -101,18 +101,7 @@ var routes = function (router) {
         });
     });
 
-    router.delete('/user', authHelper.ensureAuthenticated, function (req, res) {
 
-        var user = authHelper.getAuthenticatedUser(req);
-        if (!user) {
-            return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
-        } else {
-            // db.user.destroy().then(function () {
-            //     return res.status(200)
-            // });
-            return res.status(200);
-        }
-    });
 };
 
 module.exports = routes;
