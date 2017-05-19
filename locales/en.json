@@ -143,6 +143,7 @@
   "PROFILE_CONFIRM_PASSWORD_PLACEHOLDER": "Confirm password",
   "PROFILE_SAVE_PASSWORD_BUTTON": "Save",
   "PROFILE_CANCEL_PASSWORD_BUTTON": "Cancel",
+  "PROFILE_PASSWORD_CHANGE_SUCCESS": "Successfully changed your password",
   "PROFILE_ACCOUNT_TITLE": "Account",
   "PROFILE_VERIFIED_LABEL": "verified",
   "PROFILE_NOT_VERIFIED_LABEL": "not verified",
@@ -154,6 +155,7 @@
   "PROFILE_JS_ERROR_RESEND_VALIDATION": "An error occurred during the process, please try again later",
   "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Successfully sent a verification email to your mailbox",
   "PROFILE_JS_ERROR_DELETE_ACCOUNT": "An error occured while deleting the account.",
+  "PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Your account has been deleted successfully.",
 
   "ACCESS_DENIED_TITLE": "Access Denied",
   "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content",
@@ -224,6 +226,7 @@
   "BACK_SIGNUP_EMAIL_TAKEN": "That email is already taken",
   "BACK_SIGNUP_PB_RECAPTCHA": "Something went wrong with the reCAPTCHA",
   "BACK_SIGNUP_INVALID_EMAIL": "Invalid email",
+  "BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD": "Invalid email or password",
   "BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "User not found.",
   "BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG": "reCaptcha is empty or wrong.",
   "BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "reCaptcha is empty or wrong.",

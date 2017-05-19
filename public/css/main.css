@@ -147,6 +147,10 @@ nav .lang ul.dropdown-menu {
     font-size: 25px;
 }
 
+#login #login-info {
+    display: none;
+}
+
 /*
 ************
 ************ VERIFY ACCOUNT
