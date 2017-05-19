@@ -18,7 +18,7 @@ var permissionName = require('../../lib/permission-name');
 var i18n = require('i18n');
 
 var localStrategyCallback = function (req, username, password, done) {
-    var loginError = 'Wrong email or password.';
+    var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
     db.User.findOne({where: {email: username}})
         .then(function (user) {
                 if (!user) {

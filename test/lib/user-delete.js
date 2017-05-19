@@ -78,7 +78,7 @@ describe('DELETE /user/', function () {
                 db.User.count().then(function (count){
                     self.count = count;
                     done();
-                })
+                });
             });
 
             it('should return a status 204 success no content', function () {

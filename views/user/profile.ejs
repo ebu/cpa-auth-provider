@@ -133,6 +133,12 @@
                 <span id="security-errors" class="content"></span>
             </div>
 
+            <div id="form-security-success" class="alert alert-success alert-dismissible error-block" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <span id="security-success" class="content"><%= __('PROFILE_PASSWORD_CHANGE_SUCCESS') %></span>
+            </div>
+
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
             <button id="btn-modify-password" type="button"
                     class="btn btn-link"><%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %></button>
@@ -191,7 +197,7 @@
                     <div class="form-group">
                         <div class="g-recaptcha" data-sitekey="<%= config.recaptcha.site_key %>"></div>
                     </div>
-                    <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span
+                    <button id="btn-send-verification-link" type="submit" class="btn btn-danger"><span
                                 class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
                         <div class="spinner">
                             <div class="bounce1"></div>
@@ -286,7 +292,7 @@
                 return new Date(date);
             };
 
-            var resetErrors = function (formClass, errorsClass) {
+            var resetMessages = function (formClass, errorsClass) {
                 $("#" + formClass).hide("fast");
                 $("#" + errorsClass).empty();
             };
@@ -384,7 +390,10 @@
                     url: "<%= link('/user') %>",
                     type: 'DELETE',
                     success: function (result) {
-                        //LOGOUT
+                        //set success message in storage to get it back on login page and LOGOUT
+                        if(typeof localStorage !== 'undefined') {
+                            localStorage.setItem('loginMessage', "<%= __('PROFILE_JS_SUCCESS_DELETE_ACCOUNT') %>");
+                        }
                         window.location = "<%= link('/logout') %>";
                     },
                     error: function (error) {
@@ -399,7 +408,7 @@
 
             $saveDataBtn.on('click', function (e) {
                 e.preventDefault();
-                resetErrors("form-personnal-data-errors", "personnal-data-errors");
+                resetMessages("form-personnal-data-errors", "personnal-data-errors");
 
                 var userId = "<%= user.id %>";
                 var date = createDate($birthday.val()).getTime();
@@ -444,7 +453,7 @@
 
             $cancelBtn.on('click', function (e) {
                 e.preventDefault();
-                resetErrors("form-personnal-data-errors", "personnal-data-errors");
+                resetMessages("form-personnal-data-errors", "personnal-data-errors");
                 closeEditMode();
             });
 
@@ -457,7 +466,8 @@
             $savePasswordBtn.on('click', function (e) {
                 e.preventDefault();
 
-                resetErrors("form-security-errors", "security-errors");
+                resetMessages("form-security-errors", "security-errors");
+                $("#form-security-success").hide();
 
                 var userId = "<%= user.id %>";
 
@@ -470,11 +480,15 @@
                     },
                     type: 'POST',
                     success: function (result) {
+                        $("#form-security-success").show('fast');
                         $previousPassword.val("");
                         $password.val("");
                         $confirmPassword.val("");
                         $formModifyPass.hide();
                         $modifyPassBtn.show();
+                        $('html, body').animate({
+                            scrollTop: $("#security-success").offset().top
+                        }, 500);
                     },
                     error: function (result) {
                         $.each(result.responseJSON.errors, function (index, error) {
@@ -490,7 +504,7 @@
 
             $cancelPasswordBtn.on('click', function (e) {
                 e.preventDefault();
-                resetErrors("form-security-errors", "security-errors");
+                resetMessages("form-security-errors", "security-errors");
                 $formModifyPass.hide();
                 $modifyPassBtn.show();
             });

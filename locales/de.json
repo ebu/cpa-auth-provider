@@ -143,6 +143,7 @@
 	"PROFILE_CONFIRM_PASSWORD_PLACEHOLDER": "Bestätige das Passwort",
 	"PROFILE_SAVE_PASSWORD_BUTTON": "sparen",
 	"PROFILE_CANCEL_PASSWORD_BUTTON": "Stornieren",
+	"PROFILE_PASSWORD_CHANGE_SUCCESS": "Successfully changed your password",
 	"PROFILE_ACCOUNT_TITLE": "Konto",
 	"PROFILE_VERIFIED_LABEL": "Verifiziert",
 	"PROFILE_NOT_VERIFIED_LABEL": "nicht verifiziert",
@@ -154,6 +155,7 @@
 	"PROFILE_JS_ERROR_RESEND_VALIDATION": "Ein Fehler ist während des Prozesses aufgetreten. Bitte versuchen Sie es später erneut",
 	"PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Erfolgreich eine Bestätigungs-E-Mail an Ihre Mailbox gesendet",
 	"PROFILE_JS_ERROR_DELETE_ACCOUNT": "An error occured while deleting the account.",
+	"PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Your account has been deleted successfully.",
 
 	"ACCESS_DENIED_TITLE": "Zugriff abgelehnt",
 	"ACCESS_DENIED_MSG": "Sie haben keine Berechtigung, auf diesen Inhalt zuzugreifen",
@@ -224,6 +226,7 @@
 	"BACK_SIGNUP_EMAIL_TAKEN": "Diese eMail ist bereits vergeben",
 	"BACK_SIGNUP_PB_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
 	"BACK_SIGNUP_INVALID_EMAIL": "Ungültige E-Mail",
+	"BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD": "Invalid email or password",
 	"BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "Benutzer nicht gefunden.",
 	"BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG": "ReCaptcha ist leer oder falsch.",
 	"BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "ReCaptcha ist leer oder falsch.",

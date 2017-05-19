@@ -21,6 +21,8 @@
                     <div class="alert alert-danger"><%= message %></div>
                     <% } %>
 
+                    <div id="login-info" class="alert alert-info"></div>
+
                     <!-- LOGIN FORM -->
                     <form action="<%= link('/login') %>" method="post">
                         <div class="form-group">
@@ -48,5 +50,19 @@
     </div>
 
 </div>
+
+<script type="text/javascript">
+    (function (){
+        var infoMessage = $('#login-info');
+        if(typeof localStorage !== 'undefined') {
+            var message = localStorage.getItem('loginMessage');
+            if(message) {
+                infoMessage.text(message);
+                localStorage.setItem('loginMessage', '');
+                infoMessage.show();
+            }
+        }
+    })();
+</script>
 
 <% include layout/foot %>
