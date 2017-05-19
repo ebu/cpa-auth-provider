@@ -87,6 +87,36 @@ describe('DELETE /user/', function () {
             });
 
         });
+        context('and tries to request secured resource', function () {
+
+            var self = this;
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.login(this, done);
+            });
+
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/user', {
+                    method: 'delete',
+                    cookie: this.cookie
+                }, done);
+            });
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/user/devices', {
+                    cookie: this.cookie,
+                    parseDOM: true
+                }, done);
+            });
+
+            it('should return a status 401', function () {
+                expect(this.res.statusCode).to.equal(401);
+            });
+
+
+        });
         context('and the user is not authenticated', function () {
             before(resetDatabase);
 
