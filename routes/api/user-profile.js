@@ -21,7 +21,6 @@ module.exports = function (app, options) {
     app.options('/api/local/profile', cors);
 
     app.get('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
-
         var user = authHelper.getAuthenticatedUser(req);
 
         if (!user) {
@@ -47,7 +46,6 @@ module.exports = function (app, options) {
     });
 
     app.put('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
-
         // Data validation
         if (req.body.firstname) {
             req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).isAlpha();
@@ -66,17 +64,13 @@ module.exports = function (app, options) {
         }
 
         req.getValidationResult().then(function (result) {
-
                 if (!result.isEmpty()) {
                     // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
                         msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array
                     });
-                }
-
-                else {
-
+                } else {
                     var token = jwtHelpers.getToken(req.headers);
 
                     if (token) {

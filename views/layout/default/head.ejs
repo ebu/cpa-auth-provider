@@ -34,7 +34,9 @@
 
 <script>
     var userLogged = <% if (user) { %>true<% } else { %>false<% } %>,
-        urlPrefix = '<%= config.urlPrefix %>';
+        urlPrefix = '<%= config.urlPrefix %>',
+        siteKey = '<%= config.recaptcha.site_key %>';
 </script>
 
 <script type="text/javascript" src="/assets/js/lang.js"></script>
+<script type="text/javascript" src="/assets/js/grecaptcha.js"></script>

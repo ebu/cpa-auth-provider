@@ -36,13 +36,40 @@
                                href="<%= link('/password/recovery') %>"><%= __('LOGIN_FORGOT_PASSWORD_LINK') %></a>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block"><%= __('LOGIN_LOGIN_BUTTON') %></button>
-                    </form>
+                            <button type="submit"
+                                    class="btn btn-primary btn-block btn-large-submit"><%= __('LOGIN_LOGIN_BUTTON') %></button>
+                        </form>
 
-                    <p class="last-link text-center"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
-                                href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a></p>
+                        <% if(config.identity_providers.facebook.enabled || config.identity_providers.googleplus.enabled || config.identity_providers.twitter.enabled) { %>
 
+                        <div class="row social">
+                            <% if(config.identity_providers.googleplus.enabled) { %>
+                            <div class="text-center">
+                                <img class="login-images" src="/assets/img/logoroundg+.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec Google+</p>
+                            </div>
+                            <% } %>
+                            <% if(config.identity_providers.facebook.enabled) { %>
+                            <div class="text-center">
+                                <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec facebook</p>
+                            </div>
+                            <% } %>
+                            <% if(config.identity_providers.twitter.enabled) { %>
+                            <div class="text-center">
+                                <img class="login-images" src="/assets/img/logoroundtwitter.svg"/>
+                                <p class="login-social-labels">Connectez-vous avec Twitter</p>
+                            </div>
+                            <% } %>
+                        </div>
+                        <% } %>
+
+                        <p class="last-link"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
+                                    class="btn-link" href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a>
+                        </p>
+                    </div>
                 </div>
+
             </div>
 
         </div>
@@ -52,8 +79,23 @@
 </div>
 
 <script type="text/javascript">
-    (function (){
+    (function () {
+        var socials = $('.social div');
         var infoMessage = $('#login-info');
+
+        switch(socials.length) {
+            case 1:
+                socials.addClass('col-sm-12');
+                break;
+            case 2:
+                socials.addClass('col-sm-6');
+                break;
+            case 3:
+                socials.addClass('col-sm-4');
+                break;
+            default:
+                break;
+        }
         if(typeof localStorage !== 'undefined') {
             var message = localStorage.getItem('loginMessage');
             if(message) {

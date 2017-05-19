@@ -11,6 +11,18 @@ module.exports = {
             client_secret: '',
             callback_url: ''
         },
+        googleplus: {
+            enabled: false,
+            client_id: '',
+            client_secret: '',
+            callback_url: ''
+        },
+        twitter: {
+            enabled: false,
+            client_id: '',
+            client_secret: '',
+            callback_url: ''
+        },
         github: {
             enabled: false,
             client_id: '',

@@ -2,7 +2,6 @@
 "use strict";
 
 var generate = require('../../lib/generate');
-var messages = require('../../lib/messages');
 var db = require('../../models');
 var config = require('../../config');
 

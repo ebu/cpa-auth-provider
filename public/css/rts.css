@@ -1,3 +1,8 @@
+/*
+************
+************ GENERAL
+************
+*/
 html {
     font-size: 10px;
 }
@@ -5,48 +10,35 @@ html {
 body {
     margin: 0;
     font-family: "Gotham SSm A", "Gotham SSm B", "Helvetica", "Arial", "Verdana", sans-serif;
+    color: #666666;
+}
+
+h1 {
+    font-size: 2.8rem;
+    font-weight: 500;
+    margin-top: 0;
+    color: #333333;
 }
 
 h2 {
-    font-size: 3.2rem;
+    font-size: 1.6rem;
     line-height: 2.8rem;
     color: #333333;
-    font-weight: 500;
+    font-weight: normal;
 }
 
 h4 {
-    font-size: 2.8rem;
     color: #666666;
+    font-size: 1.6rem;
     font-weight: normal;
 }
 
 .btn-link {
-    font-size: 1.8rem;
     color: #af001e;
-    text-decoration: underline;
 }
 
 .btn-link:hover, .btn-link:active, .btn-link:focus {
     color: #bf0020;
-}
-
-.profile-container {
-    padding: 10px 0 40px;
-}
-
-#form-personnal-data h4 {
-    font-size: 1.8rem;
-    margin-top: 1.5rem;
-    color: #666666;
-    text-transform: uppercase;
-}
-
-#form-personnal-data span {
-    font-size: 1.8rem;
-}
-
-#form-personnal-data .panel {
-    border: 0;
 }
 
 .btn-primary, .btn-danger {
@@ -60,24 +52,61 @@ h4 {
     background-color: #bf0020;
 }
 
-.btn-primary:active, .btn-primary:focus, .btn-danger:active, .btn-danger:focus {
+.btn-primary:active, .btn-primary:focus, .btn-danger:active, .btn-danger:focus, .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover {
     background-color: #bf0020;
 }
 
-#form-security-errors + h4 {
-
+footer.rts-footer {
+    margin-top: 50px;
 }
 
-.delete-container {
-    padding: 16px 0;
+.alert-success.alert-success-custom {
+    position: relative;
+    background-color: initial;
+    border: none;
+    padding: 0;
+    margin: 25px 0;
 }
 
-.delete-container p {
-    font-size: 1.8rem;
-    color: #666666
+.alert-success.alert-success-custom > span.glyphicon {
+    position: absolute;
+    left: -20px;
+    top: 3px;
 }
 
 /*TODO remove this when user login btn will be in production on hummingbird*/
 .rts-hp-header .about {
     display: none;
+}
+
+#profile hr, #devices hr {
+    border-color: #333;
+}
+
+#profile .delete-container p {
+    color: #666666;
+    font-size: 1.6rem;
+}
+
+#profile #form-personnal-data h4 {
+    font-size: 1.6rem;
+    margin-top: 1.5rem;
+    color: #666666;
+    text-transform: uppercase;
+}
+
+#profile #form-personnal-data span {
+    font-size: 1.4rem;
+}
+
+#profile #form-personnal-data .panel {
+    border: 0;
+}
+
+#home .home-panel .panel-body h3 {
+    color: #333;
+}
+
+#home .home-panel .panel-body span.glyphicon {
+    color: #af001e;
 }
