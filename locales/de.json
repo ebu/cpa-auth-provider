@@ -101,6 +101,8 @@
 
 	"ADMIN_USER_DELETE_MODALE_TITLE": "Delete account",
 	"ADMIN_USER_DELETE_MODALE_TEXT": "Do you really want to delete your account? This action is irreversible and will delete all your data.",
+	"ADMIN_USER_DELETE_MODALE_TEXT_PASSWORD": "To do so you need to fill in your password below",
+	"ADMIN_USER_DELETE_MODALE_FORM_PASSWORD_LABEL": "Password",
 	"ADMIN_USER_DELETE_MODALE_CLOSE": "Cancel",
 	"ADMIN_USER_DELETE_MODALE_SUBMIT": "Confirm",
 

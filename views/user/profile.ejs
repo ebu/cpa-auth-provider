@@ -393,7 +393,6 @@
             });
         });
 
-
         $deleteUserModal.on('show.bs.modal', function () {
             $deleteUserModal.removeClass('fade');
         })
@@ -403,14 +402,32 @@
             var $label = $btnDeleteAccount.find(".button-label").first();
             var $spinner = $btnDeleteAccount.find(".spinner").first();
             var $deleteError = $("#delete-error");
+            var $password = $('#user-pass');
+            var $deleteUserForm = $("#deleteUserForm");
+            var $passwordError = $('#password-error');
 
             $deleteError.hide();
             $label.hide();
             $spinner.show();
+            $deleteUserForm.first('div.form-group').removeClass('has-error');
+            $passwordError.hide();
+            $passwordError.html("");
+
+            if(!$password.val()) {
+                $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
+                $deleteUserForm.first('div.form-group').addClass('has-error');
+                $spinner.hide()
+                $label.show();
+                $passwordError.show();
+                return;
+            }
 
             $.ajax({
                 url: "<%= link('/user') %>",
-                type: 'DELETE',
+                type: 'POST',
+                data: {
+                    password: $password.val()
+                },
                 success: function (result) {
                     //set success message in storage to get it back on login page and LOGOUT
                     if(typeof localStorage !== 'undefined') {
@@ -419,11 +436,19 @@
                     window.location = "<%= link('/logout') %>";
                 },
                 error: function (error) {
-                    $deleteUserModal.modal('toggle');
-                    $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
-                    $spinner.hide();
-                    $label.show();
-                    $deleteError.show();
+                    if(error.responseJSON.msg) {
+                        $passwordError.html(error.responseJSON.msg);
+                        $deleteUserForm.first('div.form-group').addClass('has-error');
+                        $spinner.hide()
+                        $label.show();
+                        $passwordError.show();
+                    } else {
+                        $deleteUserModal.modal('toggle');
+                        $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
+                        $spinner.hide();
+                        $label.show();
+                        $deleteError.show();
+                    }
                 }
             });
         });

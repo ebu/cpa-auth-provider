@@ -97,7 +97,7 @@ var routes = function (router) {
                         return res.status(204).send();
                     });
                 } else {
-                    return res.status(401).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
+                    return res.status(401).send({success: false, msg: req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD')});
                 }
             });
         }
