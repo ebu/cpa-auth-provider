@@ -87,7 +87,7 @@ var routes = function (router) {
         if (!req.body.password) {
             return res.status(400).send({
                 success: false,
-                msg: req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD')
+                msg: req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD');
             })
         } else {
             var user = authHelper.getAuthenticatedUser(req);
@@ -103,6 +103,6 @@ var routes = function (router) {
         }
     });
 
-}
+};
 
 module.exports = routes;
