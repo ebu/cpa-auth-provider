@@ -83,14 +83,24 @@ var routes = function (router) {
         }
     });
 
-    router.delete('/user', authHelper.ensureAuthenticated, function (req, res) {
-        var user = authHelper.getAuthenticatedUser(req);
-        if (!user) {
-            return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
+    router.post('/user', authHelper.ensureAuthenticated, function (req, res) {
+
+        if (!req.body.password) {
+            return res.status(400).send({
+                success: false,
+                msg: req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD')
+            })
         } else {
-            return user.destroy().then(function () {
-                return res.status(204).send();
-            });
+            var user = authHelper.getAuthenticatedUser(req);
+            if (!user){
+                return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
+            } else  if( !user.verifyPassword(req.body.password)) {
+                return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
+            } else {
+                return user.destroy().then(function () {
+                    return res.status(204).send();
+                });
+            }
         }
     });
 

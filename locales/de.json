@@ -153,6 +153,8 @@
 	"PROFILE_RESEND_VALIDATION_EMAIL_LINK": "Erneut senden",
 	"PROFILE_DELETE_YOUR_ACCOUNT_LABEL": "Klicken Sie auf die Schaltfläche unten, um Ihr Konto zu löschen",
 	"PROFILE_DELETE_YOUR_ACCOUNT_LINK": "Konto löschen",
+	"PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD": "Fehlendes passwort",
+	"PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD": "Falsches passwort",
 	"PROFILE_ERROR_MSG": "Bitte überprüfen Sie, ob die untenstehenden Felder ausgefüllt und gültig sind, bevor Sie das Formular ausfüllen",
 	"PROFILE_JS_ERROR_RESEND_VALIDATION": "Ein Fehler ist während des Prozesses aufgetreten. Bitte versuchen Sie es später erneut",
 	"PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Erfolgreich eine Bestätigungs-E-Mail an Ihre Mailbox gesendet",

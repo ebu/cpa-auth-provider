@@ -68,8 +68,10 @@ describe('DELETE /user/', function () {
 
             before(function (done) {
                 requestHelper.sendRequest(this, '/user', {
-                    method: 'delete',
-                    cookie: this.cookie
+                    method: 'post',
+                    type: 'form',
+                    cookie: this.cookie,
+                    data: {password: 'testpassword'}
                 }, done);
             });
 
@@ -98,15 +100,18 @@ describe('DELETE /user/', function () {
 
             before(function (done) {
                 requestHelper.sendRequest(this, '/user', {
-                    method: 'delete',
-                    cookie: this.cookie
+                    method: 'post',
+                    type: 'form',
+                   cookie: this.cookie,
+                    data: {password: 'testpassword'}
                 }, done);
             });
 
             before(function (done) {
                 requestHelper.sendRequest(this, '/user/devices', {
                     cookie: this.cookie,
-                    parseDOM: true
+                    parseDOM: true,
+                    data: {password: 'testpassword'}
                 }, done);
             });
 
@@ -121,7 +126,10 @@ describe('DELETE /user/', function () {
 
             before(function (done) {
                 requestHelper.sendRequest(this, '/user', {
-                    method: 'delete'}, done);
+                    method: 'post',
+                    type: 'form',
+                    data: {password: 'testpassword'}
+                }, done);
             });
 
             it('should return a status 401', function () {

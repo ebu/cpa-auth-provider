@@ -153,6 +153,8 @@
   "PROFILE_DELETE_YOUR_ACCOUNT_LABEL": "Cliquer sur le bouton ci-dessous pour supprimer votre compte",
   "PROFILE_DELETE_YOUR_ACCOUNT_LINK": "Supprimer votre compte",
   "PROFILE_ERROR_MSG": "Merci de vérifier que les champs ci-dessous soient remplis et valides avant de valider le formulaire",
+  "PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD": "Mots de passe manquant",
+  "PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD": "Mauvais mots de passe",
   "PROFILE_JS_ERROR_RESEND_VALIDATION": "Une erreur est survenue, merci de réessayer plus tard",
   "PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Un email de validation a été envoyé",
   "PROFILE_JS_ERROR_DELETE_ACCOUNT": "Une erreur est survenue lors de la suppression du compte.",
