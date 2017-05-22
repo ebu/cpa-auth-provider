@@ -84,7 +84,6 @@ var routes = function (router) {
     });
 
     router.post('/user', authHelper.ensureAuthenticated, function (req, res) {
-
         if (!req.body.password) {
             return res.status(400).send({
                 success: false,
@@ -92,19 +91,18 @@ var routes = function (router) {
             })
         } else {
             var user = authHelper.getAuthenticatedUser(req);
-            if (!user){
-                return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
-            } else  if( !user.verifyPassword(req.body.password)) {
-                return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
-            } else {
-                return user.destroy().then(function () {
-                    return res.status(204).send();
-                });
-            }
+            return user.verifyPassword(req.body.password).then(function (isMatch) {
+                if (isMatch) {
+                    return user.destroy().then(function () {
+                        return res.status(204).send();
+                    });
+                } else {
+                    return res.status(401).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
+                }
+            });
         }
     });
 
-
-};
+}
 
 module.exports = routes;

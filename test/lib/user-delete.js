@@ -75,8 +75,8 @@ describe('DELETE /user/', function () {
                 }, done);
             });
 
-            before(function (done){
-                db.User.count().then(function (count){
+            before(function (done) {
+                db.User.count().then(function (count) {
                     self.count = count;
                     done();
                 });
@@ -102,7 +102,7 @@ describe('DELETE /user/', function () {
                 requestHelper.sendRequest(this, '/user', {
                     method: 'post',
                     type: 'form',
-                   cookie: this.cookie,
+                    cookie: this.cookie,
                     data: {password: 'testpassword'}
                 }, done);
             });
@@ -133,6 +133,31 @@ describe('DELETE /user/', function () {
             });
 
             it('should return a status 401', function () {
+                expect(this.res.statusCode).to.equal(401);
+            });
+
+        });
+        context('with bad password', function () {
+
+            var self = this;
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.login(this, done);
+            });
+
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/user', {
+                    method: 'post',
+                    type: 'form',
+                    cookie: this.cookie,
+                    data: {password: 'wrongpassword'}
+                }, done);
+            });
+
+
+            it('should return a status 403 success no content', function () {
                 expect(this.res.statusCode).to.equal(401);
             });
 
