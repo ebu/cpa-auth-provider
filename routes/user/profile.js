@@ -87,8 +87,8 @@ var routes = function (router) {
         if (!req.body.password) {
             return res.status(400).send({
                 success: false,
-                msg: req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD');
-            })
+                msg: req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD')
+            });
         } else {
             var user = authHelper.getAuthenticatedUser(req);
             return user.verifyPassword(req.body.password).then(function (isMatch) {
