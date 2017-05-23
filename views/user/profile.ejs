@@ -397,6 +397,17 @@
             $deleteUserModal.removeClass('fade');
         })
 
+        $('#user-pass').keypress(function(event) {
+            //On pressing enter key
+            if (event.which === 13) {
+                //Do not close the popup
+                event.preventDefault();
+                //But call delete account function
+                $('#delete-user').click();
+                return false;
+            }
+        });
+
         $btnDeleteAccount.on('click', function (e) {
             e.preventDefault();
             var $label = $btnDeleteAccount.find(".button-label").first();
