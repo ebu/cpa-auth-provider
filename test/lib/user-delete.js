@@ -157,10 +157,35 @@ describe('DELETE /user/', function () {
             });
 
 
-            it('should return a status 403 success no content', function () {
+            it('should return a status 401 unauthorized', function () {
                 expect(this.res.statusCode).to.equal(401);
             });
 
+        });
+
+        context('with missing password', function () {
+
+            var self = this;
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.login(this, done);
+            });
+
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/user', {
+                    method: 'post',
+                    type: 'form',
+                    cookie: this.cookie,
+                    data: {}
+                }, done);
+            });
+
+
+            it('should return a status 401 unauthorized', function () {
+                expect(this.res.statusCode).equal(401);
+            });
         });
 
     });
