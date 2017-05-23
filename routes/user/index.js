@@ -6,7 +6,6 @@ var authHelper = require('../../lib/auth-helper');
 
 var i18n = require('i18n');
 
-
 var routes = function (router) {
 
     router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
@@ -101,6 +100,8 @@ var routes = function (router) {
             }
         });
     });
+
+
 };
 
 module.exports = routes;

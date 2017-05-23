@@ -42,8 +42,12 @@
     min-width: 80px;
 }
 
-#profile #verification-success, #profile #verification-error {
+#profile #verification-success, #profile #verification-error, #profile #delete-error {
     display: none;
+}
+
+#profile #delete-error {
+    margin-bottom: 10px;
 }
 
 #profile .verification-link-container {
@@ -52,6 +56,10 @@
 
 #profile .delete-container {
     margin-top: 10px;
+}
+
+#profile #password-error {
+    display: none;
 }
 
 @media (max-width: 767px) {

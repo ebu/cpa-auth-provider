@@ -49,6 +49,10 @@ header, footer {
     display: none;
 }
 
+.btn.btn-large-submit, .btn.btn-normal-submit {
+    font-size: 1.4rem;
+}
+
 .btn.btn-large-submit {
     font-size: 1.4rem;
     padding: 10px;
@@ -191,6 +195,10 @@ nav .lang ul.dropdown-menu {
 
 #password-recovery .signup-fields {
     margin: 0 0 35px 0;
+}
+
+#login #login-info {
+    display: none;
 }
 
 /*

@@ -138,6 +138,12 @@
                 <span id="security-errors" class="content"></span>
             </div>
 
+            <div id="form-security-success" class="alert alert-success alert-dismissible error-block" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <span id="security-success" class="content"><%= __('PROFILE_PASSWORD_CHANGE_SUCCESS') %></span>
+            </div>
+
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
             <button id="btn-modify-password" type="button"
                     class="btn btn-link"><%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %></button>
@@ -210,7 +216,7 @@
                             </div>
                         </div>
                     </div>
-                    <button id="btn-send-verification-link" type="submit" class="btn btn-primary"><span
+                    <button id="btn-send-verification-link" type="submit" class="btn btn-primary btn-large-submit"><span
                                 class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
                         <div class="spinner">
                             <div class="bounce1"></div>
@@ -229,9 +235,15 @@
 
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
+
+                <span id="delete-error" class="text-danger"><span
+                            class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
+
                 <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
-                <a class="btn btn-danger btn-large-submit"
-                   disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
+                <button class="btn btn-primary btn-large-submit" data-toggle="modal" data-target="#deleteUserModal">
+                    <span class="button-label"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></span>
+                </button>
+
             </div>
         </div>
 
@@ -239,7 +251,9 @@
 
 </div>
 
-<!-- TODO move it to an appropriate file -->
+<!-- Add client Modal -->
+<% include ./modales/user-delete.ejs %>
+
 <script type="text/javascript">
     (function () {
 
@@ -253,6 +267,8 @@
         var $formModifyPass = $('#form-modify-pass');
         var $btnContainer = $('#btn-container');
         var $btnVerificationLink = $('#btn-send-verification-link');
+        var $btnDeleteAccount = $('#delete-user');
+        var $deleteUserModal = $('#deleteUserModal');
 
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
@@ -297,7 +313,7 @@
             return new Date(date);
         };
 
-        var resetErrors = function (formClass, errorsClass) {
+        var resetMessages = function (formClass, errorsClass) {
             $("#" + formClass).hide("fast");
             $("#" + errorsClass).empty();
         };
@@ -377,9 +393,80 @@
             });
         });
 
+        $deleteUserModal.on('show.bs.modal', function () {
+            $deleteUserModal.removeClass('fade');
+        })
+
+        $('#user-pass').keypress(function(event) {
+            //On pressing enter key
+            if (event.which === 13) {
+                //Do not close the popup
+                event.preventDefault();
+                //But call delete account function
+                $('#delete-user').click();
+                return false;
+            }
+        });
+
+        $btnDeleteAccount.on('click', function (e) {
+            e.preventDefault();
+            var $label = $btnDeleteAccount.find(".button-label").first();
+            var $spinner = $btnDeleteAccount.find(".spinner").first();
+            var $deleteError = $("#delete-error");
+            var $password = $('#user-pass');
+            var $deleteUserForm = $("#deleteUserForm");
+            var $passwordError = $('#password-error');
+
+            $deleteError.hide();
+            $label.hide();
+            $spinner.show();
+            $deleteUserForm.first('div.form-group').removeClass('has-error');
+            $passwordError.hide();
+            $passwordError.html("");
+
+            if(!$password.val()) {
+                $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
+                $deleteUserForm.first('div.form-group').addClass('has-error');
+                $spinner.hide()
+                $label.show();
+                $passwordError.show();
+                return;
+            }
+
+            $.ajax({
+                url: "<%= link('/user') %>",
+                type: 'POST',
+                data: {
+                    password: $password.val()
+                },
+                success: function (result) {
+                    //set success message in storage to get it back on login page and LOGOUT
+                    if(typeof localStorage !== 'undefined') {
+                        localStorage.setItem('loginMessage', "<%= __('PROFILE_JS_SUCCESS_DELETE_ACCOUNT') %>");
+                    }
+                    window.location = "<%= link('/logout') %>";
+                },
+                error: function (error) {
+                    if(error.responseJSON.msg) {
+                        $passwordError.html(error.responseJSON.msg);
+                        $deleteUserForm.first('div.form-group').addClass('has-error');
+                        $spinner.hide()
+                        $label.show();
+                        $passwordError.show();
+                    } else {
+                        $deleteUserModal.modal('toggle');
+                        $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
+                        $spinner.hide();
+                        $label.show();
+                        $deleteError.show();
+                    }
+                }
+            });
+        });
+
         $saveDataBtn.on('click', function (e) {
             e.preventDefault();
-            resetErrors("form-personnal-data-errors", "personnal-data-errors");
+            resetMessages("form-personnal-data-errors", "personnal-data-errors");
 
             var userId = "<%= user.id %>";
             var date = createDate($birthday.val()).getTime();
@@ -424,7 +511,7 @@
 
         $cancelBtn.on('click', function (e) {
             e.preventDefault();
-            resetErrors("form-personnal-data-errors", "personnal-data-errors");
+            resetMessages("form-personnal-data-errors", "personnal-data-errors");
             closeEditMode();
         });
 
@@ -437,7 +524,8 @@
         $savePasswordBtn.on('click', function (e) {
             e.preventDefault();
 
-            resetErrors("form-security-errors", "security-errors");
+            resetMessages("form-security-errors", "security-errors");
+            $("#form-security-success").hide();
 
             var userId = "<%= user.id %>";
 
@@ -450,11 +538,15 @@
                 },
                 type: 'POST',
                 success: function (result) {
+                    $("#form-security-success").show('fast');
                     $previousPassword.val("");
                     $password.val("");
                     $confirmPassword.val("");
                     $formModifyPass.hide();
                     $modifyPassBtn.show();
+                    $('html, body').animate({
+                        scrollTop: $("#security-success").offset().top
+                    }, 500);
                 },
                 error: function (result) {
                     $.each(result.responseJSON.errors, function (index, error) {
@@ -470,11 +562,10 @@
 
         $cancelPasswordBtn.on('click', function (e) {
             e.preventDefault();
-            resetErrors("form-security-errors", "security-errors");
+            resetMessages("form-security-errors", "security-errors");
             $formModifyPass.hide();
             $modifyPassBtn.show();
         });
-
     })();
 </script>
 
