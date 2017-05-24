@@ -60,9 +60,9 @@ describe('POST /api/local/signup', function () {
             }, done);
         });
 
-        it('should return a success false', function () {
-            //console.log('msg:' + this.res.body.msg);
-            //console.log('success:' + this.res.body.success);
+        it('should return a success true', function () {
+            console.log('msg:' + this.res.body.msg);
+            console.log('success:' + this.res.body.success);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.msg).to.equal("Successfully created new user");
