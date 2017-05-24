@@ -83,7 +83,27 @@ var routes = function (router) {
         }
     });
 
+    router.post('/user', authHelper.ensureAuthenticated, function (req, res) {
 
+        var user = authHelper.getAuthenticatedUser(req);
+
+        user.verifyPassword(req.body.password).then(function (isMatch) {
+                if (isMatch) {
+                    return user.destroy();
+                } else {
+                    if (req.body.password) {
+                        throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
+                    } else {
+                        throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+                    }
+                }
+            }
+        ).then(function () {
+            return res.status(204).send();
+        }).catch(function (e) {
+            res.status(401).send({success: false, msg: e.message});
+        });
+    });
 };
 
 module.exports = routes;

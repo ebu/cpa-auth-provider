@@ -1,0 +1,47 @@
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="deleteUserModalTitle"><%= __('ADMIN_USER_DELETE_MODALE_TITLE') %></h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert alert-danger alert-dismissible error-message" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <span class="message"></span>
+                </div>
+
+                <p><%= __('ADMIN_USER_DELETE_MODALE_TEXT') %></p>
+                <p><%= __('ADMIN_USER_DELETE_MODALE_TEXT_PASSWORD') %></p>
+
+                <form id="deleteUserForm">
+                    <div class="form-group">
+                        <p id="password-error" class="text-danger"></p>
+                        <input type="password"  class="form-control" id="user-pass"
+                               placeholder="<%= __('ADMIN_USER_DELETE_MODALE_FORM_PASSWORD_LABEL') %>">
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal"><%= __('ADMIN_USER_DELETE_MODALE_CLOSE') %></button>
+                <button id="delete-user" type="button"
+                        class="btn btn-primary btn-normal-submit">
+                    <span class="button-label">
+                        <%= __('ADMIN_USER_DELETE_MODALE_SUBMIT') %>
+                    </span>
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

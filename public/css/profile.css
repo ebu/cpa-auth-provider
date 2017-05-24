@@ -50,8 +50,12 @@
     min-width: 80px;
 }
 
-#profile #verification-success, #profile #verification-error {
+#profile #verification-success, #profile #verification-error, #profile #delete-error {
     display: none;
+}
+
+#profile #delete-error {
+    margin-bottom: 10px;
 }
 
 #profile .verification-link-container {
