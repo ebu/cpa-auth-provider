@@ -12,6 +12,8 @@ var resetDatabase = function (done) {
     });
 };
 
+var recaptchaResponse = '03AOPBWq_AE4T0yzPD_QKTntmUfHZ7TiYNCCDBwOUMJBGmMv_3StO4UeabzvxTPBx_Izz96t9FmhDXJ-XK32gL8LQG4Cg12Zk3ObkEYj7zWbSmxEDYpxuV6OSe2sjEjYbvwp6EdszYQJbGjDqYP50kNX5H4Mb-_xdKzwDzOEVqLk9kDlzvzMz8kSodYRCuWGvkCYm2Sg8VX6Fexz8yTRRqT13TTNvc-hGCJ_EoXmmsX2HFdtL7xDmg1Df618vbCCsftqe2atUBSXSn8MNxAkXtFg7-kDZUOLHbXFBC_sPurEdaYVuqDbUBXwg';
+
 
 // Test authenticate
 
@@ -30,9 +32,15 @@ describe('GET /api/local/request_verification_email', function () {
                 data: {
                     email: 'qsdf@qsdf.fr',
                     password: 'qsdf',
-                    'g-recaptcha-response': '03AHJ_VuumGMJjbAPsRZf8KVVS_KR3uNwheBf3XefbSN9RmY1wnFvpTUYM5SHAoDeodK4a8cqBElvDA3rJPEu-z18r7ZlmMF1BUbDKnZsGvJqlnv7pwFofpoSyz9ltPWgH95Opovv8Yxw1yRwWnqgpw3242sR3q-EQkoqdJIZJBOziKRrtcgHOs8cMzKnvPlO5_LCT1Xf5e3AxsHsbbPSilME2WygfMELGrbq30Kb3rOL65RVg_gsuTMqxArOa9AQHxpGTx-IzYoWpjMmmCG5S1jna73xtkIB0dQuuv-J0on7U5yspn0UBNpaVslp5xa7PEjJSAQxU6yY4D8EnC2DsqnZT6bvxLNVRVJiX6HCjYnX7BvF1PRTaxrmJrZSd5yUjLxAG_QNroSwOF_hQhBprtQkSOIdEL1FlxG9PKy4wUttq3xRpgvBewOUiVMSa-m8Zr74CpsKnmU3aANqjPjDS15LjZ4zUY-qIYVQbRcw0FjBsOFwO7nqtlBfQC4ebKSgOfh31S2qXIcEY7mCxdj9MIxyqdalLwrFogrBzrQvH9CCkNizmTno0gWtWbE-obpB_EXgQ87du2FRADpHOhGmq-ic0yPZfs27an5xJrcuCOcTLOnED_RYzLETpyJ6ckYvlRsOGyGUbr-60wiLKb8ipeQkidPtMQqwd3c7bmDtk6BcIBEdm80tj_D-1YVxUdDtVmJw99RofQyVOoP2JVun0fquw4ylp_XimetVlvfjONpbmjRiRpaPUcosu0aQwZw20VTd10WFBfqIA3LUR2bKdG_JM2ODxPUg7FMVRMHIOOL0zUwxXdHSJeH8ek-vpOhJuh3vLeG3norWT1AEBOHpdHoFvlPB08u98b0cwzgJElpETn4rAdz7ad6vJL7Gee5wR0jJcqZPIdmCMZjBC4U7REletboN5JeYvK6ZMlG43o5uNAN4GH8h5VPQ'
+                    'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
+        });
+
+        it('should return a success false', function () {
+            // if Test fail  here google should have change the recaptcha algorithm
+            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
+            expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
         });
 
         before(function (done) {
