@@ -31,7 +31,7 @@
 
             <div id="personnal-data">
                 <form id="form-personnal-data">
-                    <div class="panel">
+                    <div class="panel <% if (!profile.firstname) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_FIRST_NAME_LABEL') %></h4>
                         <% if (profile.firstname) { %>
                         <span class="data-value"><%= profile.firstname %></span>
@@ -41,7 +41,7 @@
                         <input id="firstname" name="firstname" class="form-control personnal-data-input"
                                placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER') %>"/>
                     </div>
-                    <div class="panel">
+                    <div class="panel <% if (!profile.lastname) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_LAST_NAME_LABEL') %></h4>
                         <% if (profile.lastname) { %>
                         <span class="data-value"><%= profile.lastname %></span>
@@ -51,7 +51,7 @@
                         <input id="lastname" name="lastname" class="form-control personnal-data-input"
                                placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"/>
                     </div>
-                    <div class="panel">
+                    <div class="panel <% if (!profile.birthdate) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_BIRTHDATE_LABEL') %></h4>
                         <span class="data-value"></span>
                         <div class="input-group date personnal-data-input" data-provide="datepicker"
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel">
+                    <div class="panel <% if (!profile.gender) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_SEXE_LABEL') %></h4>
                         <% if (profile.gender) { %>
                         <% if (profile.gender === "female") { %>
@@ -80,7 +80,7 @@
                             <option value="female"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION') %></option>
                         </select>
                     </div>
-                    <div class="panel">
+                    <div class="panel <% if (!profile.language) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_LANGUAGE_LABEL') %></h4>
                         <% if (profile.language) { %>
                         <% if (profile.language === "fr") { %>
@@ -103,12 +103,15 @@
                             <option value="de"><%= __('PROFILE_LANGUAGE_DE_FORM_OPTION') %></option>
                         </select>
                     </div>
-                    <div class="panel">
+                    <div class="panel <% if (!profile.email) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
                         <% if (profile.email !== null) { %>
-                        <span><%= profile.email %></span>
+                        <span class="data-value"><%= profile.email %></span>
                         <% } else { %>
                         <span></span>
+                        <% } %>
+                        <% if (profile.email !== null) { %>
+                        <span class="personnal-data-input"><%= profile.email %></span>
                         <% } %>
                     </div>
                     <div id="btn-container">
@@ -173,11 +176,19 @@
         <div class="col-sm-3">
             <h4 class="account-title">
                 <%= __('PROFILE_ACCOUNT_TITLE') %>
+                <% if (profile.verified) { %>
+                <span class="glyphicon glyphicon-info-sign status-info" data-toggle="tooltip" data-placement="right"
+                      title="<%= __('PROFILE_VERIFIED_MORE_INFO')%>"></span>
+                <% } else { %>
+                <span class="glyphicon glyphicon-info-sign status-info" data-toggle="tooltip" data-placement="right"
+                      title="<%= __('PROFILE_NOT_VERIFIED_MORE_INFO')%>"></span>
+                <% } %>
             </h4>
 
             <% if (profile.verified) { %>
             <span class="text-success status">
-                <span class="glyphicon glyphicon-ok"></span> <%= __('PROFILE_VERIFIED_LABEL') %>
+                <span class="glyphicon glyphicon-ok"></span>
+                <%= __('PROFILE_VERIFIED_LABEL') %>
             </span>
             <% } else { %>
             <span class="text-danger status">
@@ -229,9 +240,17 @@
 
         <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
+
+                <span id="delete-error" class="text-danger">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    <span class="text"></span>
+                </span>
+
                 <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
-                <a class="btn btn-danger btn-large-submit"
-                   disabled="disabled"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></a>
+                <button class="btn btn-primary btn-large-submit" data-toggle="modal" data-target="#deleteUserModal">
+                    <span class="button-label"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></span>
+                </button>
+
             </div>
         </div>
 
@@ -239,7 +258,9 @@
 
 </div>
 
-<!-- TODO move it to an appropriate file -->
+<!-- Add client Modal -->
+<% include ./modales/user-delete.ejs %>
+
 <script type="text/javascript">
     (function () {
 
@@ -253,6 +274,9 @@
         var $formModifyPass = $('#form-modify-pass');
         var $btnContainer = $('#btn-container');
         var $btnVerificationLink = $('#btn-send-verification-link');
+        var $btnDeleteAccount = $('#delete-user');
+        var $deleteUserModal = $('#deleteUserModal');
+        var $formPersonalData = $('#form-personnal-data');
 
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
@@ -270,12 +294,19 @@
         $inputs.hide();
         $inputs.css('visibility', 'visible');
 
+        //Initialize all tootips
+        $('[data-toggle="tooltip"]').tooltip();
+
         // LOCAL FUNCTIONS
         var closeEditMode = function () {
             $("#personnal-data .panel").each(function (index, element) {
                 var $element = $(element);
                 var $dataField = $element.find(".data-value").first();
                 var $inputField = $element.find('.personnal-data-input').first();
+
+                if (!$dataField.text()) {
+                    $element.addClass('hidden');
+                }
 
                 //Show labels and hide fields
                 $inputField.hide();
@@ -297,7 +328,7 @@
             return new Date(date);
         };
 
-        var resetErrors = function (formClass, errorsClass) {
+        var resetMessages = function (formClass, errorsClass) {
             $("#" + formClass).hide("fast");
             $("#" + errorsClass).empty();
         };
@@ -329,6 +360,8 @@
                 var $dataField = $element.find(".data-value").first();
                 var value = String($dataField.text());
                 var $inputField = $element.find('.personnal-data-input').first();
+
+                $element.removeClass('hidden');
 
                 //If it is date field, update it correctly
                 if ($inputField.hasClass("date")) {
@@ -377,9 +410,80 @@
             });
         });
 
+        $deleteUserModal.on('show.bs.modal', function () {
+            $deleteUserModal.removeClass('fade');
+        })
+
+        $('#user-pass').keypress(function (event) {
+            //On pressing enter key
+            if (event.which === 13) {
+                //Do not close the popup
+                event.preventDefault();
+                //But call delete account function
+                $('#delete-user').click();
+                return false;
+            }
+        });
+
+        $btnDeleteAccount.on('click', function (e) {
+            e.preventDefault();
+            var $label = $btnDeleteAccount.find(".button-label").first();
+            var $spinner = $btnDeleteAccount.find(".spinner").first();
+            var $deleteError = $("#delete-error");
+            var $password = $('#user-pass');
+            var $deleteUserForm = $("#deleteUserForm");
+            var $passwordError = $('#password-error');
+
+            $deleteError.hide();
+            $label.hide();
+            $spinner.show();
+            $deleteUserForm.first('div.form-group').removeClass('has-error');
+            $passwordError.hide();
+            $passwordError.html("");
+
+            if (!$password.val()) {
+                $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
+                $deleteUserForm.first('div.form-group').addClass('has-error');
+                $spinner.hide()
+                $label.show();
+                $passwordError.show();
+                return;
+            }
+
+            $.ajax({
+                url: "<%= link('/user') %>",
+                type: 'POST',
+                data: {
+                    password: $password.val()
+                },
+                success: function (result) {
+                    //set success message in storage to get it back on login page and LOGOUT
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.setItem('loginMessage', "<%= __('PROFILE_JS_SUCCESS_DELETE_ACCOUNT') %>");
+                    }
+                    window.location = "<%= link('/logout') %>";
+                },
+                error: function (error) {
+                    if (error.responseJSON.msg) {
+                        $passwordError.html(error.responseJSON.msg);
+                        $deleteUserForm.first('div.form-group').addClass('has-error');
+                        $spinner.hide()
+                        $label.show();
+                        $passwordError.show();
+                    } else {
+                        $deleteUserModal.modal('toggle');
+                        $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
+                        $spinner.hide();
+                        $label.show();
+                        $deleteError.show();
+                    }
+                }
+            });
+        });
+
         $saveDataBtn.on('click', function (e) {
             e.preventDefault();
-            resetErrors("form-personnal-data-errors", "personnal-data-errors");
+            resetMessages("form-personnal-data-errors", "personnal-data-errors");
 
             var userId = "<%= user.id %>";
             var date = createDate($birthday.val()).getTime();
@@ -424,7 +528,7 @@
 
         $cancelBtn.on('click', function (e) {
             e.preventDefault();
-            resetErrors("form-personnal-data-errors", "personnal-data-errors");
+            resetMessages("form-personnal-data-errors", "personnal-data-errors");
             closeEditMode();
         });
 
@@ -437,7 +541,8 @@
         $savePasswordBtn.on('click', function (e) {
             e.preventDefault();
 
-            resetErrors("form-security-errors", "security-errors");
+            resetMessages("form-security-errors", "security-errors");
+            $("#form-security-success").hide();
 
             var userId = "<%= user.id %>";
 
@@ -450,11 +555,15 @@
                 },
                 type: 'POST',
                 success: function (result) {
+                    $("#form-security-success").show('fast');
                     $previousPassword.val("");
                     $password.val("");
                     $confirmPassword.val("");
                     $formModifyPass.hide();
                     $modifyPassBtn.show();
+                    $('html, body').animate({
+                        scrollTop: $("#security-success").offset().top
+                    }, 500);
                 },
                 error: function (result) {
                     $.each(result.responseJSON.errors, function (index, error) {
@@ -470,11 +579,10 @@
 
         $cancelPasswordBtn.on('click', function (e) {
             e.preventDefault();
-            resetErrors("form-security-errors", "security-errors");
+            resetMessages("form-security-errors", "security-errors");
             $formModifyPass.hide();
             $modifyPassBtn.show();
         });
-
     })();
 </script>
 
