@@ -14,7 +14,6 @@ var resetDatabase = function (done) {
 // Test get profile after account creation
 
 var recaptchaResponse = '03AOPBWq_AE4T0yzPD_QKTntmUfHZ7TiYNCCDBwOUMJBGmMv_3StO4UeabzvxTPBx_Izz96t9FmhDXJ-XK32gL8LQG4Cg12Zk3ObkEYj7zWbSmxEDYpxuV6OSe2sjEjYbvwp6EdszYQJbGjDqYP50kNX5H4Mb-_xdKzwDzOEVqLk9kDlzvzMz8kSodYRCuWGvkCYm2Sg8VX6Fexz8yTRRqT13TTNvc-hGCJ_EoXmmsX2HFdtL7xDmg1Df618vbCCsftqe2atUBSXSn8MNxAkXtFg7-kDZUOLHbXFBC_sPurEdaYVuqDbUBXwg';
-c
 
 describe('GET /api/local/profile', function () {
 
