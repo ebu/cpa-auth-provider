@@ -4,6 +4,10 @@
     box-shadow: none;
 }
 
+#profile .panel.hidden {
+    display: none;
+}
+
 #profile #btn-container, #profile #form-modify-pass {
     display: none;
 }
@@ -26,6 +30,10 @@
 
 #profile .account-title {
     display: inline-block;
+}
+
+#profile .status-info {
+    font-size: 1.2rem;
 }
 
 #profile .btn.btn-link {
@@ -51,11 +59,19 @@
 }
 
 #profile .verification-link-container {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
-#profile .delete-container {
+#profile .verification-link-container .recaptcha-wrapper {
+    max-width: 300px;
+}
+
+#profile .col-sm-9 .delete-container {
     margin-top: 10px;
+}
+
+#profile .col-sm-3 .delete-container {
+    margin-top: 30px;
 }
 
 #profile #password-error {

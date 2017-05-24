@@ -83,7 +83,7 @@ footer.rts-footer {
     border-color: #333;
 }
 
-#profile .delete-container p {
+#profile .delete-container p, #profile .verification-link-container p {
     color: #666666;
     font-size: 1.6rem;
 }
