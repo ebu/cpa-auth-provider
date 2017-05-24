@@ -66,6 +66,7 @@
                         <p class="last-link"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
                                     class="btn-link" href="<%= link('/signup') %>"><%= __('LOGIN_SIGNUP_LINK') %></a>
                         </p>
+                        
                     </div>
                 </div>
 
@@ -82,7 +83,7 @@
         var socials = $('.social div');
         var infoMessage = $('#login-info');
 
-        switch(socials.length) {
+        switch (socials.length) {
             case 1:
                 socials.addClass('col-sm-12');
                 break;
@@ -95,9 +96,9 @@
             default:
                 break;
         }
-        if(typeof localStorage !== 'undefined') {
+        if (typeof localStorage !== 'undefined') {
             var message = localStorage.getItem('loginMessage');
-            if(message) {
+            if (message) {
                 infoMessage.text(message);
                 localStorage.setItem('loginMessage', '');
                 infoMessage.show();
