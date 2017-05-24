@@ -6,35 +6,34 @@
 
         <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
 
-            <a class="" href="<%= link('/auth') %>"><span
-                        class="glyphicon glyphicon-chevron-left"></span><%= __('LOGIN_BACK_IDP_LINK') %></a>
+            <div id="login-panel">
+                <h1 class="title text-center">
+                    <%= __('LOGIN_TITLE') %>
+                </h1>
 
-            <div id="login-panel" class="panel panel-default">
-                <div class="panel-body">
-                    <h1 class="title">
-                        <span class="glyphicon glyphicon-log-in"></span>
-                        <%= __('LOGIN_TITLE') %>
-                    </h1>
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
 
-                    <!-- show any messages that come back with authentication -->
-                    <% if (message.length > 0) { %>
-                    <div class="alert alert-danger"><%= message %></div>
-                    <% } %>
+                        <!-- show any messages that come back with authentication -->
+                        <% if (message.length > 0) { %>
+                        <div class="alert alert-danger"><%= message %></div>
+                        <% } %>
 
-                    <div id="login-info" class="alert alert-info"></div>
+                        <div id="login-info" class="alert alert-info"></div>
 
-                    <!-- LOGIN FORM -->
-                    <form action="<%= link('/login') %>" method="post">
-                        <div class="form-group">
-                            <label><%= __('LOGIN_EMAIL_LABEL') %></label>
-                            <input type="email" class="form-control" name="email">
-                        </div>
-                        <div class="form-group">
-                            <label><%= __('LOGIN_PASSWORD_LABEL') %></label>
-                            <input type="password" class="form-control" name="password">
-                            <a id="password-recovery"
-                               href="<%= link('/password/recovery') %>"><%= __('LOGIN_FORGOT_PASSWORD_LINK') %></a>
-                        </div>
+                        <!-- LOGIN FORM -->
+                        <form class="connect-forms" action="<%= link('/login') %>" method="post">
+                            <div class="form-group">
+                                <input type="email" class="form-control" name="email"
+                                       placeholder="<%= __('LOGIN_EMAIL_LABEL') %>">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="password"
+                                       placeholder="<%= __('LOGIN_PASSWORD_LABEL') %>">
+                                <a id="password-recovery"
+                                   class="btn-link"
+                                   href="<%= link('/password/recovery') %>"><%= __('LOGIN_FORGOT_PASSWORD_LINK') %></a>
+                            </div>
 
                             <button type="submit"
                                     class="btn btn-primary btn-block btn-large-submit"><%= __('LOGIN_LOGIN_BUTTON') %></button>
