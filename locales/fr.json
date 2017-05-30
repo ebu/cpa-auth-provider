@@ -278,6 +278,7 @@
   "BACK_PROFILE_UPDATE_FAIL": "Impossible de mettre à jour le profile. Erreur :",
   "BACK_PROFILE_REQ_VERIF_MAIL": "Non authentifié",
 
+  "BACK_API_MENU_LABEL_DEVICES": "Mes appareils",
   "BACK_API_MENU_LABEL_SETTINGS": "Réglages",
 
   "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
