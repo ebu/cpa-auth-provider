@@ -139,6 +139,11 @@ module.exports = function (app, options) {
     function getMenu(req, lang) {
         var menu = [
             {
+                label: req.__({phrase: 'BACK_API_MENU_LABEL_DEVICES', locale: lang}),
+                url: req.protocol + '://' + req.get('host') + "/user/devices",
+                directLink: true
+            },
+            {
                 label: req.__({phrase: 'BACK_API_MENU_LABEL_SETTINGS', locale: lang}),
                 url: req.protocol + '://' + req.get('host') + "/user/profile",
                 directLink: true

@@ -64,10 +64,15 @@
 
 #profile .verification-link-container .recaptcha-wrapper {
     max-width: 300px;
+    margin: 20px 0;
 }
 
 #profile .col-sm-9 .delete-container {
     margin-top: 10px;
+}
+
+#profile .col-sm-9.col-sm-offset-3 .delete-container {
+    margin-top: 30px;
 }
 
 #profile .col-sm-3 .delete-container {
