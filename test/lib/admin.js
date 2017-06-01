@@ -124,7 +124,6 @@ describe('GET /admin', function () {
         });
 
         before(function (done) {
-            // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin', {
                 cookie: self.cookie,
                 parseDOM: true
@@ -165,7 +164,6 @@ describe('GET /admin', function () {
 
         before(function (done) {
             config.displayUsersInfos = false;
-            // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin', {
                 cookie: self.cookie,
                 parseDOM: true
@@ -203,7 +201,6 @@ describe('GET /admin', function () {
 
         before(function (done) {
             config.displayUsersInfos = true;
-            // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin', {
                 cookie: self.cookie,
                 parseDOM: true
