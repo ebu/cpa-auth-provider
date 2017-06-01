@@ -52,6 +52,8 @@ module.exports = {
 
     displayUsersInfos: true,
 
+    displayMenuBar: true,
+
     mail: {
         sending: {
             transport:  process.env.MAIL_TRANSPORT_TYPE,

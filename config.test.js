@@ -76,6 +76,8 @@ module.exports = {
 
     displayUsersInfos: true,
 
+    displayMenuBar: false,
+
     // Cross-origin resource sharing
     cors: {
         enabled: true,
