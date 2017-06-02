@@ -138,7 +138,7 @@ nav.navbar {
 nav .navbar-brand {
     padding: 4px 15px;
 }
-nav .navbar-brand > img{
+nav .navbar-brand img{
     width: 40px;
 }
 
@@ -157,6 +157,12 @@ nav .lang ul.dropdown-menu {
     min-width: inherit;
     border: none;
     left: 0;
+}
+
+nav .peach-title {
+    color: #f56b6c;
+    text-transform: capitalize;
+    vertical-align: -4px;
 }
 
 @media (max-width: 767px) {
