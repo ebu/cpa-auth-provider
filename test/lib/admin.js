@@ -124,7 +124,6 @@ describe('GET /admin', function () {
         });
 
         before(function (done) {
-            // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin', {
                 cookie: self.cookie,
                 parseDOM: true
@@ -165,7 +164,6 @@ describe('GET /admin', function () {
 
         before(function (done) {
             config.displayUsersInfos = false;
-            // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin', {
                 cookie: self.cookie,
                 parseDOM: true
@@ -173,7 +171,7 @@ describe('GET /admin', function () {
         });
 
         it('should hide Users link', function () {
-            expect(this.$('#users-link')).to.be.hidden;
+            expect(this.$('#users-link').length).to.equal(0);
         });
 
     });
@@ -203,7 +201,6 @@ describe('GET /admin', function () {
 
         before(function (done) {
             config.displayUsersInfos = true;
-            // console.log("the cookie", self.cookie);
             requestHelper.sendRequest(this, '/admin', {
                 cookie: self.cookie,
                 parseDOM: true
@@ -211,7 +208,7 @@ describe('GET /admin', function () {
         });
 
         it('should show Users link', function () {
-            expect(this.$('#users-link')).to.be.visible;
+            expect(this.$('#users-link').length).to.equal(1);
         });
 
     });
