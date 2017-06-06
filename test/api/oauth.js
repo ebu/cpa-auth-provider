@@ -550,9 +550,10 @@ describe('OAuth2 requests from cross domain with access token', function () {
         }, done);
     });
 
-    it('should return a success', function () {
+    it('should return a success with appropriate display name and number of menu items', function () {
         expect(this.res.statusCode).equal(200);
-        expect(this.res.text).to.contain('"display_name":"test@test.com"');
+        expect(this.res.body.display_name).to.equal('test@test.com');
+        expect(this.res.body.menu.length).to.equal(2);
     });
 
 });
