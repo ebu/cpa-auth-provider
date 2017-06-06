@@ -45,19 +45,19 @@
                             <% if(config.identity_providers.googleplus.enabled) { %>
                             <div class="text-center">
                                 <img class="login-images" src="/assets/img/logoroundg+.svg"/>
-                                <p class="login-social-labels">Connectez-vous avec Google+</p>
+                                <p class="login-social-labels"><%= __('LOGIN_GOOGLE_PLUS_BUTTON') %></p>
                             </div>
                             <% } %>
                             <% if(config.identity_providers.facebook.enabled) { %>
                             <div class="text-center">
                                 <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
-                                <p class="login-social-labels">Connectez-vous avec facebook</p>
+                                <p class="login-social-labels"><%= __('LOGIN_FACEBOOK_BUTTON') %></p>
                             </div>
                             <% } %>
                             <% if(config.identity_providers.twitter.enabled) { %>
                             <div class="text-center">
                                 <img class="login-images" src="/assets/img/logoroundtwitter.svg"/>
-                                <p class="login-social-labels">Connectez-vous avec Twitter</p>
+                                <p class="login-social-labels"><%= __('LOGIN_TWITTER_BUTTON') %></p>
                             </div>
                             <% } %>
                         </div>
