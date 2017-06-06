@@ -1,8 +1,7 @@
 {
   "LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE": "Authentification Cross Platform : Authorization Provider",
 
-  "LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE": "Authentification Cross Platform",
-  "LAYOUT_HEAD_CROSS_PLATFORM_AUTHENTICATION_SUBTITLE": " : Authorization Provider",
+  "LAYOUT_HEAD_HOME_TITLE": "Accueil",
 
   "LAYOUT_HEAD_NAV_MY_DEVICES": "Mes appareils",
   "LAYOUT_HEAD_NAV_EDIT_PROFILE": "Profil",
@@ -16,6 +15,9 @@
   "LOGIN_EMAIL_LABEL": "Email",
   "LOGIN_PASSWORD_LABEL": "Mot de passe",
   "LOGIN_LOGIN_BUTTON": "Me connecter",
+  "LOGIN_GOOGLE_PLUS_BUTTON": "Connectez-vous avec Google+",
+  "LOGIN_FACEBOOK_BUTTON": "Connectez-vous avec facebook",
+  "LOGIN_TWITTER_BUTTON": "Connectez-vous avec Twitter",
 
   "ADMIN_ADD_DOMAIN_ADD_SERVICE_PROVIDER_TITLE" :"Ajouter un Service Provider",
   "ADMIN_ADD_DOMAIN_NAME_LABEL": "Nom",
