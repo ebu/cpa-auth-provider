@@ -22,11 +22,18 @@ h1 {
 }
 
 main {
+    opacity: 0;
     flex: 1;
+    margin-top: 30px;
 }
 
 header, footer {
     background-color: #abc;
+}
+
+nav.navbar {
+    opacity: 0;
+    margin-bottom: 0;
 }
 
 .panel {

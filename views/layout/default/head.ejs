@@ -2,10 +2,16 @@
 
 <title><%= __('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE') %></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <!-- Bootstrap -->
 <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
 <link href="/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
 <link href="/assets/css/main.css" rel="stylesheet">
+
+<% if ( broadcaster && broadcaster.name === "rts" ) { %>
+<%- include ../rts/head %>
+<% } %>
 
 <link href="/assets/css/profile.css" rel="stylesheet">
 
@@ -40,3 +46,4 @@
 
 <script type="text/javascript" src="/assets/js/lang.js"></script>
 <script type="text/javascript" src="/assets/js/grecaptcha.js"></script>
+<script type="text/javascript" src="/assets/js/load.js"></script>

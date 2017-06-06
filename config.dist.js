@@ -91,6 +91,9 @@ module.exports = {
     // if false the list of user is not accessible in the admin
     displayUsersInfos: true,
 
+    //if false the idp menu bar is hidden
+    displayMenuBar: true,
+
     // Database configuration
     db: {
         host: '',
