@@ -52,7 +52,7 @@ module.exports = {
 
     displayUsersInfos: true,
 
-    displayMenuBar: true,
+    displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
 
     mail: {
         sending: {
