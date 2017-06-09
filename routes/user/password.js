@@ -195,6 +195,9 @@ function forcePassword(req, res) {
 			if (clientId && clientId != token.OAuth2Client.client_id) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
 			}
+			if (!token.User) {
+				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND);
+			}
 
 			return token.User.setPassword(newPassword);
 		}
