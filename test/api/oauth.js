@@ -381,19 +381,7 @@ describe('OAuth2 Implicit Flow', function () {
 		before(createFakeUser);
 
 		before(function (done) {
-			requestHelper.sendRequest(
-				this,
-				'/login',
-				{
-					method: 'post',
-					cookie: this.cookie,
-					type: 'form',
-					data: {
-						email: USER.email,
-						password: USER.password
-					}
-				},
-				done);
+			requestHelper.loginUser(this, USER.email, USER.password, done);
 		});
 
 		before(function(done) {
@@ -459,19 +447,7 @@ describe('OAuth2 Authorization Code Flow', function () {
 			requestHelper.sendRequest(this, url, {}, done);
 		});
 		before(function (done) {
-			requestHelper.sendRequest(
-				this,
-				'/login',
-				{
-					method: 'post',
-					cookie: this.cookie,
-					type: 'form',
-					data: {
-						email: USER.email,
-						password: USER.password
-					}
-				},
-				done);
+			requestHelper.loginUser(this, USER.email, USER.password, done);
 		});
 
 		before(function(done) {

@@ -281,6 +281,11 @@ describe('POST /user/password', function () {
 			it('should reject the request', function () {
 				expect(this.res.statusCode).equal(400);
 			});
+
+			it('should give USER_NOT_FOUND message', function() {
+				expect(this.res.body.success).equal(false);
+				expect(this.res.body.reason).equal('USER_NOT_FOUND');
+			});
 		});
 
 		context('with proper username for verified user', function() {
