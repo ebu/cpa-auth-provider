@@ -2,6 +2,8 @@
 
 module.exports = {
 
+    title: '',
+
     // Define the available identity providers
     identity_providers: {
         // Details : http://passportjs.org/guide/facebook/

@@ -23,6 +23,7 @@ services:
     - BROADCASTER_LAYOUT=rts
     - AUTO_IDP_REDIRECT=local
     - DISPLAY_MENU_BAR=
+    - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
 
   nginx:
     image: nginx

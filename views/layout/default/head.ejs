@@ -1,6 +1,11 @@
 <!-- views/layout/default/head.ejs -->
 
+<% if ( config.title !== "" ) { %>
+<title><%= config.title %></title>
+<% } else { %>
 <title><%= __('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE') %></title>
+<% } %>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Bootstrap -->

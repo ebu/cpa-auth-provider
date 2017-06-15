@@ -2,6 +2,8 @@
 
 module.exports = {
 
+    title: process.env.IDP_TITLE || '',
+
     broadcasterLayout: process.env.BROADCASTER_LAYOUT || '',
 
     broadcaster: '',
@@ -144,7 +146,7 @@ module.exports = {
             name: "sp:8002",
             display_name: "Example Service Provider",
             access_token: "b4949eba147f4cf88985b43c039cd05b"
-        },
+        }
     ],
 
     permissions: [
