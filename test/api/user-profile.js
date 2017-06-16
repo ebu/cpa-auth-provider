@@ -13,7 +13,7 @@ var resetDatabase = function (done) {
 
 // Test get profile after account creation
 
-var recaptchaResponse = '03AOPBWq_AE4T0yzPD_QKTntmUfHZ7TiYNCCDBwOUMJBGmMv_3StO4UeabzvxTPBx_Izz96t9FmhDXJ-XK32gL8LQG4Cg12Zk3ObkEYj7zWbSmxEDYpxuV6OSe2sjEjYbvwp6EdszYQJbGjDqYP50kNX5H4Mb-_xdKzwDzOEVqLk9kDlzvzMz8kSodYRCuWGvkCYm2Sg8VX6Fexz8yTRRqT13TTNvc-hGCJ_EoXmmsX2HFdtL7xDmg1Df618vbCCsftqe2atUBSXSn8MNxAkXtFg7-kDZUOLHbXFBC_sPurEdaYVuqDbUBXwg';
+var recaptchaResponse = '03AOPBWq-G1Wmuf3Vdr9jdWqVdNnqwgQPYVJOBoiAAglGFbaL8PQsLaRVGNEa4WXa-rX2wZmeZ8gK8aLZnhukf55ZOzrrKg5AoCg5DhpJ4FmrQj4AMS3XMsqC3oQMyzoCs-kyOvJ6RBy0BHheC6EXJFpDsMK_gnZRUpOmWsnH8PRt_TCsx2ZgDUIGoZF9fX175moy-A1N5s1ZQ1xtU-eTVI6RWv0ZcwUKdkOrUBomQ9CDguQQwmeUv8tIoRoeMtAMlS1tQCRXHjC5dKIw7BxV-UEraDCsNdnwCOL-LRga6f0MuSXuBqWmJzUg';
 
 describe('GET /api/local/profile', function () {
 

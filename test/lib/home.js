@@ -1,8 +1,19 @@
 "use strict";
 
 var db = require('../../models');
+var config = require('../../config');
+
+var chai = require('chai');
+var chaiJquery = require('chai-jquery');
+var chaiHttp = require('chai-http');
+var i18n4test = require("i18n");
 
 var requestHelper = require('../request-helper');
+
+i18n4test.configure({
+    locales:['en'],
+    directory: __dirname + '/../../locales'
+});
 
 var resetDatabase = function (done) {
     db.sequelize.query('DELETE FROM Users').then(function () {
@@ -52,6 +63,27 @@ describe('GET /', function () {
             expect(this.res.statusCode).to.equal(302);
             expect(this.res.headers).to.have.property('location');
             expect(this.res.headers.location).to.equal(urlPrefix + '/auth');
+        });
+    });
+});
+
+describe('GET home', function() {
+
+    before(resetDatabase);
+
+    context('and let empty title in configuration file', function () {
+
+        before(function (done) {
+            config.title = "";
+            done();
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/', {cookie: this.cookie}, done);
+        });
+
+        it('the title should be the default one : ' + i18n4test.__('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE'), function () {
+            expect(this.$('title').text()).to.equal(i18n4test.__('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE'));
         });
     });
 });

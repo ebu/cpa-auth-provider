@@ -1,6 +1,9 @@
 "use strict";
 
 module.exports = {
+
+    title: '',
+
     recaptcha: {
         enabled: true,
         site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
