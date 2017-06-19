@@ -18,11 +18,6 @@ var i18n = require('i18n');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
-var options = {
-    render: 'explicit',
-    hl: i18n.getLocale()
-};
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key, options);
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
