@@ -15,6 +15,8 @@ i18n4test.configure({
     directory: __dirname + '/../../locales'
 });
 
+config.title = "";
+
 var resetDatabase = function (done) {
     db.sequelize.query('DELETE FROM Users').then(function () {
         return db.User.create({
@@ -72,11 +74,6 @@ describe('GET home', function() {
     before(resetDatabase);
 
     context('and let empty title in configuration file', function () {
-
-        before(function (done) {
-            config.title = "";
-            done();
-        });
 
         before(function (done) {
             requestHelper.sendRequest(this, '/', {cookie: this.cookie}, done);
