@@ -6,6 +6,14 @@ var authHelper = require('../../lib/auth-helper');
 
 var i18n = require('i18n');
 
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
+var options = {
+    render: 'explicit',
+    hl: i18n.getLocale()
+};
+recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key, options);
+
 var routes = function (router) {
 
     router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
@@ -26,7 +34,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/user/profile', authHelper.authenticateFirst, function (req, res, next) {
+    router.get('/user/profile', recaptcha.middleware.render, authHelper.authenticateFirst, function (req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
@@ -49,7 +57,8 @@ var routes = function (router) {
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
-                            verified: user.verified
+                            verified: user.verified,
+                            captcha: req.recaptcha
                         }
                     };
 

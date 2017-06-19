@@ -18,7 +18,11 @@ var i18n = require('i18n');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
+var options = {
+    render: 'explicit',
+    hl: i18n.getLocale()
+};
+recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key, options);
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
@@ -142,12 +146,12 @@ module.exports = function (app, options) {
         res.render('login.ejs', {message: req.flash('loginMessage')});
     });
 
-    app.get('/signup', function (req, res) {
-        res.render('signup.ejs', {email: req.query.email, message: req.flash('signupMessage')});
+    app.get('/signup', recaptcha.middleware.render, function (req, res) {
+        res.render('signup.ejs', {email: req.query.email, captcha: req.recaptcha, message: req.flash('signupMessage')});
     });
 
-    app.get('/password/recovery', function (req, res) {
-        res.render('password-recovery.ejs', {});
+    app.get('/password/recovery', recaptcha.middleware.render, function (req, res) {
+        res.render('password-recovery.ejs', {captcha: req.recaptcha});
     });
 
     app.get('/password/edit', function (req, res) {
