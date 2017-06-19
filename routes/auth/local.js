@@ -8,7 +8,6 @@ var requestHelper = require('../../lib/request-helper');
 var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var recaptcha = require('express-recaptcha');
 var util = require('util');
 
 var emailHelper = require('../../lib/email-helper');
@@ -16,6 +15,10 @@ var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
 
 var i18n = require('i18n');
+
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
+recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
@@ -128,9 +131,6 @@ var localStrategyConf = {
     passwordField: 'password',
     passReqToCallback: true // allows us to pass back the entire request to the callback
 };
-
-// Google reCAPTCHA
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
 passport.use('local', new LocalStrategy(localStrategyConf, localStrategyCallback));
 
