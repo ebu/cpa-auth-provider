@@ -1,26 +1,20 @@
 <mjml>
-  <mj-body background-color='#efefef'>
-    <mj-container>
-      <mj-section background-color='#f7f7f7'>
+  <mj-body background-color='#edece8'>
+    <mj-container background-color='#edece8'>
+      <mj-section background-color='#ffffff'>
         <mj-column>
-          <mj-text color='#a8a8a8'>
-            <h1>BR MEDIATHEK</h1>
-          </mj-text>
-          <mj-divider border-color='#dddddd' border-width='1px' padding-top='0px' padding-bottom='0px'></mj-divider>
-          <mj-text color='#a8a8a8'>
-            <a style='color: inherit; text-decoration: none;' href='https://beta.mediathek.br.de'>beta.mediathek.br.de</a>
-          </mj-text>
-          <mj-divider border-color='#dddddd' border-width='1px' padding-top='0px' padding-bottom='0px'></mj-divider>
+          <mj-image width="367" src="https://login.br.de/img/mediathek_beta_brand_big_dark.png" alt="BR Mediathek Beta" align="left"/>
           <mj-text>
-            Servus {{USERNAME}},
-            </mj-text><mj-text>
+            Servus,
+          </mj-text>
+          <mj-text>
             vielen Dank für deine Registrierung in der BR Mediathek.
           </mj-text>
           <mj-text>
-            Bevor du loslegen kannst, bestätige bitte deine Anmeldung mit einem Klick oder Tap auf diesen Link:
+            Bevor du loslegen kannst, bestätige bitte deine Registrierung mit einem Klick oder Tap auf diesen Link:
           </mj-text>
-          <mj-button href='{{CONFIRMLINK}}' background-color='#0082c5'>
-            Anmeldung bestätigen
+          <mj-button href='{{CONFIRMLINK}}' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
+            Registrierung bestätigen
           </mj-button>
           <mj-text color='#a8a8a8'>
             <a style='color: inherit; text-decoration: none;' href='{{CONFIRMLINK}}'>{{CONFIRMLINK}}</a>
@@ -32,15 +26,26 @@
             überall dieselben Empfehlungen und Abonnenments, deine Merkliste
             und deine Boards, sowie deinen bisherigen Sendungsverlauf.
           </mj-text>
-          <mj-text>
-            Nur im eingeloggten Bereich kannst du eigene Boards erstellen und
-            diese mit deinen Freunden teilen.
-          </mj-text>
-          <mj-text>
+          <mj-text padding-bottom='0px'>
             Viel Spaß beim Stöbern und Schauen!
           </mj-text>
-          <mj-text color='#a8a8a8'>
+          <mj-text color='#0082c5' padding-top='0px'>
             Dein BR Mediatheks-Team
+          </mj-text>
+          <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
+          <mj-text padding-bottom='0px'>
+            Du hast dich nicht registriert?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Bitte ignoriere diese E-Mail.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Du brauchst Hilfe?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Wende dich bitte an den BR-Support unter
+            <a style='color: inherit; text-decoration: none;' href='mailto:beta-mediathek@br.de?subject=Registrierung'>beta-mediathek@br.de</a>
+            und teile uns dein Problem mit.
           </mj-text>
         </mj-column>
       </mj-section>
