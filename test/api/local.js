@@ -6,6 +6,9 @@ var db = require('../../models');
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
+
 var resetDatabase = function (done) {
     dbHelper.clearDatabase(function (err) {
         done(err);
@@ -16,13 +19,27 @@ var INCORRECT_LOGIN_OR_PASS = 'The username or password is incorrect';
 var API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA = 'Something went wrong with the reCAPTCHA';
 var API_PASSWORD_RECOVER_USER_NOT_FOUND = 'User not found';
 
-var recaptchaResponse = '03AOPBWq_AE4T0yzPD_QKTntmUfHZ7TiYNCCDBwOUMJBGmMv_3StO4UeabzvxTPBx_Izz96t9FmhDXJ-XK32gL8LQG4Cg12Zk3ObkEYj7zWbSmxEDYpxuV6OSe2sjEjYbvwp6EdszYQJbGjDqYP50kNX5H4Mb-_xdKzwDzOEVqLk9kDlzvzMz8kSodYRCuWGvkCYm2Sg8VX6Fexz8yTRRqT13TTNvc-hGCJ_EoXmmsX2HFdtL7xDmg1Df618vbCCsftqe2atUBSXSn8MNxAkXtFg7-kDZUOLHbXFBC_sPurEdaYVuqDbUBXwg';
+var recaptchaResponse = 'a dummy recaptcha response';
+
+// The following recaptcha key should always return ok
+// See https://developers.google.com/recaptcha/docs/faq
+var OK_RECATCHA_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+var OK_RECATCHA_SECRET = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
+
+// The following recaptacha key should always return ko
+var KO_RECATCHA_KEY = 'ko';
+var KO_RECATCHA_SECRET = 'ko';
 
 // Test signup
 
 describe('POST /api/local/signup', function () {
 
     context('When unauthenticated user signup with bad recaptcha', function () {
+
+        before(function (done){
+            recaptcha.init(KO_RECATCHA_KEY, KO_RECATCHA_SECRET);
+            done();
+        });
 
         before(resetDatabase);
 
@@ -31,13 +48,11 @@ describe('POST /api/local/signup', function () {
                 method: 'post',
                 cookie: this.cookie,
                 type: 'form',
-                data: {email: 'qsdf@qsdf.fr', password: 'qsdf', 'g-recaptcha-response': 'qsdf'}
+                data: {email: 'qsdf@qsdf.fr', password: 'qsdf', 'g-recaptcha-response': ''}
             }, done);
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
@@ -47,6 +62,11 @@ describe('POST /api/local/signup', function () {
     });
 
     context('When unauthenticated user signup with good recaptcha', function () {
+
+        before(function (done){
+            recaptcha.init(OK_RECATCHA_SECRET, OK_RECATCHA_SECRET);
+            done();
+        });
 
         before(resetDatabase);
 
@@ -92,8 +112,6 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
@@ -147,8 +165,6 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
         });
 
@@ -166,8 +182,6 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
             expect(this.res.statusCode).to.equal(400);
             expect(this.res.body.success).to.equal(false);
@@ -183,7 +197,14 @@ describe('POST /api/local/signup', function () {
 describe('POST /api/local/password/recover', function () {
 
     context('When user try to recover password with valid email and good recaptcha', function () {
+
         before(resetDatabase);
+
+        // Google reCAPTCHA
+        before(function (done){
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
 
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/signup', {
@@ -224,6 +245,12 @@ describe('POST /api/local/password/recover', function () {
     context('When user try to recover password with valid email and bad recaptcha', function () {
         before(resetDatabase);
 
+        // Google reCAPTCHA
+        before(function (done){
+            recaptcha.init(KO_RECATCHA_KEY, KO_RECATCHA_SECRET);
+            done();
+        });
+
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/signup', {
                 method: 'post',
@@ -238,8 +265,6 @@ describe('POST /api/local/password/recover', function () {
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
         });
 
@@ -263,6 +288,12 @@ describe('POST /api/local/password/recover', function () {
 
     context('When user try to recover password with valid email and bad recaptcha', function () {
         before(resetDatabase);
+
+        // Google reCAPTCHA
+        before(function (done){
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
 
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/signup', {
@@ -326,8 +357,6 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
         });
 

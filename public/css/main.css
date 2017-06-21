@@ -456,7 +456,6 @@ g-recaptcha {
 }
 .g-recaptcha {
     width: 41px;
-    /* border: 1px solid red; */
     height: 38px;
     overflow: hidden;
     float: left;

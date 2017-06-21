@@ -44,7 +44,7 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
 
 module.exports = function (app, options) {
     app.post('/api/local/signup', cors, recaptcha.middleware.verify, function (req, res) {
-
+        
         if (req.recaptcha.error) {
             res.json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
             return;

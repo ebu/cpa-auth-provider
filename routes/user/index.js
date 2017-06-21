@@ -6,6 +6,9 @@ var authHelper = require('../../lib/auth-helper');
 
 var i18n = require('i18n');
 
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
+
 var routes = function (router) {
 
     router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
@@ -26,7 +29,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/user/profile', authHelper.authenticateFirst, function (req, res, next) {
+    router.get('/user/profile', recaptcha.middleware.render, authHelper.authenticateFirst, function (req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
@@ -50,7 +53,8 @@ var routes = function (router) {
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
                             verified: user.verified
-                        }
+                        },
+                        captcha: req.recaptcha
                     };
 
                     res.render('./user/profile.ejs', data);

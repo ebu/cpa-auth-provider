@@ -8,7 +8,6 @@ var requestHelper = require('../../lib/request-helper');
 var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var recaptcha = require('express-recaptcha');
 var util = require('util');
 
 var emailHelper = require('../../lib/email-helper');
@@ -16,6 +15,9 @@ var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
 
 var i18n = require('i18n');
+
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
@@ -129,9 +131,6 @@ var localStrategyConf = {
     passReqToCallback: true // allows us to pass back the entire request to the callback
 };
 
-// Google reCAPTCHA
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
-
 passport.use('local', new LocalStrategy(localStrategyConf, localStrategyCallback));
 
 passport.use('local-signup', new LocalStrategy(localStrategyConf, localSignupStrategyCallback));
@@ -142,12 +141,12 @@ module.exports = function (app, options) {
         res.render('login.ejs', {message: req.flash('loginMessage')});
     });
 
-    app.get('/signup', function (req, res) {
-        res.render('signup.ejs', {email: req.query.email, message: req.flash('signupMessage')});
+    app.get('/signup', recaptcha.middleware.render, function (req, res) {
+        res.render('signup.ejs', {email: req.query.email, captcha: req.recaptcha, message: req.flash('signupMessage')});
     });
 
-    app.get('/password/recovery', function (req, res) {
-        res.render('password-recovery.ejs', {});
+    app.get('/password/recovery', recaptcha.middleware.render, function (req, res) {
+        res.render('password-recovery.ejs', {captcha: req.recaptcha});
     });
 
     app.get('/password/edit', function (req, res) {
