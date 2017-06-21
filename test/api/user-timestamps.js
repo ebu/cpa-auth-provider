@@ -14,7 +14,7 @@ var resetDatabase = function (done) {
 var TEST_EMAIL_0 = 'qsdf@qsdf.fr';
 var OLD_PASSWORD = '1234567890';
 var NEW_PASSWORD = 'abcdefghijklmn';
-var recaptchaResponse = '03AOPBWq-G1Wmuf3Vdr9jdWqVdNnqwgQPYVJOBoiAAglGFbaL8PQsLaRVGNEa4WXa-rX2wZmeZ8gK8aLZnhukf55ZOzrrKg5AoCg5DhpJ4FmrQj4AMS3XMsqC3oQMyzoCs-kyOvJ6RBy0BHheC6EXJFpDsMK_gnZRUpOmWsnH8PRt_TCsx2ZgDUIGoZF9fX175moy-A1N5s1ZQ1xtU-eTVI6RWv0ZcwUKdkOrUBomQ9CDguQQwmeUv8tIoRoeMtAMlS1tQCRXHjC5dKIw7BxV-UEraDCsNdnwCOL-LRga6f0MuSXuBqWmJzUg';
+var recaptchaResponse = 'a dummy recaptcha response';
 
 // Test authenticate
 
@@ -51,8 +51,6 @@ describe('user profile timestamps', function () {
         });
 
         it('should return a success false', function () {
-            // if Test fail  here google should have change the recaptcha algorithm
-            // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
         });
 
