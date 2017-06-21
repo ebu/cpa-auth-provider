@@ -52,9 +52,9 @@ var routes = function (router) {
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
-                            verified: user.verified,
-                            captcha: req.recaptcha
-                        }
+                            verified: user.verified
+                        },
+                        captcha: req.recaptcha
                     };
 
                     res.render('./user/profile.ejs', data);
