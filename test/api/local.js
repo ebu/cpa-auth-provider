@@ -16,7 +16,7 @@ var INCORRECT_LOGIN_OR_PASS = 'The username or password is incorrect';
 var API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA = 'Something went wrong with the reCAPTCHA';
 var API_PASSWORD_RECOVER_USER_NOT_FOUND = 'User not found';
 
-var recaptchaResponse = '03AOPBWq-G1Wmuf3Vdr9jdWqVdNnqwgQPYVJOBoiAAglGFbaL8PQsLaRVGNEa4WXa-rX2wZmeZ8gK8aLZnhukf55ZOzrrKg5AoCg5DhpJ4FmrQj4AMS3XMsqC3oQMyzoCs-kyOvJ6RBy0BHheC6EXJFpDsMK_gnZRUpOmWsnH8PRt_TCsx2ZgDUIGoZF9fX175moy-A1N5s1ZQ1xtU-eTVI6RWv0ZcwUKdkOrUBomQ9CDguQQwmeUv8tIoRoeMtAMlS1tQCRXHjC5dKIw7BxV-UEraDCsNdnwCOL-LRga6f0MuSXuBqWmJzUg';
+var recaptchaResponse = '03AOPBWq_bRoWT6-2e5P8PGK0FTDErW3gd1miP-brDdfAxj9x_RtZaTit6RSm0VhYmYFQt1MWT7uF77CC0kn0vKP5DwohN8B23zOhAWVHFshz9Bmobd8zCrPWEw2jgUJHXoqCLjbwrcaRq0c2OAuYYfa_j6sd3Vr6Vh9LX9V-Htd7rtkV9hznhXJIyXTXWCPlftGVeJNXC1l85YvAtomvjKBZmRriG0z68NdxujrqHjoWEYV-tysP2tw4-LSdffQCGP_t-hJ-N7W6yqIEmyrqntKOd7_iqfksoc8f_MUQ2te_MNI8mO6hRp2a0fa_qeOqBRHiwKCBxXOFbfnVyw7fmSjK3xd9z5UwbVXdIyVW19HUgrTEwMGlY2DoXc-N8MQe9sCk1Bw3leguREOHZoO8jGnZt0T1xnTNMro488ILkBA1wPO4XP73GPbwsG3h8-vTjAc2c2LtB9nSx';
 
 // Test signup
 
@@ -64,6 +64,7 @@ describe('POST /api/local/signup', function () {
         });
 
         it('should return a success true', function () {
+            console.log("ERROR", this.res.body.msg);
             // if Test fail  here google should have change the recaptcha algorithm
             // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
             expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
