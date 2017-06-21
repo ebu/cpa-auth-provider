@@ -36,6 +36,11 @@ describe('POST /api/local/signup', function () {
 
     context('When unauthenticated user signup with bad recaptcha', function () {
 
+        before(function (done){
+            recaptcha.init(KO_RECATCHA_KEY, KO_RECATCHA_SECRET);
+            done();
+        });
+
         before(resetDatabase);
 
         before(function (done) {
