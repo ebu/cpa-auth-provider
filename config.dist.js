@@ -82,8 +82,8 @@ module.exports = {
         // test keys
         // site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
         // secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-        site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+        site_key: '6Lc6NCYUAAAAAPiyvFO2jig6jXGtYEhgZWtWFzml',
+        secret_key: '6Lc6NCYUAAAAALCXdWXUsZgDBl7fn9XA_ecVpu7m'
     },
 
     // When accessing the home page, if defined, users are automatically
