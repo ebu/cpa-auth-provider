@@ -185,11 +185,11 @@ module.exports = function (app, options) {
 
     app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
 
-        if (req.recaptcha.error) {
-            return res.status(400).json({msg: req.__('BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG')});
-        }
-
         passport.authenticate('local-signup', function (err, user, info) {
+
+            if (req.recaptcha.error) {
+                return res.redirect(config.urlPrefix + '/signup?error=recaptcha');
+            }
             if (err) {
                 return next(err);
             }
