@@ -21,6 +21,7 @@ services:
     - TRACKING_COOKIE=true
     - IDP_CLIENT_URL=http://hummingbird-sandbox-marts.rts.ch
     - BROADCASTER_LAYOUT=rts
+    - MAIL_DEFAULT_TEMPLATE_CLASS=rts
     - AUTO_IDP_REDIRECT=local
     - DISPLAY_MENU_BAR=
     - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
