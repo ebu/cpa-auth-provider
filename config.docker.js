@@ -70,7 +70,8 @@ module.exports = {
             // secure: true
         },
         from: process.env.MAIL_FROM,
-        host: process.env.IDP_HOST
+        host: process.env.IDP_HOST,
+        defaultTemplateClass: process.env.MAIL_DEFAULT_TEMPLATE_CLASS
     },
 
     password: {
