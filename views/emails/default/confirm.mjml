@@ -8,10 +8,10 @@
             Servus,
           </mj-text>
           <mj-text>
-            vielen Dank für deine Registrierung in der BR Mediathek.
+            vielen Dank für Deine Registrierung in der BR Mediathek.
           </mj-text>
           <mj-text>
-            Bevor du loslegen kannst, bestätige bitte deine Registrierung mit einem Klick oder Tap auf diesen Link:
+            Bevor Du loslegen kannst, bestätige bitte Deine Registrierung mit einem Klick oder Tap auf diesen Link:
           </mj-text>
           <mj-button href='{{CONFIRMLINK}}' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
             Registrierung bestätigen
@@ -20,11 +20,11 @@
             <a style='color: inherit; text-decoration: none;' href='{{CONFIRMLINK}}'>{{CONFIRMLINK}}</a>
           </mj-text>
           <mj-text>
-            Durch deine Registrierung kannst du jetzt folgende Vorteile nutzen:
-            Wenn du dich auf unterschiedlichen Geräten wie Smartphone, Tablet,
-            Computer und SmartTV mit derselben E-Mail-Adresse anmeldest, siehst du
-            überall dieselben Empfehlungen und Abonnenments, deine Merkliste
-            und deine Boards, sowie deinen bisherigen Sendungsverlauf.
+            Durch Deine Registrierung kannst Du jetzt folgende Vorteile nutzen:
+            Wenn Du Dich auf unterschiedlichen Geräten wie Smartphone, Tablet,
+            Computer und SmartTV mit derselben E-Mail-Adresse anmeldest, siehst Du
+            überall dieselben Empfehlungen und Abonnenments, Deine Merkliste
+            und Deine Boards, sowie Deinen bisherigen Sendungsverlauf.
           </mj-text>
           <mj-text padding-bottom='0px'>
             Viel Spaß beim Stöbern und Schauen!
@@ -34,7 +34,7 @@
           </mj-text>
           <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
           <mj-text padding-bottom='0px'>
-            Du hast dich nicht registriert?
+            Du hast Dich nicht registriert?
           </mj-text>
           <mj-text color='#a8a8a8' padding-top='0px'>
             Bitte ignoriere diese E-Mail.
@@ -43,9 +43,9 @@
             Du brauchst Hilfe?
           </mj-text>
           <mj-text color='#a8a8a8' padding-top='0px'>
-            Wende dich bitte an den BR-Support unter
+            Wende Dich bitte an den BR-Support unter
             <a style='color: inherit; text-decoration: none;' href='mailto:beta-mediathek@br.de?subject=Registrierung'>beta-mediathek@br.de</a>
-            und teile uns dein Problem mit.
+            und teile uns Dein Problem mit.
           </mj-text>
         </mj-column>
       </mj-section>
