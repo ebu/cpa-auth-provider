@@ -232,6 +232,10 @@ nav .peach-title {
     margin-bottom: 20px;
 }
 
+#login .providers-links{
+    color: inherit;
+}
+
 /*
 ************
 ************ SIGNUP

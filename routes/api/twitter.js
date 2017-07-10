@@ -67,7 +67,7 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
 }
 
 module.exports = function (app, options) {
-    app.post('/api/facebook/signup', cors, function (req, res) {
+    app.post('/api/twitter/signup', cors, function (req, res) {
         var facebookAccessToken = req.body.fbToken;
         var applicationName = req.body.appName;
         if (facebookAccessToken && facebookAccessToken.length > 0 && applicationName && applicationName.length > 0) {

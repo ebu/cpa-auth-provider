@@ -16,13 +16,12 @@ module.exports = {
         googleplus: {
             enabled: false,
             client_id: '',
-            client_secret: '',
-            callback_url: ''
+            client_secret: ''
         },
         twitter: {
             enabled: false,
-            client_id: '',
-            client_secret: '',
+            consumer_key: '',
+            consumer_secret: '',
             callback_url: ''
         },
         github: {
