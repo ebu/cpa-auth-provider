@@ -50,9 +50,12 @@
                             <% } %>
                             <% if(config.identity_providers.facebook.enabled) { %>
                             <div class="text-center">
-                                <a class="providers-links" href="<%= link('/auth/facebook') %>">
+                                <a href="<%= link('/auth/facebook') %>"
+                                   class="identity_provider facebook">
                                     <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
-                                    <p class="login-social-labels"><%= __('LOGIN_FACEBOOK_BUTTON') %></p>
+                                    <p class="login-social-labels">
+                                        <%= __('LOGIN_FACEBOOK_BUTTON') %>
+                                    </p>
                                 </a>
                             </div>
                             <% } %>

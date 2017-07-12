@@ -227,6 +227,15 @@ nav .peach-title {
     margin-top: 5px;
 }
 
+#login .identity_provider {
+    color: #666666;
+}
+
+#login .identity_provider:hover {
+    text-decoration: none;
+    color: #666666;
+}
+
 #login .social {
     margin-top: 25px;
     margin-bottom: 20px;
