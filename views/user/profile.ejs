@@ -177,6 +177,7 @@
 
     </div>
     <hr/>
+
     <div class="row">
 
         <div class="col-sm-3">
@@ -204,6 +205,15 @@
 
             <hr class="visible-xs-block hidden-sm"/>
         </div>
+
+        <%if (profile.facebook) { %>
+        <div class="col-sm-9">
+            <div class="providers-container">
+                <span class="facebook-text">f</span>
+                <span>Votre compte est lié à facebook</span>
+            </div>
+        </div>
+        <% } %>
 
         <% if (!profile.verified) { %>
         <div class="col-sm-9">
@@ -244,7 +254,7 @@
         </div>
         <% } %>
 
-        <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
+        <div class="col-sm-9 <% if (!profile.verified || profile.facebook) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
 
                 <span id="delete-error" class="text-danger">
@@ -438,6 +448,7 @@
             var $deleteError = $("#delete-error");
             var $password = $('#user-pass');
             var $deleteUserForm = $("#deleteUserForm");
+            var isFacebookAccount = '<%= profile.facebook %>';
             var $passwordError = $('#password-error');
 
             $deleteError.hide();
@@ -447,7 +458,7 @@
             $passwordError.hide();
             $passwordError.html("");
 
-            if (!$password.val()) {
+            if (!$password.val() && isFacebookAccount !== "true") {
                 $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
                 $deleteUserForm.first('div.form-group').addClass('has-error');
                 $spinner.hide()

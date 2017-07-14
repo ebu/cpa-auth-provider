@@ -52,7 +52,8 @@ var routes = function (router) {
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
-                            verified: user.verified
+                            verified: user.verified,
+                            facebook: user.isFacebookUser()
                         },
                         captcha: req.recaptcha
                     };
