@@ -32,13 +32,11 @@ passport.use(new FacebookStrategy({
                     user.logLogin();
                 });
             } else {
-                console.log("LOGGING IN USER");
                 user.logLogin();
             }
 
             return done(null, user);
         }).catch(function (err) {
-            console.log("ERROR LOGGING IN USER", err);
             done(err, null);
         });
     }
