@@ -71,13 +71,18 @@
     margin-top: 10px;
 }
 
+#profile .col-sm-9 .first.providers-container {
+    margin-top: 5px;
+}
+
 #profile .providers-container .facebook-text {
     display: inline-block;
-    border-radius: 50%;
-    padding: 2px 12px;
-    background-color: #4267b2;
     font-size: 18px;
-    color: #fff;
+    color: #4267b2;
+}
+
+#profile .providers-container .facebook-text + span {
+    padding-left: 10px;
 }
 
 #profile .col-sm-9.col-sm-offset-3 .delete-container {

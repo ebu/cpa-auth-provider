@@ -176,6 +176,44 @@
         </div>
 
     </div>
+
+    <%if (profile.facebook || profile.twitter || profile.googleplus) { %>
+
+    <hr/>
+
+    <div class="row">
+
+        <div class="col-sm-3">
+            <h4 class="account-title">
+                <%= __('PROFILE_ACCOUNT_LINKED_TITLE') %>
+            </h4>
+        </div>
+
+        <div class="col-sm-9">
+            <%if (profile.facebook) { %>
+            <div class="providers-container first">
+                <span class="facebook-text"><i class="fa fa-facebook-official" aria-hidden="true"></i></span>
+                <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK') %></span>
+            </div>
+            <% } %>
+            <%if (profile.twitter) { %>
+            <div class="providers-container first">
+                <span class="facebook-text"><i class="fa fa-twitter-square" aria-hidden="true"></i></span>
+                <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_TWITTER') %></span>
+            </div>
+            <% } %>
+            <%if (profile.googleplus) { %>
+            <div class="providers-container first">
+                <span class="facebook-text"><i class="fa fa-google-plus-square" aria-hidden="true"></i></span>
+                <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_GOOGLEPLUS') %></span>
+            </div>
+            <% } %>
+        </div>
+
+    </div>
+
+    <% } %>
+
     <hr/>
 
     <div class="row">
@@ -205,15 +243,6 @@
 
             <hr class="visible-xs-block hidden-sm"/>
         </div>
-
-        <%if (profile.facebook) { %>
-        <div class="col-sm-9">
-            <div class="providers-container">
-                <span class="facebook-text">f</span>
-                <span>Votre compte est lié à facebook</span>
-            </div>
-        </div>
-        <% } %>
 
         <% if (!profile.verified) { %>
         <div class="col-sm-9">
@@ -254,7 +283,7 @@
         </div>
         <% } %>
 
-        <div class="col-sm-9 <% if (!profile.verified || profile.facebook) { %> col-sm-offset-3 <% } %>">
+        <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
             <div class="delete-container">
 
                 <span id="delete-error" class="text-danger">

@@ -54,7 +54,7 @@ module.exports = function (sequelize, DataTypes) {
             },
             isFacebookUser: function () {
                 var self = this;
-                if(self.provider_uid.indexOf('fb:') !== -1) {
+                if(self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
                     return true;
                 }
                 return false;
