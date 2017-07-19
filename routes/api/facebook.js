@@ -46,8 +46,7 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
                 me.logLogin().then(function (user) {
                     return done(null, buildResponse(user));
                 }, function (error) {
-                    console.log(error);
-                    res.status(500).json({error: error.message});
+                    return done(error, null);
                 });
             } else {
                 db.User.findOrCreate({
@@ -60,8 +59,8 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
                     console.log("USER", me);
                     me.logLogin().then(function (user) {
                         return done(null, buildResponse(user));
-                    }, function () {
-
+                    }, function (error) {
+                        return done(error, null);
                     });
                 }).catch(function (err) {
                     return done(err, null);
@@ -69,8 +68,7 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
             }
 
         }, function (error){
-            console.log(error);
-            res.status(500).json({error: error.message});
+            return done(error, null);
         });
     }
 }
