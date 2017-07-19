@@ -45,7 +45,6 @@ var routes = function (router) {
                                     .then(function (user, user_profile) {
                                         if (user) {
                                             user.updateAttributes({display_name: xssFilters.inHTMLData(req.body.firstname) + ' ' + xssFilters.inHTMLData(req.body.lastname)});
-                                            //TODO update dropdown to fit new display name
                                             res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
                                         }
                                     });
