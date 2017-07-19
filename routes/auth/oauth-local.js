@@ -116,7 +116,7 @@ module.exports = function (app, options) {
                     language = req.query.lang;
                 }
                 var data = {
-                    display_name: profile.getDisplayName(user),
+                    display_name: profile.getDisplayName(user, "FIRSTNAME_LASTNAME"),
                     menu : getMenu(req, language)
                 };
                 res.json(data);
