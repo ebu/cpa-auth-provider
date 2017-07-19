@@ -27,10 +27,10 @@ module.exports = {
             service_url: process.env.OPEN_AM_SERVICE_URL
         },
         facebook: {
-            enabled: false,
-            client_id: '',
-            client_secret: '',
-            callback_url: ''
+            enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
+            client_id: process.env.FACEBOOK_LOGIN_ID,
+            client_secret: process.env.FACEBOOK_LOGIN_SECRET,
+            callback_url: process.env.FACEBOOK_LOGIN_CALL_BACK_URL
         },
         googleplus: {
             enabled: false,
