@@ -150,7 +150,7 @@
   "PROFILE_CANCEL_PASSWORD_BUTTON": "Annuler",
   "PROFILE_PASSWORD_CHANGE_SUCCESS": "Votre mot de passe a été changé avec succès",
   "PROFILE_ACCOUNT_TITLE": "Compte",
-  "PROFILE_ACCOUNT_LINKED_TITLE": "Comptes lié",
+  "PROFILE_ACCOUNT_LINKED_TITLE": "Comptes liés",
   "PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK" : "Votre compte est lié à Facebook",
   "PROFILE_ACCOUNT_LINKED_PROVIDER_TWITTER" : "Votre compte est lié à Twitter",
   "PROFILE_ACCOUNT_LINKED_PROVIDER_GOOGLEPLUS" : "Votre compte est lié à Google+",
