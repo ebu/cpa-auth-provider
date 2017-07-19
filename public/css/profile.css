@@ -67,16 +67,30 @@
     margin: 20px 0;
 }
 
-#profile .col-sm-9 .delete-container {
+#profile .col-sm-9 .delete-container, #profile .col-sm-9 .providers-container {
     margin-top: 10px;
 }
 
+#profile .col-sm-9 .first.providers-container {
+    margin-top: 5px;
+}
+
+#profile .providers-container .facebook-text {
+    display: inline-block;
+    font-size: 18px;
+    color: #4267b2;
+}
+
+#profile .providers-container .facebook-text + span {
+    padding-left: 10px;
+}
+
 #profile .col-sm-9.col-sm-offset-3 .delete-container {
-    margin-top: 30px;
+    margin-top: 25px;
 }
 
 #profile .col-sm-3 .delete-container {
-    margin-top: 30px;
+    margin-top: 25px;
 }
 
 #profile #password-error {

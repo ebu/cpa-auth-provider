@@ -50,8 +50,13 @@
                             <% } %>
                             <% if(config.identity_providers.facebook.enabled) { %>
                             <div class="text-center">
-                                <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
-                                <p class="login-social-labels"><%= __('LOGIN_FACEBOOK_BUTTON') %></p>
+                                <a href="<%= link('/auth/facebook') %>"
+                                   class="identity_provider facebook">
+                                    <img class="login-images" src="/assets/img/logoroundfacebook.svg"/>
+                                    <p class="login-social-labels">
+                                        <%= __('LOGIN_FACEBOOK_BUTTON') %>
+                                    </p>
+                                </a>
                             </div>
                             <% } %>
                             <% if(config.identity_providers.twitter.enabled) { %>

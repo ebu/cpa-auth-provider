@@ -41,7 +41,13 @@ var routes = function (router) {
                                     maxAge: config.i18n.cookie_duration,
                                     httpOnly: true
                                 });
-                                res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
+                                db.User.findOne({where: {id: userId}})
+                                    .then(function (user, user_profile) {
+                                        if (user) {
+                                            user.updateAttributes({display_name: xssFilters.inHTMLData(req.body.firstname) + ' ' + xssFilters.inHTMLData(req.body.lastname)});
+                                            res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
+                                        }
+                                    });
                             },
                             function (err) {
                                 res.status(500).json({msg: req.__('BACK_PROFILE_UPDATE_FAIL') + err});
@@ -86,6 +92,12 @@ var routes = function (router) {
     router.post('/user', authHelper.ensureAuthenticated, function (req, res) {
 
         var user = authHelper.getAuthenticatedUser(req);
+
+        //If facebook user then we do not check for account password as it can be empty
+        if(user.isFacebookUser()) {
+            user.destroy();
+            return res.status(204).send();
+        }
 
         user.verifyPassword(req.body.password).then(function (isMatch) {
                 if (isMatch) {

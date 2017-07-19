@@ -3,22 +3,21 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
+var jwtHelper = require('../../lib/jwt-helper');
 var request = require('request');
 var jwt = require('jwt-simple');
 var cors = require('../../lib/cors');
 
 
 function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,name,picture&access_token=' + token;
+    var path = 'https://graph.facebook.com/me?fields=id,name,email&access_token=' + token;
     request(path, function (error, response, body) {
-
         var data = JSON.parse(body);
-        if (!error && response && response.statusCode && response.statusCode == 200) {
-            var photo_url = (data.picture) ? data.picture.data.url : null;
+        if (!error && response && response.statusCode && response.statusCode === 200) {
             var user = {
-                provider_uid: data.id,
+                provider_uid: "fb:" + data.id,
                 display_name: data.name,
-                photo_url: photo_url
+                email: data.email
             };
             done(null, user);
         }
@@ -30,38 +29,46 @@ function verifyFacebookUserAccessToken(token, done) {
 }
 
 function buildResponse(user) {
-    var token = jwt.encode(user, config.jwtSecret);
+    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
     return {
         success: true,
         user: user,
-        token: 'JWT ' + token
+        token: token
     };
 }
 
 function performFacebookLogin(appName, profile, fbAccessToken, done) {
 
     if (appName && profile && fbAccessToken) {
-        db.User.findOrCreate({
-            where: {
-                provider_uid: profile.provider_uid,
-                display_name: profile.display_name,
-                photo_url: profile.photo_url
-            }
-        }).spread(function (user) {
-            if (user.hasChanged(profile.display_name, profile.photo_url)) {
-                user.updateAttributes({
-                    display_name: profile.display_name,
-                    photo_url: profile.photo_url
-                }).then(function () {
+
+        db.User.findOne({ where: {provider_uid: profile.provider_uid} }).then( function(me){
+            if(me) {
+                me.logLogin().then(function (user) {
                     return done(null, buildResponse(user));
-                }).catch(function (error) {
+                }, function (error) {
                     return done(error, null);
                 });
             } else {
-                return done(null, buildResponse(user));
+                db.User.findOrCreate({
+                    where: {
+                        provider_uid: profile.provider_uid,
+                        display_name: profile.name,
+                        email: profile.email
+                    }
+                }).spread(function (me) {
+                    console.log("USER", me);
+                    me.logLogin().then(function (user) {
+                        return done(null, buildResponse(user));
+                    }, function (error) {
+                        return done(error, null);
+                    });
+                }).catch(function (err) {
+                    return done(err, null);
+                });
             }
-        }).catch(function (err) {
-            return done(err, null);
+
+        }, function (error){
+            return done(error, null);
         });
     }
 }

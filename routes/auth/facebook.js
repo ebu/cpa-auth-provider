@@ -11,20 +11,30 @@ passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
         clientSecret: config.identity_providers.facebook.client_secret,
         callbackURL: config.identity_providers.facebook.callback_url,
-        profileFields: ['id', 'displayName', 'photos']
+        profileFields: ['id', 'emails', 'displayName']
     },
     function (accessToken, refreshToken, profile, done) {
-        var photo_url = (profile.photos.length > 0) ? profile.photos[0].value : null;
+        var email = '';
+        if(profile.emails !== undefined) {
+            email = profile.emails[0].value;
+        }
         db.User.findOrCreate({
             where: {
-                provider_uid: "fb:" + profile.id,
-                display_name: profile.displayName,
-                photo_url: photo_url
+                provider_uid: "fb:" + profile.id
             }
         }).spread(function (user) {
-            user.logLogin().then(function () {
-            }, function () {
-            });
+            if(!user.verified && email !== '') {
+                user.updateAttributes({
+                    display_name: user.displayName,
+                    email: email,
+                    verified: true
+                }).then(function () {
+                    user.logLogin();
+                });
+            } else {
+                user.logLogin();
+            }
+
             return done(null, user);
         }).catch(function (err) {
             done(err, null);
@@ -33,7 +43,7 @@ passport.use(new FacebookStrategy({
 ));
 
 module.exports = function (app, options) {
-    app.get('/auth/facebook', passport.authenticate('facebook'));
+    app.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
 
     app.get('/auth/facebook/callback', passport.authenticate('facebook', {
         failureRedirect: '/?error=login_failed'

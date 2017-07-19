@@ -269,8 +269,8 @@ module.exports = function (app, options) {
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
-                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (sucess) {
-                            if (sucess) {
+                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (success) {
+                            if (success) {
                                 return res.status(200).send();
                             } else {
                                 return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});

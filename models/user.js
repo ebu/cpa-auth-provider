@@ -49,8 +49,12 @@ module.exports = function (sequelize, DataTypes) {
             verifyPassword: function (password) {
                 return bcrypt.compareAsync(password, this.password);
             },
-            hasChanged: function (displayName, photoUrl) {
-                return (this.display_name !== displayName || this.photo_url !== photoUrl);
+            isFacebookUser: function () {
+                var self = this;
+                if(self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
+                    return true;
+                }
+                return false;
             }
         },
         associate: function (models) {

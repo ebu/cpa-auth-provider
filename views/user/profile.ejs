@@ -176,7 +176,46 @@
         </div>
 
     </div>
+
+    <%if (profile.facebook || profile.twitter || profile.googleplus) { %>
+
     <hr/>
+
+    <div class="row">
+
+        <div class="col-sm-3">
+            <h4 class="account-title">
+                <%= __('PROFILE_ACCOUNT_LINKED_TITLE') %>
+            </h4>
+        </div>
+
+        <div class="col-sm-9">
+            <%if (profile.facebook) { %>
+            <div class="providers-container first">
+                <span class="facebook-text"><i class="fa fa-facebook-official" aria-hidden="true"></i></span>
+                <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK') %></span>
+            </div>
+            <% } %>
+            <%if (profile.twitter) { %>
+            <div class="providers-container first">
+                <span class="facebook-text"><i class="fa fa-twitter-square" aria-hidden="true"></i></span>
+                <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_TWITTER') %></span>
+            </div>
+            <% } %>
+            <%if (profile.googleplus) { %>
+            <div class="providers-container first">
+                <span class="facebook-text"><i class="fa fa-google-plus-square" aria-hidden="true"></i></span>
+                <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_GOOGLEPLUS') %></span>
+            </div>
+            <% } %>
+        </div>
+
+    </div>
+
+    <% } %>
+
+    <hr/>
+
     <div class="row">
 
         <div class="col-sm-3">
@@ -438,6 +477,7 @@
             var $deleteError = $("#delete-error");
             var $password = $('#user-pass');
             var $deleteUserForm = $("#deleteUserForm");
+            var isFacebookAccount = '<%= profile.facebook %>';
             var $passwordError = $('#password-error');
 
             $deleteError.hide();
@@ -447,7 +487,7 @@
             $passwordError.hide();
             $passwordError.html("");
 
-            if (!$password.val()) {
+            if (!$password.val() && isFacebookAccount !== "true") {
                 $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
                 $deleteUserForm.first('div.form-group').addClass('has-error');
                 $spinner.hide()
