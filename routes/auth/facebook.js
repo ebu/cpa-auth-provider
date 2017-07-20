@@ -34,6 +34,9 @@ function findOrCreateExternalUser(email, defaults) {
                 if (!user.verified) {
                     return reject(new Error('NOT_VERIFIED'));
                 }
+                if(user.display_name) {
+                    defaults["display_name"] = user.display_name;
+                }
                 return user.updateAttributes(
                     defaults
                 ).then(resolve, reject);
@@ -77,28 +80,6 @@ passport.use(new FacebookStrategy({
         ).catch(
             done
         );
-
-        db.User.findOrCreate({
-            where: {
-                provider_uid: "fb:" + profile.id
-            }
-        }).spread(function (user) {
-            if(!user.verified && email !== '') {
-                user.updateAttributes({
-                    display_name: user.displayName,
-                    email: email,
-                    verified: true
-                }).then(function () {
-                    user.logLogin();
-                });
-            } else {
-                user.logLogin();
-            }
-
-            return done(null, user);
-        }).catch(function (err) {
-            done(err, null);
-        });
     }
 ));
 
