@@ -8,7 +8,7 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 function findOrCreateExternalUser(email, defaults) {
-    return new Promise(function(resolve,reject) {
+    return new Promise(function (resolve, reject) {
         db.User.find(
             {
                 where: {
@@ -16,7 +16,7 @@ function findOrCreateExternalUser(email, defaults) {
                 }
             }
         ).then(
-            function(user) {
+            function (user) {
                 if (!user) {
                     return db.User.findOrCreate(
                         {
@@ -25,14 +25,18 @@ function findOrCreateExternalUser(email, defaults) {
                             },
                             defaults: defaults
                         }
-                    );
+                    ).spread(
+                        function (user, created) {
+                            return resolve(user);
+                        }
+                    ).catch(reject);
                 }
                 if (!user.verified) {
                     return reject(new Error('NOT_VERIFIED'));
                 }
                 return user.updateAttributes(
                     defaults
-                );
+                ).then(resolve, reject);
             },
             reject
         )
