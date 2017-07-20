@@ -141,6 +141,7 @@
 	"PROFILE_SECURITY_TITLE_MOBILE": "Sicherheit",
 	"PROFILE_PASSWORD_TITLE": "Passwort",
 	"PROFILE_EDIT_YOUR_PASSWORD_LINK": "Bearbeiten Sie Ihr Passwort",
+	"PROFILE_CREATE_YOUR_PASSWORD_LINK": "Erstelle ein Passwort",
 	"PROFILE_PREVIOUS_PASSWORD_LABEL": "Vorheriges Passwort",
 	"PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER": "Bisherige",
 	"PROFILE_NEW_PASSWORD_LABEL": "Neu",
@@ -275,6 +276,7 @@
 	"BACK_INCORRECT_PREVIOUS_PASS": "Das vorherige Passwort ist falsch",
 	"BACK_USER_NOT_FOUND": "Benutzer nicht gefunden",
 	"BACK_SUCESS_PASS_CHANGED": "Passwort erfolgreich ändern",
+	"BACK_SUCESS_PASS_CREATED": "Erfolgreich ein neues Passwort erstellt",
 
 	"BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "'Vorname' ist leer oder ungültig",
 	"BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "'Nachname' ist leer oder ungültig",

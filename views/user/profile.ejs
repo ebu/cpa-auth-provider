@@ -148,10 +148,16 @@
             </div>
 
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
-            <button id="btn-modify-password" type="button"
-                    class="btn btn-link"><%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %></button>
+            <button id="btn-modify-password" type="button" class="btn btn-link">
+                <span id="hasPasswordButtonLabel">
+                    <%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %>
+                </span>
+                <span id="hasNoPasswordButtonLabel">
+                    <%= __('PROFILE_CREATE_YOUR_PASSWORD_LINK') %>
+                </span>
+            </button>
             <form id="form-modify-pass">
-                <div class="form-group">
+                <div id="previousPasswordBlock" class="form-group">
                     <label for="old-password"><%= __('PROFILE_PREVIOUS_PASSWORD_LABEL') %></label>
                     <input type="password" class="form-control" id="previous-password"
                            placeholder="<%= __('PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER') %>">
@@ -167,8 +173,9 @@
                            placeholder="<%= __('PROFILE_CONFIRM_PASSWORD_PLACEHOLDER') %>">
                 </div>
                 <div>
-                    <button id="btn-save-password" type="submit"
-                            class="btn btn-primary btn-large-submit"><%= __('PROFILE_SAVE_PASSWORD_BUTTON') %></button>
+                    <button id="btn-save-password" type="submit" class="btn btn-primary btn-large-submit">
+                        <%= __('PROFILE_SAVE_PASSWORD_BUTTON') %>
+                    </button>
                     <button id="btn-cancel-password"
                             class="btn btn-link"><%= __('PROFILE_CANCEL_PASSWORD_BUTTON') %></button>
                 </div>
@@ -333,7 +340,17 @@
         var $birthday = $("#birthday");
         var $inputs = $('.personnal-data-input');
         var $datepicker = $(".input-group.date");
+        var $hasPasswordButtonLabel = $("#hasPasswordButtonLabel");
+        var $hasNoPasswordButtonLabel = $("#hasNoPasswordButtonLabel");
+        var $previousPasswordBlock = $("#previousPasswordBlock");
+        var hasPassword = '<%= profile.hasPassword %>';
         var date = "";
+
+        if(hasPassword !== "true") {
+            $hasPasswordButtonLabel.hide();
+            $hasNoPasswordButtonLabel.show();
+            $previousPasswordBlock.hide();
+        }
 
         //Little css trick so that date input render correctly but does not appear quickly at loading
         $inputs.hide();
@@ -591,16 +608,26 @@
             $("#form-security-success").hide();
 
             var userId = "<%= user.id %>";
+            var url = "<%= link('/user/') %>" + userId + "/password";
+            var data = {
+                password: $password.val(),
+                confirm_password: $confirmPassword.val()
+            }
+            if(hasPassword !== "true") {
+                url = "<%= link('/user/') %>" + userId + "/password/create";
+            } else {
+                data["previous_password"] = $previousPassword.val();
+            }
 
             $.ajax({
-                url: "<%= link('/user/') %>" + userId + "/password",
-                data: {
-                    previous_password: $previousPassword.val(),
-                    password: $password.val(),
-                    confirm_password: $confirmPassword.val()
-                },
+                url: url,
+                data: data,
                 type: 'POST',
                 success: function (result) {
+                    $hasPasswordButtonLabel.show();
+                    $hasNoPasswordButtonLabel.hide();
+                    $previousPasswordBlock.show();
+                    hasPassword = "true";
                     $("#form-security-success").show('fast');
                     $previousPassword.val("");
                     $password.val("");
