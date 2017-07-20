@@ -7,6 +7,38 @@ var requestHelper = require('../../lib/request-helper');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
+function findOrCreateExternalUser(email, defaults) {
+    return new Promise(function(resolve,reject) {
+        db.User.find(
+            {
+                where: {
+                    email: email
+                }
+            }
+        ).then(
+            function(user) {
+                if (!user) {
+                    return db.User.findOrCreate(
+                        {
+                            where: {
+                                email: email
+                            },
+                            defaults: defaults
+                        }
+                    );
+                }
+                if (!user.verified) {
+                    return reject(new Error('NOT_VERIFIED'));
+                }
+                return user.updateAttributes(
+                    defaults
+                );
+            },
+            reject
+        )
+    });
+}
+
 passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
         clientSecret: config.identity_providers.facebook.client_secret,
@@ -18,6 +50,30 @@ passport.use(new FacebookStrategy({
         if(profile.emails !== undefined) {
             email = profile.emails[0].value;
         }
+
+        if (email === '') {
+            // how to react to such an error!?
+            return done(new Error('NO_EMAIL', null));
+        }
+
+        var providerUid = 'fb:' + profile.id;
+
+        return findOrCreateExternalUser(
+            email,
+            {
+                provider_uid: providerUid,
+                display_name: profile.displayName,
+                verified: true
+            }
+        ).then(
+            function(u) {
+                u.logLogin();
+                return done(null, u);
+            }
+        ).catch(
+            done
+        );
+
         db.User.findOrCreate({
             where: {
                 provider_uid: "fb:" + profile.id
