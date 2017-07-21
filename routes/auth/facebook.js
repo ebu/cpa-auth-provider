@@ -35,14 +35,14 @@ function findOrCreateExternalUser(email, defaults) {
                     return reject(new Error('NOT_VERIFIED'));
                 }
                 if(user.display_name) {
-                    defaults["display_name"] = user.display_name;
+                    defaults.display_name = user.display_name;
                 }
                 return user.updateAttributes(
                     defaults
                 ).then(resolve, reject);
             },
             reject
-        )
+        );
     });
 }
 
