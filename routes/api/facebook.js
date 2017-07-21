@@ -83,7 +83,7 @@ module.exports = function (app, options) {
                     // If the user already exists and his account is not validated (i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
                         where: {
-                            email: profile.email
+                            email: user.email
                         }
                     }).then(function (userInDb){
                         if (!userInDb || userInDb.verified){
