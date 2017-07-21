@@ -34,15 +34,15 @@ function findOrCreateExternalUser(email, defaults) {
                 if (!user.verified) {
                     return resolve(false);
                 }
-                if (user.display_name) {
-                    defaults["display_name"] = user.display_name;
+                if(user.display_name) {
+                    defaults.display_name = user.display_name;
                 }
                 return user.updateAttributes(
                     defaults
                 ).then(resolve, reject);
             },
             reject
-        )
+        );
     });
 }
 

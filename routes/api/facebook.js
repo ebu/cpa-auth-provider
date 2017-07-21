@@ -56,7 +56,6 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
                         email: profile.email
                     }
                 }).spread(function (me) {
-                    console.log("USER", me);
                     me.logLogin().then(function (user) {
                         return done(null, buildResponse(user));
                     }, function (error) {
