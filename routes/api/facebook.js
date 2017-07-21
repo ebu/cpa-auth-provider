@@ -80,16 +80,27 @@ module.exports = function (app, options) {
             // Get back user object from Facebook
             verifyFacebookUserAccessToken(facebookAccessToken, function (err, user) {
                 if (user) {
-                    performFacebookLogin(applicationName, user, facebookAccessToken, function (error, response) {
-                        if (response) {
-                            res.status(200).json(response);
-                        } else {
-                            console.log(error);
-                            res.status(500).json({error: error.message});
+                    // If the user already exists and his account is not validated (i.e.: there is a user in the database with the same id and this user email is not validated
+                    db.User.find({
+                        where: {
+                            email: profile.email
+                        }
+                    }).then(function (userInDb){
+                        if (!userInDb || userInDb.verified){
+                            performFacebookLogin(applicationName, user, facebookAccessToken, function (error, response) {
+                                if (response) {
+                                    res.status(200).json(response);
+                                } else {
+                                    res.status(500).json({error: error.message});
+                                }
+                            });
+                        }  else {
+                            res.status(500).json({error: "LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED"});
                         }
                     });
+
+
                 } else {
-                    console.log(err);
                     res.status(500).json({error: err.message});
                 }
 
