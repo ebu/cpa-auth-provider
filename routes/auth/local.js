@@ -143,7 +143,15 @@ passport.use('local-signup', new LocalStrategy(localStrategyConf, localSignupStr
 module.exports = function (app, options) {
 
     app.get('/auth/local', function (req, res) {
-        res.render('login.ejs', {message: req.flash('loginMessage')});
+        var message = {};
+        if(req.query && req.query.error) {
+            message =  req.__(req.query.error);
+        }
+        if(req.flash('loginMessage').length > 0) {
+            message = req.flash('loginMessage');
+        }
+        console.log("message", message);
+        res.render('login.ejs', {message: message});
     });
 
     app.get('/signup', recaptcha.middleware.render, function (req, res) {
