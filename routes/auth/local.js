@@ -28,6 +28,11 @@ var localStrategyCallback = function (req, username, password, done) {
                     return;
                 }
 
+                if (user.isFacebookUser && ! user.password){
+                    done(null, false, req.flash('loginMessage', loginError));
+                    return;
+                }
+
                 user.verifyPassword(password).then(function (isMatch) {
                         if (isMatch) {
                             user.logLogin().then(function () {
