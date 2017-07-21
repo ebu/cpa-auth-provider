@@ -32,9 +32,9 @@ function findOrCreateExternalUser(email, defaults) {
                     ).catch(reject);
                 }
                 if (!user.verified) {
-                    return reject(new Error('NOT_VERIFIED'));
+                    return resolve(false);
                 }
-                if(user.display_name) {
+                if (user.display_name) {
                     defaults["display_name"] = user.display_name;
                 }
                 return user.updateAttributes(
@@ -54,7 +54,7 @@ passport.use(new FacebookStrategy({
     },
     function (accessToken, refreshToken, profile, done) {
         var email = '';
-        if(profile.emails !== undefined) {
+        if (profile.emails !== undefined) {
             email = profile.emails[0].value;
         }
 
@@ -73,30 +73,35 @@ passport.use(new FacebookStrategy({
                 verified: true
             }
         ).then(
-            function(u) {
-                u.logLogin();
+            function (u) {
+                if (u) {
+                    u.logLogin();
+                }
                 return done(null, u);
             }
         ).catch(
-            done
+            function (err) {
+                done(err);
+            }
         );
     }
 ));
 
 module.exports = function (app, options) {
-    app.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+    app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
 
-    app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-        failureRedirect: '/?error=login_failed'
-    }), function (req, res, next) {
+    app.get('/auth/facebook/callback',
+        passport.authenticate('facebook', {failureRedirect: '/auth?error=FBERROR'}),
+        function (req, res) {
 
-        var redirectUri = req.session.auth_origin;
-        delete req.session.auth_origin;
+            var redirectUri = req.session.auth_origin;
+            delete req.session.auth_origin;
 
-        if (redirectUri) {
-            return res.redirect(redirectUri);
-        }
+            if (redirectUri) {
+                return res.redirect(redirectUri);
+            }
+            // Successful authentication, redirect home.
+            requestHelper.redirect(res, '/');
 
-        requestHelper.redirect(res, '/');
-    });
+        });
 };
