@@ -20,7 +20,11 @@ module.exports = function (router) {
         var autoIdpRedirect = config.auto_idp_redirect;
 
         if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
-            requestHelper.redirect(res, '/auth/' + autoIdpRedirect);
+            var url = '/auth/' + autoIdpRedirect;
+            if (req.query && req.query.error) {
+                url += "?error=" + req.query.error;
+            }
+            requestHelper.redirect(res, url);
             return;
         }
 

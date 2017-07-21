@@ -46,6 +46,10 @@
     border: none;
 }
 
+#profile #hasNoPasswordButtonLabel {
+    display: none;
+}
+
 #profile #btn-send-verification-link {
     min-width: 80px;
 }

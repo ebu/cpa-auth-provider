@@ -43,6 +43,7 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
+                    console.log("USER PASSWORD", user.password);
                     var data = {
                         profile: {
                             firstname: profile.firstname,
@@ -53,6 +54,7 @@ var routes = function (router) {
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
                             verified: user.verified,
+                            hasPassword: !!user.password,
                             facebook: user.isFacebookUser()
                         },
                         captcha: req.recaptcha
@@ -100,6 +102,37 @@ var routes = function (router) {
                                 res.status(401).json({errors: [{msg: req.__('BACK_INCORRECT_PREVIOUS_PASS')}]});
                             }
                         });
+                    }
+                });
+            }
+        });
+    });
+
+    router.post('/user/:user_id/password/create', authHelper.ensureAuthenticated, function (req, res) {
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_NEW_PASS_EMPTY')).notEmpty();
+        req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+            } else {
+                db.User.findOne({
+                    where: {
+                        id: req.user.id
+                    }
+                }).then(function (user) {
+                    if (!user) {
+                        return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
+                    } else {
+                        user.setPassword(req.body.password).then(
+                            function () {
+                                res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
+                            },
+                            function (err) {
+                                res.status(500).json({errors: [err]});
+                            }
+                        );
                     }
                 });
             }
