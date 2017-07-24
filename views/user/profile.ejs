@@ -149,10 +149,10 @@
 
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
             <button id="btn-modify-password" type="button" class="btn btn-link">
-                <span id="hasPasswordButtonLabel">
+                <span id="hasPasswordButtonLabel" class="hasPassword">
                     <%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %>
                 </span>
-                <span id="hasNoPasswordButtonLabel">
+                <span id="hasNoPasswordButtonLabel" class="hasNoPassword">
                     <%= __('PROFILE_CREATE_YOUR_PASSWORD_LINK') %>
                 </span>
             </button>
@@ -340,15 +340,15 @@
         var $birthday = $("#birthday");
         var $inputs = $('.personnal-data-input');
         var $datepicker = $(".input-group.date");
-        var $hasPasswordButtonLabel = $("#hasPasswordButtonLabel");
-        var $hasNoPasswordButtonLabel = $("#hasNoPasswordButtonLabel");
+        var $elementsWithPassword =  $(".hasPassword");
+        var $elementsWithoutPassword =  $(".hasNoPassword");
         var $previousPasswordBlock = $("#previousPasswordBlock");
         var hasPassword = '<%= profile.hasPassword %>';
         var date = "";
 
         if(hasPassword !== "true") {
-            $hasPasswordButtonLabel.hide();
-            $hasNoPasswordButtonLabel.show();
+            $elementsWithPassword.hide();
+            $elementsWithoutPassword.show();
             $previousPasswordBlock.hide();
         }
 
@@ -624,8 +624,8 @@
                 data: data,
                 type: 'POST',
                 success: function (result) {
-                    $hasPasswordButtonLabel.show();
-                    $hasNoPasswordButtonLabel.hide();
+                    $elementsWithPassword.show();
+                    $elementsWithoutPassword.hide();
                     $previousPasswordBlock.show();
                     hasPassword = "true";
                     $("#form-security-success").show('fast');
