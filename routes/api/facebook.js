@@ -95,7 +95,7 @@ module.exports = function (app, options) {
                                 }
                             });
                         }  else {
-                            res.status(500).json({error: "LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED"});
+                            res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED")});
                         }
                     });
 
