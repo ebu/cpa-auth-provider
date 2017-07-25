@@ -16,11 +16,9 @@
                 </div>
 
                 <p><%= __('ADMIN_USER_DELETE_MODALE_TEXT') %></p>
-                <% if (!profile.facebook) {%>
-                <p><%= __('ADMIN_USER_DELETE_MODALE_TEXT_PASSWORD') %></p>
-                <% } %>
+                <p class="hasPassword"><%= __('ADMIN_USER_DELETE_MODALE_TEXT_PASSWORD') %></p>
 
-                <form id="deleteUserForm" <% if (profile.facebook) {%>hidden<% } %>>
+                <form id="deleteUserForm" class="hasPassword">
                     <div class="form-group">
                         <p id="password-error" class="text-danger"></p>
                         <input type="password"  class="form-control" id="user-pass"
