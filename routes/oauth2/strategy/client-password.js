@@ -13,7 +13,7 @@ exports.client_password_strategy = new ClientPasswordStrategy(
             if (!client) {
                 return done(null, false);
             }
-            if (bcrypt.compareSync(clientSecret, client.client_secret)) {
+            if (!bcrypt.compareSync(clientSecret, client.client_secret)) {
                 return done(null, false);
             }
             return done(null, client);

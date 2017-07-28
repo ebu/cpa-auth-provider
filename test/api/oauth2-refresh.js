@@ -15,7 +15,7 @@ var bcrypt = promise.promisifyAll(require('bcrypt'));
 var CLIENT = {
     id: 1,
     client_id: "ClientA",
-    client_secret: bcrypt.hashSync("ClientSecret", 5),
+    client_secret: "ClientSecret",
     name: "OAuth 2.0 Client",
     redirect_uri: 'http://localhost'
 };
@@ -37,9 +37,14 @@ var URL_PREFIX = config.urlPrefix;
 
 function createOAuth2Client(done) {
     db.OAuth2Client.create(CLIENT).then(
+        function(client) {
+            return client.updateAttributes({client_secret: bcrypt.hashSync(CLIENT.client_secret, 5)});
+        }
+    ).then(
         function () {
             return done();
-        },
+        }
+    ).catch(
         function (err) {
             return done(err);
         }
