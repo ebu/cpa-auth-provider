@@ -2,7 +2,9 @@
 
 module.exports = {
 
-    broadcasterLayout: '',
+    title: process.env.IDP_TITLE || '',
+
+    broadcasterLayout: process.env.BROADCASTER_LAYOUT || '',
 
     broadcaster: '',
 
@@ -25,21 +27,20 @@ module.exports = {
             service_url: process.env.OPEN_AM_SERVICE_URL
         },
         facebook: {
-            enabled: false,
-            client_id: '',
-            client_secret: '',
-            callback_url: ''
+            enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
+            client_id: process.env.FACEBOOK_LOGIN_ID,
+            client_secret: process.env.FACEBOOK_LOGIN_SECRET,
+            callback_url: process.env.FACEBOOK_LOGIN_CALL_BACK_URL
         },
         googleplus: {
             enabled: false,
             client_id: '',
-            client_secret: '',
-            callback_url: ''
+            client_secret: ''
         },
         twitter: {
             enabled: false,
-            client_id: '',
-            client_secret: '',
+            consumer_key: '',
+            consumer_secret: '',
             callback_url: ''
         },
         ebu: {
@@ -51,6 +52,8 @@ module.exports = {
     },
 
     displayUsersInfos: true,
+
+    displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
 
     mail: {
         sending: {
@@ -66,7 +69,8 @@ module.exports = {
             // secure: true
         },
         from: process.env.MAIL_FROM,
-        host: process.env.IDP_HOST
+        host: process.env.IDP_HOST,
+        defaultTemplateClass: process.env.MAIL_DEFAULT_TEMPLATE_CLASS
     },
 
     password: {
@@ -96,7 +100,7 @@ module.exports = {
 
     // When accessing the home page, if defined, users are automatically
     // redirected to the specified identity_providers (ie: 'github')
-    auto_idp_redirect: '',
+    auto_idp_redirect: process.env.AUTO_IDP_REDIRECT || '',
 
     db: {
         host: process.env.DB_HOST,
@@ -152,7 +156,7 @@ module.exports = {
             name: "sp:8002",
             display_name: "Example Service Provider",
             access_token: "b4949eba147f4cf88985b43c039cd05b"
-        },
+        }
     ],
 
     permissions: [

@@ -41,7 +41,7 @@ var localoAuthStrategyCallback = function (req, username, password, done) {
                 done(null, client, info);
             }
         ).catch(done);
-     }
+    }
 
 };
 
@@ -57,8 +57,7 @@ passport.use('oauth-local', new LocalStrategy(localStrategyConf, localoAuthStrat
 
 module.exports = function (app, options) {
 
-    //TODO : needed
-    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // This is needed because when configuring a custom header JQuery automatically send options request to the server.
     // That following line avoid cross domain error like
     // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
     // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
@@ -66,19 +65,91 @@ module.exports = function (app, options) {
     app.options('/oauth2/session/cookie/request', cors);
 
 
-    app.post('/oauth2/session/cookie/request', passport.authenticate('oauth-local', {
-        failureRedirect: config.urlPrefix + 'tototototototo', //'/auth/local',
-        failureFlash: true
-    }), redirectOnSuccess);
+    app.post('/oauth2/session/cookie/request', cors, passport.authenticate('oauth-local', {session: true}),
+        function (req, res, next) {
+            getUserInfos(req, res, next);
+        });
 
-    function redirectOnSuccess(req, res, next) {
-        var redirectUri = req.session.auth_origin;
-        delete req.session.auth_origin;
+    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // That following line avoid cross domain error like
+    // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
+    // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    // Origin 'http://localhost.rts.ch:8090' is therefore not allowed access.
+    app.options('/user/profile/menu', cors);
 
-        if (redirectUri) {
-            return res.redirect(redirectUri);
+    app.get('/user/profile/menu', cors, function (req, res, next) {
+        if (!req.user) {
+            // Return 200 to avoid error in browser console
+            res.json({connected: false});
+        } else {
+            returnMenuInfos(req.user, req, res);
         }
+    });
 
-        return requestHelper.redirect(res, '/');
+    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // That following line avoid cross domain error like
+    // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
+    // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    // Origin 'http://localhost.rts.ch:8090' is therefore not allowed access.
+    app.options('/api/logout', cors);
+
+    app.get('/api/logout', cors, function (req, res, next) {
+
+        req.logout();
+
+        res.json({connected: false});
+
+    });
+
+    function returnMenuInfos(user, req, res) {
+        if (!user) {
+            // Return 204 Success No Content
+            res.status(204).json({connected: false});
+        } else {
+            db.UserProfile.findOrCreate({
+                where: {
+                    user_id: user.id
+                }
+            }).spread(function (profile) {
+                var language = "en";
+                if(req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
+                    language = req.query.lang;
+                }
+                var data = {
+                    display_name: profile.getDisplayName(user, "FIRSTNAME_LASTNAME"),
+                    menu : getMenu(req, language)
+                };
+                res.json(data);
+            });
+        }
     }
+
+    function getUserInfos(req, res, next) {
+        db.User.findOne({
+            where: {
+                id: req.user.id
+            }
+        }).then(function (user) {
+            returnMenuInfos(user, req, res);
+        }, function (err) {
+            next(err);
+        });
+    }
+
+    function getMenu(req, lang) {
+        var menu = [
+            {
+                label: req.__({phrase: 'BACK_API_MENU_LABEL_DEVICES', locale: lang}),
+                url: req.protocol + '://' + req.get('host') + "/user/devices",
+                directLink: true
+            },
+            {
+                label: req.__({phrase: 'BACK_API_MENU_LABEL_SETTINGS', locale: lang}),
+                url: req.protocol + '://' + req.get('host') + "/user/profile",
+                directLink: true
+            }
+        ];
+        return menu;
+    }
+
 };

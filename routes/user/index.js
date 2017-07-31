@@ -6,6 +6,8 @@ var authHelper = require('../../lib/auth-helper');
 
 var i18n = require('i18n');
 
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
 
 var routes = function (router) {
 
@@ -27,7 +29,7 @@ var routes = function (router) {
             });
     });
 
-    router.get('/user/profile', authHelper.authenticateFirst, function (req, res, next) {
+    router.get('/user/profile', recaptcha.middleware.render, authHelper.authenticateFirst, function (req, res, next) {
         db.User.findOne({
             where: {
                 id: req.user.id
@@ -41,6 +43,7 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
+                    console.log("USER PASSWORD", user.password);
                     var data = {
                         profile: {
                             firstname: profile.firstname,
@@ -50,8 +53,11 @@ var routes = function (router) {
                             birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
-                            verified: user.verified
-                        }
+                            verified: user.verified,
+                            hasPassword: !!user.password,
+                            facebook: user.isFacebookUser()
+                        },
+                        captcha: req.recaptcha
                     };
 
                     res.render('./user/profile.ejs', data);
@@ -101,6 +107,39 @@ var routes = function (router) {
             }
         });
     });
+
+    router.post('/user/:user_id/password/create', authHelper.ensureAuthenticated, function (req, res) {
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_NEW_PASS_EMPTY')).notEmpty();
+        req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
+
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                res.status(400).json({errors: result.array()});
+            } else {
+                db.User.findOne({
+                    where: {
+                        id: req.user.id
+                    }
+                }).then(function (user) {
+                    if (!user) {
+                        return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
+                    } else {
+                        user.setPassword(req.body.password).then(
+                            function () {
+                                res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
+                            },
+                            function (err) {
+                                res.status(500).json({errors: [err]});
+                            }
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+
 };
 
 module.exports = routes;

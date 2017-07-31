@@ -8,7 +8,6 @@ var requestHelper = require('../../lib/request-helper');
 var bcrypt = require('bcrypt');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var recaptcha = require('express-recaptcha');
 var util = require('util');
 
 var emailHelper = require('../../lib/email-helper');
@@ -17,11 +16,19 @@ var permissionName = require('../../lib/permission-name');
 
 var i18n = require('i18n');
 
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
+
 var localStrategyCallback = function (req, username, password, done) {
-    var loginError = 'Wrong email or password.';
+    var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
     db.User.findOne({where: {email: username}})
         .then(function (user) {
                 if (!user) {
+                    done(null, false, req.flash('loginMessage', loginError));
+                    return;
+                }
+
+                if (user.isFacebookUser && ! user.password){
                     done(null, false, req.flash('loginMessage', loginError));
                     return;
                 }
@@ -141,15 +148,23 @@ passport.use('local-signup', new LocalStrategy(localStrategyConf, localSignupStr
 module.exports = function (app, options) {
 
     app.get('/auth/local', function (req, res) {
-        res.render('login.ejs', {message: req.flash('loginMessage')});
+        var message = {};
+        if(req.query && req.query.error) {
+            message =  req.__(req.query.error);
+        }
+        if(req.flash('loginMessage').length > 0) {
+            message = req.flash('loginMessage');
+        }
+        console.log("message", message);
+        res.render('login.ejs', {message: message});
     });
 
-    app.get('/signup', function (req, res) {
-        res.render('signup.ejs', {email: req.query.email, message: req.flash('signupMessage')});
+    app.get('/signup', recaptcha.middleware.render, function (req, res) {
+        res.render('signup.ejs', {email: req.query.email, captcha: req.recaptcha, message: req.flash('signupMessage')});
     });
 
-    app.get('/password/recovery', function (req, res) {
-        res.render('password-recovery.ejs', {});
+    app.get('/password/recovery', recaptcha.middleware.render, function (req, res) {
+        res.render('password-recovery.ejs', {captcha: req.recaptcha});
     });
 
     app.get('/password/edit', function (req, res) {
@@ -188,11 +203,11 @@ module.exports = function (app, options) {
 
     app.post('/signup', recaptchaVerify, function (req, res, next) {
 
-        if (req.recaptcha.error) {
-            return res.status(400).json({msg: req.__('BACK_SIGNUP_RECAPTCHA_EMPTY_OR_WRONG')});
-        }
-
         passport.authenticate('local-signup', function (err, user, info) {
+
+            if (req.recaptcha.error) {
+                return res.redirect(config.urlPrefix + '/signup?error=recaptcha');
+            }
             if (err) {
                 return next(err);
             }
@@ -272,8 +287,8 @@ module.exports = function (app, options) {
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
-                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (sucess) {
-                            if (sucess) {
+                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (success) {
+                            if (success) {
                                 return res.status(200).send();
                             } else {
                                 return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});

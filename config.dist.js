@@ -2,6 +2,8 @@
 
 module.exports = {
 
+    title: '',
+
     // Define the available identity providers
     identity_providers: {
         // Details : http://passportjs.org/guide/facebook/
@@ -9,6 +11,17 @@ module.exports = {
             enabled: false,
             client_id: '',
             client_secret: '',
+            callback_url: ''
+        },
+        googleplus: {
+            enabled: false,
+            client_id: '',
+            client_secret: ''
+        },
+        twitter: {
+            enabled: false,
+            consumer_key: '',
+            consumer_secret: '',
             callback_url: ''
         },
         github: {
@@ -68,8 +81,8 @@ module.exports = {
         // test keys
         // site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
         // secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-        site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+        site_key: '6Lc6NCYUAAAAAPiyvFO2jig6jXGtYEhgZWtWFzml',
+        secret_key: '6Lc6NCYUAAAAALCXdWXUsZgDBl7fn9XA_ecVpu7m'
     },
 
     // When accessing the home page, if defined, users are automatically
@@ -78,6 +91,9 @@ module.exports = {
 
     // if false the list of user is not accessible in the admin
     displayUsersInfos: true,
+
+    //if false the idp menu bar is hidden
+    displayMenuBar: true,
 
     // Database configuration
     db: {

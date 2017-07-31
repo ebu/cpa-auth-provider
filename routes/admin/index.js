@@ -7,13 +7,11 @@ var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
 var xssFilters = require('xss-filters');
 var csv = require('csv-string');
-var generate = require('../../lib/generate');
 var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
 var promise = require('bluebird');
 var bcrypt = promise.promisifyAll(require('bcrypt'));
-var generate = require('../../lib/generate');
 
 
 module.exports = function (router) {

@@ -9,18 +9,18 @@
      must look for paths in views instead of current file, we can not do a dynamic include.
      */ %>
     <%- include default/head %>
-    <% if ( broadcaster && broadcaster.name === "rts" ) { %>
-    <%- include rts/head %>
-    <% } %>
 
 </head>
 <body>
-<% if ( broadcaster && broadcaster.name === "rts" ) { %>
-<%- include rts/nav %>
-<% } %>
-<%- include default/nav %>
 
-<%- include default/alert %>
+    <% if ( broadcaster && broadcaster.name === "rts" ) { %>
+    <%- include rts/nav %>
+    <% } %>
 
-<main>
-    <div class="container">
+    <% if (config.displayMenuBar != '') { %>
+    <%- include default/nav %>
+    <% } %>
+    <%- include default/alert %>
+
+    <main>
+        <div class="container">

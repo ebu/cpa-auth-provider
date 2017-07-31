@@ -4,6 +4,10 @@
     box-shadow: none;
 }
 
+#profile .panel.hidden {
+    display: none;
+}
+
 #profile #btn-container, #profile #form-modify-pass {
     display: none;
 }
@@ -28,6 +32,10 @@
     display: inline-block;
 }
 
+#profile .status-info {
+    font-size: 1.2rem;
+}
+
 #profile .btn.btn-link {
     padding: 0;
 }
@@ -38,20 +46,59 @@
     border: none;
 }
 
+#profile #hasNoPasswordButtonLabel {
+    display: none;
+}
+
 #profile #btn-send-verification-link {
     min-width: 80px;
 }
 
-#profile #verification-success, #profile #verification-error {
+#profile #verification-success, #profile #verification-error, #profile #delete-error {
     display: none;
 }
 
-#profile .verification-link-container {
-    margin-top: 20px;
+#profile #delete-error {
+    margin-bottom: 10px;
 }
 
-#profile .delete-container {
+#profile .verification-link-container {
     margin-top: 10px;
+}
+
+#profile .verification-link-container .recaptcha-wrapper {
+    max-width: 300px;
+    margin: 20px 0;
+}
+
+#profile .col-sm-9 .delete-container, #profile .col-sm-9 .providers-container {
+    margin-top: 10px;
+}
+
+#profile .col-sm-9 .first.providers-container {
+    margin-top: 5px;
+}
+
+#profile .providers-container .facebook-text {
+    display: inline-block;
+    font-size: 18px;
+    color: #4267b2;
+}
+
+#profile .providers-container .facebook-text + span {
+    padding-left: 10px;
+}
+
+#profile .col-sm-9.col-sm-offset-3 .delete-container {
+    margin-top: 25px;
+}
+
+#profile .col-sm-3 .delete-container {
+    margin-top: 25px;
+}
+
+#profile #password-error {
+    display: none;
 }
 
 @media (max-width: 767px) {

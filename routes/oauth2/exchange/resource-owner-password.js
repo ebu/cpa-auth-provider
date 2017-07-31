@@ -19,33 +19,35 @@ exports.token = function (client, username, password, scope, done) {
 };
 
 function confirmUser(client, username, password, scope, done) {
-	db.User.findOne(
-		{where: {email: username}}
-	).then(
-		function (user) {
-			if (!user) {
-				done(new TokenError(USER_NOT_FOUND.message, USER_NOT_FOUND.code));
-				return;
-			}
+    var user;
+    db.User.findOne(
+        {where: {email: username}}
+    ).then(
+        function (user_) {
+            user = user_;
+            if (!user) {
+                throw new TokenError(USER_NOT_FOUND.message, USER_NOT_FOUND.code);
+            }
 
-			user.verifyPassword(password).then(function (isMatch) {
-					if (isMatch) {
-						return provideTokens(client, user, done);
-					} else {
-						return done(new TokenError(WRONG_PASSWORD.message, WRONG_PASSWORD.code));
-					}
-				},
-				function (err) {
-					done(err);
-				});
-		},
-		function (error) {
-			done(error);
-		}
-	);
+            return user.verifyPassword(password);
+        }
+    ).then(
+        function (isMatch) {
+            if (isMatch) {
+                provideAccessToken(client, user, scope, done);
+            } else {
+                throw new TokenError(WRONG_PASSWORD.message, WRONG_PASSWORD.code);
+            }
+        }
+    ).catch(
+        function (err) {
+            logger.error('[OAuth2][ResourceOwner][FAIL][username', username, '][err', err, ']');
+            return done(err);
+        }
+    );
 }
 
-function provideTokens(client, user, done) {
+function provideAccessToken(client, user, done) {
 	var accessToken, refreshToken, extras;
 	oauthToken.generateAccessToken(client, user).then(
 		function (_token) {

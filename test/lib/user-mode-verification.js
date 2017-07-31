@@ -1,11 +1,17 @@
 "use strict";
 
 var generate = require('../../lib/generate');
-var messages = require('../../lib/messages');
 var db = require('../../models');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
+
+var i18n4test = require("i18n");
+
+i18n4test.configure({
+    locales:['en'],
+    directory: __dirname + '/../../locales'
+});
 
 var initDatabase = function (opts, done) {
     db.Client
@@ -422,8 +428,8 @@ describe('POST /verify', function () {
                     });
 
                     describe('the response body', function () {
-                        it('should contain the message SUCCESSFUL_PAIRING: ' + messages.SUCCESSFUL_PAIRING, function () {
-                            expect(this.res.text).to.contain(messages.SUCCESSFUL_PAIRING);
+                        it('should contain the message SUCCESSFUL_PAIRING: ' + i18n4test.__('VERIFY_BACK_SUCCESSFUL_PAIRING'), function () {
+                            expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_SUCCESSFUL_PAIRING'));
                         });
                     });
 
@@ -539,8 +545,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message UNKNOWN_VERIFICATION_TYPE: ' + messages.UNKNOWN_VERIFICATION_TYPE, function () {
-                        expect(this.res.text).to.contain(messages.UNKNOWN_VERIFICATION_TYPE);
+                    it('should contain the message UNKNOWN_VERIFICATION_TYPE: ' + i18n4test.__('VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE'));
                     });
                 });
             });
@@ -566,8 +572,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function () {
-                        expect(this.res.text).to.contain(messages.INVALID_USERCODE);
+                    it('should contain the message INVALID_USERCODE: ' + i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'));
                     });
                 });
             });
@@ -593,8 +599,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the error message INVALID_USERCODE: ' + messages.INVALID_USERCODE, function () {
-                        expect(this.res.text).to.contain(messages.INVALID_USERCODE);
+                    it('should contain the error message INVALID_USERCODE: ' + i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_INVALID_USER_CODE'));
                     });
                 });
             });
@@ -622,8 +628,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message OBSOLETE_USERCODE: ' + messages.OBSOLETE_USERCODE, function () {
-                        expect(this.res.text).to.contain(messages.OBSOLETE_USERCODE);
+                    it('should contain the message OBSOLETE_USERCODE: ' + i18n4test.__('VERIFY_BACK_CODE_USED'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_CODE_USED'));
                     });
                 });
             });
@@ -668,8 +674,8 @@ describe('POST /verify', function () {
                 });
 
                 describe('the response body', function () {
-                    it('should contain the message EXPIRED_USERCODE: ' + messages.EXPIRED_USERCODE, function () {
-                        expect(this.res.text).to.contain(messages.EXPIRED_USERCODE);
+                    it('should contain the message EXPIRED_USERCODE: ' + i18n4test.__('VERIFY_BACK_CODE_EXPIRED'), function () {
+                        expect(this.res.text).to.contain(i18n4test.__('VERIFY_BACK_CODE_EXPIRED'));
                     });
                 });
             });

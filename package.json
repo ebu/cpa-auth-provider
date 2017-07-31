@@ -66,6 +66,7 @@
     "passport-local": "~0.1.6",
     "passport-oauth2": "^1.4.0",
     "passport-oauth2-client-password": "~0.1.2",
+    "passport-openam": "file:./passport-openam",
     "passport-twitter": "~1.0.2",
     "pg": "6.1.0",
     "pg-hstore": "2.3.2",

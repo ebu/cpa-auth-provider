@@ -146,7 +146,7 @@ module.exports = function (app, options) {
     app.post('/api/local/authenticate', cors, function (req, res) {
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
-                    if (!user) {
+                    if (!user || !req.body.password) {
                         res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                         return;
                     }

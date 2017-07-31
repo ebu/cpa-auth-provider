@@ -1,11 +1,14 @@
 "use strict";
 
 module.exports = {
-	recaptcha: {
-		enabled: true,
-		site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-		secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-	},
+
+    title: '',
+
+    recaptcha: {
+        enabled: true,
+        site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+        secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+    },
 
 
 	jwtSecret: 'bigsecret',
@@ -80,13 +83,15 @@ module.exports = {
 
 	displayUsersInfos: true,
 
-	// Cross-origin resource sharing
-	cors: {
-		enabled: true,
-		allowed_domains: [
-			'http://localhost.rts.ch:8080'
-		]
-	},
+    displayMenuBar: false,
+
+    // Cross-origin resource sharing
+    cors: {
+        enabled: true,
+        allowed_domains: [
+            'http://localhost.rts.ch:8080'
+        ]
+    },
 
 	// URL path prefix, e.g., '/myapp'
 	urlPrefix: '/ap',

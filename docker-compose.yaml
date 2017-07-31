@@ -25,6 +25,7 @@ services:
     - DEFAULT_LOCALE=fr
     - MAIL_TRANSPORT_TYPE=test
     - TRACKING_COOKIE=true
+    - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
     - EMAIL_FROM=no-reply@rts.ch
 #    depends_on:
 #      - postgres

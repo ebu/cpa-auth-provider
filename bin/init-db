@@ -56,6 +56,11 @@ db.sequelize
                         console.log('[DOMAIN] Database populated');
 
                         if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
+                            var bcrypt = require('bcrypt');
+                            for (var i in config.oauth2_clients) {
+                                var client = config.oauth2_clients[i];
+                                client.client_secret = bcrypt.hashSync(client.client_secret, 5);
+                            }
                             db.OAuth2Client.bulkCreate(config.oauth2_clients).then(function () {
                                 console.log('[OAUTH2_CLIENT] Database populated');
                             });
