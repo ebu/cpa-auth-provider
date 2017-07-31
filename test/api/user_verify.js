@@ -1,7 +1,6 @@
 "use strict";
 
 var generate = require('../../lib/generate');
-var messages = require('../../lib/messages');
 var db = require('../../models');
 
 var requestHelper = require('../request-helper');
@@ -19,7 +18,7 @@ var CLIENT = {
 var USER = {
     id: 123,
     email: 'test@test.com',
-    email_verified: true,
+    verified: true,
     account_uid: 'RandomUid',
     password: 'a'
 };
@@ -27,7 +26,7 @@ var USER = {
 var USER2 = {
     id: 234,
     email: 'some@one.else',
-    email_verified: true,
+    verified: true,
     account_uid: 'AnotherUid',
     password: 'b'
 };
@@ -35,7 +34,7 @@ var USER2 = {
 var UNVERIFIED_USER = {
     id: 345,
     email: 'unknown@no.where',
-    email_verified: false,
+    verified: false,
     account_uid: 'YetAnotherUid',
     password: 'c'
 };
@@ -43,7 +42,7 @@ var UNVERIFIED_USER = {
 var UNVERIFIED_USER2 = {
     id: 456,
     email: '1other@guy.where',
-    email_verified: false,
+    verified: false,
     account_uid: 'CompletelyDifferentUid',
     password: 'd'
 };

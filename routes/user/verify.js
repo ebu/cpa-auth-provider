@@ -57,14 +57,14 @@ function requestVerifyEmail(req, res, next) {
 		return res.status(400).json({success: false, reason: 'MISSING_REQUEST_FIELDS'});
 	}
 
-	db.User.find({ where: { email: username }}).then(
+	db.User.findOne({ where: { email: username }}).then(
 		function(user_res) {
 			if (!user_res) {
 				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
 			}
 			user = user_res;
 
-			if (user.email_verified) {
+			if (user.verified) {
 				throw new Error('ALREADY_CONFIRMED');
 			}
 

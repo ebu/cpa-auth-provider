@@ -29,15 +29,15 @@ function routes(router) {
 					}
 
 					if (!verifyToken.isAvailable()) {
-						return res.status(400).json({success: user.email_verified, reason: 'ALREADY_USED'});
+						return res.status(400).json({success: user.verified, reason: 'ALREADY_USED'});
 					}
 
-					if (user.email_verified) {
+					if (user.verified) {
 						res.status(200).json({success: true, reason: 'NO_CHANGE'});
 						return deleteToken(verifyToken);
 					}
 
-					user.email_verified = true;
+					user.verified = true;
 					return user.save().then(
 						function () {
 							res.status(200).json({success: true, reason: 'CONFIRMED'});
@@ -67,10 +67,10 @@ function routes(router) {
 					var client = data.OAuth2Client;
 					var user = data.User;
 
-					var wasVerified = user.email_verified;
+					var wasVerified = user.verified;
 
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
-					user.email_verified = true;
+					user.verified = true;
 					return user.save().then(
 						function () {
 							if (redirect_url) {
