@@ -62,7 +62,8 @@ function createFakeUser(done) {
     createUser(USER).then(
         function () {
             return createUser(USER2);
-        }).then(
+        }
+    ).then(
         function () {
             return done();
         }

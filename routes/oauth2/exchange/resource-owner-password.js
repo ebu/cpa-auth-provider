@@ -47,7 +47,7 @@ function confirmUser(client, username, password, scope, done) {
     );
 }
 
-function provideAccessToken(client, user, done) {
+function provideAccessToken(client, user, scope, done) {
 	var accessToken, refreshToken, extras;
 	oauthToken.generateAccessToken(client, user).then(
 		function (_token) {
