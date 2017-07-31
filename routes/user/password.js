@@ -1,7 +1,5 @@
 "use strict";
 
-var authHelper = require('../../lib/auth-helper');
-var TokenError = require('oauth2orize').TokenError;
 var oauthHelper = require('../../lib/oauth2-token');
 var db = require('../../models');
 var logger = require('../../lib/logger');
@@ -70,7 +68,7 @@ function requestPasswordEmail(req, res, next) {
 	db.User.find({ where: { email: username }}).then(
 		function(user_res) {
 			if (!user_res) {
-				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND);
+				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
 			}
 			user = user_res;
 			return db.OAuth2Client.find({where: {client_id: clientId}});
@@ -78,13 +76,13 @@ function requestPasswordEmail(req, res, next) {
 	).then(
 		function(client) {
 			if (!client) {
-				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH);
+				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
 			}
 
 			redirectUri = redirectUri || client.email_redirect_uri;
 
 			if (!client.mayEmailRedirect(redirectUri)) {
-				throw new Error(oauthHelper.ERRORS.BAD_REQUEST);
+				throw new Error(oauthHelper.ERRORS.BAD_REQUEST.message);
 			}
 			return email.sendForcePasswordEmail(user, req.host, client, redirectUri);
 		}
@@ -194,6 +192,9 @@ function forcePassword(req, res) {
 			}
 			if (clientId && clientId != token.OAuth2Client.client_id) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
+			}
+			if (!token.User) {
+				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
 			}
 
 			return token.User.setPassword(newPassword);

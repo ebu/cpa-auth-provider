@@ -66,17 +66,21 @@ function routes(router) {
 					var verifyToken = data;
 					var client = data.OAuth2Client;
 					var user = data.User;
+
+					var wasVerified = user.email_verified;
+
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
 					user.email_verified = true;
 					return user.save().then(
 						function () {
 							if (redirect_url) {
 								logger.debug('[email verify][REDIRECT][url', redirect_url, ']');
-								res.redirect(redirect_url + APPEND_VERIFY + '&username=' + encodeURIComponent(user.email));
+								res.redirect(redirect_url + APPEND_VERIFY + '&username=' + encodeURIComponent(user.email) + (wasVerified ? '&changed=false' : ''));
 								return deleteToken(verifyToken);//req.params.key);
 							} else {
 								res.render('./email/verify.ejs', {
 									user: user,
+                                    was_verified: wasVerified,
 									forward_address: 'http://beta.mediathek.br.de'
 								});
 								return deleteToken(verifyToken);//req.params.key);

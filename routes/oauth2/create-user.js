@@ -60,9 +60,16 @@ function sendSuccess(user, req, res) {
 					}
 				);
 
-				var access_token = oauth2Token.generateAccessToken(client, user);
-				var refresh_token = oauth2Token.generateRefreshToken(client, user);
-				var extras = oauth2Token.generateTokenExtras(client, user);
+                var access_duration = undefined;
+                var refresh_duration = undefined;
+                var extras = req.body;
+                if (typeof extras === 'object') {
+                    access_duration = extras['access_duration'] * 1000;
+                    refresh_duration = extras['refresh_duration'] * 1000;
+                }
+				var access_token = oauth2Token.generateAccessToken(client, user, access_duration);
+				var refresh_token = oauth2Token.generateRefreshToken(client, user, undefined, refresh_duration);
+				var extras = oauth2Token.generateTokenExtras(client, user, access_duration);
 
 				return res.status(201).json(
 					{

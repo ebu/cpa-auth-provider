@@ -13,51 +13,56 @@ var WRONG_PASSWORD = oauthToken.ERRORS.WRONG_PASSWORD;
 // only be available to a select few, highly trusted clients!
 // The application issues a token, which is bound to these values.
 
-exports.token = function (client, username, password, scope, done) {
-	// resource owner password does not have a client, so no checking for valid client!
-	return confirmUser(client, username, password, scope, done);
+exports.token = function (client, username, password, scope, reqBody, done) {
+    // TODO confirm this particular client actually may use this validation strategy?!
+    return confirmUser(client, username, password, scope, reqBody, done);
 };
 
-function confirmUser(client, username, password, scope, done) {
-    var user;
+function confirmUser(client, username, password, scope, extraArgs, done) {
     db.User.findOne(
         {where: {email: username}}
     ).then(
-        function (user_) {
-            user = user_;
+        function (user) {
             if (!user) {
-                throw new TokenError(USER_NOT_FOUND.message, USER_NOT_FOUND.code);
+                done(new TokenError(USER_NOT_FOUND.message, USER_NOT_FOUND.code));
+                return;
             }
 
-            return user.verifyPassword(password);
-        }
-    ).then(
-        function (isMatch) {
-            if (isMatch) {
-                provideAccessToken(client, user, scope, done);
-            } else {
-                throw new TokenError(WRONG_PASSWORD.message, WRONG_PASSWORD.code);
-            }
-        }
-    ).catch(
-        function (err) {
-            logger.error('[OAuth2][ResourceOwner][FAIL][username', username, '][err', err, ']');
-            return done(err);
+            user.verifyPassword(password).then(function (isMatch) {
+                    if (isMatch) {
+                        return provideAccessToken(client, user, extraArgs, done);
+                    } else {
+                        return done(new TokenError(WRONG_PASSWORD.message, WRONG_PASSWORD.code));
+                    }
+                },
+                function (err) {
+                    done(err);
+                });
+        },
+        function (error) {
+            done(error);
         }
     );
 }
 
-function provideAccessToken(client, user, scope, done) {
+function provideAccessToken(client, user, extraArgs, done) {
+    var access_duration = undefined;
+    var refresh_duration = undefined;
+    if (typeof extraArgs === 'object') {
+        access_duration = extraArgs['access_duration'] * 1000;
+        refresh_duration = extraArgs['refresh_duration'] * 1000;
+    }
+
 	var accessToken, refreshToken, extras;
-	oauthToken.generateAccessToken(client, user).then(
+	oauthToken.generateAccessToken(client, user, access_duration).then(
 		function (_token) {
 			accessToken = _token;
-			return oauthToken.generateRefreshToken(client, user, undefined);
+			return oauthToken.generateRefreshToken(client, user, undefined, refresh_duration);
 		}
 	).then(
 		function (_token) {
 			refreshToken = _token;
-			return oauthToken.generateTokenExtras(client, user);
+			return oauthToken.generateTokenExtras(client, user, access_duration);
 		}
 	).then(
 		function (_extras) {

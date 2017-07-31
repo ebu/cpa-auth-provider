@@ -390,12 +390,9 @@ describe('OAuth2 Implicit Flow', function () {
         before(resetDatabase);
         before(createFakeUser);
 
-        before(function (done) {
-            requestHelper.loginCustom(USER.email, USER.password, this, done);
-        });
-        before(function (done) {
-            requestHelper.loginCustom(USER.email, USER.password, this, done);
-        });
+		before(function (done) {
+			requestHelper.loginUser(this, USER.email, USER.password, done);
+		});
 
         before(function (done) {
             requestHelper.sendRequest(
@@ -456,12 +453,12 @@ describe('OAuth2 Authorization Code Flow', function () {
         before(resetDatabase);
         before(createFakeUser);
 
-        before(function (done) {
-            requestHelper.sendRequest(this, url, {}, done);
-        });
-        before(function (done) {
-            requestHelper.loginCustom(USER.email, USER.password, this, done);
-        });
+		before(function (done) {
+			requestHelper.sendRequest(this, url, {}, done);
+		});
+		before(function (done) {
+			requestHelper.loginUser(this, USER.email, USER.password, done);
+		});
 
         before(function (done) {
             requestHelper.sendRequest(
