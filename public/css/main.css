@@ -166,8 +166,14 @@ nav.navbar {
 nav .navbar-brand {
     padding: 4px 15px;
 }
+nav .navbar-brand > span {
+    position: relative;
+}
 nav .navbar-brand img{
-    width: 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 89px;
 }
 
 nav .lang abbr[title], .lang abbr[data-original-title] {
