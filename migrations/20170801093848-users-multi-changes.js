@@ -1,0 +1,93 @@
+'use strict';
+
+module.exports = {
+    up: function (queryInterface, Sequelize) {
+        /*
+          Add altering commands here.
+          Return a promise to correctly handle asynchronicity.
+
+          Example:
+          return queryInterface.createTable('users', { id: Sequelize.INTEGER });
+        */
+        var PERMISSIONS = [
+            {
+                id: 1,
+                label: "admin"
+            },
+            {
+                id: 2,
+                label: "other"
+            }
+        ];
+
+
+        return new Promise(
+            function (resolve, reject) {
+                queryInterface.removeColumn(
+                    'Users',
+                    'admin'
+                ).then(
+                    function () {
+                        return queryInterface.addColumn('Users', 'password_changed_at', Sequelize.BIGINT);
+                    }
+                ).then(
+                    function () {
+                        return queryInterface.changeColumn(
+                            'Users',
+                            'email',
+                            {
+                                type: Sequelize.STRING(255),
+                                unique: true
+                            }
+                        );
+                    }
+                ).then(
+                    resolve
+                ).catch(
+                    reject
+                )
+            }
+        );
+    },
+
+    down: function (queryInterface, Sequelize) {
+        /*
+          Add reverting commands here.
+          Return a promise to correctly handle asynchronicity.
+
+          Example:
+          return queryInterface.dropTable('users');
+        */
+        return new Promise(
+            function (resolve, reject) {
+                queryInterface.addColumn(
+                    'Users',
+                    'admin',
+                    Sequelize.BOOLEAN
+                ).then(
+                    function () {
+                        return queryInterface.removeColumn('Users', 'password_changed_at');
+                    }
+                ).then(
+                    function () {
+                        return queryInterface.changeColumn('Users', 'email', {type: Sequelize.STRING(255)});
+                    }
+                ).then(
+                    function () {
+                        return queryInterface.sequelize.query(
+                            'ALTER TABLE "Users" DROP CONSTRAINT "email_unique_idx";'
+                        );
+                    }
+                ).then(
+                    function () {
+                        return queryInterface.removeIndex('Users', 'email_unique_idx');
+                    }
+                ).then(
+                    resolve
+                ).catch(
+                    reject
+                )
+            }
+        );
+    }
+};

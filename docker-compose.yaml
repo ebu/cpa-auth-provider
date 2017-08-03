@@ -27,23 +27,25 @@ services:
     - TRACKING_COOKIE=true
     - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
     - EMAIL_FROM=no-reply@rts.ch
-#    depends_on:
-#      - postgres
-#    links:
-#      - postgres:postgres
-#    environment:
-#      - DB_DATABASE=cpa
-#      - DB_TYPE=postgres
-#      - DB_HOST=postgres
-#      - DB_PORT=5432
-#      - DB_USER=dockercpa
-#      - DB_PASSWORD=SchiefesHausBautFalsch
-#  postgres:
-#    build: postgres
-#    ports:
-#      - 5432:5432
-#    environment:
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
-#      - DOCKER_USER=dockercpa
-#      - DOCKER_PASSWORD=SchiefesHausBautFalsch
+    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    environment:
+      - DB_DATABASE=cpa
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=dockercpa
+      - DB_PASSWORD=SchiefesHausBautFalsch
+  postgres:
+    build: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
+      - DOCKER_USER=dockercpa
+      - DOCKER_PASSWORD=SchiefesHausBautFalsch

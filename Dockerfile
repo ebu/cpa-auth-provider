@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN npm install -g node-gyp
 
-RUN npm install -g node-gyp
+RUN yarn global add sequelize-cli
 
 ADD bin /src/bin
 ADD lib /src/lib
@@ -44,6 +44,9 @@ ENV DB_FILENAME "data/identity-provider.sqlite"
 # Create the sqlite database
 RUN mkdir data
 RUN bin/init-db
+
+ADD migrations /src/migrations
+ADD seeders /src/seeders
 
 # By default, the application listens for HTTP on port 3000
 EXPOSE 3000
