@@ -9,18 +9,6 @@ module.exports = {
           Example:
           return queryInterface.createTable('users', { id: Sequelize.INTEGER });
         */
-        var PERMISSIONS = [
-            {
-                id: 1,
-                label: "admin"
-            },
-            {
-                id: 2,
-                label: "other"
-            }
-        ];
-
-
         return new Promise(
             function (resolve, reject) {
                 queryInterface.removeColumn(
@@ -29,6 +17,10 @@ module.exports = {
                 ).then(
                     function () {
                         return queryInterface.addColumn('Users', 'password_changed_at', Sequelize.BIGINT);
+                    }
+                ).then(
+                    function () {
+                        return queryInterface.addColumn('Users', 'last_login_at', Sequelize.BIGINT);
                     }
                 ).then(
                     function () {
@@ -67,6 +59,10 @@ module.exports = {
                 ).then(
                     function () {
                         return queryInterface.removeColumn('Users', 'password_changed_at');
+                    }
+                ).then(
+                    function () {
+                        return queryInterface.removeColumn('Users', 'last_login_at');
                     }
                 ).then(
                     function () {

@@ -12,16 +12,31 @@ module.exports = {
         return new Promise(
             function (resolve, reject) {
                 queryInterface.createTable(
-                    "Permissions",
+                    "ValidationCodes",
                     {
                         "id": {
                             "type": Sequelize.INTEGER,
                             "autoIncrement": true,
                             "primaryKey": true
                         },
-                        "label": {
+                        "date": {
+                            "type": Sequelize.BIGINT,
+                            "validate": {
+                                "notEmpty": true
+                            }
+                        },
+                        "value": {
                             "type": Sequelize.STRING(255),
-                            "unique": true
+                            "validate": {
+                                "notEmpty": true
+                            }
+                        },
+                        "type": {
+                            "type": Sequelize.TEXT,
+                            "validate": {
+                                "notEmpty": true
+                            },
+                            "defaultValue": "email"
                         },
                         "created_at": {
                             "type": Sequelize.DATE,
@@ -30,33 +45,17 @@ module.exports = {
                         "updated_at": {
                             "type": Sequelize.DATE,
                             "allowNull": false
+                        },
+                        "user_id": {
+                            "type": Sequelize.INTEGER,
+                            "onUpdate": "cascade",
+                            "onDelete": "set null",
+                            "references": {
+                                "model": "Users",
+                                "key": "id"
+                            },
+                            "allowNull": true
                         }
-                    }
-                ).then(
-                    function () {
-                        return queryInterface.addColumn(
-                            'Users',
-                            'permission_id',
-                            {
-                                type: Sequelize.INTEGER,
-                                onUpdate: "cascade",
-                                "onDelete": "set null",
-                                "references": {
-                                    "model": "Permissions",
-                                    "key": "id"
-                                },
-                                allowNull: true
-                            }
-                        );
-                    }
-                ).then(
-                    function() {
-                        return queryInterface.sequelize.query(
-                            'INSERT INTO "Permissions" ("id","label","created_at","updated_at") ' +
-                            'VALUES (1, \'admin\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);' +
-                            'INSERT INTO "Permissions" ("id","label","created_at","updated_at") ' +
-                            'VALUES (2, \'other\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);'
-                        );
                     }
                 ).then(
                     resolve
@@ -77,13 +76,8 @@ module.exports = {
         */
         return new Promise(
             function (resolve, reject) {
-                queryInterface.removeColumn(
-                    'Users',
-                    'permission_id'
-                ).then(
-                    function () {
-                        return queryInterface.dropTable("Permissions");
-                    }
+                queryInterface.dropTable(
+                    "ValidationCodes"
                 ).then(
                     resolve
                 ).catch(
