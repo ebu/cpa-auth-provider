@@ -41,7 +41,7 @@ function createOAuth2Client(done) {
             return client.updateAttributes({client_secret: bcrypt.hashSync(CLIENT.client_secret, 5)});
         }
     ).then(
-        function() {
+        function () {
             done();
         }
     ).catch(
@@ -441,6 +441,9 @@ describe('OAuth2 Authorization Code Flow', function () {
     context('with normal input', function () {
         var baseUrl = '/oauth2/dialog/authorize?response_type=code&state=a';
         var url = baseUrl + '&client_id=' + encodeURIComponent(CLIENT.client_id) + '&redirect_uri=' + encodeURIComponent(CLIENT.redirect_uri);
+        var accessToken;
+        var tokenType;
+        var refreshToken;
 
         before(resetDatabase);
         before(createFakeUser);
@@ -497,12 +500,27 @@ describe('OAuth2 Authorization Code Flow', function () {
             );
         });
 
+        before(function (done) {
+            accessToken = this.res.body.access_token;
+            tokenType = this.res.body.token_type;
+            refreshToken = this.res.body.refresh_token;
+            requestHelper.sendRequest(
+                this,
+                "/oauth2/user_info",
+                {
+                    accessToken: accessToken
+                },
+                done
+            );
+        });
+
         it('should return a success', function () {
             expect(this.res.statusCode).equal(200);
+            expect(this.res.body.user.name).equal('test@test.com');
         });
 
         it('should have proper access token', function () {
-            var decoded = jwtHelper.decode(this.res.body.access_token);
+            var decoded = jwtHelper.decode(accessToken);
             expect(decoded.iss).equal('cpa');
             expect(decoded.aud).equal('cpa');
             expect(decoded.exp).match(/[0-9]+/);
@@ -511,13 +529,16 @@ describe('OAuth2 Authorization Code Flow', function () {
         });
 
         it('should have token type Bearer', function () {
-            expect(this.res.body.token_type).equal('Bearer');
+            expect(tokenType).equal('Bearer');
         });
 
         it('should send a refresh token', function () {
-            expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
+            expect(refreshToken).match(/[a-zA-Z0-9-\.]+/);
         });
+
+
     });
+
 });
 
 describe('OAuth2 requests from cross domain with access token', function () {
@@ -595,5 +616,8 @@ describe('OAuth2 requests from cross domain without access token', function () {
     });
 
 });
+
+
+
 
 
