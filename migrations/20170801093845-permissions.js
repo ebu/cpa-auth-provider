@@ -50,15 +50,6 @@ module.exports = {
                         );
                     }
                 ).then(
-                    function() {
-                        return queryInterface.sequelize.query(
-                            'INSERT INTO "Permissions" ("id","label","created_at","updated_at") ' +
-                            'VALUES (1, \'admin\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);' +
-                            'INSERT INTO "Permissions" ("id","label","created_at","updated_at") ' +
-                            'VALUES (2, \'other\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);'
-                        );
-                    }
-                ).then(
                     resolve
                 ).catch(
                     reject

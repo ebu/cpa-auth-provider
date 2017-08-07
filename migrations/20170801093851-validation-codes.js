@@ -35,8 +35,7 @@ module.exports = {
                             "type": Sequelize.TEXT,
                             "validate": {
                                 "notEmpty": true
-                            },
-                            "defaultValue": "email"
+                            }
                         },
                         "created_at": {
                             "type": Sequelize.DATE,
