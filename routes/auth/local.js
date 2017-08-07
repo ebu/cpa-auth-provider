@@ -69,55 +69,53 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     if (user) {
                         done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
                     } else {
-                        db.sequelize.sync().then(function () {
-                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                var userParams = {
-                                    email: req.body.email
-                                };
-                                if (permission) {
-                                    userParams.permission_id = permission.id;
-                                }
-                                var user;
-                                db.User.create(userParams).then(function (_user) {
-                                    user = _user;
-                                    return user.setPassword(req.body.password);
-                                }).then(function () {
-                                    return db.UserProfile.findOrCreate({
-                                        where: {user_id: user.id}
+                        db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
+                            var userParams = {
+                                email: req.body.email
+                            };
+                            if (permission) {
+                                userParams.permission_id = permission.id;
+                            }
+                            var user;
+                            db.User.create(userParams).then(function (_user) {
+                                user = _user;
+                                return user.setPassword(req.body.password);
+                            }).then(function () {
+                                return db.UserProfile.findOrCreate({
+                                    where: {user_id: user.id}
+                                });
+                            }).spread(function (user_profile) {
+                                return user_profile.updateAttributes(
+                                    {
+                                        language: req.getLocale()
                                     });
-                                }).spread(function (user_profile) {
-                                    return user_profile.updateAttributes(
-                                        {
-                                            language: req.getLocale()
-                                        });
-                                }).then(function () {
-                                    return codeHelper.getOrGenereateEmailVerificationCode(user);
-                                }).then(function (code) {
-                                    // Async
-                                    user.logLogin().then(function () {
-                                    }, function () {
-                                    });
-                                    emailHelper.send(
-                                        config.mail.from,
-                                        user.email,
-                                        "validation-email",
-                                        {log: false},
-                                        {
-                                            confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
-                                            host: config.mail.host,
-                                            mail: encodeURIComponent(user.email),
-                                            code: encodeURIComponent(code)
-                                        },
-                                        req.getLocale() ? req.getLocale() : config.mail.local
-                                    );
-                                }).then(function () {
-                                    return done(null, user);
-                                }).catch(
-                                    function (err) {
-                                        done(err);
-                                    }
+                            }).then(function () {
+                                return codeHelper.getOrGenereateEmailVerificationCode(user);
+                            }).then(function (code) {
+                                // Async
+                                user.logLogin().then(function () {
+                                }, function () {
+                                });
+                                emailHelper.send(
+                                    config.mail.from,
+                                    user.email,
+                                    "validation-email",
+                                    {log: false},
+                                    {
+                                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                        host: config.mail.host,
+                                        mail: encodeURIComponent(user.email),
+                                        code: encodeURIComponent(code)
+                                    },
+                                    req.getLocale() ? req.getLocale() : config.mail.local
                                 );
-                            });
+                            }).then(function () {
+                                return done(null, user);
+                            }).catch(
+                                function (err) {
+                                    done(err);
+                                }
+                            );
                         });
                     }
                 }, function (error) {

@@ -70,22 +70,20 @@ module.exports = function (app, options) {
                     if (user) {
                         return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
                     } else {
-                        db.sequelize.sync().then(function () {
-                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                var userParams = {
-                                    email: req.body.email
-                                };
-                                if (permission) {
-                                    userParams.permission_id = permission.id;
-                                }
-                                var user = db.User.create(userParams).then(function (user) {
-                                    return user.setPassword(req.body.password);
-                                }).then(function () {
-                                    res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
-                                }).catch(function (err) {
-                                    console.log("ERROR", err);
-                                    res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
-                                });
+                        db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
+                            var userParams = {
+                                email: req.body.email
+                            };
+                            if (permission) {
+                                userParams.permission_id = permission.id;
+                            }
+                            var user = db.User.create(userParams).then(function (user) {
+                                return user.setPassword(req.body.password);
+                            }).then(function () {
+                                res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
+                            }).catch(function (err) {
+                                console.log("ERROR", err);
+                                res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
                             });
                         });
                     }

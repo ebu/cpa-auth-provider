@@ -26,19 +26,17 @@ function createUser(req, res) {
 			if (user){
 				return res.status(400).json({error: oauth2Token.ERRORS.USER_UNAVAILABLE.code, error_description: oauth2Token.ERRORS.USER_UNAVAILABLE.message });
 			} else {
-				db.sequelize.sync().then(function() {
-					var user = db.User.create({
-						email: req.body.username,
-						account_uid: generate.accountId()
-					}).then(function (user) {
-							user.setPassword(req.body.password).done(function(result) {
-								return sendSuccess(user, req, res);
-							});
-						},
-						function(err){
-							res.status(500).json({error: 'Internal Error', error_description: err.message });
+				var user = db.User.create({
+					email: req.body.username,
+					account_uid: generate.accountId()
+				}).then(function (user) {
+						user.setPassword(req.body.password).done(function(result) {
+							return sendSuccess(user, req, res);
 						});
-				});
+					},
+					function(err){
+						res.status(500).json({error: 'Internal Error', error_description: err.message });
+					});
 			}
 		}, function(error) {
 			res.status(500).json({error: 'Internal Error', error_description: error.message });
