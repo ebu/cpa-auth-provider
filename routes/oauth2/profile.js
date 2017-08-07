@@ -33,7 +33,7 @@ var user_profile = [
                     id: req.user.id,
                     firstname: user_profile.firstname,
                     lastname: user_profile.lastname,
-                    gender: user_profile.lastname,
+                    gender: user_profile.gender,
                     birthdate: user_profile.birthdate
                 },
                 scope: req.authInfo.scope
