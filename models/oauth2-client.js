@@ -32,13 +32,17 @@ module.exports = function (sequelize, DataTypes) {
         redirect_uri: { // TODO: Use its own table (RedirectURIWhiteList)
             type: DataTypes.STRING,
             allowNull: true
+        },
+        email_redirect_uri: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     }, {
         underscored: true,
 
 		instanceMethods: {
 			mayRedirect: function(uri) {
-				if (this.redirect_uri == null) {
+				if (this.redirect_uri === null) {
 					return true;
 				}
 				if (!uri) {
@@ -47,7 +51,7 @@ module.exports = function (sequelize, DataTypes) {
 				return uri.startsWith(this.redirect_uri);
 			},
 			mayEmailRedirect: function(uri) {
-				if (this.email_redirect_uri == null) {
+				if (this.email_redirect_uri === null) {
 					return true;
 				}
 				if (!uri) {
