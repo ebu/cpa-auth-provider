@@ -3,8 +3,7 @@
 var db = require('../../../models');
 var ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy;
 var logger = require('../../../lib/logger');
-var promise = require('bluebird');
-var bcrypt = promise.promisifyAll(require('bcrypt'));
+var bcrypt = require('bcrypt');
 
 exports.client_password_strategy = new ClientPasswordStrategy(
     function (clientId, clientSecret, done) {
@@ -13,10 +12,15 @@ exports.client_password_strategy = new ClientPasswordStrategy(
             if (!client) {
                 return done(null, false);
             }
-            if (!bcrypt.compareSync(clientSecret, client.client_secret)) {
-                return done(null, false);
-            }
-            return done(null, client);
+            bcrypt.compare(clientSecret, client.client_secret).then(
+                function (result) {
+                    if (result) {
+                        return done(null, client);
+                    } else {
+                        return done(null, false);
+                    }
+                }
+            );
         }).catch(function (err) {
             logger.debug('[ClientPassword][Error', err, ']');
             return done(err);

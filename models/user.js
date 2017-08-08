@@ -1,7 +1,6 @@
 "use strict";
 
-var Promise = require('bluebird');
-var bcrypt = Promise.promisifyAll(require('bcrypt'));
+var bcrypt = require('bcrypt');
 var config = require('../config');
 
 
@@ -30,24 +29,20 @@ module.exports = function (sequelize, DataTypes) {
                 var self = this;
                 return new Promise(
                     function (resolve, reject) {
-                        bcrypt.hash(
-                            password,
-                            10,
-                            function (err, hash) {
-                                if (err) {
-                                    return reject(err);
-                                } else {
-                                    return self.updateAttributes(
-                                        {password: hash, password_changed_at: Date.now()}
-                                    ).then(resolve, reject);
-                                }
+                        bcrypt.hash(password, 10).then(
+                            function (hash) {
+                                return self.updateAttributes(
+                                    {password: hash, password_changed_at: Date.now()}
+                                )
                             }
-                        );
+                        ).then(
+                            resolve
+                        ).catch(reject);
                     }
                 );
             },
             verifyPassword: function (password) {
-                return bcrypt.compareAsync(password, this.password);
+                return bcrypt.compare(password, this.password);
             },
             isFacebookUser: function () {
                 var self = this;

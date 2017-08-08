@@ -9,8 +9,7 @@ var dbHelper = require('../db-helper');
 
 var config = require('../../config');
 
-var promise = require('bluebird');
-var bcrypt = promise.promisifyAll(require('bcrypt'));
+var bcrypt = require('bcrypt');
 
 var CLIENT = {
     id: 1,

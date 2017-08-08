@@ -12,8 +12,7 @@ var chai = require('chai');
 var chaiJquery = require('chai-jquery');
 var chaiHttp = require('chai-http');
 
-var promise = require('bluebird');
-var bcrypt = promise.promisifyAll(require('bcrypt'));
+var bcrypt = require('bcrypt');
 
 chai.use(chaiHttp);
 

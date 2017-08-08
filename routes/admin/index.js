@@ -10,8 +10,7 @@ var csv = require('csv-string');
 var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
-var promise = require('bluebird');
-var bcrypt = promise.promisifyAll(require('bcrypt'));
+var bcrypt = require('bcrypt');
 
 
 module.exports = function (router) {
@@ -116,28 +115,26 @@ module.exports = function (router) {
                     } else {
                         var secret = generate.cryptoCode(30);
                         // Hash token
-                        return bcrypt.hash(
-                            secret,
-                            5,
-                            function (err, hash) {
-                                if (err) {
-                                    return res.status(500).send(err);
-                                } else {
-                                    return db.OAuth2Client.create({
-                                        client_id: generate.clientId(),
-                                        name: xssFilters.inHTMLData(client.name),
-                                        redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
-                                        client_secret: hash
-                                    }).then(function (createClient) {
-                                        // return generated token and client id
-                                        return res.json({
-                                            'secret': secret,
-                                            'id': createClient.id,
-                                            'client_id': createClient.client_id
-                                        });
+                        return bcrypt.hash(secret, 5).then(
+                            function (hash) {
+                                return db.OAuth2Client.create({
+                                    client_id: generate.clientId(),
+                                    name: xssFilters.inHTMLData(client.name),
+                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                    client_secret: hash
+                                }).then(function (createClient) {
+                                    // return generated token and client id
+                                    return res.json({
+                                        'secret': secret,
+                                        'id': createClient.id,
+                                        'client_id': createClient.client_id
                                     });
-                                }
-                            });
+                                });
+                            },
+                            function (err) {
+                                return res.status(500).send(err);
+                            }
+                        );
                     }
                 });
 
@@ -158,22 +155,20 @@ module.exports = function (router) {
                         var secret = generate.cryptoCode(30);
 
                         // Hash token
-                        return bcrypt.hash(
-                            secret,
-                            5,
-                            function (err, hash) {
-                                if (err) {
-                                    return res.status(500).send(err);
-                                } else {
-                                    // Save token
-                                    return client.updateAttributes(
-                                        {client_secret: hash}
-                                    ).then(function () {
-                                        // return generated token
-                                        res.json({'secret': secret, 'client_id' : client.client_id});
-                                    });
-                                }
-                            });
+                        return bcrypt.hash(secret, 5).then(
+                            function (hash) {
+                                // Save token
+                                return client.updateAttributes(
+                                    {client_secret: hash}
+                                ).then(function () {
+                                    // return generated token
+                                    res.json({'secret': secret, 'client_id' : client.client_id});
+                                });
+                            },
+                            function (err) {
+                                return res.status(500).send(err);
+                            }
+                        );
                     } else {
                         res.sendStatus(404);
                     }
