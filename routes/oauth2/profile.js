@@ -33,7 +33,7 @@ var user_profile = [
                     id: req.user.id,
                     firstname: user_profile.firstname,
                     lastname: user_profile.lastname,
-                    gender: user_profile.lastname,
+                    gender: user_profile.gender,
                     birthdate: user_profile.birthdate
                 },
                 scope: req.authInfo.scope
@@ -50,6 +50,8 @@ module.exports = function (router) {
     // TODO configure the restriction of origins on the CORS preflight call
     var cors_headers = cors({origin: true, methods: ['GET']});
     router.options('/oauth2/user_info', cors_headers);
+    router.options('/oauth2/user_profile', cors_headers);
+
     router.get('/oauth2/user_info', cors_headers, user_info);
     router.get('/oauth2/user_profile', cors_headers, user_profile);
 };
