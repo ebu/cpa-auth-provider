@@ -114,7 +114,7 @@ describe('GET profile', function () {
 
         it('should return a success', function () {
             expect(this.res.statusCode).equal(200);
-            expect(this.res.body.user.name).equal('test@test.com');
+            expect(this.res.body.user.name).equal(USER.email);
         });
     });
 
@@ -150,10 +150,10 @@ describe('GET profile', function () {
 
         it('should return a success', function () {
             expect(this.res.statusCode).equal(200);
-            expect(this.res.body.user.firstname).equal('John');
-            expect(this.res.body.user.lastname).equal('Doe');
-            expect(this.res.body.user.gender).equal('M');
-            expect(this.res.body.user.birthdate).equal('273369600000');
+            expect(this.res.body.user.firstname).equal(PROFILE.firstname);
+            expect(this.res.body.user.lastname).equal(PROFILE.lastname);
+            expect(this.res.body.user.gender).equal(PROFILE.gender);
+            expect(this.res.body.user.birthdate).equal(PROFILE.birthdate);
         });
     });
 
