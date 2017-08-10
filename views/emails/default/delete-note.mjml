@@ -8,11 +8,12 @@
             Servus,
           </mj-text>
           <mj-text>
-            der Account für Deine E-Mail-Adresse {{USEREMAIL}} wird gelöscht.
+            in Deinem Profil der BR Mediathek wurde beantragt, Dein Profil unter der E-Mail-Adresse
+            {{USEREMAIL}} zu löschen.
           </mj-text>
           <mj-text>
-            Wir hoffen, dass Du trotzdem noch viel Spaß in der BR Mediathek hast! Auch ohne Account sind
-            alle Inhalte verfügbar. Allerdings können wir Dir nicht alle Features bieten.
+            Wir hoffen, dass Du trotzdem noch viel Spaß in der BR Mediathek hast. Auch ohne Profil stehen
+            Dir weiterhin alle Inhalte zur Verfügung. Allerdings können wir Dir nicht alle Features bieten.
           </mj-text>
           <mj-text padding-bottom='0px'>
             Viel Spaß beim Stöbern und Schauen!
@@ -22,16 +23,16 @@
           </mj-text>
           <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
           <mj-text padding-bottom='0px'>
-            Du wolltest Deinen Account nicht löschen?
+            Du wolltest Dein Profil nicht löschen?
           </mj-text>
           <mj-text color='#a8a8a8' padding-top='0px'>
-            Melde Dich unter {{LINK}} an.
+            Melde Dich wie gewohnt unter {{LINK}} an. Damit wird der Löschvorgang aufgehoben.
           </mj-text>
           <mj-text padding-bottom='0px'>
             Du brauchst Hilfe?
           </mj-text>
           <mj-text color='#a8a8a8' padding-top='0px'>
-            Wende Dich bitte an den BR-Support unter
+            Wende Dich bitte an den Support unter
             <a style='color: inherit; text-decoration: none;' href='mailto:beta-mediathek@br.de?subject=Registrierung'>beta-mediathek@br.de</a>
             und teile uns Dein Problem mit.
           </mj-text>
