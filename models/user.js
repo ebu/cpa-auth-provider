@@ -8,7 +8,7 @@ var config = require('../config');
 module.exports = function (sequelize, DataTypes) {
     var User = sequelize.define('User', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-		account_uid: { type: DataTypes.STRING/*, unique: true */},
+        account_uid: {type: DataTypes.STRING/*, unique: true */},
         tracking_uid: DataTypes.STRING,
         provider_uid: DataTypes.STRING,
         email: {type: DataTypes.STRING, unique: true},
@@ -18,13 +18,20 @@ module.exports = function (sequelize, DataTypes) {
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
         password_changed_at: DataTypes.BIGINT,
+        scheduled_for_deletion_at: DataTypes.DATE,
         last_login_at: DataTypes.BIGINT
     }, {
         underscored: true,
         instanceMethods: {
+            isScheduledForDeletion: function () {
+                return !!this.scheduled_for_deletion_at;
+            },
             logLogin: function (transaction) {
                 var self = this;
-                return self.updateAttributes({last_login_at: Date.now()}, {transaction: transaction});
+                return self.updateAttributes(
+                    {last_login_at: Date.now(), scheduled_for_deletion_at: null},
+                    {transaction: transaction}
+                );
             },
             setPassword: function (password) {
                 var self = this;
@@ -46,7 +53,7 @@ module.exports = function (sequelize, DataTypes) {
             },
             isFacebookUser: function () {
                 var self = this;
-                if(self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
+                if (self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
                     return true;
                 }
                 return false;

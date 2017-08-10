@@ -53,23 +53,23 @@ function provideAccessToken(client, user, extraArgs, done) {
         refresh_duration = extraArgs['refresh_duration'] * 1000;
     }
 
-	var accessToken, refreshToken, extras;
-	oauthToken.generateAccessToken(client, user, access_duration).then(
-		function (_token) {
-			accessToken = _token;
-			return oauthToken.generateRefreshToken(client, user, undefined, refresh_duration);
-		}
-	).then(
-		function (_token) {
-			refreshToken = _token;
-			return oauthToken.generateTokenExtras(client, user, access_duration);
-		}
-	).then(
-		function (_extras) {
-			extras = _extras;
-			return done(null, accessToken, refreshToken, extras);
-		}
-	).catch(
-		done
-	)
+    var accessToken, refreshToken, extras;
+    oauthToken.generateAccessToken(client, user, access_duration).then(
+        function (_token) {
+            accessToken = _token;
+            return oauthToken.generateRefreshToken(client, user, undefined, refresh_duration);
+        }
+    ).then(
+        function (_token) {
+            refreshToken = _token;
+            return oauthToken.generateTokenExtras(client, user, access_duration);
+        }
+    ).then(
+        function (_extras) {
+            extras = _extras;
+            return done(null, accessToken, refreshToken, extras);
+        }
+    ).catch(
+        done
+    )
 }

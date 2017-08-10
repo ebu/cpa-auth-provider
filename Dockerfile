@@ -30,6 +30,7 @@ ENV DB_TYPE sqlite
 ENV DB_FILENAME "data/identity-provider.sqlite"
 
 ADD config.js /src/config.js
+ADD db_config.js /src/db_config.js
 ADD bin /src/bin
 ADD lib /src/lib
 ADD models /src/models

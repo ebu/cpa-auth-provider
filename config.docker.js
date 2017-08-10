@@ -206,4 +206,10 @@ module.exports = {
     // The maximum rate at which clients should poll to obtain an access token,
     // in seconds.
     max_poll_interval: 5,
+
+    deletion: {
+        delay_in_days: process.env.DELETION_DELAY_IN_DAYS || 7,
+        // check to delete in seconds
+        delete_interval: process.env.DELETE_INTERVAL || 6 * 60 * 60, // 6 hours
+    },
 };

@@ -21,13 +21,13 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
 							return done(null, false);
 						}
 						// TODO: Define scope
-						var info = {scope: '*'};
+						var info = {scope: '*', client: client};
 						return done(null, user, info);
 					}
 				).catch(done);
 			} else {
                 // TODO: Define scope
-                var info = {scope: '*'};
+                var info = {scope: '*', client: client};
                 return done(null, client, info);
 			}
 		}
