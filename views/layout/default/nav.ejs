@@ -15,7 +15,7 @@
                href="<% if (user) { %> <%= link('/home') %> <% } else { %> <%= link('/auth') %> <% } %>">
                 <!--<%= __('LAYOUT_HEAD_HOME_TITLE') %>-->
                 <span>
-                    <img class="nav-brand" src="/assets/img/peach.png" alt="<%= __('LAYOUT_HEAD_HOME_TITLE') %>"
+                    <img class="nav-brand" src="<%= config.urlPrefix %>/assets/img/peach.png" alt="<%= __('LAYOUT_HEAD_HOME_TITLE') %>"
                      title="<%= __('LAYOUT_HEAD_HOME_TITLE') %>"/>
                 </span>
             </a>
