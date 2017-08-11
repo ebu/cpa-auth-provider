@@ -82,8 +82,8 @@ module.exports = {
 
     jwtSecret: process.env.JWT_SECRET,
     jwt: {
-        audience: 'cpa',
-        issuer: 'cpa'
+        audience: process.env.JWT_AUDIENCE || 'cpa',
+        issuer: process.env.JWT_ISSUER || 'cpa'
     },
 
     trackingCookie: {
