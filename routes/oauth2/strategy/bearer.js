@@ -7,31 +7,40 @@ var logger = require('../../../lib/logger');
 
 exports.bearer = new BearerStrategy(function (accessToken, done) {
     var clientId = jwtHelper.read(accessToken).cli;
-	db.OAuth2Client.find({where: {id: clientId}}).then(
-		function(client) {
-			if (!client) {
-				return done(null, false);
-			}
+    db.OAuth2Client.find({where: {id: clientId}}).then(
+        function (client) {
+            if (!client) {
+                return done(null, false);
+            }
 
-			var userId = jwtHelper.getUserId(accessToken, client.jwt_code);
-			if (userId) {
-				db.User.find({where: {id: userId}}).then(
-					function(user) {
-						if (!user) {
-							return done(null, false);
-						}
-						// TODO: Define scope
-						var info = {scope: '*', client: client};
-						return done(null, user, info);
-					}
-				).catch(done);
-			} else {
+            var userId;
+            try {
+                userId = jwtHelper.getUserId(accessToken, client.jwt_code);
+            } catch (e) {
+                if (e.name === 'TokenExpiredError' && e.message === 'jwt expired') {
+                    return done(null, false, e);
+                } else {
+                    return done(e);
+                }
+            }
+            if (userId) {
+                db.User.find({where: {id: userId}}).then(
+                    function (user) {
+                        if (!user) {
+                            return done(null, false);
+                        }
+                        // TODO: Define scope
+                        var info = {scope: '*', client: client};
+                        return done(null, user, info);
+                    }
+                ).catch(done);
+            } else {
                 // TODO: Define scope
                 var info = {scope: '*', client: client};
                 return done(null, client, info);
-			}
-		}
-	).catch(done);
+            }
+        }
+    ).catch(done);
 
     //
     // db.AccessToken.find({where: {token: accessToken}}).then(function (token) {
