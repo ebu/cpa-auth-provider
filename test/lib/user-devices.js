@@ -215,8 +215,8 @@ describe('GET /user/devices', function () {
                 requestHelper.sendRequest(this, '/user/devices', null, done);
             });
 
-            it('should deny access', function () {
-                expect(this.res.statusCode).to.equal(401);
+            it('should deny access (redirect to login)', function () {
+                expect(this.res.statusCode).to.equal(302);
             });
         });
     });

@@ -115,8 +115,8 @@ describe('DELETE /user/', function () {
                 }, done);
             });
 
-            it('should return a status 401', function () {
-                expect(this.res.statusCode).to.equal(401);
+            it('should return a status 302', function () {
+                expect(this.res.statusCode).to.equal(302);
             });
 
 
