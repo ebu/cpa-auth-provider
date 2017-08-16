@@ -21,7 +21,7 @@ module.exports = function (router) {
         requestHelper.redirect(res, '/home' + query);
     });
 
-    router.get('/home', authHelper.ensureAuthenticated, function (req, res) {
+    router.get('/home', authHelper.authenticateFirst, function (req, res) {
         return res.render('./user/home.ejs');
     });
 };
