@@ -30,6 +30,9 @@ var OK_RECATCHA_SECRET = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
 var KO_RECATCHA_KEY = 'ko';
 var KO_RECATCHA_SECRET = 'ko';
 
+
+var STRONG_PASSWORD = 'correct horse battery staple';
+
 // Test signup
 
 describe('POST /api/local/signup', function () {
@@ -48,7 +51,7 @@ describe('POST /api/local/signup', function () {
                 method: 'post',
                 cookie: this.cookie,
                 type: 'form',
-                data: {email: 'qsdf@qsdf.fr', password: 'qsdf', 'g-recaptcha-response': ''}
+                data: {email: 'qsdf@qsdf.fr', password: STRONG_PASSWORD, 'g-recaptcha-response': ''}
             }, done);
         });
 
@@ -77,7 +80,7 @@ describe('POST /api/local/signup', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf2@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -130,7 +133,7 @@ describe('POST /api/local/signup', function () {
                 cookie: this.cookie,
                 type: 'form',
                 data: {
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -158,7 +161,7 @@ describe('POST /api/local/signup', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -175,7 +178,7 @@ describe('POST /api/local/signup', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -213,7 +216,7 @@ describe('POST /api/local/password/recover', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -258,7 +261,7 @@ describe('POST /api/local/password/recover', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -302,7 +305,7 @@ describe('POST /api/local/password/recover', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -350,7 +353,7 @@ describe('POST /api/local/authenticate', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -367,7 +370,7 @@ describe('POST /api/local/authenticate', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf'
+                    password: STRONG_PASSWORD
                 }
             }, done);
         });
@@ -410,7 +413,7 @@ describe('POST /api/local/authenticate', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
