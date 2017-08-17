@@ -67,8 +67,8 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                         return;
                     }
 
-                    if (passwordHelper.isStrong(password, req)) {
-                        done(null, false, req.flash('signupMessage', passwordHelper.getWeaknessMsg(password, req)));
+                    if (!passwordHelper.isStrong(password)) {
+                        done(null, false, req.flash('signupMessage', passwordHelper.getWeaknessesMsg(password, req)));
                         return;
                     }
 
@@ -289,6 +289,9 @@ module.exports = function (app, options) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
                 return;
+            }
+            if (!passwordHelper.isStrong(req.body.password)) {
+                res.status(400).json({errors: passwordHelper.getWeaknesses(req.body.password, req)});
             }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
