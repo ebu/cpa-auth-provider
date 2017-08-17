@@ -11,13 +11,13 @@ var util = require('util');
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
+var passwordHelper = require('../../lib/password-helper')
 
 var i18n = require('i18n');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
 
-var owasp = require('owasp-password-strength-test');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
@@ -55,93 +55,90 @@ var localStrategyCallback = function (req, username, password, done) {
 var localSignupStrategyCallback = function (req, username, password, done) {
 
 
-    req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
-    req.getValidationResult().then(function (result) {
+        req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
+        req.getValidationResult().then(function (result) {
 
-        if (!result.isEmpty()) {
-            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
-            return;
-        } else {
-            if (req.recaptcha.error) {
-                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
-                return;
-            }
-
-            // Checking password strenght
-            var owaspResult = owasp.test(password);
-            if (!owaspResult.strong) {
-                var msg = req.__('BACK_SIGNUP_PASS_STRENGTH');
-                for (var i = 0; i < owaspResult.failedTests.length; i++) {
-                    msg = msg + "\n - " + req.__('BACK_SIGNUP_PASS_STRENGTH_' + owaspResult.failedTests[i]);
-                }
-                done(null, false, req.flash('signupMessage', msg));
-                return;
-            }
-
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
-                    } else {
-                        db.sequelize.sync().then(function () {
-                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                var userParams = {
-                                    email: req.body.email
-                                };
-                                if (permission) {
-                                    userParams.permission_id = permission.id;
-                                }
-                                var user;
-                                db.User.create(userParams).then(function (_user) {
-                                    user = _user;
-                                    return user.setPassword(req.body.password);
-                                }).then(function () {
-                                    return db.UserProfile.findOrCreate({
-                                        where: {user_id: user.id}
-                                    });
-                                }).spread(function (user_profile) {
-                                    return user_profile.updateAttributes(
-                                        {
-                                            language: req.getLocale()
-                                        });
-                                }).then(function () {
-                                    return codeHelper.getOrGenereateEmailVerificationCode(user);
-                                }).then(function (code) {
-                                    // Async
-                                    user.logLogin().then(function () {
-                                    }, function () {
-                                    });
-                                    emailHelper.send(
-                                        config.mail.from,
-                                        user.email,
-                                        "validation-email",
-                                        {log: false},
-                                        {
-                                            confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
-                                            host: config.mail.host,
-                                            mail: encodeURIComponent(user.email),
-                                            code: encodeURIComponent(code)
-                                        },
-                                        req.getLocale() ? req.getLocale() : config.mail.local
-                                    );
-                                }).then(function () {
-                                    return done(null, user);
-                                }).catch(
-                                    function (err) {
-                                        done(err);
-                                    }
-                                );
-                            });
-                        });
+                if (!result.isEmpty()) {
+                    done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
+                    return;
+                } else {
+                    if (req.recaptcha.error) {
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
+                        return;
                     }
-                }, function (error) {
-                    done(error);
-                });
-        }
-    });
+
+                    if (passwordHelper.isStrong(password, req)) {
+                        done(null, false, req.flash('signupMessage', passwordHelper.getWeaknessMsg(password, req)));
+                        return;
+                    }
+
+                    db.User.findOne({where: {email: req.body.email}})
+                        .then(function (user) {
+                            if (user) {
+                                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
+                            } else {
+                                db.sequelize.sync().then(function () {
+                                    db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
+                                        var userParams = {
+                                            email: req.body.email
+                                        };
+                                        if (permission) {
+                                            userParams.permission_id = permission.id;
+                                        }
+                                        var user;
+                                        db.User.create(userParams).then(function (_user) {
+                                            user = _user;
+                                            return user.setPassword(req.body.password);
+                                        }).then(function () {
+                                            return db.UserProfile.findOrCreate({
+                                                where: {user_id: user.id}
+                                            });
+                                        }).spread(function (user_profile) {
+                                            return user_profile.updateAttributes(
+                                                {
+                                                    language: req.getLocale()
+                                                });
+                                        }).then(function () {
+                                            return codeHelper.getOrGenereateEmailVerificationCode(user);
+                                        }).then(function (code) {
+                                            // Async
+                                            user.logLogin().then(function () {
+                                            }, function () {
+                                            });
+                                            emailHelper.send(
+                                                config.mail.from,
+                                                user.email,
+                                                "validation-email",
+                                                {log: false},
+                                                {
+                                                    confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                                    host: config.mail.host,
+                                                    mail: encodeURIComponent(user.email),
+                                                    code: encodeURIComponent(code)
+                                                },
+                                                req.getLocale() ? req.getLocale() : config.mail.local
+                                            );
+                                        }).then(function () {
+                                            return done(null, user);
+                                        }).catch(
+                                            function (err) {
+                                                done(err);
+                                            }
+                                        );
+                                    });
+                                });
+                            }
+                        }, function (error) {
+                            done(error);
+                        });
+                }
+            }
+        )
+        ;
 
 
-};
+    }
+    ;
 
 var localStrategyConf = {
     // by default, local strategy uses username and password, we will override with email
@@ -324,4 +321,6 @@ module.exports = function (app, options) {
 
         return requestHelper.redirect(res, '/');
     }
+
+
 };
