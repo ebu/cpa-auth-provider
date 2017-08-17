@@ -71,11 +71,11 @@ var localSignupStrategyCallback = function (req, username, password, done) {
             var owaspResult = owasp.test(password);
             if (!owaspResult.strong) {
                 var msg = req.__('BACK_SIGNUP_PASS_STRENGTH');
-                for (var i = 0 ; i < owaspResult.failedTests.length; i++){
-                    msg = msg + "\n - " + req.__('BACK_SIGNUP_PASS_STRENGTH_'+owaspResult.failedTests[i]);
+                for (var i = 0; i < owaspResult.failedTests.length; i++) {
+                    msg = msg + "\n - " + req.__('BACK_SIGNUP_PASS_STRENGTH_' + owaspResult.failedTests[i]);
                 }
                 done(null, false, req.flash('signupMessage', msg));
-                return ;
+                return;
             }
 
             db.User.findOne({where: {email: req.body.email}})
