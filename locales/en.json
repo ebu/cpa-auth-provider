@@ -248,6 +248,7 @@
   "VERIFY_MAIN_ALLOW_BUTTON": "Allow",
   "VERIFY_MAIN_DENY_BUTTON": "Deny",
 
+  "BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Password does not respect our security rules",
   "BACK_SIGNUP_INVALID_EMAIL_OR_PASS": "Wrong email or password",
   "BACK_SIGNUP_EMAIL_TAKEN": "That email is already taken",
   "BACK_SIGNUP_PB_RECAPTCHA": "Something went wrong with the reCAPTCHA",

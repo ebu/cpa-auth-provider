@@ -55,7 +55,7 @@ module.exports = function (app, options) {
             res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
             if (!passwordHelper.isStrong(req.body.password)) {
-                return res.status(400).json({success: false, msg: passwordHelper.getWeaknessesMsg(req.body.password, req), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                return res.status(400).json({success: false, msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
             }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {

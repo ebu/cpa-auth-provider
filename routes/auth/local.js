@@ -68,7 +68,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     }
 
                     if (!passwordHelper.isStrong(password)) {
-                        done(null, false, req.flash('signupMessage', passwordHelper.getWeaknessesMsg(password, req)));
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH')));
                         return;
                     }
 
