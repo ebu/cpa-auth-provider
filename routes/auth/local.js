@@ -17,6 +17,8 @@ var i18n = require('i18n');
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
 
+var owasp = require('owasp-password-strength-test');
+
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
     db.User.findOne({where: {email: username}})
@@ -26,7 +28,7 @@ var localStrategyCallback = function (req, username, password, done) {
                     return;
                 }
 
-                if (user.isFacebookUser && ! user.password){
+                if (user.isFacebookUser && !user.password) {
                     done(null, false, req.flash('loginMessage', loginError));
                     return;
                 }
@@ -52,8 +54,10 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
+
     req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
     req.getValidationResult().then(function (result) {
+
         if (!result.isEmpty()) {
             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
             return;
@@ -62,6 +66,18 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                 done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
                 return;
             }
+
+            // Checking password strenght
+            var owaspResult = owasp.test(password);
+            if (!owaspResult.strong) {
+                var msg = req.__('BACK_SIGNUP_PASS_STRENGTH');
+                for (var i = 0 ; i < owaspResult.failedTests.length; i++){
+                    msg = msg + "\n - " + req.__('BACK_SIGNUP_PASS_STRENGTH_'+owaspResult.failedTests[i]);
+                }
+                done(null, false, req.flash('signupMessage', msg));
+                return ;
+            }
+
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
@@ -142,10 +158,10 @@ module.exports = function (app, options) {
 
     app.get('/auth/local', function (req, res) {
         var message = {};
-        if(req.query && req.query.error) {
-            message =  req.__(req.query.error);
+        if (req.query && req.query.error) {
+            message = req.__(req.query.error);
         }
-        if(req.flash('loginMessage').length > 0) {
+        if (req.flash('loginMessage').length > 0) {
             message = req.flash('loginMessage');
         }
         console.log("message", message);
