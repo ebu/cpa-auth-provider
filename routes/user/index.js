@@ -81,7 +81,7 @@ var routes = function (router) {
                 res.status(400).json({errors: result.array()});
             } else {
                 if (!passwordHelper.isStrong(req.body.password)) {
-                    res.status(400).json({errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}]});
+                    res.status(400).json({errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}], password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
                 } else {
                     db.User.findOne({
                         where: {
@@ -123,7 +123,7 @@ var routes = function (router) {
                 res.status(400).json({errors: result.array()});
             } else {
                 if (!passwordHelper.isStrong(req.body.password)) {
-                    return res.status(400).json({errors: [{msg:passwordHelper.getWeaknessesMsg(req.body.password, req)}]});
+                    return res.status(400).json({errors: [{msg:passwordHelper.getWeaknessesMsg(req.body.password, req)}], password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
                 }
                 db.User.findOne({
                     where: {
