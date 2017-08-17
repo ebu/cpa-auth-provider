@@ -58,21 +58,21 @@ nav.navbar {
 }
 
 .btn-link {
-    color: #f56b6c;
+    color: #ff7043;
 }
 
 .btn-link:hover {
-    color: #f59b70;
+    color: #ffab00;
 }
 
 .btn-primary {
-    background-color: #f56b6c;
+    background-color: #ff7043;
     border-color: #ff7374;
     color: #fff;
 }
 
 .btn-primary:hover, .btn-primary.active, .btn-primary:focus {
-    background-color: #f59b70;
+    background-color: #ffab00;
     border-color: #f69d6e;
     color: #fff;
 }
@@ -84,6 +84,10 @@ nav.navbar {
 .btn.btn-large-submit {
     font-size: 1.4rem;
     padding: 10px;
+}
+
+.btn.btn-large-submit:focus {
+    outline: none;
 }
 
 form.connect-forms {
@@ -194,7 +198,7 @@ nav .lang ul.dropdown-menu {
 }
 
 nav .peach-title {
-    color: #f56b6c;
+    color: #ff7043;
     text-transform: capitalize;
     vertical-align: -4px;
 }
