@@ -32,6 +32,7 @@ var KO_RECATCHA_SECRET = 'ko';
 
 
 var STRONG_PASSWORD = 'correct horse battery staple';
+var WEAK_PASSWORD = 'weak';
 
 // Test signup
 
@@ -60,6 +61,32 @@ describe('POST /api/local/signup', function () {
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(false);
             expect(this.res.body.msg).to.equal(API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA);
+        });
+
+    });
+
+    context('When unauthenticated user signup with weak password', function () {
+
+        before(function (done){
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/signup', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {email: 'qsdf@qsdf.fr', password: WEAK_PASSWORD, 'g-recaptcha-response': recaptchaResponse}
+            }, done);
+        });
+
+        it('should return a success false', function () {
+            expect(this.res.body.msg.indexOf("The password you provide is not strength enough:")).to.equal(0);
+            expect(this.res.statusCode).to.equal(400);
+            expect(this.res.body.success).to.equal(false);
         });
 
     });
