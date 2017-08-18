@@ -16,7 +16,7 @@ var cors = require('../../lib/cors');
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
 var permissionName = require('../../lib/permission-name');
-var passwordHelper = require('../../lib/password-helper')
+var passwordHelper = require('../../lib/password-helper');
 
 var codeHelper = require('../../lib/code-helper');
 
