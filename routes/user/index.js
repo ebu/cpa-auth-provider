@@ -3,7 +3,7 @@
 var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
-var passwordHelper = require('../../lib/password-helper')
+var passwordHelper = require('../../lib/password-helper');
 
 var i18n = require('i18n');
 

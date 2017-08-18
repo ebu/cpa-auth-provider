@@ -282,7 +282,7 @@
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Feld 'Vorheriges Passwort' ist leer",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Das Feld 'Neues Passwort' ist leer",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Das Feld 'Passwort bestätigen' ist leer",
-	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Das Feld 'Neues Passwort' stimmt nicht mit dem Bestätigungskennwort überein",
+	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Passwörter stimmen nicht überein",
 
 	"BACK_INCORRECT_PREVIOUS_PASS": "Das vorherige Passwort ist falsch",
 	"BACK_USER_NOT_FOUND": "Benutzer nicht gefunden",

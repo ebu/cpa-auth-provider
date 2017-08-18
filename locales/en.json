@@ -281,7 +281,7 @@
   "BACK_CHANGE_PWD_PREV_PASS_EMPTY": "'Previous Password' field  is empty",
   "BACK_CHANGE_PWD_NEW_PASS_EMPTY": "'New Password' field is empty",
   "BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "'Confirm Password' field is empty",
-  "BACK_CHANGE_PWD_PASS_DONT_MATCH": "'New Password' field does not match the confirmation password",
+  "BACK_CHANGE_PWD_PASS_DONT_MATCH": "Passwords do not match",
 
   "BACK_INCORRECT_PREVIOUS_PASS": "The previous password is incorrect",
   "BACK_USER_NOT_FOUND": "User not found",

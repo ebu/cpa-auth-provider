@@ -11,7 +11,7 @@ var util = require('util');
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
-var passwordHelper = require('../../lib/password-helper')
+var passwordHelper = require('../../lib/password-helper');
 
 var i18n = require('i18n');
 
@@ -56,11 +56,13 @@ var localSignupStrategyCallback = function (req, username, password, done) {
 
 
         req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
+        req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
+
         req.getValidationResult().then(function (result) {
 
                 if (!result.isEmpty()) {
-                    done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
-                    return;
+                    done(null, false, req.flash('signupMessage', result.array()[0].msg));
                 } else {
                     if (req.recaptcha.error) {
                         done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));

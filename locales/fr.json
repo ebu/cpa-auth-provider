@@ -249,7 +249,7 @@
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Le champs 'Ancien mot de passe' est vide",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Le champs 'Nouveau mot de passe' est vide",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Le champs 'Confirmer mot de passe' est vide",
-	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Le champs 'Nouveau mot de passe' ne correspond pas au champs 'Confirmer mot de passe'",
+	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Les mots de passe ne correspondent pas",
 	"BACK_INCORRECT_PREVIOUS_PASS": "Le précédent mot de passe est incorrect",
 	"BACK_USER_NOT_FOUND": "Utilisateur inconnu",
 	"BACK_SUCESS_PASS_CHANGED": "Mot de passe mis à jour",
