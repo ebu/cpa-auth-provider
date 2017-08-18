@@ -30,10 +30,10 @@
                                        required>
                             </div>
                             <div class="form-group">
-                                <input id="password" type="password" class="form-control" name="password"
+                                <input id="password" type="password" class="form-control password-test" name="password"
                                        placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
                                 <p id="password-error-label" class="password-error error-message text-danger"></p>
-                                <div id="password-progress-bar"><div class="progress"></div></div>
+                                <div id="password-bar"><div id="password-progress"></div></div>
                             </div>
                             <div class="form-group">
                                 <input id="password2" type="password" class="form-control" name="password2"
@@ -71,28 +71,8 @@
 
     </div>
 
-    <script>
-        var password = document.getElementById("password")
-            , confirmPassword = document.getElementById("password2")
-            , passwordLabel = document.getElementById("password-error-label")
-            , progressBar = document.getElementById("password-progress-bar");
-
-        function validatePassword() {
-            var result = owaspPasswordStrengthTest.test(password.value);
-            console.log("errors", result.errors.length);
-            if(result.requiredTestErrors.length > 0 && password.value !== "") {
-                passwordLabel.innerHTML = result.requiredTestErrors[0];
-                passwordLabel.style.display = "block";
-            } else {
-                passwordLabel.style.display = "none";
-            }
-
-            console.log("password strength", result);
-        }
-        password.onkeyup = validatePassword;
-
-    </script>
-
 </div>
+
+<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/password.js"></script>
 
 <% include layout/foot %>
