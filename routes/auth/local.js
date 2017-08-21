@@ -166,7 +166,7 @@ module.exports = function (app, options) {
 
     app.get('/logout', function (req, res) {
         req.logout();
-        res.redirect('/');
+        requestHelper.redirect(res, '/');
     });
 
     app.get('/email_verify', function (req, res, next) {
@@ -199,14 +199,14 @@ module.exports = function (app, options) {
         passport.authenticate('local-signup', function (err, user, info) {
 
             if (req.recaptcha.error) {
-                return res.redirect(config.urlPrefix + '/signup?error=recaptcha');
+                return requestHelper.redirect(res, '/signup?error=recaptcha');
             }
             if (err) {
                 return next(err);
             }
             // Redirect if it fails
             if (!user) {
-                return res.redirect(config.urlPrefix + '/signup?email=' + req.body.email);
+                return requestHelper.redirect(res, '/signup?email=' + req.body.email);
             }
             req.logIn(user, function (err) {
                 if (err) {
