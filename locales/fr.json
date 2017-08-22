@@ -1,6 +1,8 @@
 {
 	"LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE": "Fournisseur d'identités",
+
 	"LAYOUT_HEAD_HOME_TITLE": "Accueil",
+
 	"LAYOUT_HEAD_NAV_MY_DEVICES": "Mes appareils",
 	"LAYOUT_HEAD_NAV_EDIT_PROFILE": "Profil",
 	"LAYOUT_HEAD_NAV_ADMIN": "Administration",
@@ -17,19 +19,23 @@
 	"LOGIN_FACEBOOK_BUTTON": "Connectez-vous avec facebook",
 	"LOGIN_TWITTER_BUTTON": "Connectez-vous avec Twitter",
 	"LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED": "Vous devez valider votre email avant de vous connecter avec Facebook",
+
 	"ADMIN_ADD_DOMAIN_ADD_SERVICE_PROVIDER_TITLE": "Ajouter un Service Provider",
 	"ADMIN_ADD_DOMAIN_NAME_LABEL": "Nom",
 	"ADMIN_ADD_DOMAIN_DOMAIN_LABEL": "Domaine",
 	"ADMIN_ADD_DOMAIN_TITLE_SUBMIT": "Ajouter",
 	"ADMIN_ADD_DOMAIN_BACK_LINK": "Retour",
+
 	"ADMIN_DOMAIN_NAME_TABLE_COL_TITLE": "Nom",
 	"ADMIN_DOMAIN_DOMAIN_TABLE_COL_TITLE": "Domaine",
 	"ADMIN_DOMAIN_ACCESS_TOKEN_TABLE_COL_TITLE": "Access Token",
 	"ADMIN_DOMAIN_ADD_A_SERVICE_PROVIDER_LINK": "Ajouter un Service Provider",
+
 	"ADMIN_TITLE": "Administration",
 	"ADMIN_SERVICE_PROVIDER_LINK": "Service Providers",
 	"ADMIN_CLIENT_LINK": "Clients",
 	"ADMIN_USERS_LINK": "Utilisateurs",
+
 	"ADMIN_CLIENT_PAGE_TITLE": "Clients",
 	"ADMIN_CLIENT_NAME_TABLE_COL_TITLE": "Clients",
 	"ADMIN_CLIENT_CREATED_AT_TABLE_COL_TITLE": "Créé le",
@@ -62,8 +68,10 @@
 	"ADMIN_CLIENT_UPDATE_CLIENT_MODALE_TITLE": "Modifier un client",
 	"ADMIN_CLIENT_UPDATE_CLIENT_MODALE_SUBMIT": "Modifier",
 	"ADMIN_CLIENT_ERROR_CANNOT_LOAD_CLIENT_LIST": "Impossible de charger la liste des clients",
+
 	"API_ADMIN_CLIENT_NAME_IS_MISSING": "Le nom du client est manquant",
 	"API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID": "L'adresse de redirection est invalide",
+
 	"ADMIN_USERS_CSV_DOWNLOAD_LINK": "CSV",
 	"ADMIN_USERS_TITLE": "Utilisateurs",
 	"ADMIN_USERS_EMAIL_TABLE_COL_TITLE": "Email",
@@ -71,17 +79,20 @@
 	"ADMIN_USERS_CREATED_TABLE_COL_TITLE": "Créé le",
 	"ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE": "Mot de passe changé le",
 	"ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Dernière connexion",
+
 	"AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Providers disponibles",
 	"AUTH_MAIN_LOGIN_FB_LINK": "Se connecter avec Facebook",
 	"AUTH_MAIN_LOGIN_GITHUB_LINK": "Se connecter avec Github",
 	"AUTH_MAIN_LOGIN_EBU_LINK": "Se connecter avec EBU",
 	"AUTH_MAIN_LOGIN_USER_LINK": "Se connecter avec un login et un mot de passe",
 	"AUTH_OPENAM_LOGIN_USER_LINK": "Se connecter avec Open AM",
+
 	"OAUTH_DIALOG_TITLE_HI": "Bonjour",
 	"OAUTH_DIALOG_TITLE": "demande l'accès à votre compte.",
 	"OAUTH_DIALOG_APPROVAL": "Etes-vous d'accord ?",
 	"OAUTH_DIALOG_ALLOW": "Autoriser",
 	"OAUTH_DIALOG_DENY": "Refuser",
+
 	"USER_DEVICES_TITLE": "Mes appareils",
 	"USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE": "Client Id",
 	"USER_DEVICES_NAME_TABLE_COL_TITLE": "Nom",
@@ -89,20 +100,24 @@
 	"USER_DEVICES_AUTHORIZED_DOMAINS_TABLE_COL_TITLE": "Domaines autorisés",
 	"USER_DEVICES_ACTIONS_TABLE_COL_TITLE": "Actions",
 	"USER_DEVICES_ASSOCIATE_DEVICE_LINK": "Associer un appareil",
+
 	"ADMIN_USER_DELETE_MODALE_TITLE": "Suppression du compte",
 	"ADMIN_USER_DELETE_MODALE_TEXT": "Souhaitez-vous vraiment supprimer votre compte? Cette action est irréversible et entrainera la suppression de toutes vos données.",
 	"ADMIN_USER_DELETE_MODALE_TEXT_PASSWORD": "Pour cela vous devez renseigner votre mot de passe ci-dessous",
 	"ADMIN_USER_DELETE_MODALE_FORM_PASSWORD_LABEL": "Mot de passe",
 	"ADMIN_USER_DELETE_MODALE_CLOSE": "Annuler",
 	"ADMIN_USER_DELETE_MODALE_SUBMIT": "Confirmer",
+
 	"ALERT_LANGUAGE_1": "Votre langue par défaut est différente de celle de votre profil.",
 	"ALERT_LANGUAGE_2": "Cliquez ici pour définir {{ default_language_of_the_idp }} en langue de profil par défaut",
 	"ALERT_LANGUAGE_3": "ou",
 	"ALERT_LANGUAGE_4": "la changer pour {{ default_language_of_the_user }}",
+
 	"HOME_MY_PROFILE_TITLE": "Mon profil",
 	"HOME_PERSONNAL_DATA_LINK": "Accéder à vos informations personnelles et les mettre à jour",
 	"HOME_MY_DEVICES_TITLE": "Mes appareils",
 	"HOME_DEVICES_LINK": "Gestion de vos appareils",
+
 	"PROFILE_MAIN_TITLE": "Mon profil",
 	"PROFILE_PERSONAL_DATA_TITLE": "Données personnelles",
 	"PROFILE_PERSONAL_DATA_TITLE_MOBILE": "Données personnelles",
@@ -156,12 +171,15 @@
 	"PROFILE_JS_SUCCESS_RESEND_VALIDATION": "Un email de validation a été envoyé",
 	"PROFILE_JS_ERROR_DELETE_ACCOUNT": "Une erreur est survenue lors de la suppression du compte.",
 	"PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Votre compte a bien été supprimé.",
+
 	"ACCESS_DENIED_TITLE": "Accès refusé",
 	"ACCESS_DENIED_MSG": "Nous sommes désolés, mais vous n'avez pas la permission d'accéder à ce contenu",
+
 	"AUTHORIZE_FORM_LABEL_PREFIX": "Souhaitez-vous autoriser",
 	"AUTHORIZE_FORM_LABEL_SUFFIX": "à agir en votre nom ?",
 	"AUTHORIZE_ALLOW_BUTTON": "Autoriser",
 	"AUTHORIZE_DENY_BUTTON": "Refuser",
+
 	"PASSWORD_EDIT_TITLE": "Changement de mot de passe",
 	"PASSWORD_EDIT_BACK_TO_LOGIN_LINK": "Retour à la page de connexion",
 	"PASSWORD_EDIT_LOGIN_WITH_NEW_PASSWORD_LINK_PREFIX": "Votre mot de passe a été changé. Vous pouvez maintenant",
@@ -170,12 +188,14 @@
 	"PASSWORD_EDIT_CONFIRM_PASSWORD_FORM_LABEL": "Confirmer le mot de passe",
 	"PASSWORD_EDIT_CONFIRM_FORM_BUTTON": "Confirmer",
 	"PASSWORD_EDIT_JS_ERROR_MSG": "Une erreur est survenue, merci de réessayer ultérieurement",
+
 	"PASSWORD_RECOVERY_BACK_TO_LOGIN_LINK": "Retour à la page de connexion",
 	"PASSWORD_RECOVERY_TITLE": "Récupération de mot de passe",
 	"PASSWORD_RECOVERY_EMAIL_LABEL": "Votre email",
 	"PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Réinitialiser votre mot de passe",
 	"PASSWORD_RECOVERY_JS_ERROR_MSG": "Une erreur est survenue, merci de réessayer plus tard",
 	"PASSWORD_RECOVERY_JS_SUCCESS_MSG": "Un email contenant un lien pour réinitialiser votre mot de passe a été envoyé",
+
 	"SIGNUP_BACK_TO_IDP_LIST_LINK": "Retour à la liste des fournisseurs d'identité",
 	"SIGNUP_EMAIL_LABEL": "Email",
 	"SIGNUP_TITLE": "S'inscrire",
@@ -188,20 +208,24 @@
 	"SIGNUP_RECAPTCHA_NOT_A_ROBOT": "Je ne suis pas un robot.",
 	"SIGNUP_RECAPTCHA_PRIVACY": "Vie privée",
 	"SIGNUP_RECAPTCHA_TERMS": "Conditions générales",
+
 	"VERIFY_TITLE": "Association d'appareils",
 	"VERIFY_USER_CODE_LABEL": "Code utilisateur",
 	"VERIFY_VERIFY_BUTTON": "Vérifier",
+
 	"VERIFY_BACK_INVALID_USER_CODE": "Code utilisateur non valide",
 	"VERIFY_BACK_CODE_USED": "Ce code utilisateur a déjà été utilisé. Vérifié votre appareil pour finir l'appairage",
 	"VERIFY_BACK_CODE_EXPIRED": "Le code utilisateur a expiré",
 	"VERIFY_BACK_SUCCESSFUL_PAIRING": "Votre appareil est maintenant appairé avec votre identifiant",
 	"VERIFY_BACK_UNKNOWN_VERIFICATION_TYPE": "Paramètre verification_type inconnu",
+
 	"VERIFY_LIST_TITLE": "Autorisation en attente",
 	"VERIFY_LIST_DEVICE_ID_LABEL": "Appareil id",
 	"VERIFY_LIST_DOMAIN_LABEL": "Domaine",
 	"VERIFY_LIST_ACCEPT_LABEL": "Accepter ?",
 	"VERIFY_YES_RADIO": " Oui",
 	"VERIFY_NO_RADIO": " Non",
+
 	"VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Validation Email",
 	"VERIFY_MAIL_SUCCESS_LABEL": "Votre compte a été vérifié avec succès.",
 	"VERIFY_MAIL_SUCCESS_THX_LABEL": "Merci",
@@ -214,11 +238,13 @@
 	"VERIFY_MAIL_OR_LABEL": "OU",
 	"VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL_PREFIX": "Retour à",
 	"VERIFY_MAIL_LOGIN_PAGE_LINK_LABEL": "la page de connexion",
+
 	"VERIFY_PREFILLED_CODE_TITLE": "Autorisation",
 	"VERIFY_MAIN_LABEL_PREFIX": "demande votre autorisation pour agir en votre nom sur",
 	"VERIFY_MAIN_LABEL_SUFFIX": ". Est-ce que vous acceptez ?",
 	"VERIFY_MAIN_ALLOW_BUTTON": "Autoriser",
 	"VERIFY_MAIN_DENY_BUTTON": "Refuser",
+
 	"BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Le mot de passe ne respecte pas les règles de sécurité",
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASS": "Email ou mot de passe invalide",
 	"BACK_SIGNUP_EMAIL_TAKEN": "Cet email est déjà utilisé",
@@ -238,22 +264,27 @@
 	"BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "Le reCaptcha est vide ou erroné.",
 	"BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "Email vide ou invalide",
 	"BACK_SIGNUP_USER_NOT_FOUND": "Utilisateur inconnu.",
+
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Utilisateur inconnu.",
 	"BACK_PWD_WRONG_RECOVERY_CODE": "Code de récupération de mot de passe erroné.",
 	"BACK_PWD_UPDATE_PWD_EMPTY": "Le nouveau mot de passe est vide",
 	"BACK_PWD_UPDATE_CONF_PWD_EMPTY": "La confirmation de mot de passe est vide",
 	"BACK_PWD_UPDATE_PWD_DONT_MATCH_EMPTY": "Le nouveau mot de passe et la confirmation ne correspondent pas",
+
 	"BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID": "Mauvais id de permission",
 	"BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "L'identifiant de client existe déjà",
+
 	"BACK_PROFILE_AUTH_FAIL": "Echec de l'authentification. Profil inconnu",
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Le champs 'Ancien mot de passe' est vide",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Le champs 'Nouveau mot de passe' est vide",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Le champs 'Confirmer mot de passe' est vide",
 	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Les mots de passe ne correspondent pas",
+
 	"BACK_INCORRECT_PREVIOUS_PASS": "Le précédent mot de passe est incorrect",
 	"BACK_USER_NOT_FOUND": "Utilisateur inconnu",
 	"BACK_SUCESS_PASS_CHANGED": "Mot de passe mis à jour",
 	"BACK_SUCESS_PASS_CREATED": "Mot de passe créé avec succès",
+
 	"BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "Le champs 'prénom' est vide ou invalide",
 	"BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "Le champs 'nom' est vide ou invalide",
 	"BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID": "Le champs 'date de naissance' est vide ou invalide",
@@ -262,18 +293,24 @@
 	"BACK_PROFILE_UPDATE_SUCCESS": "Profile mis à jour.",
 	"BACK_PROFILE_UPDATE_FAIL": "Impossible de mettre à jour le profile. Erreur :",
 	"BACK_PROFILE_REQ_VERIF_MAIL": "Non authentifié",
+
 	"BACK_API_MENU_LABEL_DEVICES": "Mes appareils",
 	"BACK_API_MENU_LABEL_SETTINGS": "Réglages",
+
 	"API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
 	"API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe",
 	"API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé",
 	"API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé",
+
 	"API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
 	"API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Merci d'envoyer un email valide",
 	"API_PASSWORD_RECOVER_USER_NOT_FOUND": "Utilisateur inconnu",
+
 	"API_INFO_NO_TOKEN": "Aucun token fourni.",
+
 	"API_VERIF_MAIL_NOT_AUTH": "Non authentifié",
 	"API_VERIF_MAIL_SENT": "email envoyé",
+
 	"API_PROFILE_AUTH_FAIL": "Echec de l'authentification. Profil de l'utilisateur inconnu.",
 	"API_PROFILE_FIRSTNAME_INVALIDE": "le prénom n'a pas un format valide",
 	"API_PROFILE_LASTNAME_INVALIDE": "le nom n'a pas un format valide",
@@ -283,7 +320,8 @@
 	"API_PROFILE_VALIDATION_ERRORS": "Il y a des erreurs :",
 	"API_PROFILE_SUCCESS": "Profil utilisateur mi à jour.",
 	"API_PROFILE_FAIL": "Impossible de mettre à jour le profil. Erreur :",
+
 	"API_ERROR": "Oops, une erreur s'est produite :",
 	"API_INCORRECT_LOGIN_OR_PASS": "Nom d'utilisateur ou mot de passe incorrect",
-	"FBERROR": "FBERROR"
+    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Le mot de passe ne respecte pas les règles de sécurité"
 }

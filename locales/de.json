@@ -326,6 +326,6 @@
 	"API_PROFILE_FAIL": "Kann nicht user_profile aktualisieren. Err:",
 
 	"API_ERROR": "Ups! Irgendwas lief schief:",
-	"API_INCORRECT_LOGIN_OR_PASS": "Der Benutzername oder das Passwort ist falsch"
-
+	"API_INCORRECT_LOGIN_OR_PASS": "Der Benutzername oder das Passwort ist falsch",
+    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Das Passwort respektiert die Sicherheitsregeln nicht"
 }
