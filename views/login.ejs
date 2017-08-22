@@ -44,8 +44,13 @@
                         <div class="row social">
                             <% if(config.identity_providers.googleplus.enabled) { %>
                             <div class="text-center">
-                                <img class="login-images" src="/assets/img/logoroundg+.svg"/>
-                                <p class="login-social-labels"><%= __('LOGIN_GOOGLE_PLUS_BUTTON') %></p>
+                                <a href="<%= link('/auth/facebook') %>"
+                                   class="identity_provider googleplus">
+                                    <img class="login-images" src="/assets/img/logoroundg+.svg"/>
+                                    <p class="login-social-labels">
+                                        <%= __('LOGIN_GOOGLE_PLUS_BUTTON') %>
+                                    </p>
+                                </a>
                             </div>
                             <% } %>
                             <% if(config.identity_providers.facebook.enabled) { %>

@@ -82,6 +82,7 @@
     "chai-jquery": "^2.0.0",
     "cheerio": "~0.13.1",
     "mocha": "~1.15.1",
+    "passport-google-plus": "^0.5.1",
     "sinon": "~1.7.3",
     "sinon-chai": "~2.4.0",
     "sqlite3": "~3.1.3",

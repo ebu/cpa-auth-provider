@@ -7,26 +7,80 @@ var requestHelper = require('../../lib/request-helper');
 var passport = require('passport');
 var GooglePlusStrategy = require('passport-google-plus');
 
+function findOrCreateExternalUser(email, defaults) {
+    return new Promise(function (resolve, reject) {
+        db.User.find(
+            {
+                where: {
+                    email: email
+                }
+            }
+        ).then(
+            function (user) {
+                if (!user) {
+                    return db.User.findOrCreate(
+                        {
+                            where: {
+                                email: email
+                            },
+                            defaults: defaults
+                        }
+                    ).spread(
+                        function (user, created) {
+                            return resolve(user);
+                        }
+                    ).catch(reject);
+                }
+                if (!user.verified) {
+                    return resolve(false);
+                }
+                if(user.display_name) {
+                    defaults.display_name = user.display_name;
+                }
+                return user.updateAttributes(
+                    defaults
+                ).then(resolve, reject);
+            },
+            reject
+        );
+    });
+}
+
 passport.use(new GooglePlusStrategy({
         clientId: config.identity_providers.googleplus.client_id,
         clientSecret: config.identity_providers.googleplus.client_secret
     },
     function (accessToken, refreshToken, profile, done) {
-        var photo_url = (profile.photos.length > 0) ? profile.photos[0].value : null;
-        db.User.findOrCreate({
-            where: {
-                provider_uid: "fb:" + profile.id,
+        var email = '';
+        if (profile.emails !== undefined) {
+            email = profile.emails[0].value;
+        }
+
+        if (email === '') {
+            return done(new Error('NO_EMAIL', null));
+        }
+
+        var providerUid = 'gp:' + profile.id;
+
+        return findOrCreateExternalUser(
+            email,
+            {
+                provider_uid: providerUid,
                 display_name: profile.displayName,
-                photo_url: photo_url
+                verified: true
             }
-        }).spread(function (user) {
-            user.logLogin().then(function () {
-            }, function () {
-            });
-            return done(null, user);
-        }).catch(function (err) {
-            done(err, null);
-        });
+        ).then(
+            function (u) {
+                if (u) {
+                    u.logLogin();
+                }
+                return done(null, u);
+            }
+        ).catch(
+            function (err) {
+                done(err);
+            }
+        );
     }
 ));
 
