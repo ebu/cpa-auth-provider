@@ -71,7 +71,7 @@ nav.navbar {
     color: #fff;
 }
 
-.btn-primary:hover, .btn-primary.active, .btn-primary:focus {
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus, .btn-primary:active:focus {
     background-color: #ffab00;
     border-color: #f69d6e;
     color: #fff;
