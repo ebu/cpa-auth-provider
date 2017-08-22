@@ -590,7 +590,7 @@ describe('OAuth2 requests from cross domain without access token', function () {
     });
 
     it('should return an error', function () {
-        expect(this.res.statusCode).equal(401);
+        expect(this.res.statusCode).to.be.within(400, 401);
     });
 
 });

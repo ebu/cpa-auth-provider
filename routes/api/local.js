@@ -10,7 +10,8 @@ var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 
 var jwt = require('jwt-simple');
-var JwtStrategy = require('passport-jwt').Strategy;
+var JwtStrategy = require('passport-jwt').Strategy,
+    ExtractJwt = require('passport-jwt').ExtractJwt;
 var cors = require('../../lib/cors');
 
 var emailHelper = require('../../lib/email-helper');
@@ -25,7 +26,10 @@ var i18n = require('i18n');
 recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
 var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
 opts.secretOrKey = config.jwtSecret;
+// opts.issuer = "accounts.examplesoft.com";
+// opts.audience = "yoursite.net";
 passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
     if (!jwt_payload) {
         done(null, false);
