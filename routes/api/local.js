@@ -17,6 +17,7 @@ var cors = require('../../lib/cors');
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
 var permissionName = require('../../lib/permission-name');
+var passwordHelper = require('../../lib/password-helper');
 
 var codeHelper = require('../../lib/code-helper');
 
@@ -48,7 +49,7 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
 
 module.exports = function (app, options) {
     app.post('/api/local/signup', cors, recaptcha.middleware.verify, function (req, res) {
-        
+
         if (req.recaptcha.error) {
             res.json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
             return;
@@ -57,6 +58,9 @@ module.exports = function (app, options) {
         if (!req.body.email || !req.body.password) {
             res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
+            if (!passwordHelper.isStrong(req.body.password)) {
+                return res.status(400).json({success: false, msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+            }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {

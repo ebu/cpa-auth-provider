@@ -248,9 +248,19 @@
 	"VERIFY_MAIN_ALLOW_BUTTON": "Zulassen",
 	"VERIFY_MAIN_DENY_BUTTON": "Verweigern",
 
+	"BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Passwort respektiert unsere Sicherheitsregeln nicht",
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASS": "falsche Email oder Passwort",
 	"BACK_SIGNUP_EMAIL_TAKEN": "Diese eMail ist bereits vergeben",
 	"BACK_SIGNUP_PB_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
+	"BACK_SIGNUP_PASS_STRENGTH": "The password you provide is not strength enough:",
+	"BACK_SIGNUP_PASS_STRENGTH_0": "The password must be at least 10 characters long.",
+	"BACK_SIGNUP_PASS_STRENGTH_1": "The password must be fewer than 128 characters.",
+	"BACK_SIGNUP_PASS_STRENGTH_2": "The password may not contain sequences of three or more repeated characters.",
+	"BACK_SIGNUP_PASS_STRENGTH_3": "The password must contain at least one lowercase letter.",
+	"BACK_SIGNUP_PASS_STRENGTH_4": "The password must contain at least one uppercase letter.",
+	"BACK_SIGNUP_PASS_STRENGTH_5": "The password must contain at least one number.",
+	"BACK_SIGNUP_PASS_STRENGTH_6": "The password must contain at least one special character.",
+	"BACK_SIGNUP_PASS_STRENGTH": "The password you provide didn't pass the following tests:",
 	"BACK_SIGNUP_INVALID_EMAIL": "Ungültige E-Mail",
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD": "Ungültige E-Mail oder Passwort",
 	"BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "Benutzer nicht gefunden.",
@@ -272,7 +282,7 @@
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Feld 'Vorheriges Passwort' ist leer",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Das Feld 'Neues Passwort' ist leer",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Das Feld 'Passwort bestätigen' ist leer",
-	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Das Feld 'Neues Passwort' stimmt nicht mit dem Bestätigungskennwort überein",
+	"BACK_CHANGE_PWD_PASS_DONT_MATCH": "Passwörter stimmen nicht überein",
 
 	"BACK_INCORRECT_PREVIOUS_PASS": "Das vorherige Passwort ist falsch",
 	"BACK_USER_NOT_FOUND": "Benutzer nicht gefunden",
@@ -316,6 +326,6 @@
 	"API_PROFILE_FAIL": "Kann nicht user_profile aktualisieren. Err:",
 
 	"API_ERROR": "Ups! Irgendwas lief schief:",
-	"API_INCORRECT_LOGIN_OR_PASS": "Der Benutzername oder das Passwort ist falsch"
-
+	"API_INCORRECT_LOGIN_OR_PASS": "Der Benutzername oder das Passwort ist falsch",
+    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Das Passwort respektiert die Sicherheitsregeln nicht"
 }

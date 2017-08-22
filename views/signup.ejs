@@ -13,7 +13,7 @@
             <div class="row">
                 <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
 
-                    <!-- show any messages that come back with singup process -->
+                    <!-- show any messages that come back with signup process -->
                     <% if (message.length > 0) { %>
                     <div class="alert alert-danger"><%= message %></div>
                     <% } %>
@@ -30,11 +30,13 @@
                                        required>
                             </div>
                             <div class="form-group">
-                                <input id="password" type="password" class="form-control" name="password"
+                                <input id="password" type="password" class="form-control password-test" name="password"
                                        placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
+                                <p id="password-error-label" class="password-error error-message text-danger"></p>
+                                <div id="password-bar"><div id="password-progress"></div></div>
                             </div>
                             <div class="form-group">
-                                <input id="password2" type="password" class="form-control" name="password2"
+                                <input id="confirm_password" type="password" class="form-control" name="confirm_password"
                                        placeholder="<%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %>" required>
                             </div>
                         </div>
@@ -69,22 +71,8 @@
 
     </div>
 
-    <script>
-        var password = document.getElementById("password")
-            , confirm_password = document.getElementById("password2");
-
-        function validatePassword() {
-            if (password.value != confirm_password.value) {
-                confirm_password.setCustomValidity('<%= __('SIGNUP_JS_PASSWORD_MISSMATCH_MSG') %>');
-            } else {
-                confirm_password.setCustomValidity('');
-            }
-        }
-
-        password.onchange = validatePassword;
-        confirm_password.onkeyup = validatePassword;
-    </script>
-
 </div>
+
+<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/password.js"></script>
 
 <% include layout/foot %>

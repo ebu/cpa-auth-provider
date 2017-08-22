@@ -58,21 +58,21 @@ nav.navbar {
 }
 
 .btn-link {
-    color: #f56b6c;
+    color: #ff7043;
 }
 
 .btn-link:hover {
-    color: #f59b70;
+    color: #ffab00;
 }
 
 .btn-primary {
-    background-color: #f56b6c;
+    background-color: #ff7043;
     border-color: #ff7374;
     color: #fff;
 }
 
-.btn-primary:hover, .btn-primary.active, .btn-primary:focus {
-    background-color: #f59b70;
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus, .btn-primary:active:focus {
+    background-color: #ffab00;
     border-color: #f69d6e;
     color: #fff;
 }
@@ -84,6 +84,10 @@ nav.navbar {
 .btn.btn-large-submit {
     font-size: 1.4rem;
     padding: 10px;
+}
+
+.btn.btn-large-submit:focus {
+    outline: none;
 }
 
 form.connect-forms {
@@ -194,7 +198,7 @@ nav .lang ul.dropdown-menu {
 }
 
 nav .peach-title {
-    color: #f56b6c;
+    color: #ff7043;
     text-transform: capitalize;
     vertical-align: -4px;
 }
@@ -498,8 +502,39 @@ g-recaptcha {
 ************ CLIENT
 ************
 */
+
 #client .btn-group{
     display: flex;
+}
+
+/*
+************
+************ PASSWORD TESTING
+************
+*/
+
+#password-bar {
+    padding: 0 5px;
+    width: 100%;
+    height:2px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 10px 0 0 0;
+    position: relative;
+}
+
+#password-bar #password-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background-color: #ccc;
+    transition: width 0.5s;
+}
+
+.password-error {
+    margin-top: 5px;
 }
 
 /*
