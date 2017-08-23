@@ -1,6 +1,7 @@
 "use strict";
 
 var oauthToken = require('../../../lib/oauth2-token');
+var userDeletion = require('../../../lib/user-deletion');
 
 // Grant implicit authorization.  The callback takes the `client` requesting
 // authorization, the authenticated `user` granting access, and
@@ -10,7 +11,7 @@ var oauthToken = require('../../../lib/oauth2-token');
 
 exports.token = function (client, user, ares, done) {
 	try {
-		var accessToken;
+		var accessToken, extras;
 		oauthToken.generateAccessToken(client, user).then(
 			function(_accessToken) {
 				accessToken = _accessToken;
@@ -18,7 +19,15 @@ exports.token = function (client, user, ares, done) {
 			}
 		).then(
 			function(_extras) {
-                return done(null, accessToken, _extras);
+				extras = _extras;
+                return userDeletion.cancelDeletion(user, client);
+            }
+        ).then(
+            function (deletionCancelled) {
+                if (deletionCancelled) {
+                    extras['deletion_cancelled'] = true;
+                }
+                return done(null, accessToken, extras);
 			}
 		).catch(
 			function(e) {

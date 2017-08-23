@@ -4,6 +4,7 @@ var db = require('../../../models');
 var oauthToken = require('../../../lib/oauth2-token');
 var TokenError = require('oauth2orize').TokenError;
 var logger = require('../../../lib/logger');
+var userDeletion = require('../../../lib/user-deletion');
 
 var USER_NOT_FOUND = oauthToken.ERRORS.USER_NOT_FOUND;
 var WRONG_PASSWORD = oauthToken.ERRORS.WRONG_PASSWORD;
@@ -67,6 +68,13 @@ function provideAccessToken(client, user, extraArgs, done) {
     ).then(
         function (_extras) {
             extras = _extras;
+            return userDeletion.cancelDeletion(user, client);
+        }
+    ).then(
+        function (deletionCancelled) {
+            if (deletionCancelled) {
+                extras['deletion_cancelled'] = true;
+            }
             return done(null, accessToken, refreshToken, extras);
         }
     ).catch(

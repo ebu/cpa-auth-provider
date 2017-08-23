@@ -29,7 +29,7 @@ module.exports = function (sequelize, DataTypes) {
             logLogin: function (transaction) {
                 var self = this;
                 return self.updateAttributes(
-                    {last_login_at: Date.now(), scheduled_for_deletion_at: null},
+                    {last_login_at: Date.now()},
                     {transaction: transaction}
                 );
             },
