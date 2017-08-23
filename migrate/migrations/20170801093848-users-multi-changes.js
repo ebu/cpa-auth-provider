@@ -70,8 +70,16 @@ module.exports = {
                     }
                 ).then(
                     function () {
-                        return queryInterface.sequelize.query(
-                            'ALTER TABLE "Users" DROP CONSTRAINT "email_unique_idx";'
+                        return new Promise(
+                            function(resolve, reject) {
+                                queryInterface.sequelize.query(
+                                    'ALTER TABLE "Users" DROP CONSTRAINT "email_unique_idx";'
+                                ).then(
+                                    resolve
+                                ).catch(
+                                    resolve
+                                );
+                            }
                         );
                     }
                 ).then(

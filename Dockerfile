@@ -15,8 +15,8 @@ ADD passport-openam /src/passport-openam
 RUN yarn install
 
 
-ADD migrations_config.js /src/migrations_config.js
-ADD migrations /src/migrations
+ADD .sequelizerc /src/.sequelizerc
+ADD migrate /src/migrate
 RUN mkdir /src/seeders
 
 # Add other application files
@@ -54,4 +54,4 @@ RUN mkdir data
 # By default, the application listens for HTTP on port 3000
 EXPOSE 3000
 
-CMD sequelize db:migrate --config migrations_config.js && bin/server
+CMD sequelize db:migrate && bin/server
