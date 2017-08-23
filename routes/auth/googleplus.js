@@ -5,10 +5,10 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
 var passport = require('passport');
-var GooglePlusStrategy = require('passport-google-plus');
+var GooglePlusStrategy = require('passport-google-oauth20');
 
 passport.use(new GooglePlusStrategy({
-        clientId: config.identity_providers.googleplus.client_id,
+        clientID: config.identity_providers.googleplus.client_id,
         clientSecret: config.identity_providers.googleplus.client_secret
     },
     function (accessToken, refreshToken, profile, done) {
