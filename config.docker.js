@@ -23,20 +23,20 @@ module.exports = {
         },
         openam: {
             enabled: ('true' == process.env.OPEN_AM_ENABLED),
-            callback_url: 'https://cpa.rts.ch/auth/openam/callback',
-            service_url:'https://sso.rts.ch/'
+            callback_url: process.env.BASE_URL + '/auth/openam/callback',
+            service_url: process.env.OPEN_AM_SERVICE_URL
         },
         facebook: {
             enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
             client_id: process.env.FACEBOOK_LOGIN_ID,
             client_secret: process.env.FACEBOOK_LOGIN_SECRET,
-            callback_url: 'https://cpa.rts.ch/auth/facebook/callback'
+            callback_url: process.env.BASE_URL + '/auth/facebook/callback'
         },
         googleplus: {
             enabled: false,
             client_id: process.env.GOOGLE_LOGIN_ID,
             client_secret: process.env.GOOGLE_LOGIN_SECRET,
-            callback_url: 'https://cpa.rts.ch/auth/google/callback'
+            callback_url: process.env.BASE_URL + '/auth/google/callback'
         },
         twitter: {
             enabled: false,
