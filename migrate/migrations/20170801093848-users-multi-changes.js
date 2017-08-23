@@ -84,7 +84,13 @@ module.exports = {
                     }
                 ).then(
                     function () {
-                        return queryInterface.removeIndex('Users', 'email_unique_idx');
+                        return new Promise(
+                            function(resolve,reject) {
+                                queryInterface.removeIndex('Users', 'email_unique_idx').then(
+                                    resolve, resolve
+                                );
+                            }
+                        );
                     }
                 ).then(
                     resolve

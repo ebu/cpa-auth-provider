@@ -26,13 +26,7 @@ module.exports = {
                 "verification_uri": {
                     "type": Sequelize.STRING(255)
                 },
-                "state": {
-                    "type": Sequelize.TEXT,
-                    "validate": {
-                        "notEmpty": true
-                    },
-                    "defaultValue": "pending"
-                },
+                "state": Sequelize.ENUM('pending', 'verified', 'denied'),
                 "created_at": {
                     "type": Sequelize.DATE,
                     "allowNull": false

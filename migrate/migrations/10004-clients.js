@@ -47,13 +47,7 @@ module.exports = {
                         "isIP": true
                     }
                 },
-                "registration_type": {
-                    "type": Sequelize.TEXT,
-                    "validate": {
-                        "notEmpty": true
-                    },
-                    "defaultValue": "dynamic"
-                },
+                "registration_type": Sequelize.ENUM('dynamic','static'),
                 "redirect_uri": {
                     "type": Sequelize.STRING(255),
                     "allowNull": true
