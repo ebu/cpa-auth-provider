@@ -5,7 +5,7 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
 var passport = require('passport');
-var GooglePlusStrategy = require('passport-google-plus');
+var GooglePlusStrategy = require('passport-google-oauth20');
 
 function findOrCreateExternalUser(email, defaults) {
     return new Promise(function (resolve, reject) {
@@ -47,10 +47,14 @@ function findOrCreateExternalUser(email, defaults) {
 }
 
 passport.use(new GooglePlusStrategy({
-        clientId: config.identity_providers.googleplus.client_id,
-        clientSecret: config.identity_providers.googleplus.client_secret
+        clientID: config.identity_providers.googleplus.client_id,
+        clientSecret: config.identity_providers.googleplus.client_secret,
+        callbackURL: config.identity_providers.googleplus.callback_url
     },
     function (accessToken, refreshToken, profile, done) {
+        console.log("accessToken", accessToken);
+        console.log("refreshToken", refreshToken);
+        console.log("profile", profile);
         var email = '';
         if (profile.emails !== undefined) {
             email = profile.emails[0].value;
@@ -95,9 +99,9 @@ passport.use(new GooglePlusStrategy({
 // ));
 
 module.exports = function (app, options) {
-    app.get('/auth/googleplus', passport.authenticate('facebook'));
+    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
-    app.get('/auth/googleplus/callback', passport.authenticate('facebook', {
+    app.get('/auth/google/callback', passport.authenticate('google', {
         failureRedirect: '/?error=login_failed'
     }), function (req, res, next) {
 
