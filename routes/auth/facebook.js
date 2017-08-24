@@ -3,6 +3,7 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
+var callbackHelper = require('../../lib/callback-helper');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -49,7 +50,7 @@ function findOrCreateExternalUser(email, defaults) {
 passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
         clientSecret: config.identity_providers.facebook.client_secret,
-        callbackURL: config.identity_providers.facebook.callback_url,
+        callbackURL: callbackHelper.getURL("facebook"),
         profileFields: ['id', 'emails', 'displayName']
     },
     function (accessToken, refreshToken, profile, done) {

@@ -2,11 +2,14 @@
 var db = require('../../models/index');
 var rtsConfig = require('../../config.js').identity_providers.openam;
 var passport = require('passport');
+var callbackHelper = require('../../lib/callback-helper');
+
 var OpenAMStrategy = require('passport-openam').Strategy;
+
 passport.use(new OpenAMStrategy(
     {
         openAmBaseUrl: rtsConfig.service_url,
-        callbackUrl: rtsConfig.callback_url,
+        callbackUrl: callbackHelper.getURL("openam"),
         issuer: 'passport-openam'
     },
     function (token, profile, done) {
@@ -37,6 +40,6 @@ module.exports = function (app, options) {
     });
     app.get('/auth/openam/logout', function (req, res) {
         req.logout();
-        res.redirect('https://sso.rts.ch/sso/UI/Logout');
+        res.redirect(rtsConfig.service_url + '/sso/UI/Logout');
     });
 };
