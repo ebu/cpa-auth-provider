@@ -11,11 +11,20 @@ describe(
         context(
             'with empty prefix',
             function () {
+                var oldPrefix, oldUrl;
                 before(
                     function (done) {
+                        oldUrl = config.baseUrl;
+                        oldPrefix = config.urlPrefix;
                         config.baseUrl = HOST;
                         config.urlPrefix = '';
                         done();
+                    }
+                );
+                after(
+                    function () {
+                        config.baseUrl = oldUrl;
+                        config.urlPrefix = oldPrefix;
                     }
                 );
 
@@ -37,12 +46,21 @@ describe(
 
         context(
             'with prefix',
-            function() {
+            function () {
+                var oldPrefix, oldUrl;
                 before(
-                    function(done) {
+                    function (done) {
+                        oldUrl = config.baseUrl;
+                        oldPrefix = config.urlPrefix;
                         config.baseUrl = HOST;
                         config.urlPrefix = PREFIX;
                         done();
+                    }
+                );
+                after(
+                    function () {
+                        config.baseUrl = oldUrl;
+                        config.urlPrefix = oldPrefix;
                     }
                 );
 
@@ -64,12 +82,21 @@ describe(
 
         context(
             'with / at end of host and prefix',
-            function() {
+            function () {
+                var oldPrefix, oldUrl;
                 before(
-                    function(done) {
+                    function (done) {
+                        oldUrl = config.baseUrl;
+                        oldPrefix = config.urlPrefix;
                         config.baseUrl = HOST + '/';
                         config.urlPrefix = PREFIX + '/';
                         done();
+                    }
+                );
+                after(
+                    function () {
+                        config.baseUrl = oldUrl;
+                        config.urlPrefix = oldPrefix;
                     }
                 );
 
