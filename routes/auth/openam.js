@@ -9,7 +9,7 @@ var OpenAMStrategy = require('passport-openam').Strategy;
 passport.use(new OpenAMStrategy(
     {
         openAmBaseUrl: rtsConfig.service_url,
-        callbackUrl: callbackHelper.getURL("openam"),
+        callbackUrl: callbackHelper.getURL("/auth/openam/callback"),
         issuer: 'passport-openam'
     },
     function (token, profile, done) {

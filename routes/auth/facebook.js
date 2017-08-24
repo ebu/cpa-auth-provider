@@ -50,7 +50,7 @@ function findOrCreateExternalUser(email, defaults) {
 passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
         clientSecret: config.identity_providers.facebook.client_secret,
-        callbackURL: callbackHelper.getURL("facebook"),
+        callbackURL: callbackHelper.getURL('/auth/facebook/callback'),
         profileFields: ['id', 'emails', 'displayName']
     },
     function (accessToken, refreshToken, profile, done) {
