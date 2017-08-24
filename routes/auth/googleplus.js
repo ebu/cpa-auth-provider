@@ -34,7 +34,7 @@ function findOrCreateExternalUser(email, defaults) {
                 if (!user.verified) {
                     return resolve(false);
                 }
-                if(user.display_name) {
+                if (user.display_name) {
                     defaults.display_name = user.display_name;
                 }
                 return user.updateAttributes(
@@ -52,9 +52,6 @@ passport.use(new GooglePlusStrategy({
         callbackURL: config.identity_providers.googleplus.callback_url
     },
     function (accessToken, refreshToken, profile, done) {
-        console.log("accessToken", accessToken);
-        console.log("refreshToken", refreshToken);
-        console.log("profile", profile);
         var email = '';
         if (profile.emails !== undefined) {
             email = profile.emails[0].value;
@@ -64,7 +61,7 @@ passport.use(new GooglePlusStrategy({
             return done(new Error('NO_EMAIL', null));
         }
 
-        var providerUid = 'gp:' + profile.id;
+        var providerUid = 'google:' + profile.id;
 
         return findOrCreateExternalUser(
             email,
@@ -88,22 +85,10 @@ passport.use(new GooglePlusStrategy({
     }
 ));
 
-// passport.use(new GooglePlusStrategy({
-//         clientId: 'YOUR_CLIENT_ID',
-//         clientSecret: 'YOUR_CLIENT_SECRET'
-//     },
-//     function(tokens, profile, done) {
-//         // Create or update user, call done() when complete...
-//         done(null, profile, tokens);
-//     }
-// ));
-
 module.exports = function (app, options) {
-    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+    app.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 
-    app.get('/auth/google/callback', passport.authenticate('google', {
-        failureRedirect: '/?error=login_failed'
-    }), function (req, res, next) {
+    app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED'}), function (req, res) {
 
         var redirectUri = req.session.auth_origin;
         delete req.session.auth_origin;
