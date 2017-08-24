@@ -4,9 +4,9 @@ describe(
         var callbackHelper = require('../../lib/callback-helper');
         var config = require('../../config');
 
-        const HOST = 'http://www.test.super.de:3456';
-        const PATH = 'my/path';
-        const PREFIX = 'test';
+        var HOST = 'http://www.test.super.de:3456';
+        var PATH = 'my/path';
+        var PREFIX = 'test';
 
         context(
             'with empty prefix',
