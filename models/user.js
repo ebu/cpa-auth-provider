@@ -50,6 +50,13 @@ module.exports = function (sequelize, DataTypes) {
                     return true;
                 }
                 return false;
+            },
+            isGoogleUser: function () {
+                var self = this;
+                if(self.provider_uid && self.provider_uid.indexOf('google:') !== -1) {
+                    return true;
+                }
+                return false;
             }
         },
         associate: function (models) {

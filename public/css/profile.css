@@ -85,7 +85,15 @@
     color: #4267b2;
 }
 
-#profile .providers-container .facebook-text + span {
+#profile .providers-container .google-text {
+    display: inline-block;
+    font-size: 18px;
+    color: #e42c11;
+}
+
+#profile .providers-container .facebook-text + span,
+#profile .providers-container .google-text + span,
+#profile .providers-container .twitter-text + span{
     padding-left: 10px;
 }
 
