@@ -43,7 +43,13 @@ Edit `config.local.js` to set the necessary configuration options:
 
 ## Initialise the database
 
-    $ NODE_ENV=development bin/init-db
+Configure the database parameters also in `migrate/migrations_config.js`.
+If you use a docker, this will all happen automatically.
+
+    $ npm install -g sequelize-cli
+    $ sequelize db:migrate
+    
+If you want some default values, also run `bin/prep-db`.
 
 ## Start the server
 
@@ -78,6 +84,14 @@ To run the unit tests:
 To generate a test coverage report (in the `coverage` directory);
 
     $ make coverage
+    
+Empty migrations can be created (once sequelize-cli is installed):
+
+    $ sequelize migration:create
+
+New models can be added (once sequelize-cli is installed):
+
+    $ sequelize model:create --name User --attributes 'name:string, email:string'
 
 ## Related projects
 
