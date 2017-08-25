@@ -646,6 +646,7 @@ describe('POST /verify', function () {
                         self.clock.restore();
                         // The pairing code should expire one hour after it was created
                         var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
+                        self.clock.restore();
                         self.clock = sinon.useFakeTimers(time);
 
                         done();

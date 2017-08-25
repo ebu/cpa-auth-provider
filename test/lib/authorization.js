@@ -254,6 +254,7 @@ describe("POST /authorized", function () {
             resetDatabase(function () {
                 // The access token should expire 30 days after it was created
                 var time = new Date("Fri May 09 2014 11:00:00 GMT+0100").getTime();
+                self.clock.restore();
                 self.clock = sinon.useFakeTimers(time);
 
                 done();

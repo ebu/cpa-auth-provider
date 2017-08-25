@@ -93,6 +93,10 @@ describe('user profile timestamps', function () {
             );
         });
 
+        after(function () {
+            this.clock.restore();
+        });
+
         before(function (done) {
             var self = this;
             requestHelper.sendRequest(
