@@ -36,9 +36,9 @@ function buildResponse(user) {
     };
 }
 
-function performFacebookLogin(appName, profile, fbAccessToken, done) {
+function performFacebookLogin(profile, fbAccessToken, done) {
 
-    if (appName && profile && fbAccessToken) {
+    if (profile && fbAccessToken) {
 
         db.User.findOne({ where: {provider_uid: profile.provider_uid} }).then( function(me){
             if(me) {
@@ -74,8 +74,7 @@ function performFacebookLogin(appName, profile, fbAccessToken, done) {
 module.exports = function (app, options) {
     app.post('/api/facebook/signup', cors, function (req, res) {
         var facebookAccessToken = req.body.fbToken;
-        var applicationName = req.body.appName;
-        if (facebookAccessToken && facebookAccessToken.length > 0 && applicationName && applicationName.length > 0) {
+        if (facebookAccessToken && facebookAccessToken.length > 0) {
             // Get back user object from Facebook
             verifyFacebookUserAccessToken(facebookAccessToken, function (err, user) {
                 if (user) {

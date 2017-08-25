@@ -106,4 +106,3 @@ function buildResponse(user) {
         token: token
     };
 }
-
