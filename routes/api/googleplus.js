@@ -7,7 +7,7 @@ var jwtHelper = require('../../lib/jwt-helper');
 var cors = require('../../lib/cors');
 
 var GoogleAuth = require('google-auth-library');
-var auth = new GoogleAuth;
+var auth = new GoogleAuth();
 var client = new auth.OAuth2(config.identity_providers.googleplus.client_id, '', '');
 
 module.exports = function (app, options) {
@@ -54,9 +54,9 @@ function verifyGoogleIdToken(token, done) {
 
         if(data) {
             var user = {
-                provider_uid: "google:" + data['sub'],
-                display_name: data['name'],
-                email: data['email']
+                provider_uid: "google:" + data.sub,
+                display_name: data.name,
+                email: data.email
             };
             return done(null, user);
         }

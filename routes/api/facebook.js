@@ -86,7 +86,7 @@ module.exports = function (app, options) {
                         }
                     }).then(function (userInDb) {
                         if (!userInDb || userInDb.verified) {
-                            performFacebookLogin(applicationName, user, facebookAccessToken, function (error, response) {
+                            performFacebookLogin(user, facebookAccessToken, function (error, response) {
                                 if (response) {
                                     res.status(200).json(response);
                                 } else {
