@@ -13,7 +13,7 @@ var db = require('../models');
 
 var EMAIL = '--email=';
 
-var username = undefined;
+var username;
 for (var i in process.argv) {
     if (process.argv[i].startsWith(EMAIL)) {
         username = process.argv[i].slice(EMAIL.length);
