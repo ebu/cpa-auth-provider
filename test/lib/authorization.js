@@ -249,12 +249,12 @@ describe("POST /authorized", function () {
 
             // Set creation time of the pairing code
             var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-            this.clock = sinon.useFakeTimers(time, "Date");
+            this.clock = sinon.useFakeTimers(time);
 
             resetDatabase(function () {
                 // The access token should expire 30 days after it was created
                 var time = new Date("Fri May 09 2014 11:00:00 GMT+0100").getTime();
-                self.clock = sinon.useFakeTimers(time, "Date");
+                self.clock = sinon.useFakeTimers(time);
 
                 done();
             });

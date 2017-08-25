@@ -181,7 +181,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {
@@ -278,7 +278,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {
@@ -375,7 +375,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has expired
                     var time = new Date("Sat May 31 2014 11:00:00 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {
@@ -448,7 +448,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {
@@ -508,7 +508,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {

@@ -15,6 +15,7 @@ var chaiHttp = require('chai-http');
 var bcrypt = require('bcrypt');
 
 chai.use(chaiHttp);
+chai.Assertion.addProperty('visible', require('chai-visible'));
 
 var initDatabase = function (done) {
     db.Permission
@@ -430,11 +431,6 @@ describe('GET /admin/users', function () {
             expect(this.$('table > tbody > tr').length).to.equal(2);
         });
 
-        it('should show the right text and buttons for admin and user', function () {
-            expect(this.$('#user-5 .admin-text')).to.be.visible;
-            expect(this.$('#user-6 .admin-text')).to.be.hidden;
-        });
-
     });
 
     context('When the user is not authenticated', function () {
@@ -447,7 +443,7 @@ describe('GET /admin/users/csv', function () {
     var self = this;
 
     before(function () {
-        self.clock = sinon.useFakeTimers(new Date("Jan 29 2017 11:11:00 GMT+0000").getTime(), "Date");
+        self.clock = sinon.useFakeTimers(new Date("Jan 29 2017 11:11:00 GMT+0000").getTime());
     });
     after(function () {
         self.clock.restore();
@@ -567,8 +563,8 @@ describe('GET /api/admin/clients', function () {
             expect(res[0].id).to.equal(1);
             expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
             expect(res[0].client_secret).to.be.undefined;
-            expect(res[0].created_at).to.be.defined;
-            expect(res[0].updated_at).to.be.defined;
+            expect(res[0].created_at).not.undefined;
+            expect(res[0].updated_at).not.undefined;
             expect(res[0].name).to.equal("OAuth 2.0 Client");
         });
 
@@ -643,8 +639,8 @@ describe('GET /api/admin/clients/id', function () {
             expect(res.id).to.equal(1);
             expect(res.client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
             expect(res.client_secret).to.be.undefined;
-            expect(res.created_at).to.be.defined;
-            expect(res.updated_at).to.be.defined;
+            expect(res.created_at).not.undefined;
+            expect(res.updated_at).not.undefined;
             expect(res.name).to.equal("OAuth 2.0 Client");
         });
 
@@ -772,8 +768,8 @@ describe('DELETE /api/admin/clients/id', function () {
             expect(res[0].id).to.equal(1);
             expect(res[0].client_id).to.equal("db05acb0c6ed902e5a5b7f5ab79e7144");
             expect(res[0].client_secret).to.be.undefined;
-            expect(res[0].created_at).to.be.defined;
-            expect(res[0].updated_at).to.be.defined;
+            expect(res[0].created_at).not.undefined;
+            expect(res[0].updated_at).not.undefined;
             expect(res[0].name).to.equal("OAuth 2.0 Client");
             expect(res.length).to.equal(1);
         });
@@ -826,8 +822,8 @@ describe('POST /api/admin/clients', function () {
             expect(res[0].client_id.length).to.equal(16);
             expect(res[0].name).to.equal("OAuth 2.0 Client");
             expect(res[0].client_secret).to.be.undefined;
-            expect(res[0].created_at).to.be.defined;
-            expect(res[0].updated_at).to.be.defined;
+            expect(res[0].created_at).not.undefined;
+            expect(res[0].updated_at).not.undefined;
             expect(self.clientsInDb[0].client_secret.length).to.equal(60);
         });
     });
@@ -888,8 +884,8 @@ describe('POST /api/admin/clients', function () {
             expect(res[0].name).to.equal("bbb");
             expect(res[0].client_secret).to.be.undefined;
             expect(res[0].client_id.length).to.equal(16);
-            expect(res[0].created_at).to.be.defined;
-            expect(res[0].updated_at).to.be.defined;
+            expect(res[0].created_at).not.undefined;
+            expect(res[0].updated_at).not.undefined;
             expect(self.clientsInDb[0].client_secret.length).to.equal(60);
 
         });

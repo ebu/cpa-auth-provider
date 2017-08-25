@@ -22,7 +22,7 @@ describe('user profile timestamps', function () {
     context('account creation', function () {
         before(function (done) {
             var time = new Date("Wed Jan 29 2017 05:17:00 GMT+0000").getTime();
-            this.clock = sinon.useFakeTimers(time, "Date");
+            this.clock = sinon.useFakeTimers(time);
 
             this.start_at = Date.now();
             done();
@@ -57,7 +57,7 @@ describe('user profile timestamps', function () {
         before(function (done) {
             var self = this;
             this.clock.restore();
-            this.clock = sinon.useFakeTimers(new Date("Wed Feb 01 2017 11:42:00 GMT+0000").getTime(), "Date");
+            this.clock = sinon.useFakeTimers(new Date("Wed Feb 01 2017 11:42:00 GMT+0000").getTime());
             this.login_at = Date.now();
             requestHelper.sendRequest(
                 self,
@@ -78,7 +78,7 @@ describe('user profile timestamps', function () {
         before(function (done) {
             var self = this;
             this.clock.restore();
-            this.clock = sinon.useFakeTimers(new Date("Wed Feb 08 2017 15:37:00 GMT+0000").getTime(), "Date");
+            this.clock = sinon.useFakeTimers(new Date("Wed Feb 08 2017 15:37:00 GMT+0000").getTime());
             this.change_at = Date.now();
             db.User.findOne({where: {email: TEST_EMAIL_0}}).then(
                 function (user) {

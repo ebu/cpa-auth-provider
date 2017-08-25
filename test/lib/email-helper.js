@@ -91,6 +91,6 @@ describe("emailHelper test templating", function () {
 
 describe("broadcaster config", function () {
     it("should contains mail.form", function () {
-        expect(config.mail.from).defined;
+        expect(config.mail.from).not.undefined;
     });
 });

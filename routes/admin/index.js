@@ -310,7 +310,7 @@ module.exports = function (router) {
             name: client.name,
             redirect_uri: client.redirect_uri,
             created_at: client.created_at,
-            udpated_at: client.udpated_at
+            updated_at: client.updated_at
 
         };
     }

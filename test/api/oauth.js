@@ -538,6 +538,7 @@ describe('OAuth2 requests from cross domain with access token', function () {
 
     before(function (done) {
         var self = this;
+        self.cookie = null;
         requestHelper.sendRequest(this, '/oauth2/session/cookie/request', {
             method: 'post',
             data: {
