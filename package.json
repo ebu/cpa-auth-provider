@@ -40,6 +40,7 @@
     "express-recaptcha": "^2.1.0",
     "express-session": "~1.13.0",
     "express-validator": "^3.1.2",
+    "google-auth-library": "^0.10.0",
     "i18n": "^0.8.3",
     "jquery": "^3.1.1",
     "jquery-form": "^3.50.0",

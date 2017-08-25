@@ -2,7 +2,6 @@
 
 var db = require('../../models');
 var config = require('../../config');
-var requestHelper = require('../../lib/request-helper');
 var jwtHelper = require('../../lib/jwt-helper');
 var request = require('request');
 var jwt = require('jwt-simple');
@@ -80,13 +79,14 @@ module.exports = function (app, options) {
             // Get back user object from Facebook
             verifyFacebookUserAccessToken(facebookAccessToken, function (err, user) {
                 if (user) {
-                    // If the user already exists and his account is not validated (i.e.: there is a user in the database with the same id and this user email is not validated
+                    // If the user already exists and his account is not validated
+                    // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
                         where: {
                             email: user.email
                         }
-                    }).then(function (userInDb){
-                        if (!userInDb || userInDb.verified){
+                    }).then(function (userInDb) {
+                        if (!userInDb || userInDb.verified) {
                             performFacebookLogin(applicationName, user, facebookAccessToken, function (error, response) {
                                 if (response) {
                                     res.status(200).json(response);
@@ -94,7 +94,7 @@ module.exports = function (app, options) {
                                     res.status(500).json({error: error.message});
                                 }
                             });
-                        }  else {
+                        } else {
                             res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED")});
                         }
                     });
