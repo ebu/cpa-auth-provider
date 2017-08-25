@@ -6,6 +6,7 @@ variables:
 stages:
   - test
   - docker-publish
+  - docker-publish-prod
 
 npm_test:
   stage: test
@@ -23,7 +24,7 @@ docker_push:
     - docker:dind
   variables:
     DOCKER_DRIVER: overlay
-    CONTAINER_RELEASE_IMAGE: registry.ebu.io/pipe/identity-provider:develop
+    CONTAINER_RELEASE_IMAGE: registry.ebu.io/pipe/identity-provider:$CI_COMMIT_REF_NAME
   script:
     - docker build -t identity-provider .
     - docker login -u dind-runner -p $REGISTRY_PASSWORD registry.ebu.io
@@ -31,5 +32,26 @@ docker_push:
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - develop
+  tags:
+    - dind
+
+docker_push_prod:
+  stage: docker-publish-prod
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+    CONTAINER_RELEASE_IMAGE: registry.ebu.io/pipe/identity-provider:$CI_COMMIT_REF_NAME
+    CONTAINER_SHA_IMAGE: registry.ebu.io/pipe/identity-provider:$CI_COMMIT_SHA
+  script:
+    - docker build -t identity-provider .
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD registry.ebu.io
+    - docker tag identity-provider $CONTAINER_RELEASE_IMAGE
+    - docker tag identity-provider $CONTAINER_SHA_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_SHA_IMAGE
+  only:
+    - prod
   tags:
     - dind
