@@ -15,9 +15,9 @@ module.exports = function (app, options) {
 
         var googleIdToken = req.body.idToken;
 
-        if(googleIdToken && googleIdToken.length > 0) {
-            verifyGoogleIdToken(googleIdToken, function(error, user) {
-                if(!error && user) {
+        if (googleIdToken && googleIdToken.length > 0) {
+            verifyGoogleIdToken(googleIdToken, function (error, user) {
+                if (!error && user) {
                     // If the user already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
@@ -48,11 +48,11 @@ module.exports = function (app, options) {
 };
 
 function verifyGoogleIdToken(token, done) {
-    client.verifyIdToken(token, config.identity_providers.googleplus.client_id, function(e, login) {
+    client.verifyIdToken(token, config.identity_providers.googleplus.client_id, function (e, login) {
         var payload = login.getPayload();
         var data = payload;
 
-        if(data) {
+        if (data) {
             var user = {
                 provider_uid: "google:" + data.sub,
                 display_name: data.name,
@@ -67,8 +67,8 @@ function verifyGoogleIdToken(token, done) {
 function performGoogleLogin(profile, done) {
 
     if (profile) {
-        db.User.findOne({ where: {provider_uid: profile.provider_uid} }).then( function(me){
-            if(me) {
+        db.User.findOne({where: {provider_uid: profile.provider_uid}}).then(function (me) {
+            if (me) {
                 me.logLogin().then(function (user) {
                     return done(null, buildResponse(user));
                 }, function (error) {
@@ -92,7 +92,7 @@ function performGoogleLogin(profile, done) {
                 });
             }
 
-        }, function (error){
+        }, function (error) {
             return done(error, null);
         });
     }

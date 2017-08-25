@@ -7,70 +7,6 @@ var request = require('request');
 var jwt = require('jwt-simple');
 var cors = require('../../lib/cors');
 
-
-function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,name,email&access_token=' + token;
-    request(path, function (error, response, body) {
-        var data = JSON.parse(body);
-        if (!error && response && response.statusCode && response.statusCode === 200) {
-            var user = {
-                provider_uid: "fb:" + data.id,
-                display_name: data.name,
-                email: data.email
-            };
-            done(null, user);
-        }
-        else {
-            console.log(data.error);
-            done({code: response.statusCode, message: data.error.message}, null);
-        }
-    });
-}
-
-function buildResponse(user) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
-    return {
-        success: true,
-        user: user,
-        token: token
-    };
-}
-
-function performFacebookLogin(profile, fbAccessToken, done) {
-
-    if (profile && fbAccessToken) {
-
-        db.User.findOne({ where: {provider_uid: profile.provider_uid} }).then( function(me){
-            if(me) {
-                me.logLogin().then(function (user) {
-                    return done(null, buildResponse(user));
-                }, function (error) {
-                    return done(error, null);
-                });
-            } else {
-                db.User.findOrCreate({
-                    where: {
-                        provider_uid: profile.provider_uid,
-                        display_name: profile.name,
-                        email: profile.email
-                    }
-                }).spread(function (me) {
-                    me.logLogin().then(function (user) {
-                        return done(null, buildResponse(user));
-                    }, function (error) {
-                        return done(error, null);
-                    });
-                }).catch(function (err) {
-                    return done(err, null);
-                });
-            }
-
-        }, function (error){
-            return done(error, null);
-        });
-    }
-}
-
 module.exports = function (app, options) {
     app.post('/api/facebook/signup', cors, function (req, res) {
         var facebookAccessToken = req.body.fbToken;
@@ -114,4 +50,61 @@ module.exports = function (app, options) {
     });
 };
 
+function verifyFacebookUserAccessToken(token, done) {
+    var path = 'https://graph.facebook.com/me?fields=id,name,email&access_token=' + token;
+    request(path, function (error, response, body) {
+        var data = JSON.parse(body);
+        if (!error && response && response.statusCode && response.statusCode === 200) {
+            var user = {
+                provider_uid: "fb:" + data.id,
+                display_name: data.name,
+                email: data.email
+            };
+            done(null, user);
+        } else {
+            console.log(data.error);
+            done({code: response.statusCode, message: data.error.message}, null);
+        }
+    });
+}
 
+function buildResponse(user) {
+    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
+    return {
+        success: true,
+        user: user,
+        token: token
+    };
+}
+
+function performFacebookLogin(profile, fbAccessToken, done) {
+    if (profile && fbAccessToken) {
+        db.User.findOne({where: {provider_uid: profile.provider_uid}}).then(function (me) {
+            if (me) {
+                me.logLogin().then(function (user) {
+                    return done(null, buildResponse(user));
+                }, function (error) {
+                    return done(error, null);
+                });
+            } else {
+                db.User.findOrCreate({
+                    where: {
+                        provider_uid: profile.provider_uid,
+                        display_name: profile.name,
+                        email: profile.email
+                    }
+                }).spread(function (me) {
+                    me.logLogin().then(function (user) {
+                        return done(null, buildResponse(user));
+                    }, function (error) {
+                        return done(error, null);
+                    });
+                }).catch(function (err) {
+                    return done(err, null);
+                });
+            }
+        }, function (error) {
+            return done(error, null);
+        });
+    }
+}
