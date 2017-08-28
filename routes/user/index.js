@@ -44,7 +44,6 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
-                    console.log("USER PASSWORD", user.password);
                     var data = {
                         profile: {
                             firstname: profile.firstname,

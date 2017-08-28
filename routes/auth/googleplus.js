@@ -5,11 +5,11 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
 var passport = require('passport');
-var GooglePlusStrategy = require('passport-google-oauth20');
+var GoogleStrategy = require('passport-google-oauth20');
 
-passport.use(new GooglePlusStrategy({
-        clientID: config.identity_providers.googleplus.client_id,
-        clientSecret: config.identity_providers.googleplus.client_secret
+passport.use(new GoogleStrategy({
+        clientID: config.identity_providers.google.client_id,
+        clientSecret: config.identity_providers.google.client_secret
     },
     function (accessToken, refreshToken, profile, done) {
         var photo_url = (profile.photos.length > 0) ? profile.photos[0].value : null;

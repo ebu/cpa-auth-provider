@@ -28,12 +28,12 @@ module.exports = {
         facebook: {
             enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
             client_id: process.env.FACEBOOK_LOGIN_ID,
-            client_secret: process.env.FACEBOOK_LOGIN_SECRET,
+            client_secret: process.env.FACEBOOK_LOGIN_SECRET
         },
-        googleplus: {
+        google: {
             enabled: false,
             client_id: process.env.GOOGLE_LOGIN_ID,
-            client_secret: process.env.GOOGLE_LOGIN_SECRET,
+            client_secret: process.env.GOOGLE_LOGIN_SECRET
         },
         twitter: {
             enabled: false,

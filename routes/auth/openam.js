@@ -1,6 +1,6 @@
 "use strict";
 var db = require('../../models/index');
-var rtsConfig = require('../../config.js').identity_providers.openam;
+var openamConfig = require('../../config.js').identity_providers.openam;
 var passport = require('passport');
 var callbackHelper = require('../../lib/callback-helper');
 
@@ -8,7 +8,7 @@ var OpenAMStrategy = require('passport-openam').Strategy;
 
 passport.use(new OpenAMStrategy(
     {
-        openAmBaseUrl: rtsConfig.service_url,
+        openAmBaseUrl: openamConfig.service_url,
         callbackUrl: callbackHelper.getURL("/auth/openam/callback"),
         issuer: 'passport-openam'
     },
@@ -40,6 +40,6 @@ module.exports = function (app, options) {
     });
     app.get('/auth/openam/logout', function (req, res) {
         req.logout();
-        res.redirect(rtsConfig.service_url + '/sso/UI/Logout');
+        res.redirect(openamConfig.service_url + '/sso/UI/Logout');
     });
 };
