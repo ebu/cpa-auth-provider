@@ -40,10 +40,10 @@ var initDatabase = function (done) {
 
             .then(function () {
                 db.User.create({
-                    id: 5,
-                    email: 'testuser',
-                    provider_uid: 'testuser'
-                })
+                        id: 5,
+                        email: 'testuser',
+                        provider_uid: 'testuser'
+                    })
                     .then(function (user) {
                         return user.setPassword('testpassword');
                     })
@@ -676,7 +676,7 @@ describe('GET /api/admin/clients/:clientId/secret', function () {
     });
 
     before(function (done) {
-        db.OAuth2Client.findOne({id: 1}).then(
+        db.OAuth2Client.findOne({where: {id: 1}}).then(
             function (client) {
                 self.clientInDb = client;
                 done();

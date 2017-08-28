@@ -47,7 +47,7 @@ module.exports = function (router) {
 
     router.get('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findOne({
-            id: req.params.id
+            where: {id: req.params.id}
         }).then(
             function (client) {
                 if (client) {
@@ -162,7 +162,7 @@ module.exports = function (router) {
                                     {client_secret: hash}
                                 ).then(function () {
                                     // return generated token
-                                    res.json({'secret': secret, 'client_id' : client.client_id});
+                                    res.json({'secret': secret, 'client_id': client.client_id});
                                 });
                             },
                             function (err) {
