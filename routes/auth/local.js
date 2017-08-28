@@ -11,11 +11,13 @@ var util = require('util');
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
+var passwordHelper = require('../../lib/password-helper');
 
 var i18n = require('i18n');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
+
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
@@ -26,7 +28,7 @@ var localStrategyCallback = function (req, username, password, done) {
                     return;
                 }
 
-                if (user.isFacebookUser && ! user.password){
+                if (user.isFacebookUser && !user.password) {
                     done(null, false, req.flash('loginMessage', loginError));
                     return;
                 }
@@ -52,80 +54,93 @@ var localStrategyCallback = function (req, username, password, done) {
 
 var localSignupStrategyCallback = function (req, username, password, done) {
 
-    req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
-    req.getValidationResult().then(function (result) {
-        if (!result.isEmpty()) {
-            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_INVALID_EMAIL')));
-            return;
-        } else {
-            if (req.recaptcha.error) {
-                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
-                return;
-            }
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
-                    } else {
-                        db.sequelize.sync().then(function () {
-                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                var userParams = {
-                                    email: req.body.email
-                                };
-                                if (permission) {
-                                    userParams.permission_id = permission.id;
-                                }
-                                var user;
-                                db.User.create(userParams).then(function (_user) {
-                                    user = _user;
-                                    return user.setPassword(req.body.password);
-                                }).then(function () {
-                                    return db.UserProfile.findOrCreate({
-                                        where: {user_id: user.id}
-                                    });
-                                }).spread(function (user_profile) {
-                                    return user_profile.updateAttributes(
-                                        {
-                                            language: req.getLocale()
-                                        });
-                                }).then(function () {
-                                    return codeHelper.getOrGenereateEmailVerificationCode(user);
-                                }).then(function (code) {
-                                    // Async
-                                    user.logLogin().then(function () {
-                                    }, function () {
-                                    });
-                                    emailHelper.send(
-                                        config.mail.from,
-                                        user.email,
-                                        "validation-email",
-                                        {log: false},
-                                        {
-                                            confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
-                                            host: config.mail.host,
-                                            mail: encodeURIComponent(user.email),
-                                            code: encodeURIComponent(code)
-                                        },
-                                        req.getLocale() ? req.getLocale() : config.mail.local
-                                    );
-                                }).then(function () {
-                                    return done(null, user);
-                                }).catch(
-                                    function (err) {
-                                        done(err);
-                                    }
-                                );
-                            });
-                        });
+
+        req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
+        req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
+        req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
+
+        req.getValidationResult().then(function (result) {
+
+                if (!result.isEmpty()) {
+                    done(null, false, req.flash('signupMessage', result.array()[0].msg));
+                } else {
+                    if (req.recaptcha.error) {
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
+                        return;
                     }
-                }, function (error) {
-                    done(error);
-                });
-        }
-    });
+
+                    if (!passwordHelper.isStrong(password)) {
+                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH')));
+                        return;
+                    }
+
+                    db.User.findOne({where: {email: req.body.email}})
+                        .then(function (user) {
+                            if (user) {
+                                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
+                            } else {
+                                db.sequelize.sync().then(function () {
+                                    db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
+                                        var userParams = {
+                                            email: req.body.email
+                                        };
+                                        if (permission) {
+                                            userParams.permission_id = permission.id;
+                                        }
+                                        var user;
+                                        db.User.create(userParams).then(function (_user) {
+                                            user = _user;
+                                            return user.setPassword(req.body.password);
+                                        }).then(function () {
+                                            return db.UserProfile.findOrCreate({
+                                                where: {user_id: user.id}
+                                            });
+                                        }).spread(function (user_profile) {
+                                            return user_profile.updateAttributes(
+                                                {
+                                                    language: req.getLocale()
+                                                });
+                                        }).then(function () {
+                                            return codeHelper.getOrGenereateEmailVerificationCode(user);
+                                        }).then(function (code) {
+                                            // Async
+                                            user.logLogin().then(function () {
+                                            }, function () {
+                                            });
+                                            emailHelper.send(
+                                                config.mail.from,
+                                                user.email,
+                                                "validation-email",
+                                                {log: false},
+                                                {
+                                                    confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                                    host: config.mail.host,
+                                                    mail: encodeURIComponent(user.email),
+                                                    code: encodeURIComponent(code)
+                                                },
+                                                req.getLocale() ? req.getLocale() : config.mail.local
+                                            );
+                                        }).then(function () {
+                                            return done(null, user);
+                                        }).catch(
+                                            function (err) {
+                                                done(err);
+                                            }
+                                        );
+                                    });
+                                });
+                            }
+                        }, function (error) {
+                            done(error);
+                        });
+                }
+            }
+        )
+        ;
 
 
-};
+    }
+    ;
 
 var localStrategyConf = {
     // by default, local strategy uses username and password, we will override with email
@@ -142,10 +157,10 @@ module.exports = function (app, options) {
 
     app.get('/auth/local', function (req, res) {
         var message = {};
-        if(req.query && req.query.error) {
-            message =  req.__(req.query.error);
+        if (req.query && req.query.error) {
+            message = req.__(req.query.error);
         }
-        if(req.flash('loginMessage').length > 0) {
+        if (req.flash('loginMessage').length > 0) {
             message = req.flash('loginMessage');
         }
         console.log("message", message);
@@ -166,7 +181,7 @@ module.exports = function (app, options) {
 
     app.get('/logout', function (req, res) {
         req.logout();
-        res.redirect('/');
+        requestHelper.redirect(res, '/');
     });
 
     app.get('/email_verify', function (req, res, next) {
@@ -199,14 +214,14 @@ module.exports = function (app, options) {
         passport.authenticate('local-signup', function (err, user, info) {
 
             if (req.recaptcha.error) {
-                return res.redirect(config.urlPrefix + '/signup?error=recaptcha');
+                return requestHelper.redirect(res, '/signup?error=recaptcha');
             }
             if (err) {
                 return next(err);
             }
             // Redirect if it fails
             if (!user) {
-                return res.redirect(config.urlPrefix + '/signup?email=' + req.body.email);
+                return requestHelper.redirect(res, '/signup?email=' + req.body.email);
             }
             req.logIn(user, function (err) {
                 if (err) {
@@ -277,6 +292,9 @@ module.exports = function (app, options) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
+            if (!passwordHelper.isStrong(req.body.password)) {
+                res.status(400).json({msg: passwordHelper.getWeaknessesMsg(req.body.password, req), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+            }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
                     if (user) {
@@ -308,4 +326,6 @@ module.exports = function (app, options) {
 
         return requestHelper.redirect(res, '/');
     }
+
+
 };

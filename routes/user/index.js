@@ -3,6 +3,7 @@
 var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
+var passwordHelper = require('../../lib/password-helper');
 
 var i18n = require('i18n');
 
@@ -79,31 +80,35 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                db.User.findOne({
-                    where: {
-                        id: req.user.id
-                    }
-                }).then(function (user) {
-                    if (!user) {
-                        return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
-                    } else {
-                        user.verifyPassword(req.body.previous_password).then(function (isMatch) {
-                            // if user is found and password is right change password
-                            if (isMatch) {
-                                user.setPassword(req.body.password).then(
-                                    function () {
-                                        res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
-                                    },
-                                    function (err) {
-                                        res.status(500).json({errors: [err]});
-                                    }
-                                );
-                            } else {
-                                res.status(401).json({errors: [{msg: req.__('BACK_INCORRECT_PREVIOUS_PASS')}]});
-                            }
-                        });
-                    }
-                });
+                if (!passwordHelper.isStrong(req.body.password)) {
+                    res.status(400).json({errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}], password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                } else {
+                    db.User.findOne({
+                        where: {
+                            id: req.user.id
+                        }
+                    }).then(function (user) {
+                        if (!user) {
+                            return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
+                        } else {
+                            user.verifyPassword(req.body.previous_password).then(function (isMatch) {
+                                // if user is found and password is right change password
+                                if (isMatch) {
+                                    user.setPassword(req.body.password).then(
+                                        function () {
+                                            res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
+                                        },
+                                        function (err) {
+                                            res.status(500).json({errors: [err]});
+                                        }
+                                    );
+                                } else {
+                                    res.status(401).json({errors: [{msg: req.__('BACK_INCORRECT_PREVIOUS_PASS')}]});
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
     });
@@ -117,6 +122,9 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
+                if (!passwordHelper.isStrong(req.body.password)) {
+                    return res.status(400).json({errors: [{msg:passwordHelper.getWeaknessesMsg(req.body.password, req)}], password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                }
                 db.User.findOne({
                     where: {
                         id: req.user.id

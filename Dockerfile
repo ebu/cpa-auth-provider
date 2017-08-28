@@ -1,37 +1,40 @@
-FROM node:7
+FROM node:8.4
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
   libsqlite3-dev apt-transport-https
 
-# Install yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y yarn
-
 RUN npm install -g node-gyp
+RUN yarn global add sequelize-cli
 
+WORKDIR /src
+
+# Install Node.js dependencies
+ADD package.json /src/package.json
+ADD passport-openam /src/passport-openam
+RUN yarn install
+
+
+ADD .sequelizerc /src/.sequelizerc
+ADD migrate /src/migrate
+RUN mkdir /src/seeders
+
+# Add other application files
 ADD bin /src/bin
-ADD lib /src/lib
+# TODO find better way to run tests without adding test file to the image
+ADD test /src/test
+ADD config.test.js /src/config.test.js
+ADD locales /src/locales
 ADD models /src/models
 ADD public /src/public
 ADD routes /src/routes
 ADD views /src/views
 ADD templates /src/templates
-ADD locales /src/locales
-ADD passport-openam /src/passport-openam
-ADD package.json /src/package.json
-ADD config.js /src/config.js
-# TODO find better way to run tests without adding test file to the image
-ADD test /src/test
-ADD config.test.js /src/config.test.js
-
-# Install Node.js dependencies
-WORKDIR /src
-RUN yarn install
+ADD lib /src/lib
 
 # Configure
 ADD config.docker.js /src/config.local.js
+ADD config.js /src/config.js
 
 ENV NODE_ENV development
 
@@ -46,9 +49,9 @@ ENV DB_FILENAME "data/identity-provider.sqlite"
 
 # Create the sqlite database
 RUN mkdir data
-RUN bin/init-db
+# RUN bin/init-db
 
 # By default, the application listens for HTTP on port 3000
 EXPOSE 3000
 
-CMD ["bin/server"]
+CMD sequelize db:migrate && bin/server

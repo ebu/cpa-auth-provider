@@ -12,8 +12,8 @@ var resetDatabase = function (done) {
 
 
 var TEST_EMAIL_0 = 'qsdf@qsdf.fr';
-var OLD_PASSWORD = '1234567890';
-var NEW_PASSWORD = 'abcdefghijklmn';
+var OLD_PASSWORD = 'correct horse battery staple';
+var NEW_PASSWORD = 'correct horse battery staple 42';
 var recaptchaResponse = 'a dummy recaptcha response';
 
 // Test authenticate

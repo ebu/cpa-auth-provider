@@ -1,0 +1,31 @@
+version: '2'
+services:
+  identity-provider:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - MAIL_FROM=no-reply@rts.ch
+      - IDP_HOST=http://localhost:3000
+      - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+      - IDP_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+      - DEFAULT_LOCALE=fr
+      - DB_DATABASE=idp
+      - DB_TYPE=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=dockeridp
+      - DB_PASSWORD=SchiefesHausBautFalsch
+      - MAIL_TRANSPORT_TYPE=test
+      - TRACKING_COOKIE=true
+    depends_on:
+    - mysql
+  mysql:
+    image: mysql:5.5
+    ports:
+    - 3306:3306
+    environment:
+    - MYSQL_ROOT_PASSWORD=LautesNichtsGraultWeiter
+    - MYSQL_DATABASE=idp
+    - MYSQL_USER=dockeridp
+    - MYSQL_PASSWORD=SchiefesHausBautFalsch

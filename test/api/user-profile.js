@@ -14,6 +14,8 @@ var resetDatabase = function (done) {
 // Test get profile after account creation
 var recaptchaResponse = 'a dummy recaptcha response';
 
+var STRONG_PASSWORD = 'correct horse battery staple';
+
 describe('GET /api/local/profile', function () {
 
     function cleanDbAndRegisterUser() {
@@ -30,7 +32,7 @@ describe('GET /api/local/profile', function () {
                 type: 'form',
                 data: {
                     email: 'test@db.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -47,7 +49,7 @@ describe('GET /api/local/profile', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf',
+                    password: STRONG_PASSWORD,
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);
@@ -67,7 +69,7 @@ describe('GET /api/local/profile', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: 'qsdf'
+                    password: STRONG_PASSWORD
                 }
             }, done);
         });

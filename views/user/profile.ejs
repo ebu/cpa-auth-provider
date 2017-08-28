@@ -164,8 +164,10 @@
                 </div>
                 <div class="form-group">
                     <label for="new-password"><%= __('PROFILE_NEW_PASSWORD_LABEL') %></label>
-                    <input type="password" class="form-control" id="password"
+                    <input type="password" class="form-control password-test" id="password"
                            placeholder="<%= __('PROFILE_NEW_PASSWORD_PLACEHOLDER') %>">
+                    <p id="password-error-label" class="password-error error-message text-danger"></p>
+                    <div id="password-bar"><div id="password-progress"></div></div>
                 </div>
                 <div class="form-group">
                     <label for="confirm-password"><%= __('PROFILE_CONFIRM_PASSWORD_LABEL') %></label>
@@ -313,6 +315,7 @@
 <!-- Add client Modal -->
 <% include ./modales/user-delete.ejs %>
 
+<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/password.js"></script>
 <script type="text/javascript">
     (function () {
 
@@ -343,6 +346,7 @@
         var $elementsWithPassword =  $(".hasPassword");
         var $elementsWithoutPassword =  $(".hasNoPassword");
         var $previousPasswordBlock = $("#previousPasswordBlock");
+        var $passwordStrengthProgress = $("#password-progress");
         var hasPassword = '<%= profile.hasPassword %>';
         var date = "";
 
@@ -630,6 +634,7 @@
                     hasPassword = "true";
                     $("#form-security-success").show('fast');
                     $previousPassword.val("");
+                    $passwordStrengthProgress.width(0);
                     $password.val("");
                     $confirmPassword.val("");
                     $formModifyPass.hide();
@@ -640,7 +645,7 @@
                 },
                 error: function (result) {
                     $.each(result.responseJSON.errors, function (index, error) {
-                        $("#security-errors").append($('<p>').text(error.msg));
+                        $("#security-errors").append($('<p>').html(error.msg));
                     });
                     $("#form-security-errors").show("fast");
                     $('html, body').animate({
