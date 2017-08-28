@@ -8,7 +8,7 @@ var cors = require('../../lib/cors');
 
 var GoogleAuth = require('google-auth-library');
 var auth = new GoogleAuth();
-var client = new auth.OAuth2(config.identity_providers.googleplus.client_id, '', '');
+var client = new auth.OAuth2(config.identity_providers.google.client_id, '', '');
 
 module.exports = function (app, options) {
     app.post('/api/google/signup', cors, function (req, res) {
@@ -48,7 +48,7 @@ module.exports = function (app, options) {
 };
 
 function verifyGoogleIdToken(token, done) {
-    client.verifyIdToken(token, config.identity_providers.googleplus.client_id, function (e, login) {
+    client.verifyIdToken(token, config.identity_providers.google.client_id, function (e, login) {
         var payload = login.getPayload();
         var data = payload;
 

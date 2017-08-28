@@ -32,7 +32,7 @@ module.exports = {
             client_secret: process.env.FACEBOOK_LOGIN_SECRET,
             callback_url: process.env.FACEBOOK_LOGIN_CALL_BACK_URL
         },
-        googleplus: {
+        google: {
             enabled: false,
             client_id: '',
             client_secret: ''

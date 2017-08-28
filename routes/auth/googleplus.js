@@ -5,7 +5,7 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 
 var passport = require('passport');
-var GooglePlusStrategy = require('passport-google-oauth20');
+var GoogleStrategy = require('passport-google-oauth20');
 
 function findOrCreateExternalUser(email, defaults) {
     return new Promise(function (resolve, reject) {
@@ -46,10 +46,10 @@ function findOrCreateExternalUser(email, defaults) {
     });
 }
 
-passport.use(new GooglePlusStrategy({
-        clientID: config.identity_providers.googleplus.client_id,
-        clientSecret: config.identity_providers.googleplus.client_secret,
-        callbackURL: config.identity_providers.googleplus.callback_url
+passport.use(new GoogleStrategy({
+        clientID: config.identity_providers.google.client_id,
+        clientSecret: config.identity_providers.google.client_secret,
+        callbackURL: config.identity_providers.google.callback_url
     },
     function (accessToken, refreshToken, profile, done) {
         var email = '';
