@@ -4,6 +4,10 @@
     box-shadow: none;
 }
 
+#profile .panel:not(.hidden) {
+    margin-top: 0;
+}
+
 #profile .panel.hidden {
     display: none;
 }
