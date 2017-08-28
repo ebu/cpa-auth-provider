@@ -70,7 +70,7 @@ var routes = function (router) {
         });
     });
 
-    router.post('/user/:user_id/password', authHelper.authenticateFirst, function (req, res) {
+    router.post('/user/:user_id/password', authHelper.ensureAuthenticated, function (req, res) {
         req.checkBody('previous_password', req.__('BACK_CHANGE_PWD_PREV_PASS_EMPTY')).notEmpty();
         req.checkBody('password', req.__('BACK_CHANGE_PWD_NEW_PASS_EMPTY')).notEmpty();
         req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
@@ -113,7 +113,7 @@ var routes = function (router) {
         });
     });
 
-    router.post('/user/:user_id/password/create', authHelper.authenticateFirst, function (req, res) {
+    router.post('/user/:user_id/password/create', authHelper.ensureAuthenticated, function (req, res) {
         req.checkBody('password', req.__('BACK_CHANGE_PWD_NEW_PASS_EMPTY')).notEmpty();
         req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
         req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
