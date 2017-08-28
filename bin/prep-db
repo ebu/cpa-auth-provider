@@ -1,0 +1,83 @@
+#!/usr/bin/env node
+
+"use strict";
+
+/**
+ * Script to fill database with some default values
+ *
+ * Usage: $ NODE_ENV=[development|test] bin/prep-db
+ */
+
+switch (process.env.NODE_ENV) {
+    case 'development':
+        console.log('Resetting local database');
+        break;
+
+    case 'test':
+        console.log('Resetting test database');
+        break;
+
+    default:
+        console.error('Unknown environment\r\nUsage: NODE_ENV=[development|test] bin/init-db\r\nExiting...');
+        process.exit(1);
+        break;
+}
+
+var db = require('../models');
+var config = require('../config');
+
+if (process.env.NODE_ENV === 'development') {
+    createUsers();
+    createDomains();
+    createOAuth2Clients();
+}
+
+function createUsers() {
+    if (!config.users) {
+        return;
+    }
+    db.User.bulkCreate(config.users).then(
+        function () {
+            db.User.findOne({where: {id: 1}}).then(
+                function (user) {
+                    return user.setPassword("admin");
+                }
+            );
+            console.log('[USER] Database populated');
+        },
+        function (e) {
+            console.log('[USER] Error:', e);
+        }
+    );
+}
+
+function createDomains() {
+    db.Domain.bulkCreate(config.domains).then(
+        function () {
+            console.log('[DOMAIN] Database populated');
+        },
+        function (e) {
+            console.log('[DOMAIN] Error:', e);
+        }
+    );
+}
+
+function createOAuth2Clients() {
+    if (config.hasOwnProperty('oauth2_clients') && config.oauth2_clients.length > 0) {
+        var bcrypt = require('bcrypt');
+        for (var i in config.oauth2_clients) {
+            var client = config.oauth2_clients[i];
+            client.client_secret = bcrypt.hashSync(client.client_secret, 5);
+        }
+        db.OAuth2Client.bulkCreate(config.oauth2_clients).then(
+            function () {
+                console.log('[OAUTH2_CLIENT] Database populated');
+            },
+            function (e) {
+                console.log('[OAUTH2_CLIENT] Error:', e);
+            }
+        );
+    } else {
+        console.log("No server clients configured");
+    }
+}
