@@ -33,7 +33,7 @@ module.exports = {
         ebu: {
             enabled: false
         },
-        googleplus: {
+        google: {
             enabled: false
         },
         twitter: {

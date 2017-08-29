@@ -199,7 +199,7 @@ describe('POST /verify', function () {
                    db.PairingCode.findAll().then(
                        function(l) {
                            for(var i in l) {
-                               console.log(l[i].updated_at);
+                               //console.log(l[i].updated_at);
                            }
                            done();
                        },
