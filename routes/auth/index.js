@@ -12,7 +12,7 @@ module.exports = function (router) {
         requestHelper.redirect(res, '/');
     });
 
-    router.get('/protected', authHelper.ensureAuthenticated, function (req, res) {
+    router.get('/protected', authHelper.authenticateFirst, function (req, res) {
         res.send('protected');
     });
 

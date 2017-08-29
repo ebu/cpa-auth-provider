@@ -13,7 +13,7 @@ module.exports = {
             client_secret: '',
             callback_url: ''
         },
-        googleplus: {
+        google: {
             enabled: false,
             client_id: '',
             client_secret: ''

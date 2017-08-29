@@ -12,7 +12,7 @@ var recaptcha = require('express-recaptcha');
 
 var routes = function (router) {
 
-    router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
+    router.get('/user/devices', authHelper.authenticateFirst, function (req, res, next) {
         db.Client
             .findAll({
                 where: {user_id: req.user.id},
@@ -44,7 +44,6 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
-                    console.log("USER PASSWORD", user.password);
                     var data = {
                         profile: {
                             firstname: profile.firstname,

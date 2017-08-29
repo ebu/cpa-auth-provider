@@ -186,7 +186,7 @@
 
     </div>
 
-    <%if (profile.facebook || profile.twitter || profile.googleplus) { %>
+    <%if (profile.facebook || profile.twitter || profile.google) { %>
 
     <hr/>
 
@@ -211,7 +211,7 @@
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_TWITTER') %></span>
             </div>
             <% } %>
-            <%if (profile.googleplus) { %>
+            <%if (profile.google) { %>
             <div class="providers-container first">
                 <span class="facebook-text"><i class="fa fa-google-plus-square" aria-hidden="true"></i></span>
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_GOOGLEPLUS') %></span>
