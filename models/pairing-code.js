@@ -30,15 +30,19 @@ module.exports = function (sequelize, DataTypes) {
         }
     }, {
         underscored: true,
-
-        instanceMethods: expiresMixin(config.pairing_code_lifetime),
-
         associate: function (models) {
             PairingCode.belongsTo(models.Client);
             PairingCode.belongsTo(models.User);
             PairingCode.belongsTo(models.Domain);
         }
     });
+
+    var funcs = expiresMixin(config.pairing_code_lifetime);
+    for (var f in funcs) {
+        if (funcs.hasOwnProperty(f) && typeof funcs[f] === 'function') {
+            PairingCode.prototype[f] = funcs[f];
+        }
+    }
 
     return PairingCode;
 };

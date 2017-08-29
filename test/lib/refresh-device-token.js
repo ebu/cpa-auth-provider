@@ -144,7 +144,7 @@ describe("POST /token", function () {
             context("that has an existing user mode access token for the requested domain", function () {
                 before(function () {
                     var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {
@@ -262,7 +262,7 @@ describe("POST /token", function () {
             context("that has an existing client mode access token for the requested domain", function () {
                 before(function () {
                     var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
                 });
 
                 after(function () {

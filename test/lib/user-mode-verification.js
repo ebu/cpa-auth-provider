@@ -174,7 +174,7 @@ describe('GET /verify', function () {
 describe('POST /verify', function () {
     before(function () {
         var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-        this.clock = sinon.useFakeTimers(time, "Date");
+        this.clock = sinon.useFakeTimers(time);
     });
 
     after(function () {
@@ -198,7 +198,7 @@ describe('POST /verify', function () {
                     before(function () {
                         // Ensure pairing code has not expired
                         var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
-                        this.clock = sinon.useFakeTimers(time, "Date");
+                        this.clock = sinon.useFakeTimers(time);
                     });
 
                     after(function () {
@@ -299,7 +299,7 @@ describe('POST /verify', function () {
                     before(function () {
                         // Ensure pairing code has not expired
                         var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
-                        this.clock = sinon.useFakeTimers(time, "Date");
+                        this.clock = sinon.useFakeTimers(time);
                     });
 
                     after(function () {
@@ -403,7 +403,7 @@ describe('POST /verify', function () {
                     before(function () {
                         // Ensure pairing code has not expired
                         var time = new Date("Wed Apr 09 2014 11:30:00 GMT+0100").getTime();
-                        this.clock = sinon.useFakeTimers(time, "Date");
+                        this.clock = sinon.useFakeTimers(time);
                     });
 
                     after(function () {
@@ -640,13 +640,14 @@ describe('POST /verify', function () {
 
                     // Set creation time of the pairing code
                     var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers(time);
 
                     resetDatabase(function () {
                         self.clock.restore();
                         // The pairing code should expire one hour after it was created
                         var time = new Date("Wed Apr 09 2014 12:00:00 GMT+0100").getTime();
-                        self.clock = sinon.useFakeTimers(time, "Date");
+                        self.clock.restore();
+                        self.clock = sinon.useFakeTimers(time);
 
                         done();
                     });

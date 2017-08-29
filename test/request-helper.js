@@ -61,6 +61,10 @@ module.exports = {
         }
 
         req.end(function (err, res) {
+            if (!context.cookie && res.headers['set-cookie']) {
+                context.cookie = res.headers['set-cookie'];
+            }
+
             context.res = res;
 
             if (opts.parseDOM) {

@@ -27,7 +27,12 @@ var i18n = require('i18n');
 recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
 var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
+opts.jwtFromRequest = ExtractJwt.fromExtractors(
+    [
+        ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+        ExtractJwt.fromAuthHeaderAsBearerToken()
+    ]
+);
 opts.secretOrKey = config.jwtSecret;
 // opts.issuer = "accounts.examplesoft.com";
 // opts.audience = "yoursite.net";
@@ -59,7 +64,11 @@ module.exports = function (app, options) {
             res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
             if (!passwordHelper.isStrong(req.body.password)) {
-                return res.status(400).json({success: false, msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                return res.status(400).json({
+                    success: false,
+                    msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
+                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                });
             }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {

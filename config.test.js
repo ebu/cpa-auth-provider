@@ -33,6 +33,12 @@ module.exports = {
         ebu: {
             enabled: false
         },
+        google: {
+            enabled: false
+        },
+        twitter: {
+            enabled: false
+        },
         local: {
             enabled: true
         }

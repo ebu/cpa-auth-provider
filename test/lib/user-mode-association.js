@@ -73,7 +73,7 @@ describe('POST /associate', function () {
     context('with a client not associated with a user account', function () {
         before(function () {
             var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-            this.clock = sinon.useFakeTimers(time, "Date");
+            this.clock = sinon.useFakeTimers(time);
         });
 
         after(function () {
@@ -186,7 +186,7 @@ describe('POST /associate', function () {
 
             before(function () {
                 var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-                this.clock = sinon.useFakeTimers(time, "Date");
+                this.clock = sinon.useFakeTimers(time);
             });
 
             after(function () {
@@ -297,7 +297,7 @@ describe('POST /associate', function () {
 
             before(function () {
                 var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-                this.clock = sinon.useFakeTimers(time, "Date");
+                this.clock = sinon.useFakeTimers(time);
             });
 
             after(function () {
