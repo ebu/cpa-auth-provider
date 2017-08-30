@@ -3,7 +3,6 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
-var Raven = require('raven');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
