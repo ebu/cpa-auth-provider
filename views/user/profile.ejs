@@ -509,7 +509,7 @@
             $passwordError.hide();
             $passwordError.html("");
 
-            if (!$password.val() && isFacebookAccount !== "true") {
+            if (!$password.val() && isFacebookAccount !== "true" && isGoogleAccount !== "true") {
                 $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
                 $deleteUserForm.first('div.form-group').addClass('has-error');
                 $spinner.hide()
