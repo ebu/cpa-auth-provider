@@ -39,6 +39,7 @@
     "express-recaptcha": "^2.3.0",
     "express-session": "~1.15.5",
     "express-validator": "^3.2.1",
+    "google-auth-library": "^0.10.0",
     "i18n": "^0.8.3",
     "jquery": "^3.2.1",
     "jquery-form": "^4.2.1",
