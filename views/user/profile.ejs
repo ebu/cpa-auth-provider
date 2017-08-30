@@ -207,13 +207,13 @@
             <% } %>
             <%if (profile.twitter) { %>
             <div class="providers-container first">
-                <span class="facebook-text"><i class="fa fa-twitter-square" aria-hidden="true"></i></span>
+                <span class="twitter-text"><i class="fa fa-twitter-square" aria-hidden="true"></i></span>
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_TWITTER') %></span>
             </div>
             <% } %>
             <%if (profile.google) { %>
             <div class="providers-container first">
-                <span class="facebook-text"><i class="fa fa-google-plus-square" aria-hidden="true"></i></span>
+                <span class="google-text"><i class="fa fa-google-plus-square" aria-hidden="true"></i></span>
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_GOOGLEPLUS') %></span>
             </div>
             <% } %>
@@ -499,6 +499,7 @@
             var $password = $('#user-pass');
             var $deleteUserForm = $("#deleteUserForm");
             var isFacebookAccount = '<%= profile.facebook %>';
+            var isGoogleAccount = '<%= profile.google %>';
             var $passwordError = $('#password-error');
 
             $deleteError.hide();
@@ -508,7 +509,7 @@
             $passwordError.hide();
             $passwordError.html("");
 
-            if (!$password.val() && isFacebookAccount !== "true") {
+            if (!$password.val() && isFacebookAccount !== "true" && isGoogleAccount !== "true") {
                 $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
                 $deleteUserForm.first('div.form-group').addClass('has-error');
                 $spinner.hide()

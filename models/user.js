@@ -62,5 +62,13 @@ module.exports = function (sequelize, DataTypes) {
         return false;
     };
 
+    User.prototype.isGoogleUser =  function () {
+        var self = this;
+        if(self.provider_uid && self.provider_uid.indexOf('google:') !== -1) {
+            return true;
+        }
+        return false;
+    }
+
     return User;
 };

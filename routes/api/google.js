@@ -2,18 +2,22 @@
 
 var db = require('../../models');
 var config = require('../../config');
-var jwtHelper = require('../../lib/jwt-helper');
-var request = require('request');
 var jwt = require('jwt-simple');
+var jwtHelper = require('../../lib/jwt-helper');
 var cors = require('../../lib/cors');
 
+var GoogleAuth = require('google-auth-library');
+var auth = new GoogleAuth();
+var client = new auth.OAuth2(config.identity_providers.google.client_id, '', '');
+
 module.exports = function (app, options) {
-    app.post('/api/facebook/signup', cors, function (req, res) {
-        var facebookAccessToken = req.body.fbToken;
-        if (facebookAccessToken && facebookAccessToken.length > 0) {
-            // Get back user object from Facebook
-            verifyFacebookUserAccessToken(facebookAccessToken, function (err, user) {
-                if (user) {
+    app.post('/api/google/signup', cors, function (req, res) {
+
+        var googleIdToken = req.body.idToken;
+
+        if (googleIdToken && googleIdToken.length > 0) {
+            verifyGoogleIdToken(googleIdToken, function (error, user) {
+                if (!error && user) {
                     // If the user already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
@@ -22,7 +26,7 @@ module.exports = function (app, options) {
                         }
                     }).then(function (userInDb) {
                         if (!userInDb || userInDb.verified) {
-                            performFacebookLogin(user, facebookAccessToken, function (error, response) {
+                            performGoogleLogin(user, function (error, response) {
                                 if (response) {
                                     res.status(200).json(response);
                                 } else {
@@ -33,52 +37,36 @@ module.exports = function (app, options) {
                             res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED")});
                         }
                     });
-
-
                 } else {
-                    res.status(500).json({error: err.message});
+                    res.status(500).json({error: error.message});
                 }
-
             });
-        }
-        else {
-            // 400 BAD REQUEST
-            console.log('error', 'Bad login request from ' +
-                req.connection.remoteAddress + '. Reason: facebook access token and application name are required.');
-            res.status(400);
+        } else {
+            res.status(500).json({error: 'Missing google IDtoken to connect with Google account'});
         }
     });
 };
 
-function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,name,email&access_token=' + token;
-    request(path, function (error, response, body) {
-        var data = JSON.parse(body);
-        if (!error && response && response.statusCode && response.statusCode === 200) {
+function verifyGoogleIdToken(token, done) {
+    client.verifyIdToken(token, config.identity_providers.google.client_id, function (e, login) {
+        var payload = login.getPayload();
+        var data = payload;
+
+        if (data) {
             var user = {
-                provider_uid: "fb:" + data.id,
+                provider_uid: "google:" + data.sub,
                 display_name: data.name,
                 email: data.email
             };
-            done(null, user);
-        } else {
-            console.log(data.error);
-            done({code: response.statusCode, message: data.error.message}, null);
+            return done(null, user);
         }
+        return done({message: 'No user with this google id were found'}, null);
     });
 }
 
-function buildResponse(user) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
-    return {
-        success: true,
-        user: user,
-        token: token
-    };
-}
+function performGoogleLogin(profile, done) {
 
-function performFacebookLogin(profile, fbAccessToken, done) {
-    if (profile && fbAccessToken) {
+    if (profile) {
         db.User.findOne({where: {provider_uid: profile.provider_uid}}).then(function (me) {
             if (me) {
                 me.logLogin().then(function (user) {
@@ -103,8 +91,18 @@ function performFacebookLogin(profile, fbAccessToken, done) {
                     return done(err, null);
                 });
             }
+
         }, function (error) {
             return done(error, null);
         });
     }
+}
+
+function buildResponse(user) {
+    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
+    return {
+        success: true,
+        user: user,
+        token: token
+    };
 }
