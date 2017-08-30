@@ -31,7 +31,7 @@ module.exports = {
             client_secret: process.env.FACEBOOK_LOGIN_SECRET
         },
         google: {
-            enabled: false,
+            enabled: ('true' == process.env.GOOGLE_LOGIN_ENABLED),
             client_id: process.env.GOOGLE_LOGIN_ID,
             client_secret: process.env.GOOGLE_LOGIN_SECRET
         },
