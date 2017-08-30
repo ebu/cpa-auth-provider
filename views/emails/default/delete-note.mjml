@@ -8,11 +8,11 @@
             Servus,
           </mj-text>
           <mj-text>
-            in Deinem Profil der BR Mediathek wurde beantragt, Dein Profil unter der E-Mail-Adresse
+            in Deinem Nutzerkonto der BR Mediathek wurde beantragt, Dein Nutzerkonto unter der E-Mail-Adresse
             {{USEREMAIL}} zu löschen.
           </mj-text>
           <mj-text>
-            Wir hoffen, dass Du trotzdem noch viel Spaß in der BR Mediathek hast. Auch ohne Profil stehen
+            Wir hoffen, dass Du trotzdem noch viel Spaß in der BR Mediathek hast. Auch ohne Nutzerkonto stehen
             Dir weiterhin alle Inhalte zur Verfügung. Allerdings können wir Dir nicht alle Features bieten.
           </mj-text>
           <mj-text padding-bottom='0px'>
@@ -23,7 +23,7 @@
           </mj-text>
           <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
           <mj-text padding-bottom='0px'>
-            Du wolltest Dein Profil nicht löschen?
+            Du wolltest Dein Nutzerkonto nicht löschen?
           </mj-text>
           <mj-text color='#a8a8a8' padding-top='0px'>
             Melde Dich wie gewohnt unter {{LINK}} an. Damit wird der Löschvorgang aufgehoben.
