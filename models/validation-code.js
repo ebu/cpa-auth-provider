@@ -1,8 +1,8 @@
 "use strict";
 
-var config       = require('../config');
+var config = require('../config');
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
 
     var ValidationCode = sequelize.define('ValidationCode', {
         id: {
@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         underscored: true,
 
-        associate: function(models) {
+        associate: function (models) {
             ValidationCode.belongsTo(models.User);
         }
     });

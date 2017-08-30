@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-
+    baseUrl: 'http://localhost',
     title: '',
 
     recaptcha: {
@@ -31,6 +31,12 @@ module.exports = {
             enabled: false
         },
         ebu: {
+            enabled: false
+        },
+        google: {
+            enabled: false
+        },
+        twitter: {
             enabled: false
         },
         local: {

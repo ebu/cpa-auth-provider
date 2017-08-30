@@ -20,45 +20,7 @@ module.exports = function (sequelize, DataTypes) {
         last_login_at: DataTypes.BIGINT
     }, {
         underscored: true,
-        instanceMethods: {
-            logLogin: function (transaction) {
-                var self = this;
-                return self.updateAttributes({last_login_at: Date.now()}, {transaction: transaction});
-            },
-            setPassword: function (password) {
-                var self = this;
-                return new Promise(
-                    function (resolve, reject) {
-                        bcrypt.hash(password, 10).then(
-                            function (hash) {
-                                return self.updateAttributes(
-                                    {password: hash, password_changed_at: Date.now()}
-                                )
-                            }
-                        ).then(
-                            resolve
-                        ).catch(reject);
-                    }
-                );
-            },
-            verifyPassword: function (password) {
-                return bcrypt.compare(password, this.password);
-            },
-            isFacebookUser: function () {
-                var self = this;
-                if(self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
-                    return true;
-                }
-                return false;
-            },
-            isGoogleUser: function () {
-                var self = this;
-                if(self.provider_uid && self.provider_uid.indexOf('google:') !== -1) {
-                    return true;
-                }
-                return false;
-            }
-        },
+
         associate: function (models) {
             User.hasMany(models.Client);
             User.hasMany(models.AccessToken);
@@ -68,6 +30,45 @@ module.exports = function (sequelize, DataTypes) {
             User.hasOne(models.UserProfile);
         }
     });
+
+    User.prototype.logLogin = function (transaction) {
+        var self = this;
+        return self.updateAttributes({last_login_at: Date.now()}, {transaction: transaction});
+    };
+    User.prototype.setPassword = function (password) {
+        var self = this;
+        return new Promise(
+            function (resolve, reject) {
+                bcrypt.hash(password, 10).then(
+                    function (hash) {
+                        return self.updateAttributes(
+                            {password: hash, password_changed_at: Date.now()}
+                        )
+                    }
+                ).then(
+                    resolve
+                ).catch(reject);
+            }
+        );
+    };
+    User.prototype.verifyPassword = function (password) {
+        return bcrypt.compare(password, this.password);
+    };
+    User.prototype.isFacebookUser = function () {
+        var self = this;
+        if (self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
+            return true;
+        }
+        return false;
+    };
+
+    User.prototype.isGoogleUser =  function () {
+        var self = this;
+        if(self.provider_uid && self.provider_uid.indexOf('google:') !== -1) {
+            return true;
+        }
+        return false;
+    }
 
     return User;
 };

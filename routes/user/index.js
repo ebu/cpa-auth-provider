@@ -12,7 +12,7 @@ var recaptcha = require('express-recaptcha');
 
 var routes = function (router) {
 
-    router.get('/user/devices', authHelper.ensureAuthenticated, function (req, res, next) {
+    router.get('/user/devices', authHelper.authenticateFirst, function (req, res, next) {
         db.Client
             .findAll({
                 where: {user_id: req.user.id},

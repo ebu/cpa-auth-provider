@@ -76,7 +76,7 @@ describe('GET home', function() {
     context('and let empty title in configuration file', function () {
 
         before(function (done) {
-            requestHelper.sendRequest(this, '/', {cookie: this.cookie}, done);
+            requestHelper.sendRequest(this, '/auth/local', {cookie: this.cookie, parseDOM: true}, done);
         });
 
         it('the title should be the default one : ' + i18n4test.__('LAYOUT_DEFAULT_HEAD_CROSS_PLATFORM_AUTHENTICATION_TITLE'), function () {
