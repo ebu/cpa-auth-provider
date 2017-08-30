@@ -25,6 +25,12 @@ services:
     - AUTO_IDP_REDIRECT=local
     - DISPLAY_MENU_BAR=
     - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
+    - FACEBOOK_LOGIN_ENABLED=true
+    - FACEBOOK_LOGIN_ID=1987072604859726
+    - FACEBOOK_LOGIN_SECRET=eb01cbc36d070e6c86ad3e697bebdca1
+    - GOOGLE_LOGIN_ENABLED=true
+    - GOOGLE_LOGIN_ID=621117323323-j048lcbv5khh6lhr1lok4vv17mekijvm.apps.googleusercontent.com
+    - GOOGLE_LOGIN_SECRET=rw1KMzemV5Mhtjq1iOAI4H8A
 
   nginx:
     image: nginx
