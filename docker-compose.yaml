@@ -25,3 +25,4 @@ services:
     - MAIL_TRANSPORT_TYPE=test
     - TRACKING_COOKIE=true
     - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
+    - SENTRY_DSN=https://e72ec5652a4b4053a8b5347d5d155e1b:1d87bd47a5ae4820b6be3c6d0e3501cb@error-tracking.ebu.io/13

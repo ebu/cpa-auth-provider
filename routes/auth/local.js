@@ -3,6 +3,7 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
+var Raven = require('raven');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -163,7 +164,6 @@ module.exports = function (app, options) {
         if (req.flash('loginMessage').length > 0) {
             message = req.flash('loginMessage');
         }
-        console.log("message", message);
         res.render('login.ejs', {message: message});
     });
 

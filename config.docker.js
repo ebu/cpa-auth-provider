@@ -73,6 +73,10 @@ module.exports = {
         defaultTemplateClass: process.env.MAIL_DEFAULT_TEMPLATE_CLASS
     },
 
+    sentry: {
+        dsn: process.env.SENTRY_DSN
+    },
+
     password: {
         // in sec
         recovery_code_validity_duration: 1800,

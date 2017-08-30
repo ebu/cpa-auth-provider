@@ -55,6 +55,10 @@ module.exports = {
         host: 'http://localhost:3000'
     },
 
+    sentry: {
+        dsn: 'https://e72ec5652a4b4053a8b5347d5d155e1b:1d87bd47a5ae4820b6be3c6d0e3501cb@error-tracking.ebu.io/13'
+    },
+
     password: {
         // in sec
         recovery_code_validity_duration: 1800,
