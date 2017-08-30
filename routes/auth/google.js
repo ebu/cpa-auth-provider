@@ -7,6 +7,8 @@ var requestHelper = require('../../lib/request-helper');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20');
 
+var callbackHelper = require('../../lib/callback-helper');
+
 function findOrCreateExternalUser(email, defaults) {
     return new Promise(function (resolve, reject) {
         db.User.find(
@@ -49,7 +51,7 @@ function findOrCreateExternalUser(email, defaults) {
 passport.use(new GoogleStrategy({
         clientID: config.identity_providers.google.client_id,
         clientSecret: config.identity_providers.google.client_secret,
-        callbackURL: config.identity_providers.google.callback_url
+        callbackURL: callbackHelper.getURL('/auth/google/callback')
     },
     function (accessToken, refreshToken, profile, done) {
         var email = '';
