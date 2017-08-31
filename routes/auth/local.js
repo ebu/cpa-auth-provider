@@ -12,7 +12,7 @@ var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
 var passwordHelper = require('../../lib/password-helper');
-
+var oAuthProviderHelper = require ('../../lib/oAuth-provider-helper')
 var i18n = require('i18n');
 
 // Google reCAPTCHA
@@ -28,24 +28,30 @@ var localStrategyCallback = function (req, username, password, done) {
                     return;
                 }
 
-                if (user.isFacebookUser && !user.password) {
-                    done(null, false, req.flash('loginMessage', loginError));
-                    return;
-                }
-
-                user.verifyPassword(password).then(function (isMatch) {
-                        if (isMatch) {
-                            user.logLogin().then(function () {
-                            }, function () {
+                oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (res){
+                    if (res){
+                        done(null, false, req.flash('loginMessage', loginError));
+                        return;
+                    }
+                    else {
+                        return user.verifyPassword(password).then(function (isMatch) {
+                                if (isMatch) {
+                                    user.logLogin().then(function () {
+                                    }, function () {
+                                    });
+                                    done(null, user);
+                                } else {
+                                    done(null, false, req.flash('loginMessage', loginError));
+                                }
+                            },
+                            function (err) {
+                                done(err);
                             });
-                            done(null, user);
-                        } else {
-                            done(null, false, req.flash('loginMessage', loginError));
-                        }
-                    },
-                    function (err) {
-                        done(err);
-                    });
+
+                    }
+                });
+
+
             },
             function (error) {
                 done(error);

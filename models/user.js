@@ -9,7 +9,6 @@ module.exports = function (sequelize, DataTypes) {
     var User = sequelize.define('User', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         tracking_uid: DataTypes.STRING,
-        provider_uid: DataTypes.STRING,
         email: {type: DataTypes.STRING, unique: true},
         password: DataTypes.STRING,
         enable_sso: DataTypes.BOOLEAN,
@@ -25,6 +24,7 @@ module.exports = function (sequelize, DataTypes) {
             User.hasMany(models.Client);
             User.hasMany(models.AccessToken);
             User.hasMany(models.ValidationCode);
+            User.hasMany(models.OAuthProvider);
             User.belongsTo(models.IdentityProvider);
             User.belongsTo(models.Permission);
             User.hasOne(models.UserProfile);
@@ -54,21 +54,6 @@ module.exports = function (sequelize, DataTypes) {
     User.prototype.verifyPassword = function (password) {
         return bcrypt.compare(password, this.password);
     };
-    User.prototype.isFacebookUser = function () {
-        var self = this;
-        if (self.provider_uid && self.provider_uid.indexOf('fb:') !== -1) {
-            return true;
-        }
-        return false;
-    };
-
-    User.prototype.isGoogleUser =  function () {
-        var self = this;
-        if(self.provider_uid && self.provider_uid.indexOf('google:') !== -1) {
-            return true;
-        }
-        return false;
-    }
 
     return User;
 };

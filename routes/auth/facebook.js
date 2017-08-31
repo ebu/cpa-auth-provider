@@ -4,11 +4,13 @@ var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var callbackHelper = require('../../lib/callback-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-function findOrCreateExternalUser(email, defaults) {
+function findOrCreateExternalUser(email, fbData) {
+    console.log("defaults", fbData);
     return new Promise(function (resolve, reject) {
         db.User.find(
             {
@@ -24,23 +26,37 @@ function findOrCreateExternalUser(email, defaults) {
                             where: {
                                 email: email
                             },
-                            defaults: defaults
+                            defaults: fbData
                         }
                     ).spread(
-                        function (user, created) {
-                            return resolve(user);
+                        function (user) {
+
+                            db.OAuthProvider.findOrCreate({
+                                where: {
+                                    name: oAuthProviderHelper.FB,
+                                    uid: fbData.provider_uid,
+                                    user_id: user.id
+                                }
+                            }).then(function (provider) {
+                                return resolve(user);
+                            });
                         }
                     ).catch(reject);
                 }
                 if (!user.verified) {
                     return resolve(false);
                 }
-                if(user.display_name) {
-                    defaults.display_name = user.display_name;
+                if (user.display_name) {
+                    return user.updateAttributes({
+                            display_name: fbData.display_name,
+                            verified: true
+                        }
+                    ).then(resolve, reject);
+                } else {
+                    return user.updateAttributes({
+                        verified: true
+                    }).then(resolve, reject);
                 }
-                return user.updateAttributes(
-                    defaults
-                ).then(resolve, reject);
             },
             reject
         );

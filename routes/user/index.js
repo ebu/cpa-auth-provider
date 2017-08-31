@@ -4,6 +4,8 @@ var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 var passwordHelper = require('../../lib/password-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+
 
 var i18n = require('i18n');
 
@@ -44,24 +46,28 @@ var routes = function (router) {
                         user_id: req.user.id
                     }
                 }).spread(function (profile) {
-                    var data = {
-                        profile: {
-                            firstname: profile.firstname,
-                            lastname: profile.lastname,
-                            gender: profile.gender,
-                            language: profile.language,
-                            birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
-                            email: user.email,
-                            display_name: profile.getDisplayName(user, req.query.policy),
-                            verified: user.verified,
-                            hasPassword: !!user.password,
-                            facebook: user.isFacebookUser(),
-                            google: user.isGoogleUser()
-                        },
-                        captcha: req.recaptcha
-                    };
+                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
 
-                    res.render('./user/profile.ejs', data);
+                        var data = {
+                            profile: {
+                                firstname: profile.firstname,
+                                lastname: profile.lastname,
+                                gender: profile.gender,
+                                language: profile.language,
+                                birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
+                                email: user.email,
+                                display_name: profile.getDisplayName(user, req.query.policy),
+                                verified: user.verified,
+                                hasPassword: !!user.password,
+                                facebook: providers.indexOf(oAuthProviderHelper.FB) > -1,
+                                google: providers.indexOf(oAuthProviderHelper.GOOGLE) > -1
+                            },
+                            captcha: req.recaptcha
+                        };
+
+                        res.render('./user/profile.ejs', data);
+                    });
+
 
                 });
             }
@@ -81,7 +87,10 @@ var routes = function (router) {
                 res.status(400).json({errors: result.array()});
             } else {
                 if (!passwordHelper.isStrong(req.body.password)) {
-                    res.status(400).json({errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}], password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                    res.status(400).json({
+                        errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
+                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                    });
                 } else {
                     db.User.findOne({
                         where: {
@@ -123,7 +132,10 @@ var routes = function (router) {
                 res.status(400).json({errors: result.array()});
             } else {
                 if (!passwordHelper.isStrong(req.body.password)) {
-                    return res.status(400).json({errors: [{msg:passwordHelper.getWeaknessesMsg(req.body.password, req)}], password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                    return res.status(400).json({
+                        errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
+                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                    });
                 }
                 db.User.findOne({
                     where: {

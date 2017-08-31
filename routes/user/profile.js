@@ -9,6 +9,7 @@ var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
 var i18n = require('i18n');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
@@ -94,27 +95,31 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        if(user.isFacebookUser() || user.isGoogleUser()) {
-            user.destroy();
-            return res.status(204).send();
-        }
-
-        user.verifyPassword(req.body.password).then(function (isMatch) {
-                if (isMatch) {
-                    return user.destroy();
-                } else {
-                    if (req.body.password) {
-                        throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
-                    } else {
-                        throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+        oAuthProviderHelper.isExternalOAuthUserOnly().then(function (res) {
+            if (res) {
+                user.destroy();
+                return res.status(204).send();
+            } else {
+                user.verifyPassword(req.body.password).then(function (isMatch) {
+                        if (isMatch) {
+                            return user.destroy();
+                        } else {
+                            if (req.body.password) {
+                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
+                            } else {
+                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+                            }
+                        }
                     }
-                }
+                ).then(function () {
+                    return res.status(204).send();
+                }).catch(function (e) {
+                    res.status(401).send({success: false, msg: e.message});
+                });
             }
-        ).then(function () {
-            return res.status(204).send();
-        }).catch(function (e) {
-            res.status(401).send({success: false, msg: e.message});
         });
+
+
     });
 };
 
