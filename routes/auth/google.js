@@ -3,13 +3,14 @@
 var db = require('../../models/index');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20');
 
 var callbackHelper = require('../../lib/callback-helper');
 
-function findOrCreateExternalUser(email, defaults) {
+function findOrCreateExternalUser(email, googleData) {
     return new Promise(function (resolve, reject) {
         db.User.find(
             {
@@ -25,23 +26,63 @@ function findOrCreateExternalUser(email, defaults) {
                             where: {
                                 email: email
                             },
-                            defaults: defaults
+                            defaults: googleData
                         }
                     ).spread(
-                        function (user, created) {
-                            return resolve(user);
+                        function (user) {
+
+                            db.OAuthProvider.findOne({
+                                where: {
+                                    name: oAuthProviderHelper.GOOGLE,
+                                    user_id: user.id
+                                }
+                            }).then(function (provider) {
+                                if (!provider) {
+                                    provider = db.OAuthProvider.build({
+                                        name: oAuthProviderHelper.GOOGLE,
+                                        uid: googleData.provider_uid,
+                                        user_id: user.id
+                                    });
+                                    provider.save().then(function () {
+                                        return resolve(user);
+                                    });
+                                } else {
+                                    return resolve(user);
+                                }
+                            });
                         }
                     ).catch(reject);
+                } else {
+                    db.OAuthProvider.findOne({
+                        where: {
+                            name: oAuthProviderHelper.GOOGLE,
+                            user_id: user.id
+                        }
+                    }).then(function (provider) {
+                        if (!provider) {
+                            provider = db.OAuthProvider.build({
+                                name: oAuthProviderHelper.GOOGLE,
+                                uid: googleData.provider_uid,
+                                user_id: user.id
+                            });
+                            provider.save();
+                        }
+                    });
                 }
                 if (!user.verified) {
                     return resolve(false);
                 }
                 if (user.display_name) {
-                    defaults.display_name = user.display_name;
+                    return user.updateAttributes({
+                            display_name: googleData.display_name,
+                            verified: true
+                        }
+                    ).then(resolve, reject);
+                } else {
+                    return user.updateAttributes({
+                        verified: true
+                    }).then(resolve, reject);
                 }
-                return user.updateAttributes(
-                    defaults
-                ).then(resolve, reject);
             },
             reject
         );

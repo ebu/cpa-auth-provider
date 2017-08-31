@@ -30,18 +30,43 @@ function findOrCreateExternalUser(email, fbData) {
                         }
                     ).spread(
                         function (user) {
-
-                            db.OAuthProvider.findOrCreate({
+                            db.OAuthProvider.findOne({
                                 where: {
                                     name: oAuthProviderHelper.FB,
-                                    uid: fbData.provider_uid,
                                     user_id: user.id
                                 }
                             }).then(function (provider) {
-                                return resolve(user);
+                                if (!provider) {
+                                    provider = db.OAuthProvider.build({
+                                        name: oAuthProviderHelper.FB,
+                                        uid: fbData.provider_uid,
+                                        user_id: user.id
+                                    });
+                                    provider.save().then(function () {
+                                        return resolve(user);
+                                    });
+                                } else {
+                                    return resolve(user);
+                                }
                             });
                         }
                     ).catch(reject);
+                } else {
+                    db.OAuthProvider.findOne({
+                        where: {
+                            name: oAuthProviderHelper.FB,
+                            user_id: user.id
+                        }
+                    }).then(function (provider) {
+                        if (!provider) {
+                            provider = db.OAuthProvider.build({
+                                name: oAuthProviderHelper.FB,
+                                uid: fbData.provider_uid,
+                                user_id: user.id
+                            });
+                            provider.save();
+                        }
+                    });
                 }
                 if (!user.verified) {
                     return resolve(false);
