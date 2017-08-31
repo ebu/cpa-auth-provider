@@ -9,6 +9,24 @@ var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
+function createProfiderIfNotExists(user, fbData) {
+    db.OAuthProvider.findOne({
+        where: {
+            name: oAuthProviderHelper.FB,
+            user_id: user.id
+        }
+    }).then(function (provider) {
+        if (!provider) {
+            provider = db.OAuthProvider.build({
+                name: oAuthProviderHelper.FB,
+                uid: fbData.provider_uid,
+                user_id: user.id
+            });
+            provider.save();
+        }
+    });
+}
+
 function findOrCreateExternalUser(email, fbData) {
     console.log("defaults", fbData);
     return new Promise(function (resolve, reject) {
@@ -36,38 +54,14 @@ function findOrCreateExternalUser(email, fbData) {
                                     user_id: user.id
                                 }
                             }).then(function (provider) {
-                                if (!provider) {
-                                    provider = db.OAuthProvider.build({
-                                        name: oAuthProviderHelper.FB,
-                                        uid: fbData.provider_uid,
-                                        user_id: user.id
-                                    });
-                                    provider.save().then(function () {
-                                        return resolve(user);
-                                    });
-                                } else {
-                                    return resolve(user);
-                                }
+                                createProfiderIfNotExists(user, fbData);
+                                return resolve(user);
                             });
                         }
                     ).catch(reject);
-                } else {
-                    db.OAuthProvider.findOne({
-                        where: {
-                            name: oAuthProviderHelper.FB,
-                            user_id: user.id
-                        }
-                    }).then(function (provider) {
-                        if (!provider) {
-                            provider = db.OAuthProvider.build({
-                                name: oAuthProviderHelper.FB,
-                                uid: fbData.provider_uid,
-                                user_id: user.id
-                            });
-                            provider.save();
-                        }
-                    });
                 }
+                createProfiderIfNotExists(user, fbData);
+
                 if (!user.verified) {
                     return resolve(false);
                 }

@@ -10,6 +10,24 @@ var GoogleStrategy = require('passport-google-oauth20');
 
 var callbackHelper = require('../../lib/callback-helper');
 
+function createProviderIfNotExists(user, googleData) {
+    db.OAuthProvider.findOne({
+        where: {
+            name: oAuthProviderHelper.GOOGLE,
+            user_id: user.id
+        }
+    }).then(function (provider) {
+        if (!provider) {
+            provider = db.OAuthProvider.build({
+                name: oAuthProviderHelper.GOOGLE,
+                uid: googleData.provider_uid,
+                user_id: user.id
+            });
+            provider.save();
+        }
+    });
+}
+
 function findOrCreateExternalUser(email, googleData) {
     return new Promise(function (resolve, reject) {
         db.User.find(
@@ -37,38 +55,13 @@ function findOrCreateExternalUser(email, googleData) {
                                     user_id: user.id
                                 }
                             }).then(function (provider) {
-                                if (!provider) {
-                                    provider = db.OAuthProvider.build({
-                                        name: oAuthProviderHelper.GOOGLE,
-                                        uid: googleData.provider_uid,
-                                        user_id: user.id
-                                    });
-                                    provider.save().then(function () {
-                                        return resolve(user);
-                                    });
-                                } else {
-                                    return resolve(user);
-                                }
+                                createProviderIfNotExists(user, googleData);
+                                return resolve(user);
                             });
                         }
                     ).catch(reject);
-                } else {
-                    db.OAuthProvider.findOne({
-                        where: {
-                            name: oAuthProviderHelper.GOOGLE,
-                            user_id: user.id
-                        }
-                    }).then(function (provider) {
-                        if (!provider) {
-                            provider = db.OAuthProvider.build({
-                                name: oAuthProviderHelper.GOOGLE,
-                                uid: googleData.provider_uid,
-                                user_id: user.id
-                            });
-                            provider.save();
-                        }
-                    });
                 }
+                createProviderIfNotExists(user, googleData);
                 if (!user.verified) {
                     return resolve(false);
                 }
