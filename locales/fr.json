@@ -18,7 +18,8 @@
 	"LOGIN_GOOGLE_PLUS_BUTTON": "Connectez-vous avec Google+",
 	"LOGIN_FACEBOOK_BUTTON": "Connectez-vous avec facebook",
 	"LOGIN_TWITTER_BUTTON": "Connectez-vous avec Twitter",
-	"LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED": "Vous devez valider votre email avant de vous connecter avec Facebook",
+	"LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB": "Vous devez valider votre email avant de vous connecter avec Facebook",
+	"LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE": "Vous devez valider votre email avant de vous connecter avec Google",
 
 	"ADMIN_ADD_DOMAIN_ADD_SERVICE_PROVIDER_TITLE": "Ajouter un Service Provider",
 	"ADMIN_ADD_DOMAIN_NAME_LABEL": "Nom",
