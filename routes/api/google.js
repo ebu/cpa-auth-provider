@@ -25,6 +25,7 @@ module.exports = function (app, options) {
                             email: user.email
                         }
                     }).then(function (userInDb) {
+                        console.log("userInDb", userInDb);
                         if (userInDb && !userInDb.verified) {
                             res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
                         } else {
