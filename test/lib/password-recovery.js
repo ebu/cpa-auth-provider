@@ -197,7 +197,7 @@ describe('Test password recovery code', function () {
 });
 
 describe('Test password update code', function () {
-    context('When we try to update password with POST password/update endpoint and not strong password', function () {
+    context('When we try to update password with POST password/update endpoint and not strong password then try with a strong password', function () {
 
         var self = this;
         var res1 = null;
