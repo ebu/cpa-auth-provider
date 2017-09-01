@@ -79,7 +79,7 @@ function performGoogleLogin(profile, done) {
                 db.User.findOrCreate({
                     where: {
                         provider_uid: profile.provider_uid,
-                        display_name: profile.name,
+                        // display_name: profile.name,
                         email: profile.email
                     }
                 }).spread(function (me) {
