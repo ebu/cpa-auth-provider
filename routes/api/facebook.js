@@ -21,7 +21,9 @@ module.exports = function (app, options) {
                             email: user.email
                         }
                     }).then(function (userInDb) {
-                        if (!userInDb || userInDb.verified) {
+                        if (userInDb && !userInDb.verified) {
+                            res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
+                        } else {
                             performFacebookLogin(user, facebookAccessToken, function (error, response) {
                                 if (response) {
                                     res.status(200).json(response);
@@ -29,8 +31,6 @@ module.exports = function (app, options) {
                                     res.status(500).json({error: error.message});
                                 }
                             });
-                        } else {
-                            res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         }
                     });
 
