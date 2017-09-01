@@ -59,7 +59,7 @@ docker_push_prod:
 
 deploy_manager_test:
   stage: deploy-test-env
-  image: alpine-curl
+  image: appropriate/curl
   variables:
     CI_DEPLOY_TEST_TRIGGER_TOKEN: $CI_DEPLOY_TEST_TRIGGER_TOKEN
   script:
