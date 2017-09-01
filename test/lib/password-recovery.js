@@ -3,6 +3,7 @@
 
 var db = require('../../models');
 var codeHelper = require('../../lib/code-helper');
+var requestHelper = require('../request-helper');
 var config = require('../../config');
 var dbHelper = require('../db-helper');
 
@@ -188,4 +189,98 @@ describe('Test password recovery code', function () {
     });
 
 
+});
+
+describe('Test password update code', function () {
+    context('When we try to update password with POST password/update endpoint and not strong password', function () {
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            db.User.create({
+                id: 1,
+                email: 'testuser@testuser.com',
+                provider_uid: 'testuser',
+                display_name: 'Test User'
+            }).then(function (user) {
+                self.user = user;
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        done();
+                    });
+                });
+            });
+        });
+
+        before(function (done) {
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/password/update', {
+                method: 'post',
+                data: {
+                    password: 'mdp',
+                    'confirm-password': 'mdp',
+                    email: 'testuser@testuser.com',
+                    code: self.recoverCode
+                }
+            }, done);
+        });
+
+        it('should not update password and return http error code', function () {
+            expect(self.res.statusCode).to.equal(400);
+        });
+
+    });
+
+    context('When we try to update password with POST password/update endpoint and strong password', function () {
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            db.User.create({
+                id: 1,
+                email: 'testuser@testuser.com',
+                provider_uid: 'testuser',
+                display_name: 'Test User'
+            }).then(function (user) {
+                self.user = user;
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        done();
+                    });
+                });
+            });
+        });
+
+        before(function (done) {
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/password/update', {
+                method: 'post',
+                data: {
+                    password: 'Gaga123.gogo',
+                    'confirm-password': 'Gaga123.gogo',
+                    email: 'testuser@testuser.com',
+                    code: self.recoverCode
+                }
+            }, done);
+        });
+
+        it('should update password and return success http code', function () {
+            expect(self.res.statusCode).to.equal(200);
+        });
+
+    });
 });
