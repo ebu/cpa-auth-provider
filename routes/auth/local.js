@@ -293,6 +293,7 @@ module.exports = function (app, options) {
             }
             if (!passwordHelper.isStrong(req.body.password)) {
                 res.status(400).json({msg: passwordHelper.getWeaknessesMsg(req.body.password, req), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                return;
             }
             db.User.findOne({where: {email: req.body.email}})
                 .then(function (user) {
