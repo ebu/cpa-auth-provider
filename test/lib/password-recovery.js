@@ -16,6 +16,11 @@ var resetDatabase = function (done) {
     });
 };
 
+var PASSWORD = {
+    strong: "Mytestpassword.isthebest",
+    weak: "weakpassword"
+};
+
 describe('Test password recovery code', function () {
     context('When tries to recover password', function () {
         var self = this;
@@ -195,6 +200,7 @@ describe('Test password update code', function () {
     context('When we try to update password with POST password/update endpoint and not strong password', function () {
 
         var self = this;
+        var res1 = null;
 
         before(resetDatabase);
 
@@ -224,16 +230,30 @@ describe('Test password update code', function () {
             requestHelper.sendRequest(self, '/password/update', {
                 method: 'post',
                 data: {
-                    password: 'mdp',
-                    'confirm-password': 'mdp',
+                    password: PASSWORD.weak,
+                    'confirm-password': PASSWORD.weak,
                     email: 'testuser@testuser.com',
                     code: self.recoverCode
                 }
             }, done);
         });
 
-        it('should not update password and return http error code', function () {
-            expect(self.res.statusCode).to.equal(400);
+        before(function (done) {
+            res1 = self.res;
+            requestHelper.sendRequest(self, '/password/update', {
+                method: 'post',
+                data: {
+                    password: PASSWORD.strong,
+                    'confirm-password': PASSWORD.strong,
+                    email: 'testuser@testuser.com',
+                    code: self.recoverCode
+                }
+            }, done);
+        });
+
+        it('should return http error code for first request and success for second one', function () {
+            expect(res1.statusCode).to.equal(400);
+            expect(self.res.statusCode).to.equal(200);
         });
 
     });
@@ -270,8 +290,8 @@ describe('Test password update code', function () {
             requestHelper.sendRequest(self, '/password/update', {
                 method: 'post',
                 data: {
-                    password: 'Gaga123.gogo',
-                    'confirm-password': 'Gaga123.gogo',
+                    password: PASSWORD.strong,
+                    'confirm-password': PASSWORD.strong,
                     email: 'testuser@testuser.com',
                     code: self.recoverCode
                 }
