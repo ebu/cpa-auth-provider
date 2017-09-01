@@ -7,6 +7,7 @@ stages:
   - test
   - docker-publish
   - docker-publish-prod
+  - deploy-test-env
 
 npm_test:
   stage: test
@@ -55,3 +56,11 @@ docker_push_prod:
     - prod
   tags:
     - dind
+
+deploy_idp_test:
+  stage: deploy-test-env
+  image: appropriate/curl
+  script:
+    - curl -X POST -F token=ed97645e904fbb43edd1b0ac7c4ef6 -F ref=master https://git.ebu.io/api/v4/projects/273/trigger/pipeline
+  only:
+    - develop

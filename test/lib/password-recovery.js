@@ -3,6 +3,7 @@
 
 var db = require('../../models');
 var codeHelper = require('../../lib/code-helper');
+var requestHelper = require('../request-helper');
 var config = require('../../config');
 var dbHelper = require('../db-helper');
 
@@ -13,6 +14,11 @@ var resetDatabase = function (done) {
         }
         done();
     });
+};
+
+var PASSWORD = {
+    strong: "Mytestpassword.isthebest",
+    weak: "weakpassword"
 };
 
 describe('Test password recovery code', function () {
@@ -188,4 +194,113 @@ describe('Test password recovery code', function () {
     });
 
 
+});
+
+describe('Test password update code', function () {
+    context('When we try to update password with POST password/update endpoint and not strong password then try with a strong password', function () {
+
+        var self = this;
+        var res1 = null;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            db.User.create({
+                id: 1,
+                email: 'testuser@testuser.com',
+                provider_uid: 'testuser',
+                display_name: 'Test User'
+            }).then(function (user) {
+                self.user = user;
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        done();
+                    });
+                });
+            });
+        });
+
+        before(function (done) {
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/password/update', {
+                method: 'post',
+                data: {
+                    password: PASSWORD.weak,
+                    'confirm-password': PASSWORD.weak,
+                    email: 'testuser@testuser.com',
+                    code: self.recoverCode
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            res1 = self.res;
+            requestHelper.sendRequest(self, '/password/update', {
+                method: 'post',
+                data: {
+                    password: PASSWORD.strong,
+                    'confirm-password': PASSWORD.strong,
+                    email: 'testuser@testuser.com',
+                    code: self.recoverCode
+                }
+            }, done);
+        });
+
+        it('should return http error code for first request and success for second one', function () {
+            expect(res1.statusCode).to.equal(400);
+            expect(self.res.statusCode).to.equal(200);
+        });
+
+    });
+
+    context('When we try to update password with POST password/update endpoint and strong password', function () {
+
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            db.User.create({
+                id: 1,
+                email: 'testuser@testuser.com',
+                provider_uid: 'testuser',
+                display_name: 'Test User'
+            }).then(function (user) {
+                self.user = user;
+                return user.setPassword('mdp').then(function () {
+                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        self.recoverCode = recoverCode;
+                        self.currentPass = user.password;
+                        done();
+                    });
+                });
+            });
+        });
+
+        before(function (done) {
+            requestHelper.login(self, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(self, '/password/update', {
+                method: 'post',
+                data: {
+                    password: PASSWORD.strong,
+                    'confirm-password': PASSWORD.strong,
+                    email: 'testuser@testuser.com',
+                    code: self.recoverCode
+                }
+            }, done);
+        });
+
+        it('should update password and return success http code', function () {
+            expect(self.res.statusCode).to.equal(200);
+        });
+
+    });
 });
