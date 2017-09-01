@@ -86,36 +86,42 @@ function performFacebookLogin(fbProfile, fbAccessToken, done) {
                     [{model: db.User}]
             }
         ).then(function (fbProvider) {
-            var me = fbProvider.User
-            if (me) {
-                me.logLogin().then(function (user) {
-                    return done(null, buildResponse(user));
-                }, function (error) {
-                    return done(error, null);
-                });
-            } else {
+            if (!fbProvider) {
                 db.User.findOrCreate({
                     where: {
-                        display_name: fbProfile.name,
                         email: fbProfile.email
                     }
                 }).spread(function (me) {
-                    me.logLogin().then(function (user) {
-                        db.OAuthProvider.findOrCreate({
-                            where: {
-                                name: oAuthProviderHelper.FB,
-                                uid: fbProfile.provider_uid,
-                                user_id: user.id
-                            }
-                        }).then(function () {
-                            return done(null, buildResponse(user));
+                    me.updateAttributes({display_name: fbProfile.display_name}).then(function () {
+                        me.logLogin().then(function (user) {
+                            var provider = db.OAuthProvider.build({
+                                where: {
+                                    name: oAuthProviderHelper.FB,
+                                    uid: fbProfile.provider_uid,
+                                    user_id: user.id
+                                }
+                            });
+                            provider.save().then(function () {
+                                return done(null, buildResponse(user));
+                            });
+                        }, function (error) {
+                            return done(error, null);
                         });
-                    }, function (error) {
-                        return done(error, null);
                     });
                 }).catch(function (err) {
                     return done(err, null);
                 });
+            } else {
+                var me = fbProvider.User
+                if (me) {
+                    me.logLogin().then(function (user) {
+                        return done(null, buildResponse(user));
+                    }, function (error) {
+                        return done(error, null);
+                    });
+                } else {
+
+                }
             }
         }, function (error) {
             return done(error, null);
