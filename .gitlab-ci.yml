@@ -57,13 +57,10 @@ docker_push_prod:
   tags:
     - dind
 
-# not working for some reason
-# deploy_idp_test:
-#   stage: deploy-test-env
-#   image: appropriate/curl
-#   variables:
-#     CI_DEPLOY_TEST_TRIGGER_TOKEN: $CI_DEPLOY_TEST_TRIGGER_TOKEN
-#   script:
-#     - curl -X POST -F token=$CI_DEPLOY_TEST_TRIGGER_TOKEN -F ref=master https://git.ebu.io/api/v4/projects/273/trigger/pipeline
-#   only:
-#     - develop
+deploy_idp_test:
+  stage: deploy-test-env
+  image: appropriate/curl
+  script:
+    - curl -X POST -F token=ed97645e904fbb43edd1b0ac7c4ef6 -F ref=master https://git.ebu.io/api/v4/projects/273/trigger/pipeline
+  only:
+    - develop
