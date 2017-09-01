@@ -82,11 +82,14 @@ function performGoogleLogin(profile, done) {
                         email: profile.email
                     }
                 }).spread(function (me) {
-                    me.logLogin().then(function (user) {
-                        return done(null, buildResponse(user));
-                    }, function (error) {
-                        return done(error, null);
+                    me.updateAttributes({verified:true}).then(function(){
+                        me.logLogin().then(function (user) {
+                            return done(null, buildResponse(user));
+                        }, function (error) {
+                            return done(error, null);
+                        });
                     });
+
                 }).catch(function (err) {
                     return done(err, null);
                 });
