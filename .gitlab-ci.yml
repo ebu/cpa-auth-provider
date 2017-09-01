@@ -55,3 +55,10 @@ docker_push_prod:
     - prod
   tags:
     - dind
+
+deploy_manager_test:
+  stage: deploy-test-env
+  script:
+    - "curl -X POST -F token=$CI_DEPLOY_TEST_TRIGGER_TOKEN -F ref=master https://git.ebu.io/api/v4/projects/273/trigger/pipeline"
+  only:
+    - develop
