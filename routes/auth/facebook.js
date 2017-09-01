@@ -105,7 +105,7 @@ passport.use(new FacebookStrategy({
             email,
             {
                 provider_uid: providerUid,
-                display_name: profile.displayName,
+                // display_name: profile.displayName,
                 verified: true
             }
         ).then(

@@ -4,6 +4,7 @@ var db = require('../../models');
 var config = require('../../config');
 var jwt = require('jwt-simple');
 var jwtHelper = require('../../lib/jwt-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var cors = require('../../lib/cors');
 
 var GoogleAuth = require('google-auth-library');
@@ -64,10 +65,10 @@ function verifyGoogleIdToken(token, done) {
     });
 }
 
-function performGoogleLogin(profile, done) {
+function performGoogleLogin(googleProfile, done) {
 
-    if (profile) {
-        db.User.findOne({where: {provider_uid: profile.provider_uid}}).then(function (me) {
+    if (googleProfile) {
+        db.User.findOne({where: {provider_uid: googleProfile.provider_uid}}).then(function (me) {
             if (me) {
                 me.logLogin().then(function (user) {
                     return done(null, buildResponse(user));
@@ -77,15 +78,26 @@ function performGoogleLogin(profile, done) {
             } else {
                 db.User.findOrCreate({
                     where: {
-                        provider_uid: profile.provider_uid,
-                        display_name: profile.name,
-                        email: profile.email
+                        provider_uid: googleProfile.provider_uid,
+                        // display_name: profile.name,
+                        email: googleProfile.email
                     }
                 }).spread(function (me) {
-                    me.logLogin().then(function (user) {
-                        return done(null, buildResponse(user));
-                    }, function (error) {
-                        return done(error, null);
+                    me.updateAttributes({display_name: googleProfile.display_name, verified:true}).then(function () {
+                        me.logLogin().then(function (user) {
+                            var provider = db.OAuthProvider.build({
+                                where: {
+                                    name: oAuthProviderHelper.GOOGLE,
+                                    uid: googleProfile.provider_uid,
+                                    user_id: user.id
+                                }
+                            });
+                            provider.save().then(function () {
+                                return done(null, buildResponse(user));
+                            });
+                        }, function (error) {
+                            return done(error, null);
+                        });
                     });
                 }).catch(function (err) {
                     return done(err, null);

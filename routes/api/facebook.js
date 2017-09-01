@@ -58,7 +58,7 @@ function verifyFacebookUserAccessToken(token, done) {
         if (!error && response && response.statusCode && response.statusCode === 200) {
             var fbProfile = {
                 provider_uid: "fb:" + data.id,
-                display_name: data.name,
+                // display_name: data.name,
                 email: data.email
             };
             done(null, fbProfile);
@@ -92,7 +92,7 @@ function performFacebookLogin(fbProfile, fbAccessToken, done) {
                         email: fbProfile.email
                     }
                 }).spread(function (me) {
-                    me.updateAttributes({display_name: fbProfile.display_name}).then(function () {
+                    me.updateAttributes({display_name: fbProfile.display_name, verified:true}).then(function () {
                         me.logLogin().then(function (user) {
                             var provider = db.OAuthProvider.build({
                                 where: {
