@@ -57,7 +57,7 @@ function verifyFacebookUserAccessToken(token, done) {
         if (!error && response && response.statusCode && response.statusCode === 200) {
             var user = {
                 provider_uid: "fb:" + data.id,
-                display_name: data.name,
+                // display_name: data.name,
                 email: data.email
             };
             done(null, user);
