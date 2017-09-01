@@ -59,6 +59,9 @@ docker_push_prod:
 
 deploy_manager_test:
   stage: deploy-test-env
+  image: alpine-curl
+  variables:
+    - CI_DEPLOY_TEST_TRIGGER_TOKEN: $CI_DEPLOY_TEST_TRIGGER_TOKEN
   script:
     - "curl -X POST -F token=$CI_DEPLOY_TEST_TRIGGER_TOKEN -F ref=master https://git.ebu.io/api/v4/projects/273/trigger/pipeline"
   only:
