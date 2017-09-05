@@ -18,7 +18,7 @@ var initDatabase = function (opts, done) {
             .create({
                 id: 3,
                 email: 'testuser',
-                provider_uid: 'testuser',
+                provider_uid: 'fb:1234',
                 display_name: 'Test User',
                 permission_id: 1
             })
@@ -187,6 +187,71 @@ describe('DELETE /user/', function () {
                 expect(this.res.statusCode).equal(401);
             });
         });
+        context('and the user has google account and has set password', function () {
+            context('when using the right password when deleting', function () {
 
+                var self = this;
+                before(resetDatabase);
+
+                before(function (done) {
+                    requestHelper.login(this, done);
+                });
+
+
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/user', {
+                        method: 'post',
+                        type: 'form',
+                        cookie: this.cookie,
+                        data: {password: 'testpassword'}
+                    }, done);
+                });
+
+                before(function (done) {
+                    db.User.count().then(function (count) {
+                        self.count = count;
+                        done();
+                    });
+                });
+
+                it('should return a status 204 success no content', function () {
+                    expect(this.res.statusCode).to.equal(204);
+                    expect(self.count).to.equal(0);
+                });
+
+            });
+            context('when using the wrong password when deleting', function () {
+
+                var self = this;
+                before(resetDatabase);
+
+                before(function (done) {
+                    requestHelper.login(this, done);
+                });
+
+
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/user', {
+                        method: 'post',
+                        type: 'form',
+                        cookie: this.cookie,
+                        data: {password: 'wrongpassword'}
+                    }, done);
+                });
+
+                before(function (done) {
+                    db.User.count().then(function (count) {
+                        self.count = count;
+                        done();
+                    });
+                });
+
+                it('should return a status 204 success no content', function () {
+                    expect(this.res.statusCode).to.equal(401);
+                    expect(self.count).to.equal(1);
+                });
+
+            });
+        });
     });
 });
