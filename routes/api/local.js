@@ -75,7 +75,6 @@ module.exports = function (app, options) {
                     if (user) {
                         return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
                     } else {
-                        db.sequelize.sync().then(function () {
                             db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
                                 var userParams = {
                                     email: req.body.email
@@ -92,7 +91,6 @@ module.exports = function (app, options) {
                                     res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
                                 });
                             });
-                        });
                     }
                 }, function (error) {
                     res.status(500).json({success: false, msg: req.__('API_ERROR') + error});

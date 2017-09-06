@@ -269,6 +269,8 @@
     "BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "reCaptcha is empty or wrong.",
     "BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "Email is empty or invalid",
     "BACK_SIGNUP_USER_NOT_FOUND": "User not found.",
+    "BACK_SIGNUP_BIRTHDAY_FAIL": "Invalid birthday",
+    "BACK_SIGNUP_GENDER_FAIL": "Invalid gender",
 
     "BACK_PWD_UPDATE_USER_NOT_FOUND": "User not found.",
     "BACK_PWD_WRONG_RECOVERY_CODE": "Wrong recovery code.",

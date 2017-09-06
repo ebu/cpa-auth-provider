@@ -25,3 +25,4 @@ services:
     - MAIL_TRANSPORT_TYPE=test
     - TRACKING_COOKIE=true
     - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
+    - PROFILE_FIELDS_REQUIRED=gender,birthday

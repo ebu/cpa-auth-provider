@@ -53,11 +53,30 @@ var localStrategyCallback = function (req, username, password, done) {
 };
 
 var localSignupStrategyCallback = function (req, username, password, done) {
+        var attributes = {};
 
+        var profilesConfig = config.userProfiles || {};
+        var fields = profilesConfig.requiredFields || [];
+        var required = {'gender': fields.indexOf('gender') >= 0, 'birthday': fields.indexOf('birthday') >= 0};
+        for (var i = 0; i < fields.length; ++i) {
+            var fieldName = fields[i].toLowerCase().trim();
+            if (required.hasOwnProperty(fieldName)) {
+                required[fieldName] = true;
+            }
+        }
 
         req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
         req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
         req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
+
+        if (required.gender) {
+            req.checkBody('gender', req.__('BACK_SIGNUP_FAIL_GENDER')).notEmpty().isIn(['male', 'female']);
+            attributes['gender'] = req.body.gender;
+        }
+        if (required.birthday) {
+            req.checkBody('birthday', req.__('BACK_SIGNUP_FAIL_BIRTHDAY')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/i);
+            attributes['birthday'] = req.body.birthday;
+        }
 
         req.getValidationResult().then(function (result) {
 
@@ -79,55 +98,51 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             if (user) {
                                 done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
                             } else {
-                                db.sequelize.sync().then(function () {
-                                    db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                        var userParams = {
-                                            email: req.body.email
-                                        };
-                                        if (permission) {
-                                            userParams.permission_id = permission.id;
-                                        }
-                                        var user;
-                                        db.User.create(userParams).then(function (_user) {
-                                            user = _user;
-                                            return user.setPassword(req.body.password);
-                                        }).then(function () {
-                                            return db.UserProfile.findOrCreate({
-                                                where: {user_id: user.id}
-                                            });
-                                        }).spread(function (user_profile) {
-                                            return user_profile.updateAttributes(
-                                                {
-                                                    language: req.getLocale()
-                                                });
-                                        }).then(function () {
-                                            return codeHelper.getOrGenereateEmailVerificationCode(user);
-                                        }).then(function (code) {
-                                            // Async
-                                            user.logLogin().then(function () {
-                                            }, function () {
-                                            });
-                                            emailHelper.send(
-                                                config.mail.from,
-                                                user.email,
-                                                "validation-email",
-                                                {log: false},
-                                                {
-                                                    confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
-                                                    host: config.mail.host,
-                                                    mail: encodeURIComponent(user.email),
-                                                    code: encodeURIComponent(code)
-                                                },
-                                                req.getLocale() ? req.getLocale() : config.mail.local
-                                            );
-                                        }).then(function () {
-                                            return done(null, user);
-                                        }).catch(
-                                            function (err) {
-                                                done(err);
-                                            }
+                                db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
+                                    var userParams = {
+                                        email: req.body.email
+                                    };
+                                    if (permission) {
+                                        userParams.permission_id = permission.id;
+                                    }
+                                    var user;
+                                    db.User.create(userParams).then(function (_user) {
+                                        user = _user;
+                                        return user.setPassword(req.body.password);
+                                    }).then(function () {
+                                        return db.UserProfile.findOrCreate({
+                                            where: {user_id: user.id}
+                                        });
+                                    }).spread(function (user_profile) {
+                                        attributes.language = req.getLocale();
+                                        return user_profile.updateAttributes(attributes);
+                                    }).then(function () {
+                                        return codeHelper.getOrGenereateEmailVerificationCode(user);
+                                    }).then(function (code) {
+                                        // Async
+                                        user.logLogin().then(function () {
+                                        }, function () {
+                                        });
+                                        emailHelper.send(
+                                            config.mail.from,
+                                            user.email,
+                                            "validation-email",
+                                            {log: false},
+                                            {
+                                                confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                                host: config.mail.host,
+                                                mail: encodeURIComponent(user.email),
+                                                code: encodeURIComponent(code)
+                                            },
+                                            req.getLocale() ? req.getLocale() : config.mail.local
                                         );
-                                    });
+                                    }).then(function () {
+                                        return done(null, user);
+                                    }).catch(
+                                        function (err) {
+                                            done(err);
+                                        }
+                                    );
                                 });
                             }
                         }, function (error) {
@@ -167,7 +182,18 @@ module.exports = function (app, options) {
     });
 
     app.get('/signup', recaptcha.middleware.render, function (req, res) {
-        res.render('signup.ejs', {email: req.query.email, captcha: req.recaptcha, message: req.flash('signupMessage')});
+        var profilesConfig = config.userProfiles || {};
+        var fields = profilesConfig.requiredFields || [];
+        var required = {'gender': fields.indexOf('gender') >= 0, 'birthday': fields.indexOf('birthday') >= 0};
+        res.render(
+            'signup.ejs',
+            {
+                email: req.query.email,
+                captcha: req.recaptcha,
+                requiredFields: required,
+                message: req.flash('signupMessage')
+            }
+        );
     });
 
     app.get('/password/recovery', recaptcha.middleware.render, function (req, res) {
