@@ -94,7 +94,8 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        if(user.isFacebookUser() || user.isGoogleUser()) {
+        if (!user.password && (user.isFacebookUser() || user.isGoogleUser())) {
+
             user.destroy();
             return res.status(204).send();
         }
