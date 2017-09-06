@@ -201,6 +201,7 @@
 	"SIGNUP_BACK_TO_IDP_LIST_LINK": "Zurück zu Identity Provider",
 	"SIGNUP_TITLE": "Anmeldung",
 	"SIGNUP_EMAIL_LABEL": "Email",
+    "SIGNUP_BIRTHDATE_LABEL": "Geburtsdatum",
 	"SIGNUP_PASSWORD_LABEL": "Passwort",
 	"SIGNUP_CONFIRM_PASSWORD_LABEL": "Bestätige das Passwort",
 	"SIGNUP_SIGNUP_BUTTON": "Anmelden",
