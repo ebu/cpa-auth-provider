@@ -93,7 +93,8 @@ module.exports = function (app, options) {
                         logger.debug('[POST /api/local/signup][email', username, '][ERR', err, ']');
                         return res.status(400).json({
                             success: false,
-                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS'),
+                            missingFields: err.data ? err.data.missingFields : undefined
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
                         return res.status(400).json({

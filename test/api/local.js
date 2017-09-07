@@ -257,6 +257,7 @@ describe('POST /api/local/signup', function () {
                 expect(this.res.statusCode).equal(400);
                 expect(this.res.body.success).equal(false);
                 expect(this.res.body.msg).equal("missing required fields");
+                expect(this.res.body.missingFields).members(['birthday']);
             });
 
         });
