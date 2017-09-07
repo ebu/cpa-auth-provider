@@ -270,7 +270,7 @@
 	"BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "ReCaptcha ist leer oder falsch.",
 	"BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "E-Mail ist leer oder ungültig",
 	"BACK_SIGNUP_USER_NOT_FOUND": "Benutzer nicht gefunden.",
-	"BACK_SIGNUP_BIRTHDAY_FAIL": "Geburtstag nicht gültig",
+	"BACK_SIGNUP_BIRTHDATE_FAIL": "Geburtsdatum nicht gültig",
 	"BACK_SIGNUP_GENDER_FAIL": "Geschlecht nicht gültig",
 
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Benutzer nicht gefunden.",

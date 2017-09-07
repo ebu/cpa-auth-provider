@@ -226,7 +226,7 @@ describe('POST /api/local/signup', function () {
         var preFields;
         before(function () {
             preFields =config.userProfiles.requiredFields;
-            config.userProfiles.requiredFields = ['gender','birthday'];
+            config.userProfiles.requiredFields = ['gender','birthdate'];
             userHelper.reloadConfig();
         });
         after(function () {
@@ -257,7 +257,7 @@ describe('POST /api/local/signup', function () {
                 expect(this.res.statusCode).equal(400);
                 expect(this.res.body.success).equal(false);
                 expect(this.res.body.msg).equal("missing required fields");
-                expect(this.res.body.missingFields).members(['birthday']);
+                expect(this.res.body.missingFields).members(['birthdate']);
             });
 
         });
@@ -274,7 +274,7 @@ describe('POST /api/local/signup', function () {
                         email: 'someone@somewhere.com',
                         password: STRONG_PASSWORD,
                         gender: 'jedi',
-                        birthday: '21/12/1970',
+                        birthdate: '21/12/1970',
                         'g-recaptcha-response': recaptchaResponse
                     }
                 }, done);
@@ -286,6 +286,7 @@ describe('POST /api/local/signup', function () {
                 expect(this.res.statusCode).equal(400);
                 expect(this.res.body.success).equal(false);
                 expect(this.res.body.msg).equal("missing required fields");
+                expect(this.res.body.missingFields).undefined;
             });
         });
 
@@ -301,7 +302,7 @@ describe('POST /api/local/signup', function () {
                         email: 'someone@somewhere.com',
                         password: STRONG_PASSWORD,
                         gender: 'female',
-                        birthday: '21/12/1970',
+                        birthdate: '249782400000',
                         'g-recaptcha-response': recaptchaResponse
                     }
                 }, done);

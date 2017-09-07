@@ -59,7 +59,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
 
     var profilesConfig = config.userProfiles || {};
     var fields = profilesConfig.requiredFields || [];
-    var required = {'gender': fields.indexOf('gender') >= 0, 'birthday': fields.indexOf('birthday') >= 0};
+    var required = {'gender': fields.indexOf('gender') >= 0, 'birthdate': fields.indexOf('birthdate') >= 0};
     for (var i = 0; i < fields.length; ++i) {
         var fieldName = fields[i].toLowerCase().trim();
         if (required.hasOwnProperty(fieldName)) {
@@ -72,12 +72,13 @@ var localSignupStrategyCallback = function (req, username, password, done) {
     req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
 
     if (required.gender) {
-        req.checkBody('gender', req.__('BACK_SIGNUP_FAIL_GENDER')).notEmpty().isIn(['male', 'female']);
+        req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female']);
         attributes.gender = req.body.gender;
     }
-    if (required.birthday) {
-        req.checkBody('birthday', req.__('BACK_SIGNUP_FAIL_BIRTHDAY')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
-        attributes.birthday = req.body.birthday;
+    if (required.birthdate) {
+        req.checkBody('birthdate', req.__('BACK_SIGNUP_BIRTHDATE_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
+        var date = new Date(req.body.birthdate);
+        attributes.birthdate = date.getTime();
     }
 
     req.getValidationResult().then(function (result) {
@@ -104,7 +105,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
                         } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
                             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
-                        } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_BIRTHDAY) {
+                        } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_DATE_OF_BIRTH) {
                             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
                         } else {
                             done(err);
@@ -143,7 +144,7 @@ module.exports = function (app, options) {
     app.get('/signup', recaptcha.middleware.render, function (req, res) {
         var profilesConfig = config.userProfiles || {};
         var fields = profilesConfig.requiredFields || [];
-        var required = {'gender': fields.indexOf('gender') >= 0, 'birthday': fields.indexOf('birthday') >= 0};
+        var required = {'gender': fields.indexOf('gender') >= 0, 'birthdate': fields.indexOf('birthdate') >= 0};
         res.render(
             'signup.ejs',
             {

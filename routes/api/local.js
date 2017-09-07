@@ -101,7 +101,7 @@ module.exports = function (app, options) {
                             success: false,
                             msg: req.__('API_SIGNUP_MISSING_FIELDS')
                         });
-                    } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_BIRTHDAY) {
+                    } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_DATE_OF_BIRTH) {
                         return res.status(400).json({
                             success: false,
                             msg: req.__('API_SIGNUP_MISSING_FIELDS')
