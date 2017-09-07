@@ -90,11 +90,20 @@ module.exports = function (app, options) {
                             password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
-                        logger.debug('[POST /api/local/signup][email', username, '][MISSING FIELDS', err.id, '][ERR', err, ']');
+                        logger.debug('[POST /api/local/signup][email', username, '][ERR', err, ']');
                         return res.status(400).json({
                             success: false,
-                            msg: req.__('API_SIGNUP_MISSING_FIELDS'),
-                            missing: err.id.join(',')
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                        });
+                    } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                        });
+                    } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_BIRTHDAY) {
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
                         });
                     } else {
                         logger.error('[POST /api/local/signup][email', username, '][ERR', err, ']');

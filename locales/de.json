@@ -308,6 +308,7 @@
 	"API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
 	"API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Bitte E-Mail und Passwort eingeben.",
 	"API_SIGNUP_EMAIL_ALREADY_EXISTS": "E-Mail existiert bereits.",
+	"API_SIGNUP_MISSING_FIELDS": "missing required fields",
 	"API_SIGNUP_SUCCESS": "Erfolgreicher neuer Benutzer erstellt.",
 
 	"API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",

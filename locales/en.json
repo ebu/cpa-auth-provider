@@ -307,7 +307,8 @@
     "API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Something went wrong with the reCAPTCHA",
     "API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Please pass email and password",
     "API_SIGNUP_EMAIL_ALREADY_EXISTS": "email already exists",
-    "API_SIGNUP_SUCCESS": "Successfully created new user",
+	"API_SIGNUP_MISSING_FIELDS": "missing required fields",
+	"API_SIGNUP_SUCCESS": "Successfully created new user",
 
     "API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Something went wrong with the reCAPTCHA",
     "API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL": "Please pass a valid email address",

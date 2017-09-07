@@ -76,7 +76,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
         attributes['gender'] = req.body.gender;
     }
     if (required.birthday) {
-        req.checkBody('birthday', req.__('BACK_SIGNUP_FAIL_BIRTHDAY')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/i);
+        req.checkBody('birthday', req.__('BACK_SIGNUP_FAIL_BIRTHDAY')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
         attributes['birthday'] = req.body.birthday;
     }
 
@@ -101,6 +101,10 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
                         } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
                             // TODO properly log the missing fields in err.id
+                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                        } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
+                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                        } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_BIRTHDAY) {
                             done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
                         } else {
                             done(err);

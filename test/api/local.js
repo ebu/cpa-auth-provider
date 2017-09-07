@@ -220,6 +220,100 @@ describe('POST /api/local/signup', function () {
 
     });
 
+    context('and some required fields', function () {
+        var config = require('../../config');
+        var userHelper = require('../../lib/user-helper');
+        var preFields;
+        before(function () {
+            preFields =config.userProfiles.requiredFields;
+            config.userProfiles.requiredFields = ['gender','birthday'];
+            userHelper.reloadConfig();
+        });
+        after(function () {
+            config.userProfiles.requiredFields = preFields;
+            userHelper.reloadConfig();
+        });
+
+        context('When unauthenticated user signup without all required fields', function () {
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/signup', {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        email: 'someone@somewhere.com',
+                        password: STRONG_PASSWORD,
+                        gender: 'male',
+                        'g-recaptcha-response': recaptchaResponse
+                    }
+                }, done);
+            });
+
+            it('should return a success false', function () {
+                // if Test fail  here google should have change the recaptcha algorithm
+                // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
+                expect(this.res.statusCode).equal(400);
+                expect(this.res.body.success).equal(false);
+                expect(this.res.body.msg).equal("missing required fields");
+            });
+
+        });
+
+        context('When unauthenticated user signup with badly formatted field', function () {
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/signup', {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        email: 'someone@somewhere.com',
+                        password: STRONG_PASSWORD,
+                        gender: 'jedi',
+                        birthday: '21/12/1970',
+                        'g-recaptcha-response': recaptchaResponse
+                    }
+                }, done);
+            });
+
+            it('should return a success false', function () {
+                // if Test fail  here google should have change the recaptcha algorithm
+                // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
+                expect(this.res.statusCode).equal(400);
+                expect(this.res.body.success).equal(false);
+                expect(this.res.body.msg).equal("missing required fields");
+            });
+        });
+
+        context('When unauthenticated user signup with correct fields', function () {
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/signup', {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        email: 'someone@somewhere.com',
+                        password: STRONG_PASSWORD,
+                        gender: 'female',
+                        birthday: '21/12/1970',
+                        'g-recaptcha-response': recaptchaResponse
+                    }
+                }, done);
+            });
+
+            it('should return a success false', function () {
+                // if Test fail  here google should have change the recaptcha algorithm
+                // => update recaptchaResponse by getting the value post as parameter g-recaptcha-response in signup query using a browser
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body.success).equal(true);
+            });
+        });
+    });
 });
 
 // Test password recovery

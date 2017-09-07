@@ -304,6 +304,7 @@
 	"API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
 	"API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Merci d'envoyer un email et un mot de passe",
 	"API_SIGNUP_EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé",
+	"API_SIGNUP_MISSING_FIELDS": "missing required fields",
 	"API_SIGNUP_SUCCESS": "L'utilisateur a bien été créé",
 
 	"API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
