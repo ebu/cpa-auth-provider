@@ -4,6 +4,7 @@ var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var jwtHelpers = require('../../lib/jwt-helper');
+var logger = require('../../lib/logger');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -18,6 +19,7 @@ var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
 var permissionName = require('../../lib/permission-name');
 var passwordHelper = require('../../lib/password-helper');
+var userHelper = require('../../lib/user-helper');
 
 var codeHelper = require('../../lib/code-helper');
 
@@ -63,38 +65,43 @@ module.exports = function (app, options) {
         if (!req.body.email || !req.body.password) {
             res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
-            if (!passwordHelper.isStrong(req.body.password)) {
-                return res.status(400).json({
-                    success: false,
-                    msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
-                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
-                });
-            }
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
-                    } else {
-                            db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                var userParams = {
-                                    email: req.body.email
-                                };
-                                if (permission) {
-                                    userParams.permission_id = permission.id;
-                                }
-                                var user = db.User.create(userParams).then(function (user) {
-                                    return user.setPassword(req.body.password);
-                                }).then(function () {
-                                    res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
-                                }).catch(function (err) {
-                                    console.log("ERROR", err);
-                                    res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
-                                });
-                            });
+            var username = req.body.email;
+            var password = req.body.password;
+            var attributes = {};
+            config.userProfiles.requiredFields.forEach(
+                function (element) {
+                    if (req.body[element]) {
+                        attributes[element] = req.body[element];
                     }
-                }, function (error) {
-                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
-                });
+                }
+            );
+
+            userHelper.createUser(username, password, attributes).then(
+                function (user) {
+                    res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
+                },
+                function (err) {
+                    if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
+                        return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
+                    } else if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
+                            password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                        });
+                    } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
+                        logger.debug('[POST /api/local/signup][email', username, '][MISSING FIELDS', err.id, '][ERR', err, ']');
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS'),
+                            missing: err.id.join(',')
+                        });
+                    } else {
+                        logger.error('[POST /api/local/signup][email', username, '][ERR', err, ']');
+                        res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
+                    }
+                }
+            );
         }
     });
 

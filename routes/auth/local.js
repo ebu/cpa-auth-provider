@@ -13,6 +13,8 @@ var codeHelper = require('../../lib/code-helper');
 var permissionName = require('../../lib/permission-name');
 var passwordHelper = require('../../lib/password-helper');
 
+var userHelper = require('../../lib/user-helper');
+
 var i18n = require('i18n');
 
 // Google reCAPTCHA
@@ -53,109 +55,62 @@ var localStrategyCallback = function (req, username, password, done) {
 };
 
 var localSignupStrategyCallback = function (req, username, password, done) {
-        var attributes = {};
+    var attributes = {};
 
-        var profilesConfig = config.userProfiles || {};
-        var fields = profilesConfig.requiredFields || [];
-        var required = {'gender': fields.indexOf('gender') >= 0, 'birthday': fields.indexOf('birthday') >= 0};
-        for (var i = 0; i < fields.length; ++i) {
-            var fieldName = fields[i].toLowerCase().trim();
-            if (required.hasOwnProperty(fieldName)) {
-                required[fieldName] = true;
-            }
+    var profilesConfig = config.userProfiles || {};
+    var fields = profilesConfig.requiredFields || [];
+    var required = {'gender': fields.indexOf('gender') >= 0, 'birthday': fields.indexOf('birthday') >= 0};
+    for (var i = 0; i < fields.length; ++i) {
+        var fieldName = fields[i].toLowerCase().trim();
+        if (required.hasOwnProperty(fieldName)) {
+            required[fieldName] = true;
         }
-
-        req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
-        req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
-        req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
-
-        if (required.gender) {
-            req.checkBody('gender', req.__('BACK_SIGNUP_FAIL_GENDER')).notEmpty().isIn(['male', 'female']);
-            attributes['gender'] = req.body.gender;
-        }
-        if (required.birthday) {
-            req.checkBody('birthday', req.__('BACK_SIGNUP_FAIL_BIRTHDAY')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/i);
-            attributes['birthday'] = req.body.birthday;
-        }
-
-        req.getValidationResult().then(function (result) {
-
-                if (!result.isEmpty()) {
-                    done(null, false, req.flash('signupMessage', result.array()[0].msg));
-                } else {
-                    if (req.recaptcha.error) {
-                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
-                        return;
-                    }
-
-                    if (!passwordHelper.isStrong(password)) {
-                        done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH')));
-                        return;
-                    }
-
-                    db.User.findOne({where: {email: req.body.email}})
-                        .then(function (user) {
-                            if (user) {
-                                done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
-                            } else {
-                                db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                                    var userParams = {
-                                        email: req.body.email
-                                    };
-                                    if (permission) {
-                                        userParams.permission_id = permission.id;
-                                    }
-                                    var user;
-                                    db.User.create(userParams).then(function (_user) {
-                                        user = _user;
-                                        return user.setPassword(req.body.password);
-                                    }).then(function () {
-                                        return db.UserProfile.findOrCreate({
-                                            where: {user_id: user.id}
-                                        });
-                                    }).spread(function (user_profile) {
-                                        attributes.language = req.getLocale();
-                                        return user_profile.updateAttributes(attributes);
-                                    }).then(function () {
-                                        return codeHelper.getOrGenereateEmailVerificationCode(user);
-                                    }).then(function (code) {
-                                        // Async
-                                        user.logLogin().then(function () {
-                                        }, function () {
-                                        });
-                                        emailHelper.send(
-                                            config.mail.from,
-                                            user.email,
-                                            "validation-email",
-                                            {log: false},
-                                            {
-                                                confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
-                                                host: config.mail.host,
-                                                mail: encodeURIComponent(user.email),
-                                                code: encodeURIComponent(code)
-                                            },
-                                            req.getLocale() ? req.getLocale() : config.mail.local
-                                        );
-                                    }).then(function () {
-                                        return done(null, user);
-                                    }).catch(
-                                        function (err) {
-                                            done(err);
-                                        }
-                                    );
-                                });
-                            }
-                        }, function (error) {
-                            done(error);
-                        });
-                }
-            }
-        )
-        ;
-
-
     }
-    ;
+
+    req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
+    req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
+    req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
+
+    if (required.gender) {
+        req.checkBody('gender', req.__('BACK_SIGNUP_FAIL_GENDER')).notEmpty().isIn(['male', 'female']);
+        attributes['gender'] = req.body.gender;
+    }
+    if (required.birthday) {
+        req.checkBody('birthday', req.__('BACK_SIGNUP_FAIL_BIRTHDAY')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/i);
+        attributes['birthday'] = req.body.birthday;
+    }
+
+    req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                done(null, false, req.flash('signupMessage', result.array()[0].msg));
+            } else {
+                if (req.recaptcha.error) {
+                    done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
+                    return;
+                }
+
+                attributes.language = req.getLocale();
+                userHelper.createUser(username, password, attributes).then(
+                    function (user) {
+                        done(null, user);
+                    },
+                    function (err) {
+                        if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
+                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH')));
+                        } else if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
+                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
+                        } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
+                            // TODO properly log the missing fields in err.id
+                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                        } else {
+                            done(err);
+                        }
+                    }
+                );
+            }
+        }
+    );
+};
 
 var localStrategyConf = {
     // by default, local strategy uses username and password, we will override with email
@@ -318,7 +273,10 @@ module.exports = function (app, options) {
                 return;
             }
             if (!passwordHelper.isStrong(req.body.password)) {
-                res.status(400).json({msg: passwordHelper.getWeaknessesMsg(req.body.password, req), password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)});
+                res.status(400).json({
+                    msg: passwordHelper.getWeaknessesMsg(req.body.password, req),
+                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                });
                 return;
             }
             db.User.findOne({where: {email: req.body.email}})

@@ -93,10 +93,10 @@ describe('GET /api/local/profile', function () {
             //console.log('status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
-            expect(this.res.body.user_profile.firstname).to.be.undefined;
-            expect(this.res.body.user_profile.lastname).to.be.undefined;
-            expect(this.res.body.user_profile.gender).to.be.undefined;
-            expect(this.res.body.user_profile.birthdate).to.be.undefined;
+            expect(this.res.body.user_profile.firstname).null;
+            expect(this.res.body.user_profile.lastname).null;
+            expect(this.res.body.user_profile.gender).null;
+            expect(this.res.body.user_profile.birthdate).null;
             expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
             expect(this.res.body.user_profile.display_name).to.equals('qsdf@qsdf.fr');
         });
