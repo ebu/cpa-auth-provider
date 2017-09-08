@@ -41,6 +41,16 @@ module.exports = {
                 });
             }
         });
+    },
+
+    createFakeUser: function (userTemplate, done) {
+        return db.User.create(userTemplate).then(function (user) {
+            return user.setPassword(userTemplate.password);
+        }).then(
+            function () {
+                done();
+            }
+        );
     }
 };
 

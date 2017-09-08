@@ -9,49 +9,55 @@ var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
 var i18n = require('i18n');
+var userHelper = require('../../lib/user-helper');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
         var userId = authHelper.getAuthenticatedUser(req).id;
-        req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).notEmpty().isAlpha();
-        req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).notEmpty().isAlpha();
-        req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).notEmpty().isInt();
-        req.checkBody('gender', req.__('BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID')).notEmpty().isIn(['male'], ['female']);
-        req.checkBody('language', req.__('BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID')).notEmpty().isAlpha();
+
+        var requiredFields = userHelper.getRequiredFields();
+        if (requiredFields.firstname) {
+            req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).notEmpty().isAlpha();
+        } else if (req.body.firstname) {
+            req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).isAlpha();
+        }
+        if (requiredFields.lastname) {
+            req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).notEmpty().isAlpha();
+        } else if (req.body.lastname) {
+            req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).isAlpha();
+        }
+        if (requiredFields.birthdate) {
+            req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).notEmpty().isInt();
+        } else if (req.body.birthdate) {
+            req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).isInt();
+        }
+        if (requiredFields.gender) {
+            req.checkBody('gender', req.__('BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID')).notEmpty().isIn(['male', 'female']);
+        } else if (req.body.gender) {
+            req.checkBody('gender', req.__('BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID')).isIn(['male', 'female']);
+        }
+        if (requiredFields.language) {
+            req.checkBody('language', req.__('BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID')).notEmpty().isAlpha();
+        } else if (req.body.language) {
+            req.checkBody('language', req.__('BACK_LANGUAGE_UPDATE_LANGUAGE_EMPTY_OR_INVALID')).isAlpha();
+        }
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
-            db.UserProfile.findOrCreate({
-                where: {user_id: userId}
-            }).spread(function (user_profile) {
-                    user_profile.updateAttributes(
-                        {
-                            //use XSS filters to prevent users storing malicious data/code that could be interpreted then
-                            firstname: xssFilters.inHTMLData(req.body.firstname),
-                            lastname: xssFilters.inHTMLData(req.body.lastname),
-                            gender: xssFilters.inHTMLData(req.body.gender),
-                            birthdate: xssFilters.inHTMLData(req.body.birthdate),
-                            language: xssFilters.inHTMLData(req.body.language)
-                        })
-                        .then(function (user_profile) {
-                                res.cookie(config.i18n.cookie_name, user_profile.language, {
-                                    maxAge: config.i18n.cookie_duration,
-                                    httpOnly: true
-                                });
-                                db.User.findOne({where: {id: userId}})
-                                    .then(function (user, user_profile) {
-                                        if (user) {
-                                            user.updateAttributes({display_name: xssFilters.inHTMLData(req.body.firstname) + ' ' + xssFilters.inHTMLData(req.body.lastname)});
-                                            res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
-                                        }
-                                    });
-                            },
-                            function (err) {
-                                res.status(500).json({msg: req.__('BACK_PROFILE_UPDATE_FAIL') + err});
-                            });
+            userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(
+                function (userProfile) {
+                    res.cookie(config.i18n.cookie_name, userProfile.language, {
+                        maxAge: config.i18n.cookie_duration,
+                        httpOnly: true
+                    });
+                    res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
+                },
+                function (err) {
+                    console.log(err);
+                    res.status(500).json({msg: req.__('BACK_PROFILE_UPDATE_FAIL') + err});
                 }
             );
         });
