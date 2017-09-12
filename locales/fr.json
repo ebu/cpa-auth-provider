@@ -268,6 +268,7 @@
 	"BACK_SIGNUP_USER_NOT_FOUND": "Utilisateur inconnu.",
 	"BACK_SIGNUP_BIRTHDATE_FAIL": "Date de naissance invalide",
 	"BACK_SIGNUP_GENDER_FAIL": "Sexe invalide",
+	"BACK_SIGNUP_MISSING_FIELDS": "Date de naissance ou sexe invalide",
 
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Utilisateur inconnu.",
 	"BACK_PWD_WRONG_RECOVERY_CODE": "Code de récupération de mot de passe erroné.",

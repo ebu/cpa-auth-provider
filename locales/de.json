@@ -272,6 +272,7 @@
 	"BACK_SIGNUP_USER_NOT_FOUND": "Benutzer nicht gefunden.",
 	"BACK_SIGNUP_BIRTHDATE_FAIL": "Geburtsdatum nicht gültig",
 	"BACK_SIGNUP_GENDER_FAIL": "Geschlecht nicht gültig",
+	"BACK_SIGNUP_MISSING_FIELDS": "Angaben unvollständig",
 
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Benutzer nicht gefunden.",
 	"BACK_PWD_WRONG_RECOVERY_CODE": "Falscher Wiederherstellungscode.",

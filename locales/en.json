@@ -271,6 +271,7 @@
     "BACK_SIGNUP_USER_NOT_FOUND": "User not found.",
     "BACK_SIGNUP_BIRTHDATE_FAIL": "Invalid date of birth",
     "BACK_SIGNUP_GENDER_FAIL": "Invalid gender",
+    "BACK_SIGNUP_MISSING_FIELDS": "You did not supply all required information",
 
     "BACK_PWD_UPDATE_USER_NOT_FOUND": "User not found.",
     "BACK_PWD_WRONG_RECOVERY_CODE": "Wrong recovery code.",
