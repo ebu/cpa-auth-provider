@@ -10,6 +10,7 @@ var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
 var i18n = require('i18n');
 var userHelper = require('../../lib/user-helper');
+var logger = require('../../lib/logger');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
@@ -56,7 +57,7 @@ var routes = function (router) {
                     res.json({msg: req.__('BACK_PROFILE_UPDATE_SUCCESS')});
                 },
                 function (err) {
-                    console.log(err);
+                    logger.error('[PUT /user/profile][ERROR', err, ']');
                     res.status(500).json({msg: req.__('BACK_PROFILE_UPDATE_FAIL') + err});
                 }
             );
