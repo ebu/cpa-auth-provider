@@ -265,6 +265,10 @@ nav .peach-title {
     margin: 0 0 35px 0;
 }
 
+#signup #gender {
+    color: #999;
+}
+
 /*
 ************
 ************ PASSWORD RECOVERY
