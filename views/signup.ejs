@@ -34,7 +34,10 @@
                             <div class="form-group">
                                 <div class="input-group date" data-provide="datepicker"
                                      data-language="en">
-                                    <input id="birthdate" name="birthdate" class="form-control" type="text" placeholder="<%= __('SIGNUP_BIRTHDATE_LABEL') %>">
+                                    <input id="birthdate" name="birthdate" class="form-control"
+                                           type="text" placeholder="<%= __('SIGNUP_BIRTHDATE_LABEL') %>"
+                                           <% if(birthdate) {%> value="<%= birthdate %>" <% } %>
+                                    >
                                     <div class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </div>
@@ -45,7 +48,11 @@
                             <% if(requiredFields.gender) {%>
                             <div class="form-group">
                                 <select id="gender" name="gender" class="form-control personnal-data-input">
-                                    <option class="input-gender" value="" selected disabled>Sexe</option>
+                                    <option class="input-gender"
+                                            <% if(gender) {%>value="<%= gender %>"<% } %>
+                                            selected disabled>
+                                        <%= __('PROFILE_SEXE_LABEL') %>
+                                    </option>
                                     <option value="male"><%= __('PROFILE_MAN_SEXE_FORM_OPTION') %></option>
                                     <option value="female"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION') %></option>
                                     <option value="other"><%= __('PROFILE_OTHER_SEX_FORM_OPTION') %></option>

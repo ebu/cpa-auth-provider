@@ -145,15 +145,18 @@ module.exports = function (app, options) {
         var profilesConfig = config.userProfiles || {};
         var fields = profilesConfig.requiredFields || [];
         var required = {'gender': fields.indexOf('gender') >= 0, 'birthdate': fields.indexOf('birthdate') >= 0};
-        res.render(
-            'signup.ejs',
-            {
-                email: req.query.email,
-                captcha: req.recaptcha,
-                requiredFields: required,
-                message: req.flash('signupMessage')
+        var profileAttributes = {
+            email: req.query.email ? decodeURIComponent(req.query.email) : '',
+            captcha: req.recaptcha,
+            requiredFields: required,
+            message: req.flash('signupMessage')
+        };
+        for (var key in required) {
+            if (required.hasOwnProperty(key) && required[key]) {
+                profileAttributes[key] = req.query[key] ? decodeURIComponent(req.query[key]) : '';
             }
-        );
+        }
+        res.render('signup.ejs', profileAttributes);
     });
 
     app.get('/password/recovery', recaptcha.middleware.render, function (req, res) {
@@ -206,7 +209,14 @@ module.exports = function (app, options) {
             }
             // Redirect if it fails
             if (!user) {
-                return requestHelper.redirect(res, '/signup?email=' + req.body.email);
+                var params = ['email=' + encodeURIComponent(req.body.email)];
+                if (config.userProfiles && config.userProfiles.requiredFields) {
+                    for (var i = 0; i < config.userProfiles.requiredFields.length; ++i) {
+                        var element = config.userProfiles.requiredFields[i];
+                        params.push(element + "=" + encodeURIComponent(req.body[element]));
+                    }
+                }
+                return requestHelper.redirect(res, '/signup?' + params.join('&'));
             }
             req.logIn(user, function (err) {
                 if (err) {
