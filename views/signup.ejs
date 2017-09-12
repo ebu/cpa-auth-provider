@@ -70,13 +70,19 @@
                             <div class="form-group">
                                 <select id="gender" name="gender" class="form-control personnal-data-input">
                                     <option class="input-gender"
-                                            <% if(gender) {%>value="<%= gender %>"<% } %>
-                                            selected disabled>
+                                            <% if(!gender) {%>selected<% } %>
+                                            disabled>
                                         <%= __('PROFILE_SEXE_LABEL') %>
                                     </option>
-                                    <option value="male"><%= __('PROFILE_MAN_SEXE_FORM_OPTION') %></option>
-                                    <option value="female"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION') %></option>
-                                    <option value="other"><%= __('PROFILE_OTHER_SEX_FORM_OPTION') %></option>
+                                    <option value="male" <% if(gender=='male') {%>selected<%}%> >
+                                        <%= __('PROFILE_MAN_SEXE_FORM_OPTION') %>
+                                    </option>
+                                    <option value="female" <% if(gender=='female') {%>selected<%}%> >
+                                        <%= __('PROFILE_WOMAN_SEXE_FORM_OPTION') %>
+                                    </option>
+                                    <option value="other" <% if(gender=='other') {%>selected<%}%> >
+                                        <%= __('PROFILE_OTHER_SEX_FORM_OPTION') %>
+                                    </option>
                                 </select>
                             </div>
                             <% } %>
