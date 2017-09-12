@@ -30,6 +30,27 @@
                                         <% } %>
                                        required>
                             </div>
+                            <% if(requiredFields.firstname) { %>
+                            <div class="form-group">
+                                <input id="firstname" name="firstname" class="form-control"
+                                       type="text" placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER') %>"
+                                        <% if(firstname) { %>
+                                       value="<%= firstname %>"
+                                        <% } %>
+                                >
+                            </div>
+                            <% } %>
+                            <% if(requiredFields.lastname) { %>
+                            <div class="form-group">
+                                <input id="lastname" name="lastname" class="form-control"
+                                       type="text" placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"
+                                        <% if(lastname) { %>
+                                       value="<%= lastname %>"
+                                        <% } %>
+                                >
+                            </div>
+                            <% } %>
+
                             <% if(requiredFields.birthdate) {%>
                             <div class="form-group">
                                 <div class="input-group date" data-provide="datepicker"

@@ -57,20 +57,19 @@ var localStrategyCallback = function (req, username, password, done) {
 var localSignupStrategyCallback = function (req, username, password, done) {
     var attributes = {};
 
-    var profilesConfig = config.userProfiles || {};
-    var fields = profilesConfig.requiredFields || [];
-    var required = {'gender': fields.indexOf('gender') >= 0, 'birthdate': fields.indexOf('birthdate') >= 0};
-    for (var i = 0; i < fields.length; ++i) {
-        var fieldName = fields[i].toLowerCase().trim();
-        if (required.hasOwnProperty(fieldName)) {
-            required[fieldName] = true;
-        }
-    }
+    var required = userHelper.getRequiredFields();
 
     req.checkBody('email', req.__('BACK_SIGNUP_INVALID_EMAIL')).isEmail();
     req.checkBody('confirm_password', req.__('BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY')).notEmpty();
     req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
 
+    // general required copy
+    for (var key in required) {
+        if (required.hasOwnProperty(key) && required[key]) {
+            attributes[key] = req.body[key];
+        }
+    }
+    // specialized required copies
     if (required.gender) {
         req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female', 'other']);
         attributes.gender = req.body.gender;
@@ -142,9 +141,7 @@ module.exports = function (app, options) {
     });
 
     app.get('/signup', recaptcha.middleware.render, function (req, res) {
-        var profilesConfig = config.userProfiles || {};
-        var fields = profilesConfig.requiredFields || [];
-        var required = {'gender': fields.indexOf('gender') >= 0, 'birthdate': fields.indexOf('birthdate') >= 0};
+        var required = userHelper.getRequiredFields();
         var profileAttributes = {
             email: req.query.email ? decodeURIComponent(req.query.email) : '',
             captcha: req.recaptcha,
