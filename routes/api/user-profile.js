@@ -58,7 +58,7 @@ module.exports = function (app, options) {
             req.checkBody('birthdate', req.__('API_PROFILE_BIRTHDATE_INVALIDE')).isInt();
         }
         if (req.body.gender) {
-            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male', 'female']);
+            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male', 'female', 'other']);
         }
         if (req.body.language) {
             req.checkBody('language', req.__('API_PROFILE_LANGUAGE_INVALIDE')).isAlpha();

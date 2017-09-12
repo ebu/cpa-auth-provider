@@ -300,7 +300,7 @@ describe('GET /api/local/profile', function () {
                 userHelper.reloadConfig();
             });
 
-            context('everything is correctly set at once', function () {
+            context('everything is correctly set at once (female)', function () {
                 before(resetDatabase);
 
                 before(function (done) {
@@ -321,6 +321,72 @@ describe('GET /api/local/profile', function () {
                             method: 'put',
                             type: 'json',
                             data: {gender: 'female', birthdate: 249782400000},
+                            accessToken: accessToken,
+                            tokenType: 'Bearer'
+                        }, done
+                    );
+                });
+
+                it('should accept the change', function () {
+                    expect(this.res.statusCode).equal(200);
+                    expect(this.res.body.success).equal(true);
+                });
+            });
+
+            context('everything is correctly set at once (male)', function () {
+                before(resetDatabase);
+
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/local/authenticate', {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            email: USER_EMAIL,
+                            password: STRONG_PASSWORD
+                        }
+                    }, done);
+                });
+
+                before(function (done) {
+                    var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                    requestHelper.sendRequest(this, '/api/local/profile', {
+                            method: 'put',
+                            type: 'json',
+                            data: {gender: 'male', birthdate: 249782400000},
+                            accessToken: accessToken,
+                            tokenType: 'Bearer'
+                        }, done
+                    );
+                });
+
+                it('should accept the change', function () {
+                    expect(this.res.statusCode).equal(200);
+                    expect(this.res.body.success).equal(true);
+                });
+            });
+
+            context('everything is correctly set at once (gender other)', function () {
+                before(resetDatabase);
+
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/local/authenticate', {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            email: USER_EMAIL,
+                            password: STRONG_PASSWORD
+                        }
+                    }, done);
+                });
+
+                before(function (done) {
+                    var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                    requestHelper.sendRequest(this, '/api/local/profile', {
+                            method: 'put',
+                            type: 'json',
+                            data: {gender: 'other', birthdate: 249782400000},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done

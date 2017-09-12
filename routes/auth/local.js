@@ -72,7 +72,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
     req.checkBody('password', req.__('BACK_CHANGE_PWD_PASS_DONT_MATCH')).equals(req.body.confirm_password);
 
     if (required.gender) {
-        req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female']);
+        req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female', 'other']);
         attributes.gender = req.body.gender;
     }
     if (required.birthdate) {
