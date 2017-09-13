@@ -17,6 +17,7 @@ function setupRoutes(router) {
 	register('request-password-email', requestPasswordEmail);
 	register('set-password', setPassword);
 	register('force-password', forcePassword);
+	register('check-force-token', checkForceToken);
 
 	var cors_headers = cors({origin: true, methods: ['POST']});
 	router.options('/user/password', cors_headers);
@@ -210,9 +211,47 @@ function forcePassword(req, res) {
 		}
 	).catch(
 		function(err) {
-			console.log(err);
 			res.status(400).json({success: false, reason: err.message});
 			logger.debug('[User][Password][FAIL][type force-password][token', tokenKey, '][clientId', clientId, '][err', err, ']');
 		}
 	);
+}
+
+function checkForceToken(req, res) {
+    var clientId = req.body.client_id;
+    var requestType = req.body.request_type;
+
+    var tokenKey = req.body.token;
+
+    if (requestType !== 'check-force-token') {
+        res.status(400).json({success: false, reason: oauthHelper.ERRORS.BAD_REQUEST.message});
+        logger.debug('[User][Password][FAIL][type check-force-token][token', tokenKey, '][clientId', clientId, '][err bad request type]');
+        return;
+    }
+
+    if (!clientId || !tokenKey) {
+        return res.status(400).json({success: false, reason: 'MISSING_REQUEST_FIELDS'});
+    }
+
+    var token;
+    db.UserEmailToken.find({where: {key: tokenKey}, include: [db.User, db.OAuth2Client]}).then(
+        function (_token) {
+            token = _token;
+            if (!token) {
+                throw new Error('INVALID_TOKEN');
+            }
+            if (clientId && clientId != token.OAuth2Client.client_id) {
+                throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
+            }
+            if (!token.User) {
+                throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
+            }
+
+            res.status(200).json({success: true});
+        }
+    ).catch(
+        function (err) {
+            res.status(200).json({success: false, reason: err.message});
+        }
+    );
 }
