@@ -96,8 +96,9 @@ New models can be added (once sequelize-cli is installed):
 It's possible to test with scaling of instances:
 
     $ docker-compose -f docker-compose-nginx.yaml build
-    $ docker-compose -f docker-compose-nginx.yaml scale identity-provider=4
-    $ docker-compose -f docker-compose-nginx.yaml up -d --remove-orphans
+    $ docker-compose -f docker-compose-nginx.yaml up -d postgres
+    $ docker-compose -f docker-compose-nginx.yaml up -d --scale identity-provider=4
+    $ docker-compose -f docker-compose-nginx.yaml up -d proxy
 
 ## Related projects
 
