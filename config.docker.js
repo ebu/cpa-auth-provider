@@ -210,8 +210,11 @@ module.exports = {
     max_poll_interval: 5,
 
     deletion: {
+        // how long before a deletion request is processed
         delay_in_days: process.env.DELETION_DELAY_IN_DAYS || 7,
         // check to delete in seconds
         delete_interval: process.env.DELETE_INTERVAL || 6 * 60 * 60, // 6 hours
+        // how long before a verification is considered failed, in seconds
+        verification_time: process.env.VERIFICATION_TIME || 48 * 60 * 60 // 48 hours
     },
 };
