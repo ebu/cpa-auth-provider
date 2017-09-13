@@ -215,6 +215,6 @@ module.exports = {
         // check to delete in seconds
         delete_interval: process.env.DELETE_INTERVAL || 6 * 60 * 60, // 6 hours
         // how long before a verification is considered failed, in seconds
-        verification_time: process.env.VERIFICATION_TIME || 48 * 60 * 60 // 48 hours
+        verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
     },
 };
