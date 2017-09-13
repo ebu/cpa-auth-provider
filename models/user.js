@@ -2,7 +2,11 @@
 
 var bcrypt = require('bcrypt');
 var config = require('../config');
+var legacyPasswordHelper = require('../lib/legacy-password-helper');
 
+// mark password hashes as bcrypt password
+var BCRYPT_TAG = '{BC}';
+var PASSWORD_REGEX = /(\{\w+})?(.*)/;
 
 module.exports = function (sequelize, DataTypes) {
 
@@ -42,7 +46,7 @@ module.exports = function (sequelize, DataTypes) {
                 bcrypt.hash(password, 10).then(
                     function (hash) {
                         return self.updateAttributes(
-                            {password: hash, password_changed_at: Date.now()}
+                            {password: BCRYPT_TAG + hash, password_changed_at: Date.now()}
                         )
                     }
                 ).then(
@@ -52,7 +56,14 @@ module.exports = function (sequelize, DataTypes) {
         );
     };
     User.prototype.verifyPassword = function (password) {
-        return bcrypt.compare(password, this.password);
+        var result = PASSWORD_REGEX.exec(this.password);
+        var hash = result[2];
+        var func = legacyPasswordHelper.getCheckFunction(result[1]);
+        if (func) {
+            return func(password, hash);
+        } else { // if (result[1] === BCRYPT_TAG || !result[1]) {
+            return bcrypt.compare(password, hash);
+        }
     };
     User.prototype.isFacebookUser = function () {
         var self = this;
@@ -68,7 +79,7 @@ module.exports = function (sequelize, DataTypes) {
             return true;
         }
         return false;
-    }
+    };
 
     return User;
 };
