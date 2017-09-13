@@ -132,6 +132,7 @@
 	"PROFILE_SEXE_LABEL": "Sexe",
 	"PROFILE_MAN_SEXE_FORM_OPTION": "Mann",
 	"PROFILE_WOMAN_SEXE_FORM_OPTION": "Frau",
+	"PROFILE_OTHER_SEX_FORM_OPTION": "Nicht angegeben",
 	"PROFILE_LANGUAGE_LABEL": "Sprache",
 	"PROFILE_LANGUAGE_FR_FORM_OPTION": "Français",
 	"PROFILE_LANGUAGE_EN_FORM_OPTION": "English",
@@ -201,6 +202,7 @@
 	"SIGNUP_BACK_TO_IDP_LIST_LINK": "Zurück zu Identity Provider",
 	"SIGNUP_TITLE": "Anmeldung",
 	"SIGNUP_EMAIL_LABEL": "Email",
+    "SIGNUP_BIRTHDATE_LABEL": "Geburtsdatum",
 	"SIGNUP_PASSWORD_LABEL": "Passwort",
 	"SIGNUP_CONFIRM_PASSWORD_LABEL": "Bestätige das Passwort",
 	"SIGNUP_SIGNUP_BUTTON": "Anmelden",
@@ -269,6 +271,9 @@
 	"BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG": "ReCaptcha ist leer oder falsch.",
 	"BACK_SIGNUP_EMAIL_EMPTY_OR_INVALID": "E-Mail ist leer oder ungültig",
 	"BACK_SIGNUP_USER_NOT_FOUND": "Benutzer nicht gefunden.",
+	"BACK_SIGNUP_BIRTHDATE_FAIL": "Geburtsdatum nicht gültig",
+	"BACK_SIGNUP_GENDER_FAIL": "Geschlecht nicht gültig",
+	"BACK_SIGNUP_MISSING_FIELDS": "Angaben unvollständig",
 
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Benutzer nicht gefunden.",
 	"BACK_PWD_WRONG_RECOVERY_CODE": "Falscher Wiederherstellungscode.",
@@ -305,6 +310,7 @@
 	"API_SIGNUP_SOMETHING_WRONG_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
 	"API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD": "Bitte E-Mail und Passwort eingeben.",
 	"API_SIGNUP_EMAIL_ALREADY_EXISTS": "E-Mail existiert bereits.",
+	"API_SIGNUP_MISSING_FIELDS": "missing required fields",
 	"API_SIGNUP_SUCCESS": "Erfolgreicher neuer Benutzer erstellt.",
 
 	"API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",

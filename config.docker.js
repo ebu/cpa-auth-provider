@@ -49,6 +49,12 @@ module.exports = {
         }
     },
 
+    userProfiles: {
+        requiredFields: process.env.PROFILE_FIELDS_REQUIRED
+            ? process.env.PROFILE_FIELDS_REQUIRED.toLowerCase().split(',')
+            : [],
+    },
+
     baseUrl: process.env.BASE_URL,
 
     displayUsersInfos: true,
