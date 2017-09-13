@@ -76,7 +76,7 @@
                                   data-selected="<%= profile.gender %>"><%= __('PROFILE_OTHER_SEX_FORM_OPTION') %></span>
                             <% } %>
                         <% } else { %>
-                        <span class="data-value" data-selected="male"></span>
+                        <span class="data-value" data-selected="other"></span>
                         <% } %>
                         <select id="gender" name="gender" class="form-control personnal-data-input">
                             <option value="male"><%= __('PROFILE_MAN_SEXE_FORM_OPTION') %></option>
@@ -558,7 +558,8 @@
             resetMessages("form-personnal-data-errors", "personnal-data-errors");
 
             var userId = "<%= user.id %>";
-            var date = createDate($birthday.val()).getTime();
+            var dateOfBirth = $birthday.val();
+            var date = dateOfBirth ? createDate(dateOfBirth).getTime() : '';
 
             $.ajax({
                 url: "<%= link('/user/profile/') %>",
