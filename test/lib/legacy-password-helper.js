@@ -16,7 +16,7 @@ describe("Test legacy password ", function () {
     });
     describe("Check if password is legacy", function () {
         describe("with a {SSHA} password", function () {
-            assert(legacyPasswordHelper.isLegacyRTSPassword(_12345678_HASHED_PASSWORD))
+            assert(legacyPasswordHelper.isLegacyRTSPassword(_12345678_HASHED_PASSWORD));
         });
         describe("with a {ECE} password", function () {
             assert(legacyPasswordHelper.isLegacyRTSPassword('{ECE}123456789098765432'));
