@@ -246,7 +246,7 @@ describe('GET /api/local/profile', function () {
                 requestHelper.sendRequest(this, '/api/local/profile', {
                         method: 'put',
                         type: 'json',
-                        data: {firstname: 42},
+                        data: {firstname: '42'},
                         accessToken: accessToken,
                         tokenType: 'JWT'
                     }, done
@@ -282,6 +282,38 @@ describe('GET /api/local/profile', function () {
             });
         });
 
+        context('a complex name is set (succesfully)', function () {
+            before(resetDatabase);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/authenticate', {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        email: USER_EMAIL,
+                        password: STRONG_PASSWORD
+                    }
+                }, done);
+            });
+
+            before(function (done) {
+                var accessToken = this.res.body.token.substring(4, this.res.body.token.size);
+                requestHelper.sendRequest(this, '/api/local/profile', {
+                        method: 'put',
+                        type: 'json',
+                        data: {firstname: 'Adélè-Cëçilä'},
+                        accessToken: accessToken,
+                        tokenType: 'Bearer'
+                    }, done
+                );
+            });
+
+            it('should accept the change', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body.success).equal(true);
+            });
+        });
     });
 
     context('When user request tries to save a profile', function () {
