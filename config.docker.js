@@ -49,6 +49,12 @@ module.exports = {
         }
     },
 
+    userProfiles: {
+        requiredFields: process.env.PROFILE_FIELDS_REQUIRED
+            ? process.env.PROFILE_FIELDS_REQUIRED.toLowerCase().split(',')
+            : [],
+    },
+
     baseUrl: process.env.BASE_URL,
 
     displayUsersInfos: true,
@@ -83,6 +89,8 @@ module.exports = {
         // a new recovery code will be generated only if the current one has less that TTL
         keep_recovery_code_until: 900
     },
+
+    use_sequelize_sessions: true,
 
     jwtSecret: process.env.JWT_SECRET,
     jwt: {
