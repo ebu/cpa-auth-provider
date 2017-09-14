@@ -282,7 +282,7 @@ describe('GET /api/local/profile', function () {
             });
         });
 
-        context('a complex name is set (succesfully)', function () {
+        context('a complex name is set (successfully)', function () {
             before(resetDatabase);
 
             before(function (done) {
@@ -302,7 +302,12 @@ describe('GET /api/local/profile', function () {
                 requestHelper.sendRequest(this, '/api/local/profile', {
                         method: 'put',
                         type: 'json',
-                        data: {firstname: 'Adélè-Cëçilä'},
+                        data: {
+                            firstname: 'Adélè-Cëçilä',
+                            lastname: "von Höheñlohé",
+                            gender: 'other',
+                            birthdate: 249782400000
+                        },
                         accessToken: accessToken,
                         tokenType: 'Bearer'
                     }, done
