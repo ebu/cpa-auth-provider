@@ -60,7 +60,7 @@ module.exports = function (sequelize, DataTypes) {
         var hash = result[2];
         var func = legacyPasswordHelper.getCheckFunction(result[1]);
         if (func) {
-            return func(password, hash);
+            return func(password, this.password);
         } else { // if (result[1] === BCRYPT_TAG || !result[1]) {
             return bcrypt.compare(password, hash);
         }
