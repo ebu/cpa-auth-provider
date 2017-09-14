@@ -49,10 +49,10 @@ module.exports = function (app, options) {
     app.put('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
         // Data validation
         if (req.body.firstname) {
-            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).isAlpha();
+            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).matches(userHelper.NAME_REGEX);
         }
         if (req.body.lastname) {
-            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).isAlpha();
+            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).matches(userHelper.NAME_REGEX);
         }
         if (req.body.birthdate) {
             req.checkBody('birthdate', req.__('API_PROFILE_BIRTHDATE_INVALIDE')).isInt();
