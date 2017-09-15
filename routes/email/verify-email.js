@@ -68,6 +68,9 @@ function routes(router) {
 					var user = data.User;
 
 					var wasVerified = user.verified;
+					if (!verifyToken.isAvailable()) {
+						return res.status(400).json('ALREADY USED');
+					}
 
 					var redirect_url = getEmailRedirectUrl(verifyToken, client);
 					user.verified = true;
@@ -81,7 +84,7 @@ function routes(router) {
 								res.render('./email/verify.ejs', {
 									user: user,
                                     was_verified: wasVerified,
-									forward_address: 'http://beta.mediathek.br.de'
+									forward_address: 'https://beta.mediathek.br.de'
 								});
 								return deleteToken(verifyToken);//req.params.key);
 							}
@@ -145,22 +148,10 @@ function getTokenAndClient(key) {
 		function (resolve, reject) {
 			db.UserEmailToken.find({where: {key: key}, include: [db.User, db.OAuth2Client]}).then(
 				function (verifyToken) {
-					if (!verifyToken) {
-						return reject(new Error('invalid token'));
-					}
+					if (!verifyToken || verifyToken.type !== 'REG') {
+						return reject(new Error('INVALID_TOKEN'));
+                    }
 					resolve(verifyToken);
-					// if (verifyToken.oauth2_client_id) {
-					// 	db.OAuth2Client.find({where: {id: verifyToken.oauth2_client_id}}).then(
-					// 		function (client) {
-					// 			resolve({token: verifyToken, client: client});
-					// 		},
-					// 		function (e) {
-					// 			resolve({token: verifyToken, client: undefined});
-					// 		}
-					// 	);
-					// } else {
-					// 	resolve({token: verifyToken, client: undefined});
-					// }
 				},
 				reject
 			)

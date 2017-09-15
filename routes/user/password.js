@@ -188,7 +188,7 @@ function forcePassword(req, res) {
 	db.UserEmailToken.find({where: {key: tokenKey}, include: [db.User, db.OAuth2Client]}).then(
 		function(_token) {
 			token = _token;
-			if (!token) {
+			if (!token || token.type !== 'PWD') {
 				throw new Error('INVALID_TOKEN');
 			}
 			if (clientId && clientId != token.OAuth2Client.client_id) {
@@ -197,6 +197,9 @@ function forcePassword(req, res) {
 			if (!token.User) {
 				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
 			}
+            if (!token.isAvailable()) {
+                throw new Error('TOKEN_ALREADY_USED')
+            }
 
 			return token.User.setPassword(newPassword);
 		}
@@ -246,6 +249,9 @@ function checkForceToken(req, res) {
             if (!token.User) {
                 throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
             }
+            if (!token.isAvailable()) {
+            	throw new Error('TOKEN_ALREADY_USED')
+			}
 
             res.status(200).json({success: true});
         }
