@@ -29,7 +29,11 @@ function routes(router) {
 					}
 
 					if (!verifyToken.isAvailable()) {
-						return res.status(400).json({success: user.verified, reason: 'ALREADY_USED'});
+						if (user.verified) {
+                            return res.status(200).json({success: true, reason: 'ALREADY_USED'});
+						} else {
+                            return res.status(400).json({success: false, reason: 'ALREADY_USED'});
+						}
 					}
 
 					if (user.verified) {
