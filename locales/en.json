@@ -333,5 +333,13 @@
 
     "API_ERROR": "Oops, something went wrong:",
     "API_INCORRECT_LOGIN_OR_PASS": "The username or password is incorrect",
-    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH"
+    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH",
+
+    "OWASP_PASSWORD_LENGTH_MIN": "The password must be at least {} characters long.",
+    "OWASP_PASSWORD_LENGTH_MAX": "The password must be fewer than {} characters.",
+    "OWASP_PASSWORD_REPEAT_CHARACTER": "The password may not contain sequences of three or more repeated characters.",
+    "OWASP_PASSWORD_REQ_LOWERCASE": "The password must contain at least one lowercase letter.",
+    "OWASP_PASSWORD_REQ_UPPERCASE": "The password must contain at least one uppercase letter.",
+    "OWASP_PASSWORD_REQ_NUMBER": "The password must contain at least one number.",
+    "OWASP_PASSWORD_REQ_SPECIAL": "The password must contain at least one special character."
 }

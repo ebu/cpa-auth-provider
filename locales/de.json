@@ -334,5 +334,13 @@
 
 	"API_ERROR": "Ups! Irgendwas lief schief:",
 	"API_INCORRECT_LOGIN_OR_PASS": "Der Benutzername oder das Passwort ist falsch",
-    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Das Passwort respektiert die Sicherheitsregeln nicht"
+    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Das Passwort respektiert die Sicherheitsregeln nicht",
+
+	"OWASP_PASSWORD_LENGTH_MIN": "Das Passwort muss mindestens {} Zeichen lang sein.",
+	"OWASP_PASSWORD_LENGTH_MAX": "Das Passwort darf nicht länger als {} Zeichen sein.",
+	"OWASP_PASSWORD_REPEAT_CHARACTER": "Das Passwort darf den gleichen Buchstaben nicht dreimal direkt hintereinandern enthalten.",
+	"OWASP_PASSWORD_REQ_LOWERCASE": "Das Passwort muss mindestens einen kleinen Buchstaben enthalten.",
+	"OWASP_PASSWORD_REQ_UPPERCASE": "Das Passwort muss mindestens einen Großbuchstaben enthalten.",
+	"OWASP_PASSWORD_REQ_NUMBER": "Das Passwort muss mindestens eine Zahl enthalten.",
+	"OWASP_PASSWORD_REQ_SPECIAL": "Das Passwort muss mindestens ein Sonderzeichen enthalten."
 }

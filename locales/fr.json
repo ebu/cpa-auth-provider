@@ -330,5 +330,13 @@
 
 	"API_ERROR": "Oops, une erreur s'est produite :",
 	"API_INCORRECT_LOGIN_OR_PASS": "Nom d'utilisateur ou mot de passe incorrect",
-    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Le mot de passe ne respecte pas les règles de sécurité"
+    "API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Le mot de passe ne respecte pas les règles de sécurité",
+
+	"OWASP_PASSWORD_LENGTH_MIN": "Le mot de passe doit contenir au moins {} caractères.",
+	"OWASP_PASSWORD_LENGTH_MAX": "Le mot de passe ne peut pas contenir plus de {} caractères.",
+	"OWASP_PASSWORD_REPEAT_CHARACTER": "Le mot de passe ne peut pas contenir des séquences de plus de 3 caractères identiques.",
+	"OWASP_PASSWORD_REQ_LOWERCASE": "Le mot de passe doit contenir au moins un caractère minuscule.",
+	"OWASP_PASSWORD_REQ_UPPERCASE": "Le mot de passe doit contenir au moins un caractère majuscule.",
+	"OWASP_PASSWORD_REQ_NUMBER": "Le mot de passe doit contenir au moins un chiffre.",
+	"OWASP_PASSWORD_REQ_SPECIAL": "Le mot de passe doit contenir au moins un caractère spécial, par exemple '.;?=-{}%&' etc..."
 }
