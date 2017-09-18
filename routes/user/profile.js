@@ -15,14 +15,14 @@ var routes = function (router) {
 
         var requiredFields = userHelper.getRequiredFields();
         if (requiredFields.firstname) {
-            req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).notEmpty().isAlpha();
+            req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).notEmpty().matches(userHelper.NAME_REGEX);
         } else if (req.body.firstname) {
-            req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).isAlpha();
+            req.checkBody('firstname', req.__('BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID')).matches(userHelper.NAME_REGEX);
         }
         if (requiredFields.lastname) {
-            req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).notEmpty().isAlpha();
+            req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).notEmpty().matches(userHelper.NAME_REGEX);
         } else if (req.body.lastname) {
-            req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).isAlpha();
+            req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).matches(userHelper.NAME_REGEX);
         }
         if (requiredFields.birthdate) {
             req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).notEmpty().isInt();

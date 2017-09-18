@@ -90,6 +90,8 @@ module.exports = {
         keep_recovery_code_until: 900
     },
 
+    use_sequelize_sessions: true,
+
     jwtSecret: process.env.JWT_SECRET,
     jwt: {
         audience: 'cpa',
