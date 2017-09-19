@@ -8,7 +8,7 @@ function validatePassword(password) {
     var passwordLabel = document.getElementById("password-error-label");
     var result = owaspPasswordStrengthTest.test(password);
 
-    if (result.errors.length > 0 && password !== "") {
+    if (result.failedTests.length > 0 && password !== "") {
         passwordLabel.innerHTML = window.passStrengthErrors[result.failedTests[0]];
         passwordLabel.style.display = "block";
     } else {
