@@ -9,7 +9,18 @@
      must look for paths in views instead of current file, we can not do a dynamic include.
      */ %>
     <%- include default/head %>
-
+    <script>
+        window.passStrengthErrors =
+            {
+                0: "<%= __("BACK_SIGNUP_PASS_STRENGTH_0") %>",
+                1: "<%= __("BACK_SIGNUP_PASS_STRENGTH_1") %>",
+                2: "<%= __("BACK_SIGNUP_PASS_STRENGTH_2") %>",
+                3: "<%= __("BACK_SIGNUP_PASS_STRENGTH_3") %>",
+                4: "<%= __("BACK_SIGNUP_PASS_STRENGTH_4") %>",
+                5: "<%= __("BACK_SIGNUP_PASS_STRENGTH_5") %>",
+                6: "<%= __("BACK_SIGNUP_PASS_STRENGTH_6") %>"
+            }
+    </script>
 </head>
 <body>
 

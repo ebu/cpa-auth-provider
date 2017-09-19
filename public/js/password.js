@@ -9,7 +9,7 @@ function validatePassword(password) {
     var result = owaspPasswordStrengthTest.test(password);
 
     if (result.errors.length > 0 && password !== "") {
-        passwordLabel.innerHTML = passStrenghtErrors[result.failedTests[0]] ;
+        passwordLabel.innerHTML = window.passStrengthErrors[result.failedTests[0]];
         passwordLabel.style.display = "block";
     } else {
         passwordLabel.style.display = "none";
