@@ -1,6 +1,5 @@
 <% include layout/header %>
 
-
 <div class="container">
 
     <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
@@ -151,9 +150,8 @@
                 $genderField.css("color", "#555");
             });
         }
-
     })();
 </script>
-<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/password.js"></script>
+<% include util/password-support %>
 
 <% include layout/foot %>

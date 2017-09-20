@@ -195,7 +195,7 @@
     "PASSWORD_RECOVERY_BACK_TO_LOGIN_LINK": "Back to login",
     "PASSWORD_RECOVERY_TITLE": "Password recovery",
     "PASSWORD_RECOVERY_EMAIL_LABEL": "Your email",
-    "PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Reset password",
+    "PASSWORD_RECOVERY_RESET_PASSWORD_BUTTON": "Reset password",
     "PASSWORD_RECOVERY_JS_ERROR_MSG": "An error occurred during the process, please try again later",
     "PASSWORD_RECOVERY_JS_SUCCESS_MSG": "A password reset link has been sent successfully to your email address",
 

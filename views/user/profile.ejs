@@ -319,7 +319,8 @@
 <!-- Add client Modal -->
 <% include ./modales/user-delete.ejs %>
 
-<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/password.js"></script>
+<% include ../util/password-support %>
+
 <script type="text/javascript">
     (function () {
 
