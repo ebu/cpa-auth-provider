@@ -10,7 +10,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
-var oAuthProviderHelper = require ('../../lib/oAuth-provider-helper')
+var oAuthProviderHelper = require ('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
 
 // Google reCAPTCHA

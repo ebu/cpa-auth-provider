@@ -112,7 +112,7 @@ function performFacebookLogin(fbProfile, fbAccessToken, done) {
                     return done(err, null);
                 });
             } else {
-                var me = fbProvider.User
+                var me = fbProvider.User;
                 if (me) {
                     me.logLogin().then(function (user) {
                         return done(null, buildResponse(user));
