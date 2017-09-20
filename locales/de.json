@@ -195,7 +195,7 @@
 	"PASSWORD_RECOVERY_BACK_TO_LOGIN_LINK": "Zurück zur Anmeldung",
 	"PASSWORD_RECOVERY_TITLE": "Passwort-Wiederherstellung",
 	"PASSWORD_RECOVERY_EMAIL_LABEL": "Deine E-Mail",
-	"PASSWORD_RECOVERY_RESET_PAWWORD_BUTTON": "Passwort zurücksetzen",
+	"PASSWORD_RECOVERY_RESET_PASSWORD_BUTTON": "Passwort zurücksetzen",
 	"PASSWORD_RECOVERY_JS_ERROR_MSG": "Ein Fehler ist während des Prozesses aufgetreten. Bitte versuchen Sie es später erneut",
 	"PASSWORD_RECOVERY_JS_SUCCESS_MSG": "Ein Passwort-Reset-Link wurde erfolgreich an Ihre E-Mail-Adresse gesendet",
 
