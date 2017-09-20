@@ -150,17 +150,8 @@
                 $genderField.css("color", "#555");
             });
         }
-        window.passStrengthErrors = {
-            0: "<%= __("BACK_SIGNUP_PASS_STRENGTH_0") %>",
-            1: "<%= __("BACK_SIGNUP_PASS_STRENGTH_1") %>",
-            2: "<%= __("BACK_SIGNUP_PASS_STRENGTH_2") %>",
-            3: "<%= __("BACK_SIGNUP_PASS_STRENGTH_3") %>",
-            4: "<%= __("BACK_SIGNUP_PASS_STRENGTH_4") %>",
-            5: "<%= __("BACK_SIGNUP_PASS_STRENGTH_5") %>",
-            6: "<%= __("BACK_SIGNUP_PASS_STRENGTH_6") %>"
-        };
     })();
 </script>
-<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/password.js"></script>
+<% include util/password-support %>
 
 <% include layout/foot %>
