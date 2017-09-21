@@ -9,7 +9,7 @@ module.exports = {
           Example:
           return queryInterface.createTable('users', { id: Sequelize.INTEGER });
         */
-        queryInterface.changeColumn(
+        return queryInterface.changeColumn(
             'User_Profiles',
             'birthdate',
             {type: Sequelize.BIGINT}
@@ -24,7 +24,7 @@ module.exports = {
           Example:
           return queryInterface.dropTable('users');
         */
-        queryInterface.changeColumn(
+        return queryInterface.changeColumn(
             'User_Profiles',
             'birthdate',
             {type: Sequelize.STRING(255)}
