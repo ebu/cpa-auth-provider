@@ -565,3 +565,71 @@ describe('GET /api/local/profile', function () {
         });
     });
 });
+
+describe('GET /api/local/profile/required-fields', function () {
+    var URL = '/api/local/profile/required-fields';
+    var userHelper = require('../../lib/user-helper');
+    var config = require('../../config');
+
+    context('for no required fields', function () {
+        context('normal request', function () {
+            before(doGet(URL));
+
+            it('should return json object with all possible fields', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body).eql(
+                    {"gender": false, "dateOfBirth": false, "firstname": false, "lastname": false, "language": false}
+                );
+            });
+        });
+
+        context('array request', function () {
+            before(doGet(URL + '?array'));
+
+            it('should return an empty json list', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body).empty;
+            });
+        });
+    });
+
+    context('for gender and date of birth as required fields', function () {
+        var preReq;
+        before(function () {
+            preReq = config.userProfiles.requiredFields;
+            config.userProfiles.requiredFields = ['dateOfBirth', 'gender'];
+            userHelper.reloadConfig();
+        });
+        after(function () {
+            config.userProfiles.requiredFields = preReq;
+            userHelper.reloadConfig();
+        });
+        context('normal request', function () {
+            before(doGet(URL));
+
+            it('should return json object with the fields gender and dateOfBirth true', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body).eql(
+                    {"gender": true, "dateOfBirth": true, "firstname": false, "lastname": false, "language": false}
+                );
+            });
+        });
+
+        context('array request', function () {
+            before(doGet(URL + '?array'));
+
+            it('should return an empty json list', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body).members(['dateOfBirth', 'gender']);
+            });
+        });
+    });
+
+
+    function doGet(url) {
+        return function (done) {
+            requestHelper.sendRequest(this, url, {method: 'get'}, done);
+        }
+    }
+
+});

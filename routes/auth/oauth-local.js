@@ -11,6 +11,7 @@ var cors = require('../../lib/cors');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var userHelper = require('../../lib/user-helper');
 var recaptcha = require('express-recaptcha');
 
 var localoAuthStrategyCallback = function (req, username, password, done) {
@@ -80,7 +81,7 @@ module.exports = function (app, options) {
     app.get('/user/profile/menu', cors, function (req, res, next) {
         if (!req.user) {
             // Return 200 to avoid error in browser console
-            res.json({connected: false});
+            res.json({connected: false, required_fields: userHelper.getRequiredFields()});
         } else {
             returnMenuInfos(req.user, req, res);
         }
@@ -97,7 +98,7 @@ module.exports = function (app, options) {
 
         req.logout();
 
-        res.json({connected: false});
+        res.json({connected: false, required_fields: userHelper.getRequiredFields()});
 
     });
 
@@ -117,6 +118,7 @@ module.exports = function (app, options) {
                 }
                 var data = {
                     display_name: profile.getDisplayName(user, "FIRSTNAME_LASTNAME"),
+                    required_fields: userHelper.getRequiredFields(),
                     menu : getMenu(req, language)
                 };
                 res.json(data);
