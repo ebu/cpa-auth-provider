@@ -24,8 +24,10 @@ module.exports = {
           Example:
           return queryInterface.dropTable('users');
         */
-        return new Promise(function (resolve, reject) {
-            resolve();
-        });
+        queryInterface.changeColumn(
+            'User_Profiles',
+            'birthdate',
+            {type: Sequelize.STRING(255)}
+        );
     }
 };
