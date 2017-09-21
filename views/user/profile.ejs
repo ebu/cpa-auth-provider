@@ -51,7 +51,7 @@
                         <input id="lastname" name="lastname" class="form-control personnal-data-input"
                                placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"/>
                     </div>
-                    <div class="panel <% if (!profile.dateOfBirth) { %> hidden <% } %>">
+                    <div class="panel <% if (!profile.date_of_birth) { %> hidden <% } %>">
                         <h4><%= __('PROFILE_DATE_OF_BIRTH_LABEL') %></h4>
                         <span class="data-value"></span>
                         <div class="input-group date personnal-data-input" data-provide="datepicker"
@@ -405,8 +405,8 @@
         };
 
         //Init date field and datepicker
-        if ("<%= profile.dateOfBirth %>" && "<%= profile.dateOfBirth %>" != "null" && "<%= profile.dateOfBirth %>" !== null && "<%= profile.dateOfBirth %>" != "undefined") {
-            date = new Date(parseInt("<%= profile.dateOfBirth %>"));
+        if ("<%= profile.date_of_birth %>" && "<%= profile.date_of_birth %>" != "null" && "<%= profile.date_of_birth %>" !== null && "<%= profile.date_of_birth %>" != "undefined") {
+            date = new Date(parseInt("<%= profile.date_of_birth %>"));
             $datepicker.prev(".data-value").text(formatDate(date));
         }
 
@@ -559,8 +559,8 @@
             resetMessages("form-personnal-data-errors", "personnal-data-errors");
 
             var userId = "<%= user.id %>";
-            var dateOfBirth = $birthday.val();
-            var date = dateOfBirth ? createDate(dateOfBirth).getTime() : '';
+            var date_of_birth = $birthday.val();
+            var date = date_of_birth ? createDate(date_of_birth).getTime() : '';
 
             $.ajax({
                 url: "<%= link('/user/profile/') %>",
@@ -569,7 +569,7 @@
                     lastname: $lastname.val(),
                     gender: $gender.val(),
                     language: $language.val(),
-                    dateOfBirth: date
+                    date_of_birth: date
                 },
                 type: 'PUT',
                 success: function (result) {

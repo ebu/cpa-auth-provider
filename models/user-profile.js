@@ -7,7 +7,7 @@ module.exports = function (sequelize, DataTypes) {
         firstname: DataTypes.STRING,
         lastname: DataTypes.STRING,
         gender: DataTypes.STRING,
-        dateOfBirth: DataTypes.BIGINT,
+        date_of_birth: DataTypes.BIGINT,
         language: DataTypes.STRING
 
     }, {

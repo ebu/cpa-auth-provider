@@ -27,7 +27,7 @@ module.exports = {
                 "gender": {
                     "type": Sequelize.STRING(255)
                 },
-                "dateOfBirth": {
+                "date_of_birth": {
                     "type": Sequelize.BIGINT
                 },
                 "created_at": {

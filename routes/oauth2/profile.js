@@ -34,7 +34,7 @@ var user_profile = [
                     firstname: user_profile.firstname,
                     lastname: user_profile.lastname,
                     gender: user_profile.gender,
-                    dateOfBirth: user_profile.dateOfBirth
+                    date_of_birth: user_profile.date_of_birth
                 },
                 scope: req.authInfo.scope
             });

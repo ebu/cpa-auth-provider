@@ -36,7 +36,7 @@ module.exports = function (app, options) {
                         firstname: user_profile.firstname,
                         lastname: user_profile.lastname,
                         gender: user_profile.gender,
-                        dateOfBirth: user_profile.dateOfBirth ? parseInt(user_profile.dateOfBirth) : user_profile.dateOfBirth,
+                        date_of_birth: user_profile.date_of_birth ? parseInt(user_profile.date_of_birth) : user_profile.date_of_birth,
                         language: user_profile.language,
                         email: user.email,
                         display_name: user_profile.getDisplayName(user, req.query.policy)
@@ -54,8 +54,8 @@ module.exports = function (app, options) {
         if (req.body.lastname) {
             req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).matches(userHelper.NAME_REGEX);
         }
-        if (req.body.dateOfBirth) {
-            req.checkBody('dateOfBirth', req.__('API_PROFILE_DATE_OF_BIRTH_INVALIDE')).isInt();
+        if (req.body.date_of_birth) {
+            req.checkBody('date_of_birth', req.__('API_PROFILE_DATE_OF_BIRTH_INVALIDE')).isInt();
         }
         if (req.body.gender) {
             req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male', 'female', 'other']);

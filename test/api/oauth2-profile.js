@@ -28,7 +28,7 @@ var PROFILE = {
     firstname: 'John',
     lastname: 'Doe',
     gender: 'M',
-    dateOfBirth: 273369600000,
+    date_of_birth: 273369600000,
     language: 'FR',
     user_id: 123
 };
@@ -153,7 +153,7 @@ describe('GET profile', function () {
             expect(this.res.body.user.firstname).equal(PROFILE.firstname);
             expect(this.res.body.user.lastname).equal(PROFILE.lastname);
             expect(this.res.body.user.gender).equal(PROFILE.gender);
-            expect(this.res.body.user.dateOfBirth).equal(PROFILE.dateOfBirth);
+            expect(this.res.body.user.date_of_birth).equal(PROFILE.date_of_birth);
         });
     });
 
