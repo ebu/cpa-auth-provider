@@ -9,11 +9,17 @@ module.exports = {
           Example:
           return queryInterface.createTable('users', { id: Sequelize.INTEGER });
         */
-        return queryInterface.changeColumn(
-            'User_Profiles',
-            'birthdate',
-            {type: Sequelize.BIGINT}
-        );
+
+        return queryInterface.sequelize.query("update \"UserProfiles\" set birthdate='0' where birthdate=''").then(function(){
+            return queryInterface.changeColumn(
+                'UserProfiles',
+                'birthdate',
+                {
+                    type: 'BIGINT USING CAST("birthdate" as BIGINT)'
+                }
+            );
+        });
+        
     },
 
     down: function (queryInterface, Sequelize) {
@@ -25,9 +31,10 @@ module.exports = {
           return queryInterface.dropTable('users');
         */
         return queryInterface.changeColumn(
-            'User_Profiles',
+            'UserProfiles',
             'birthdate',
             {type: Sequelize.STRING(255)}
         );
     }
-};
+}
+;
