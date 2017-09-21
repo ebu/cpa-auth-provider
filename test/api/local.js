@@ -274,7 +274,7 @@ describe('POST /api/local/signup', function () {
                         email: 'someone@somewhere.com',
                         password: STRONG_PASSWORD,
                         gender: 'jedi',
-                        date_of_birth: '21/12/1970',
+                        date_of_birth: 249782400000,
                         'g-recaptcha-response': recaptchaResponse
                     }
                 }, done);
@@ -302,7 +302,7 @@ describe('POST /api/local/signup', function () {
                         email: 'someone@somewhere.com',
                         password: STRONG_PASSWORD,
                         gender: 'female',
-                        date_of_birth: '249782400000',
+                        date_of_birth: 249782400000,
                         'g-recaptcha-response': recaptchaResponse
                     }
                 }, done);
