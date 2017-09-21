@@ -81,7 +81,7 @@ module.exports = function (app, options) {
     app.get('/user/profile/menu', cors, function (req, res, next) {
         if (!req.user) {
             // Return 200 to avoid error in browser console
-            res.json({connected: false});
+            res.json({connected: false, required_fields: userHelper.getRequiredFields()});
         } else {
             returnMenuInfos(req.user, req, res);
         }
