@@ -25,7 +25,9 @@ module.exports = {
 
     identity_providers: {
         facebook: {
-            enabled: false
+            enabled: true,
+            client_id: 'abc',
+            client_secret: '123'
         },
         github: {
             enabled: false
