@@ -102,7 +102,7 @@ module.exports = function (app, options) {
     });
 
 
-    const requiredFieldsQueryPath = '/api/local/profile/required-fields';
+    var requiredFieldsQueryPath = '/api/local/profile/required-fields';
     app.options(requiredFieldsQueryPath, cors);
     app.get(
         requiredFieldsQueryPath,

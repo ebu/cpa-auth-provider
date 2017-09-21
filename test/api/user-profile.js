@@ -567,7 +567,7 @@ describe('GET /api/local/profile', function () {
 });
 
 describe('GET /api/local/profile/required-fields', function () {
-    const URL = '/api/local/profile/required-fields';
+    var URL = '/api/local/profile/required-fields';
     var userHelper = require('../../lib/user-helper');
     var config = require('../../config');
 
