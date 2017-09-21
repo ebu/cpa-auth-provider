@@ -74,10 +74,10 @@ var localSignupStrategyCallback = function (req, username, password, done) {
         req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female', 'other']);
         attributes.gender = req.body.gender;
     }
-    if (required.birthdate) {
-        req.checkBody('birthdate', req.__('BACK_SIGNUP_BIRTHDATE_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
-        var date = new Date(req.body.birthdate);
-        attributes.birthdate = date.getTime();
+    if (required.dateOfBirth) {
+        req.checkBody('dateOfBirth', req.__('BACK_SIGNUP_DATE_OF_BIRTH_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
+        var date = new Date(req.body.dateOfBirth);
+        attributes.dateOfBirth = date.getTime();
     }
 
     req.getValidationResult().then(function (result) {
