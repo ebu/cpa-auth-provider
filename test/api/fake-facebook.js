@@ -29,19 +29,6 @@ describe(
 describe(
     'GET /auth/facebook/callback',
     function () {
-        // before(function () {
-        //     nock.disableNetConnect();
-        //     nock.enableNetConnect('127.0.0.1');
-        // });
-        // after(function () {
-        //     nock.cleanAll();
-        //     nock.enableNetConnect();
-        // });
-
-        // before(function () {
-        //     nock.recorder.rec();
-        // });
-
         before(function (done) {
             nock('https://graph.facebook.com:443')
                 .post('/oauth/access_token', "grant_type=authorization_code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Ffacebook%2Fcallback&client_id=abc&client_secret=123&code=mycodeabc")
