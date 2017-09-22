@@ -226,7 +226,7 @@ describe('POST /api/local/signup', function () {
         var preFields;
         before(function () {
             preFields =config.userProfiles.requiredFields;
-            config.userProfiles.requiredFields = ['gender','birthdate'];
+            config.userProfiles.requiredFields = ['gender','date_of_birth'];
             userHelper.reloadConfig();
         });
         after(function () {
@@ -257,7 +257,7 @@ describe('POST /api/local/signup', function () {
                 expect(this.res.statusCode).equal(400);
                 expect(this.res.body.success).equal(false);
                 expect(this.res.body.msg).equal("missing required fields");
-                expect(this.res.body.missingFields).members(['birthdate']);
+                expect(this.res.body.missingFields).members(['date_of_birth']);
             });
 
         });
@@ -274,7 +274,7 @@ describe('POST /api/local/signup', function () {
                         email: 'someone@somewhere.com',
                         password: STRONG_PASSWORD,
                         gender: 'jedi',
-                        birthdate: '21/12/1970',
+                        date_of_birth: 249782400000,
                         'g-recaptcha-response': recaptchaResponse
                     }
                 }, done);
@@ -302,7 +302,7 @@ describe('POST /api/local/signup', function () {
                         email: 'someone@somewhere.com',
                         password: STRONG_PASSWORD,
                         gender: 'female',
-                        birthdate: '249782400000',
+                        date_of_birth: 249782400000,
                         'g-recaptcha-response': recaptchaResponse
                     }
                 }, done);
