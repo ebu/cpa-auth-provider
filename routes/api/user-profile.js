@@ -100,4 +100,27 @@ module.exports = function (app, options) {
             }
         );
     });
+
+
+    var requiredFieldsQueryPath = '/api/local/profile/required-fields';
+    app.options(requiredFieldsQueryPath, cors);
+    app.get(
+        requiredFieldsQueryPath,
+        cors,
+        function (req, res) {
+            var fields = userHelper.getRequiredFields();
+            var asObject = !req.query.hasOwnProperty('array');
+            if (asObject) {
+                return res.status(200).json(fields);
+            } else {
+                var list = [];
+                for(var key in fields) {
+                    if (fields.hasOwnProperty(key) && fields[key]) {
+                        list.push(key);
+                    }
+                }
+                return res.status(200).json(list);
+            }
+        }
+    );
 };
