@@ -96,7 +96,7 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.user_profile.firstname).null;
             expect(this.res.body.user_profile.lastname).null;
             expect(this.res.body.user_profile.gender).null;
-            expect(this.res.body.user_profile.birthdate).null;
+            expect(this.res.body.user_profile.date_of_birth).null;
             expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
             expect(this.res.body.user_profile.display_name).to.equals('qsdf@qsdf.fr');
         });
@@ -120,7 +120,7 @@ describe('GET /api/local/profile', function () {
                         firstname: 'emile',
                         lastname: 'zola',
                         gender: 'male',
-                        birthdate: birth
+                        date_of_birth: birth
                     },
                     accessToken: accessToken,
                     tokenType: 'JWT'
@@ -154,7 +154,7 @@ describe('GET /api/local/profile', function () {
                         firstname: 'emile',
                         lastname: 'zola',
                         gender: 'male',
-                        birthdate: birth
+                        date_of_birth: birth
                     },
                     accessToken: accessToken,
                     tokenType: 'JWT'
@@ -183,7 +183,7 @@ describe('GET /api/local/profile', function () {
             expect(this.res.body.user_profile.firstname).to.equal('emile');
             expect(this.res.body.user_profile.lastname).to.equal('zola');
             expect(this.res.body.user_profile.gender).to.equal('male');
-            expect(this.res.body.user_profile.birthdate).to.equals(birth);
+            expect(this.res.body.user_profile.date_of_birth).to.equals(birth);
             expect(this.res.body.user_profile.email).to.equals('qsdf@qsdf.fr');
             expect(this.res.body.user_profile.display_name).to.equals('emile zola');
         });
@@ -215,7 +215,7 @@ describe('GET /api/local/profile', function () {
             });
         });
 
-        context('Bad birthdate (not a number)', function () {
+        context('Bad date_of_birth (not a number)', function () {
 
             cleanDbAndRegisterUser();
 
@@ -224,7 +224,7 @@ describe('GET /api/local/profile', function () {
                 requestHelper.sendRequest(this, '/api/local/profile', {
                         method: 'put',
                         type: 'json',
-                        data: {birthdate: 'not a number'},
+                        data: {date_of_birth: 'not a number'},
                         accessToken: accessToken,
                         tokenType: 'JWT'
                     }, done
@@ -306,7 +306,7 @@ describe('GET /api/local/profile', function () {
                             firstname: 'Adélè-Cëçilä',
                             lastname: "von Höheñlohé",
                             gender: 'other',
-                            birthdate: 249782400000
+                            date_of_birth: 249782400000
                         },
                         accessToken: accessToken,
                         tokenType: 'Bearer'
@@ -329,7 +329,7 @@ describe('GET /api/local/profile', function () {
             var preFields;
             before(function () {
                 preFields = config.userProfiles.requiredFields;
-                config.userProfiles.requiredFields = ['birthdate', 'gender'];
+                config.userProfiles.requiredFields = ['date_of_birth', 'gender'];
                 userHelper.reloadConfig();
             });
             after(function () {
@@ -357,7 +357,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {gender: 'female', birthdate: 249782400000},
+                            data: {gender: 'female', date_of_birth: 249782400000},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -390,7 +390,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {gender: 'male', birthdate: 249782400000},
+                            data: {gender: 'male', date_of_birth: 249782400000},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -423,7 +423,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {gender: 'other', birthdate: 249782400000},
+                            data: {gender: 'other', date_of_birth: 249782400000},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -457,7 +457,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {gender: 'female', birthdate: '249782400000'},
+                            data: {gender: 'female', date_of_birth: '249782400000'},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -501,7 +501,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {birthdate: 249782400000, firstname: 'benedict'},
+                            data: {date_of_birth: 249782400000, firstname: 'benedict'},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -539,7 +539,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {birthdate: 'not a number'},
+                            data: {date_of_birth: 'not a number'},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -550,7 +550,7 @@ describe('GET /api/local/profile', function () {
                     requestHelper.sendRequest(this, '/api/local/profile', {
                             method: 'put',
                             type: 'json',
-                            data: {gender: 'female', birthdate: '249782400000'},
+                            data: {gender: 'female', date_of_birth: '249782400000'},
                             accessToken: accessToken,
                             tokenType: 'Bearer'
                         }, done
@@ -578,7 +578,7 @@ describe('GET /api/local/profile/required-fields', function () {
             it('should return json object with all possible fields', function () {
                 expect(this.res.statusCode).equal(200);
                 expect(this.res.body).eql(
-                    {"gender": false, "birthdate": false, "firstname": false, "lastname": false, "language": false}
+                    {"gender": false, "date_of_birth": false, "firstname": false, "lastname": false, "language": false}
                 );
             });
         });
@@ -593,11 +593,11 @@ describe('GET /api/local/profile/required-fields', function () {
         });
     });
 
-    context('for gender and birthdate as required fields', function () {
+    context('for gender and date of birth as required fields', function () {
         var preReq;
         before(function () {
             preReq = config.userProfiles.requiredFields;
-            config.userProfiles.requiredFields = ['birthdate', 'gender'];
+            config.userProfiles.requiredFields = ['date_of_birth', 'gender'];
             userHelper.reloadConfig();
         });
         after(function () {
@@ -607,10 +607,10 @@ describe('GET /api/local/profile/required-fields', function () {
         context('normal request', function () {
             before(doGet(URL));
 
-            it('should return json object with the fields gender and birthdate true', function () {
+            it('should return json object with the fields gender and date_of_birth true', function () {
                 expect(this.res.statusCode).equal(200);
                 expect(this.res.body).eql(
-                    {"gender": true, "birthdate": true, "firstname": false, "lastname": false, "language": false}
+                    {"gender": true, "date_of_birth": true, "firstname": false, "lastname": false, "language": false}
                 );
             });
         });
@@ -620,7 +620,7 @@ describe('GET /api/local/profile/required-fields', function () {
 
             it('should return an empty json list', function () {
                 expect(this.res.statusCode).equal(200);
-                expect(this.res.body).members(['birthdate', 'gender']);
+                expect(this.res.body).members(['date_of_birth', 'gender']);
             });
         });
     });

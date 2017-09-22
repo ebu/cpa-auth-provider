@@ -50,13 +50,13 @@
                             </div>
                             <% } %>
 
-                            <% if(requiredFields.birthdate) {%>
+                            <% if(requiredFields.date_of_birth) {%>
                             <div class="form-group">
                                 <div class="input-group date" data-provide="datepicker"
                                      data-language="en">
-                                    <input id="birthdate" name="birthdate" class="form-control"
-                                           type="text" placeholder="<%= __('SIGNUP_BIRTHDATE_LABEL') %>"
-                                           <% if(birthdate) {%> value="<%= birthdate %>" <% } %>
+                                    <input id="date_of_birth" name="date_of_birth" class="form-control"
+                                           type="text" placeholder="<%= __('SIGNUP_DATE_OF_BIRTH_LABEL') %>"
+                                           <% if(date_of_birth) {%> value="<%= date_of_birth %>" <% } %>
                                     >
                                     <div class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
