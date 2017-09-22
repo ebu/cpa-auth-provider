@@ -50,7 +50,7 @@ var routes = function (router) {
                             lastname: profile.lastname,
                             gender: profile.gender,
                             language: profile.language,
-                            birthdate: profile.birthdate ? parseInt(profile.birthdate) : profile.birthdate,
+                            date_of_birth: profile.date_of_birth ? profile.date_of_birth : profile.date_of_birth,
                             email: user.email,
                             display_name: profile.getDisplayName(user, req.query.policy),
                             verified: user.verified,

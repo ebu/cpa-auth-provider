@@ -27,10 +27,10 @@ var routes = function (router) {
         } else if (req.body.lastname) {
             req.checkBody('lastname', req.__('BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID')).matches(userHelper.NAME_REGEX);
         }
-        if (requiredFields.birthdate) {
-            req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).notEmpty().isInt();
-        } else if (req.body.birthdate) {
-            req.checkBody('birthdate', req.__('BACK_PROFILE_UPDATE_BIRTHDATE_EMPTY_OR_INVALID')).isInt();
+        if (requiredFields.date_of_birth) {
+            req.checkBody('date_of_birth', req.__('BACK_PROFILE_UPDATE_DATE_OF_BIRTH_EMPTY_OR_INVALID')).notEmpty().isInt();
+        } else if (req.body.date_of_birth) {
+            req.checkBody('date_of_birth', req.__('BACK_PROFILE_UPDATE_DATE_OF_BIRTH_EMPTY_OR_INVALID')).isInt();
         }
         if (requiredFields.gender) {
             req.checkBody('gender', req.__('BACK_PROFILE_UPDATE_GENDER_EMPTY_OR_INVALID')).notEmpty().isIn(['male', 'female', 'other']);
