@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-    baseUrl: 'http://localhost',
+    baseUrl: 'http://localhost:3000',
     title: '',
 
     recaptcha: {
