@@ -48,37 +48,13 @@ function resetDatabase(done) {
     );
 }
 
-function getAccessToken(user, client) {
-    user = user || USER;
-    client = client || CLIENT;
-    return function (done) {
-        requestHelper.sendRequest(
-            this,
-            '/oauth2/token',
-            {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    grant_type: 'password',
-                    username: user.email,
-                    password: user.password,
-                    client_id: client.client_id,
-                    client_secret: client.client_secret
-                }
-            },
-            done
-        );
-    }
-}
-
 // test refresh token
 describe('DELETE /oauth2/me', function () {
     let url = '/oauth2/me';
 
     context('correctly requesting a delete', function () {
         before(resetDatabase);
-        before(getAccessToken(USER, CLIENT));
+        before(oauthHelper.getAccessToken(USER, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -118,7 +94,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('using a wrong password', function () {
         before(resetDatabase);
-        before(getAccessToken(USER, CLIENT));
+        before(oauthHelper.getAccessToken(USER, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -153,7 +129,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('missing the password', function () {
         before(resetDatabase);
-        before(getAccessToken(USER, CLIENT));
+        before(oauthHelper.getAccessToken(USER, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -186,7 +162,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('correctly requesting a delete (for a 2nd user)', function () {
         before(resetDatabase);
-        before(getAccessToken(USER2, CLIENT));
+        before(oauthHelper.getAccessToken(USER2, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
