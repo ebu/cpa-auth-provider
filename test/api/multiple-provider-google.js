@@ -30,6 +30,21 @@ function mockGoogle() {
     nock('https://accounts.google.com/')
         .get('o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=621117323323-j048lcbv5khh6lhr1lok4vv17mekijvm.apps.googleusercontent.com')
         .reply(302);
+    nock('https://www.googleapis.com').post('/oauth2/v4/token').reply(
+        200,
+        {
+            access_token: 'access-token-g1',
+        }
+    );
+    nock('https://www.googleapis.com').get('/plus/v1/people/me?access_token=access-token-g1').reply(
+        200,
+        {
+            id: 'aa123',
+            name: {familyName: 'Wurst', givenName: 'Hans'},
+            gender: 'slug',
+            emails: [{value: 'someone@gmail.com', type: 'main'}]
+        }
+    );
 
     // nock('https://graph.facebook.com:443')
     //     .post('/oauth/access_token', "grant_type=authorization_code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Ffacebook%2Fcallback&client_id=abc&client_secret=123&code=mycodeabc")
@@ -53,7 +68,7 @@ describe('GET /auth/google', function () {
 
         it('should redirect to google', function () {
             expect(this.res.statusCode).equal(302);
-            expect(this.res.headers.location).equal("https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=abc");
+            expect(this.res.headers.location).equal("https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fap%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=abc");
         });
     }
 );
