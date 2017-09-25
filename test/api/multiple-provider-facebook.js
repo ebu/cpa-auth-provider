@@ -69,7 +69,7 @@ describe('GET /auth/facebook/callback', function () {
             );
         });
 
-        it('should redirect ?', function () {
+        it('should redirect to /ap/', function () {
                 expect(this.res.statusCode).equal(302);
                 expect(this.res.text).equal('Found. Redirecting to /ap/');
             }

@@ -36,7 +36,9 @@ module.exports = {
             enabled: false
         },
         google: {
-            enabled: false
+            enabled: true,
+            client_id: 'abc',
+            client_secret: '123'
         },
         twitter: {
             enabled: false
