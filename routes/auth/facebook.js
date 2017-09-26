@@ -9,71 +9,6 @@ var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-function findOrCreateExternalUser(email, provider_uid, displayName) {
-    return new Promise(function (resolve, reject) {
-        db.User.find(
-            {
-                where: {
-                    email: email
-                }
-            }
-        ).then(
-            function (user) {
-                //TODO udpate display name and other data from FB.
-                if (user){
-                    // user must be verified
-                    if (!user.verified) {
-                        return resolve(false); //TODO raise error
-                    } else {
-                        db.OAuthProvider.findOne({
-                            where: {
-                                name: oAuthProviderHelper.FB,
-                                user_id: user.id
-                            }
-                        }).then(function (provider) {
-                            if (!provider) {
-                                provider = db.OAuthProvider.build({
-                                    name: oAuthProviderHelper.FB,
-                                    uid: provider_uid,
-                                    user_id: user.id
-                                });
-                                provider.save().then(function (){
-                                    resolve(user);
-                                });
-                            } else {
-                                resolve(user);
-                            }
-                        });
-                    }
-                } else {
-                    return db.User.findOrCreate(
-                        {
-                            where: {
-                                email: email
-                            },
-                            defaults: {
-                                verified: true,
-                                display_name: displayName
-                            }
-                        }
-                    ).spread(
-                        function (user) {
-                            var provider = db.OAuthProvider.build({
-                                name: oAuthProviderHelper.FB,
-                                uid: provider_uid,
-                                user_id: user.id
-                            });
-                            provider.save().then(function (){
-                                resolve(user);
-                            });
-                        }
-                    ).catch(reject);
-                }
-            },
-            reject
-        );
-    });
-}
 
 passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
@@ -94,7 +29,7 @@ passport.use(new FacebookStrategy({
 
         var providerUid = 'fb:' + profile.id;
 
-        return findOrCreateExternalUser(email, providerUid, profile.displayName).then(
+        return oAuthProviderHelper.findOrCreateExternalUser(email, providerUid, profile.displayName, oAuthProviderHelper.FB).then(
             function (u) {
                 if (u) {
                     u.logLogin();
