@@ -26,13 +26,11 @@ var localStrategyCallback = function (req, username, password, done) {
     db.User.findOne({where: {email: username}})
         .then(function (user) {
                 if (!user) {
-                    done(null, false, req.flash('loginMessage', loginError));
-                    return;
+                    doneWithError();
                 }
 
                 if (user.isFacebookUser && !user.password) {
-                    done(null, false, req.flash('loginMessage', loginError));
-                    return;
+                    doneWithError();
                 }
 
                 user.verifyPassword(password).then(function (isMatch) {
@@ -42,7 +40,7 @@ var localStrategyCallback = function (req, username, password, done) {
                             });
                             done(null, user);
                         } else {
-                            done(null, false, req.flash('loginMessage', loginError));
+                            doneWithError();
                         }
                     },
                     function (err) {
@@ -52,6 +50,14 @@ var localStrategyCallback = function (req, username, password, done) {
             function (error) {
                 done(error);
             });
+
+    function doneWithError(e) {
+        e = e || loginError;
+        req.flash('loginMessage', e);
+        req.session.save(function () {
+            return done(null, false, e);
+        });
+    }
 };
 
 var localSignupStrategyCallback = function (req, username, password, done) {
@@ -134,8 +140,10 @@ module.exports = function (app, options) {
         if (req.query && req.query.error) {
             message = req.__(req.query.error);
         }
-        if (req.flash('loginMessage').length > 0) {
-            message = req.flash('loginMessage');
+        var loginMessage = req.flash('loginMessage');
+        if (loginMessage && loginMessage.length > 0) {
+            message = loginMessage;
+            delete req.session.loginMessage;
         }
         res.render('login.ejs', {message: message});
     });
