@@ -83,6 +83,7 @@
 
     "AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Available providers",
     "AUTH_MAIN_LOGIN_FB_LINK": "Login with Facebook",
+    "AUTH_MAIN_LOGIN_GOOGLE_LINK": "Login with Google",
     "AUTH_MAIN_LOGIN_GITHUB_LINK": "Login with Github",
     "AUTH_MAIN_LOGIN_EBU_LINK": "Login with EBU",
     "AUTH_MAIN_LOGIN_USER_LINK": "Login with Username and Password",
