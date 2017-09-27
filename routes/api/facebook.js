@@ -23,7 +23,7 @@ module.exports = function (app, options) {
                         }
                     }).then(function (userInDb) {
                         if (userInDb && !userInDb.verified) {
-                            res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED")});
+                            res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
                             performFacebookLogin(fbProfile, facebookAccessToken, function (error, response) {
                                 if (response) {
@@ -33,8 +33,9 @@ module.exports = function (app, options) {
                                 }
                             });
                         }
+                    // }).catch(function (err) {
+                    //     return done(err, null);
                     });
-
 
                 } else {
                     res.status(500).json({error: err.message});
