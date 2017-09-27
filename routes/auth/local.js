@@ -143,7 +143,6 @@ module.exports = function (app, options) {
         var loginMessage = req.flash('loginMessage');
         if (loginMessage && loginMessage.length > 0) {
             message = loginMessage;
-            delete req.session.loginMessage;
         }
         res.render('login.ejs', {message: message});
     });
