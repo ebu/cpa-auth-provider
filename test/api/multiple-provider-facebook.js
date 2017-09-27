@@ -191,22 +191,7 @@ describe('GET /auth/facebook', function () {
 describe('POST /api/facebook/signup', function () {
 
     describe('When user is not in the system', function () {
-
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
-                }
-            }, done)
-        });
-
+        
         before(function (done) {
             mockFB();
 
