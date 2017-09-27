@@ -68,6 +68,9 @@ module.exports = function (router) {
         if (client.redirect_uri) {
             req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
         }
+        if (client.email_redirect_uri) {
+            req.checkBody('email_redirect_uri', req.__('API_ADMIN_CLIENT_EMAIL_REDIRECT_URL_IS_INVALID')).isURL();
+        }
 
         return req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -91,7 +94,8 @@ module.exports = function (router) {
                                 oAuhtClient.updateAttributes({
                                     name: xssFilters.inHTMLData(client.name),
                                     jwt_code: xssFilters.inHTMLData(client.jwt_code),
-                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri)
+                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                    email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri)
                                 }).then(function () {
                                     res.json({'id': client.id});
                                 });
@@ -124,6 +128,7 @@ module.exports = function (router) {
                                     name: xssFilters.inHTMLData(client.name),
                                     jwt_code: xssFilters.inHTMLData(client.jwt_code),
                                     redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                    email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri),
                                     client_secret: hash
                                 }).then(function (createClient) {
                                     // return generated token and client id
@@ -315,6 +320,7 @@ module.exports = function (router) {
             jwt_code: client.jwt_code,
             name: client.name,
             redirect_uri: client.redirect_uri,
+            email_redirect_uri: client.email_redirect_uri,
             created_at: client.created_at,
             udpated_at: client.udpated_at
 
