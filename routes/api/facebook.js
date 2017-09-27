@@ -52,18 +52,17 @@ module.exports = function (app, options) {
 };
 
 function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,name,email&access_token=' + token;
+    var path = 'https://graph.facebook.com/me?fields=id,email,name&access_token=' + token;
     request(path, function (error, response, body) {
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode === 200) {
             var fbProfile = {
                 provider_uid: "fb:" + data.id,
-                // display_name: data.name,
+                display_name: data.name,
                 email: data.email
             };
             done(null, fbProfile);
         } else {
-            console.log(data.error);
             done({code: response.statusCode, message: data.error.message}, null);
         }
     });
@@ -80,19 +79,17 @@ function buildResponse(user) {
 
 function performFacebookLogin(fbProfile, fbAccessToken, done) {
     if (fbProfile && fbAccessToken) {
-        db.OAuthProvider.findOne({
-                where: {provider_uid: fbProfile.provider_uid},
-                include:
-                    [{model: db.User}]
-            }
-        ).then(function (fbProvider) {
+        db.OAuthProvider.findOne({where: {uid: fbProfile.provider_uid}}).then(function (fbProvider) {
             if (!fbProvider) {
                 db.User.findOrCreate({
                     where: {
                         email: fbProfile.email
+                    }, defaults: {
+                        verified: true,
+                        display_name: fbProfile.display_name
                     }
                 }).spread(function (me) {
-                    me.updateAttributes({display_name: fbProfile.display_name, verified:true}).then(function () {
+                    me.updateAttributes({display_name: fbProfile.display_name, verified: true}).then(function () {
                         me.logLogin().then(function (user) {
                             var provider = db.OAuthProvider.build({
                                 where: {
@@ -112,16 +109,13 @@ function performFacebookLogin(fbProfile, fbAccessToken, done) {
                     return done(err, null);
                 });
             } else {
-                var me = fbProvider.User;
-                if (me) {
-                    me.logLogin().then(function (user) {
+                db.User.findOne({where: {email: fbProfile.email}}).then(function (user) {
+                    user.logLogin().then(function () {
                         return done(null, buildResponse(user));
                     }, function (error) {
                         return done(error, null);
                     });
-                } else {
-
-                }
+                });
             }
         }, function (error) {
             return done(error, null);

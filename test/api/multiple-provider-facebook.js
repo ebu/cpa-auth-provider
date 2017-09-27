@@ -32,7 +32,13 @@ function mockFB() {
     nock('https://graph.facebook.com')
         .get('/v2.5/me?fields=id%2Cemail%2Cname&access_token=AccessTokenA')
         .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: EMAIL});
+    nock('https://graph.facebook.com')
+        .get('/me?fields=id,email,name&access_token=AccessTokenA')
+        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: EMAIL});
 }
+
+
+https://graph.facebook.com/me?fields=id,email,name&access_token=AccessTokenA
 
 
 describe('GET /auth/facebook', function () {
@@ -183,4 +189,43 @@ describe('GET /auth/facebook', function () {
             );
         });
     });
+});
+
+describe('POST /api/facebook/signup', function () {
+
+    describe('When user is not in the system', function () {
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/signup', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {
+                    email: EMAIL,
+                    password: STRONG_PASSWORD,
+                    gender: 'female',
+                    date_of_birth: 249782400000,
+                    'g-recaptcha-response': recaptchaResponse
+                }
+            }, done)
+        });
+
+        before(function (done) {
+            mockFB();
+
+            requestHelper.sendRequest(this, '/api/facebook/signup', {
+                method: 'post',
+                type: 'form',
+                data: {
+                    fbToken: 'AccessTokenA'
+                }
+            }, done);
+        });
+
+        it('should return 200 OK', function () {
+                expect(this.res.statusCode).equal(200);
+            }
+        );
+    });
+
 });
