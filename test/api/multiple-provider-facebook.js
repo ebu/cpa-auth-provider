@@ -191,7 +191,7 @@ describe('GET /auth/facebook', function () {
 describe('POST /api/facebook/signup', function () {
 
     describe('When user is not in the system', function () {
-        
+
         before(function (done) {
             mockFB();
 
@@ -206,7 +206,7 @@ describe('POST /api/facebook/signup', function () {
 
         it('should return 200 OK', function () {
             expect(this.res.body.success).equal(true);
-            expect(this.res.body.user.email).equal("someone@importa.nt");
+            expect(this.res.body.user.email).equal(EMAIL);
             expect(this.res.statusCode).equal(200);
             }
         );
@@ -306,7 +306,7 @@ describe('POST /api/facebook/signup', function () {
 
         it('should return 200 OK', function () {
                 expect(this.res.body.success).equal(true);
-                expect(this.res.body.user.email).equal("someone@importa.nt");
+                expect(this.res.body.user.email).equal(EMAIL);
                 expect(this.res.statusCode).equal(200);
             }
         );
