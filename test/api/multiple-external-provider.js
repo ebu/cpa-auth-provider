@@ -27,6 +27,42 @@ var resetDatabase = function (done) {
     });
 };
 
+describe('Local login after', function (){
+    describe('Facebook API login first', function () {
+        before(resetDatabase);
+
+        before(function (done) {
+            facebookAPISignup.call(this, done);
+        });
+
+        before(function (done) {
+            localSignup.call(this, done);
+        });
+
+        it('should return 400 OK', function () {
+                expect(this.res.statusCode).equal(400);
+                expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
+            }
+        );
+    });
+    describe('Google API login first', function () {
+        before(resetDatabase);
+
+        before(function (done) {
+            googleAPISignup.call(this, done);
+        });
+
+        before(function (done) {
+            localSignup.call(this, done);
+        });
+
+        it('should return 400 OK', function () {
+                expect(this.res.statusCode).equal(400);
+                expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
+            }
+        );
+    });
+});
 
 describe('Facebook', function () {
 
@@ -123,6 +159,8 @@ describe('Facebook', function () {
 
         describe('When user is not in the system', function () {
 
+            before(resetDatabase);
+
             before(function (done) {
                 facebookAPISignup.call(this, done);
             });
@@ -218,6 +256,9 @@ describe('Google', function () {
 
     describe('GET /auth/google/callback', function () {
         describe('When user is not in the system', function () {
+
+            before(resetDatabase);
+
             before(function (done) {
                 googleUISignup.call(this, done);
             });
@@ -362,7 +403,6 @@ describe('Google', function () {
     });
 
 });
-
 
 describe('Facebook and Google', function () {
     describe('using UI', function () {
