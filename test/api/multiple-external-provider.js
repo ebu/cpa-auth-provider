@@ -1,13 +1,14 @@
 "use strict";
 
-var requestHelper = require('../request-helper');
 var db = require('../../models');
-var dbHelper = require('../db-helper');
-var recaptcha = require('express-recaptcha');
 
 var nock = require('nock');
+var recaptcha = require('express-recaptcha');
 
-var FB_EMAIL = 'someone@importa.nt';
+var dbHelper = require('../db-helper');
+var requestHelper = require('../request-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+
 var GOOGLE_EMAIL = 'someone@gmail.com';
 
 var recaptchaResponse = 'a dummy recaptcha response';
@@ -25,8 +26,6 @@ var resetDatabase = function (done) {
         done(err);
     });
 };
-
-
 
 
 describe('Facebook', function () {
@@ -75,7 +74,7 @@ describe('Facebook', function () {
                 before(resetDatabase);
 
                 before(function (done) {
-                    localSignupWithFBEMail.call(this, done);
+                    localSignup.call(this, done);
                 });
 
                 before(function (done) {
@@ -99,11 +98,11 @@ describe('Facebook', function () {
                 before(resetDatabase);
 
                 before(function (done) {
-                    localSignupWithFBEMail.call(this, done);
+                    localSignup.call(this, done);
                 });
 
                 before(function (done) {
-                    markFBEmailAsVerified(done);
+                    markEmailAsVerified(done);
                 });
 
                 before(function (done) {
@@ -130,7 +129,7 @@ describe('Facebook', function () {
 
             it('should return 200 OK', function () {
                     expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(FB_EMAIL);
+                    expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
                     expect(this.res.statusCode).equal(200);
                 }
             );
@@ -146,7 +145,7 @@ describe('Facebook', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignupWithFBEMail.call(this, done);
+                localSignup.call(this, done);
             });
 
             before(function (done) {
@@ -171,11 +170,11 @@ describe('Facebook', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignupWithFBEMail.call(this, done);
+                localSignup.call(this, done);
             });
 
             before(function (done) {
-                markFBEmailAsVerified(done);
+                markEmailAsVerified(done);
             });
 
             before(function (done) {
@@ -184,7 +183,7 @@ describe('Facebook', function () {
 
             it('should return 200 OK', function () {
                     expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(FB_EMAIL);
+                    expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
                     expect(this.res.statusCode).equal(200);
                 }
             );
@@ -239,7 +238,7 @@ describe('Google', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignupWithGoogleEMail.call(this, done);
+                localSignup.call(this, done);
             });
 
             before(function (done) {
@@ -263,11 +262,11 @@ describe('Google', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignupWithGoogleEMail.call(this, done);
+                localSignup.call(this, done);
             });
 
             before(function (done) {
-                markGoogleEmailAsVerified(done);
+                markEmailAsVerified(done);
             });
 
             before(function (done) {
@@ -316,7 +315,7 @@ describe('Google', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignupWithGoogleEMail.call(this, done);
+                localSignup.call(this, done);
             });
 
             before(function (done) {
@@ -341,11 +340,11 @@ describe('Google', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignupWithGoogleEMail.call(this, done);
+                localSignup.call(this, done);
             });
 
             before(function (done) {
-                markGoogleEmailAsVerified(done);
+                markEmailAsVerified(done);
             });
 
             before(function (done) {
@@ -365,27 +364,111 @@ describe('Google', function () {
 });
 
 
-///////////////// FB utilities
+describe('Facebook and Google', function () {
+    describe('using UI', function () {
+        describe('When user is in the system and has validated his mail and add facebook and google', function () {
 
-function mockFB() {
-    nock('https://graph.facebook.com:443')
-        .post('/oauth/access_token', "grant_type=authorization_code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Ffacebook%2Fcallback&client_id=abc&client_secret=123&code=mycodeabc")
-        .reply(200, {access_token: 'AccessTokenA', token_type: 'Bearer', expires_in: 3600});
-    nock('https://graph.facebook.com')
-        .get('/v2.5/me?fields=id%2Cemail%2Cname&access_token=AccessTokenA')
-        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: FB_EMAIL});
-    nock('https://graph.facebook.com')
-        .get('/me?fields=id,email,name&access_token=AccessTokenA')
-        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: FB_EMAIL});
-}
+            var providersInDb;
 
-function localSignupWithFBEMail(done) {
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+
+            });
+            before(function (done) {
+                facebookUISignup.call(this, done);
+
+            });
+
+            before(function (done) {
+                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
+                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                        providersInDb = providers;
+                        done();
+                    });
+                });
+            });
+
+            it('it should return 2 entries in oAuthProvider', function () {
+                    console.log(providersInDb);
+                    expect(providersInDb.length).equal(2);
+                }
+            );
+        });
+
+
+    });
+    // describe('using API', function () {
+    //     describe('When user is in the system and has validated his mail and add facebook and google', function () {
+    //
+    //         var providersInDb;
+    //
+    //         before(function (done) {
+    //             recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+    //             done();
+    //         });
+    //
+    //         before(resetDatabase);
+    //
+    //         before(function (done) {
+    //             localSignup.call(this, done);
+    //         });
+    //
+    //         before(function (done) {
+    //             markEmailAsVerified(done);
+    //         });
+    //
+    //         before(function (done) {
+    //             googleAPISignup.call(this, done);
+    //
+    //         });
+    //         before(function (done) {
+    //             facebookAPISignup.call(this, done);
+    //
+    //         });
+    //
+    //         before(function (done) {
+    //             db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
+    //                 oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+    //                     providersInDb = providers;
+    //                     done();
+    //                 });
+    //             });
+    //         });
+    //
+    //         it('it should return 2 entries in oAuthProvider', function () {
+    //                 console.log(providersInDb);
+    //                 expect(providersInDb.length).equal(2);
+    //             }
+    //         );
+    //     });
+    //
+    //
+    // });
+});
+
+
+function localSignup(done) {
     requestHelper.sendRequest(this, '/api/local/signup', {
         method: 'post',
         cookie: this.cookie,
         type: 'form',
         data: {
-            email: FB_EMAIL,
+            email: GOOGLE_EMAIL,
             password: STRONG_PASSWORD,
             gender: 'female',
             date_of_birth: 249782400000,
@@ -394,8 +477,8 @@ function localSignupWithFBEMail(done) {
     }, done);
 }
 
-function markFBEmailAsVerified(done) {
-    db.User.findOne({where: {email: FB_EMAIL}}).then(
+function markEmailAsVerified(done) {
+    db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(
         function (user) {
             user.updateAttributes({verified: true}).then(
                 function () {
@@ -406,6 +489,20 @@ function markFBEmailAsVerified(done) {
         },
         done
     );
+}
+
+///////////////// FB utilities
+
+function mockFB() {
+    nock('https://graph.facebook.com:443')
+        .post('/oauth/access_token', "grant_type=authorization_code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Ffacebook%2Fcallback&client_id=abc&client_secret=123&code=mycodeabc")
+        .reply(200, {access_token: 'AccessTokenA', token_type: 'Bearer', expires_in: 3600});
+    nock('https://graph.facebook.com')
+        .get('/v2.5/me?fields=id%2Cemail%2Cname&access_token=AccessTokenA')
+        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: GOOGLE_EMAIL});
+    nock('https://graph.facebook.com')
+        .get('/me?fields=id,email,name&access_token=AccessTokenA')
+        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: GOOGLE_EMAIL});
 }
 
 function facebookAPISignup(done) {
@@ -465,34 +562,6 @@ function mockGoogle() {
     );
 }
 
-function localSignupWithGoogleEMail(done) {
-    requestHelper.sendRequest(this, '/api/local/signup', {
-        method: 'post',
-        cookie: this.cookie,
-        type: 'form',
-        data: {
-            email: GOOGLE_EMAIL,
-            password: STRONG_PASSWORD,
-            gender: 'female',
-            date_of_birth: 249782400000,
-            'g-recaptcha-response': recaptchaResponse
-        }
-    }, done);
-}
-
-function markGoogleEmailAsVerified(done) {
-    db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(
-        function (user) {
-            user.updateAttributes({verified: true}).then(
-                function () {
-                    done();
-                },
-                done
-            );
-        },
-        done
-    );
-}
 
 function googleUISignup(done) {
     mockGoogle();
