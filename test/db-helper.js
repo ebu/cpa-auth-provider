@@ -16,7 +16,8 @@ module.exports = {
             'PairingCodes',
             'Users',
             'Permissions',
-            'UserProfiles'
+            'UserProfiles',
+            'OAuthProviders'
         ];
 
         var deleteData = function (table, done) {
