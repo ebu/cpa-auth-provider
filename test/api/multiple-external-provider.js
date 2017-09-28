@@ -404,7 +404,6 @@ describe('Facebook and Google', function () {
             });
 
             it('it should return 2 entries in oAuthProvider', function () {
-                    console.log(providersInDb);
                     expect(providersInDb.length).equal(2);
                 }
             );
