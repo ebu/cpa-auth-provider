@@ -411,53 +411,50 @@ describe('Facebook and Google', function () {
 
 
     });
-    // describe('using API', function () {
-    //     describe('When user is in the system and has validated his mail and add facebook and google', function () {
-    //
-    //         var providersInDb;
-    //
-    //         before(function (done) {
-    //             recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-    //             done();
-    //         });
-    //
-    //         before(resetDatabase);
-    //
-    //         before(function (done) {
-    //             localSignup.call(this, done);
-    //         });
-    //
-    //         before(function (done) {
-    //             markEmailAsVerified(done);
-    //         });
-    //
-    //         before(function (done) {
-    //             googleAPISignup.call(this, done);
-    //
-    //         });
-    //         before(function (done) {
-    //             facebookAPISignup.call(this, done);
-    //
-    //         });
-    //
-    //         before(function (done) {
-    //             db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-    //                 oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
-    //                     providersInDb = providers;
-    //                     done();
-    //                 });
-    //             });
-    //         });
-    //
-    //         it('it should return 2 entries in oAuthProvider', function () {
-    //                 console.log(providersInDb);
-    //                 expect(providersInDb.length).equal(2);
-    //             }
-    //         );
-    //     });
-    //
-    //
-    // });
+    describe('using API', function () {
+        describe('When user is in the system and has validated his mail and add facebook and google', function () {
+
+            var providersInDb;
+
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                googleAPISignup.call(this, done);
+            });
+            before(function (done) {
+                facebookAPISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
+                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                        providersInDb = providers;
+                        done();
+                    });
+                });
+            });
+
+            it('it should return 2 entries in oAuthProvider', function () {
+                    expect(providersInDb.length).equal(2);
+                }
+            );
+        });
+
+
+    });
 });
 
 
