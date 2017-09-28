@@ -570,3 +570,194 @@ describe('POST /api/local/authenticate', function () {
 
 
 });
+
+
+describe('POST /signup', function () {
+    var URL = '/signup';
+
+    context('new user signup with no required fields', function () {
+        context('with bad recaptcha', function () {
+            before(function () {
+                recaptcha.init(KO_RECATCHA_KEY, KO_RECATCHA_SECRET);
+            });
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {email: 'qsdf@qsdf.fr', password: STRONG_PASSWORD, 'g-recaptcha-response': ''}
+                    },
+                    done
+                );
+            });
+
+            it('should return a success false', function () {
+                expect(this.res.statusCode).equal(302);
+                expect(this.res.text).match(/Found. Redirecting to [\w\.\/]*signup\?error=recaptcha/);
+                expect(this.res.header.location).match(/[\w\/]*signup\?error=recaptcha/);
+            });
+
+        });
+
+        context('When unauthenticated user signup with good recaptcha', function () {
+            before(function () {
+                recaptcha.init(OK_RECATCHA_SECRET, OK_RECATCHA_SECRET);
+            });
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            email: 'qsdf2@qsdf.fr',
+                            password: STRONG_PASSWORD,
+                            confirm_password: STRONG_PASSWORD,
+                            'g-recaptcha-response': recaptchaResponse
+                        }
+                    },
+                    done);
+            });
+            before(function (done) {
+                var redirectUrl = this.res.header.location;
+                redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
+                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+            });
+
+            it('should have errors displayed', function () {
+                expect(this.$('div.signup-error').length).equal(0);
+            });
+        });
+    });
+
+    context('with required fields gender and date_of_birth', function () {
+        var config = require('../../config');
+        var userHelper = require('../../lib/user-helper');
+        var preFields;
+        before(function () {
+            preFields = config.userProfiles.requiredFields;
+            config.userProfiles.requiredFields = ['gender', 'date_of_birth'];
+            userHelper.reloadConfig();
+        });
+        after(function () {
+            config.userProfiles.requiredFields = preFields;
+            userHelper.reloadConfig();
+        });
+
+        context('When unauthenticated user signup without all required fields', function () {
+            before(function () {
+                recaptcha.init(OK_RECATCHA_SECRET, OK_RECATCHA_SECRET);
+            });
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            email: 'qsdf2@qsdf.fr',
+                            password: STRONG_PASSWORD,
+                            confirm_password: STRONG_PASSWORD,
+                            gender: 'female',
+                            'g-recaptcha-response': recaptchaResponse
+                        }
+                    },
+                    done);
+            });
+            before(function (done) {
+                var redirectUrl = this.res.header.location;
+                redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
+                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+            });
+
+            it('should have invalid date of birth error displayed', function () {
+                var items = this.$('div.signup-error');
+                expect(items.length).equal(1);
+                expect(items[0].children[0].data).equal('Invalid date of birth');
+            });
+        });
+
+        context('When unauthenticated user signup with badly formatted field', function () {
+            before(function () {
+                recaptcha.init(OK_RECATCHA_SECRET, OK_RECATCHA_SECRET);
+            });
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            email: 'someone@somewhere.com',
+                            password: STRONG_PASSWORD,
+                            confirm_password: STRONG_PASSWORD,
+                            gender: 'jedi',
+                            date_of_birth: '24/09/1950',
+                            'g-recaptcha-response': recaptchaResponse
+                        }
+                    },
+                    done);
+            });
+            before(function (done) {
+                var redirectUrl = this.res.header.location;
+                redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
+                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+            });
+
+            it('should have invalid gender error', function () {
+                var items = this.$('div.signup-error');
+                expect(items.length).equal(1);
+                expect(items[0].children[0].data).equal('Invalid gender');
+            });
+        });
+
+        context('When unauthenticated user signup with correct fields', function () {
+            before(function () {
+                recaptcha.init(OK_RECATCHA_SECRET, OK_RECATCHA_SECRET);
+            });
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            email: 'someone@somewhere.com',
+                            password: STRONG_PASSWORD,
+                            confirm_password: STRONG_PASSWORD,
+                            gender: 'female',
+                            date_of_birth: '24/09/1950',
+                            'g-recaptcha-response': recaptchaResponse
+                        }
+                    },
+                    done);
+            });
+            before(function (done) {
+                var redirectUrl = this.res.header.location;
+                redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
+                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+            });
+
+            it('should have no errors displayed', function () {
+                var items = this.$('div.signup-error');
+                expect(items.length).equal(0);
+            });
+        });
+    });
+});

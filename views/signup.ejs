@@ -14,7 +14,7 @@
 
                     <!-- show any messages that come back with signup process -->
                     <% if (message.length > 0) { %>
-                    <div class="alert alert-danger"><%= message %></div>
+                    <div class="signup-error alert alert-danger"><%= message %></div>
                     <% } %>
 
                     <form class="connect-forms" action="<%= link('/signup') %>" method="post">
