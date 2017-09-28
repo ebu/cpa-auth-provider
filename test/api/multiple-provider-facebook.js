@@ -36,7 +36,7 @@ function mockFB() {
         .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: FB_EMAIL});
 }
 
-function localSignup(done) {
+function localSignupWithFBEMail(done) {
     requestHelper.sendRequest(this, '/api/local/signup', {
         method: 'post',
         cookie: this.cookie,
@@ -135,7 +135,7 @@ describe('Facebook', function () {
                 before(resetDatabase);
 
                 before(function (done) {
-                    localSignup.call(this, done);
+                    localSignupWithFBEMail.call(this, done);
                 });
 
                 before(function (done) {
@@ -159,7 +159,7 @@ describe('Facebook', function () {
                 before(resetDatabase);
 
                 before(function (done) {
-                    localSignup.call(this, done);
+                    localSignupWithFBEMail.call(this, done);
                 });
 
                 before(function (done) {
@@ -206,7 +206,7 @@ describe('Facebook', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignup.call(this, done);
+                localSignupWithFBEMail.call(this, done);
             });
 
             before(function (done) {
@@ -231,7 +231,7 @@ describe('Facebook', function () {
             before(resetDatabase);
 
             before(function (done) {
-                localSignup.call(this, done);
+                localSignupWithFBEMail.call(this, done);
             });
 
             before(function (done) {
