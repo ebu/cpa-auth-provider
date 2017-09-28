@@ -38,7 +38,7 @@ module.exports = function (app, options) {
             }
             // });
         } else {
-            res.status(500).json({error: 'Missing google IDtoken to connect with Google account'});
+            res.status(400).json({error: 'Missing google IDtoken to connect with Google account'});
         }
     });
 };
