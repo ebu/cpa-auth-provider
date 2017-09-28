@@ -233,7 +233,7 @@ describe('POST /api/facebook/signup', function () {
                     date_of_birth: 249782400000,
                     'g-recaptcha-response': recaptchaResponse
                 }
-            }, done)
+            }, done);
         });
 
         before(function (done) {
@@ -277,7 +277,7 @@ describe('POST /api/facebook/signup', function () {
                     date_of_birth: 249782400000,
                     'g-recaptcha-response': recaptchaResponse
                 }
-            }, done)
+            }, done);
         });
 
         before(function (done) {
