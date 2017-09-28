@@ -3,8 +3,7 @@
 var db = require('../../models');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var cors = require('../../lib/cors');
-
-var googleHelper = require('../../lib/google-helper')
+var googleHelper = require('../../lib/google-helper');
 
 module.exports = function (app, options) {
     app.post('/api/google/signup', cors, function (req, res) {
