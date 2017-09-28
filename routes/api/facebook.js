@@ -25,7 +25,7 @@ module.exports = function (app, options) {
                         if (userInDb && !userInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
-                            performFacebookLogin(fbProfile, facebookAccessToken, function (error, response) {
+                            performFacebookLogin(fbProfile, function (error, response) {
                                 if (response) {
                                     res.status(200).json(response);
                                 } else {
@@ -78,8 +78,8 @@ function buildResponse(user) {
     };
 }
 
-function performFacebookLogin(fbProfile, fbAccessToken, done) {
-    if (fbProfile && fbAccessToken) {
+function performFacebookLogin(fbProfile, done) {
+    if (fbProfile) {
         db.OAuthProvider.findOne({where: {uid: fbProfile.provider_uid}}).then(function (fbProvider) {
             if (!fbProvider) {
                 db.User.findOrCreate({

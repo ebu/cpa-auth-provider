@@ -5,6 +5,7 @@ var db = require('../../models');
 var dbHelper = require('../db-helper');
 var recaptcha = require('express-recaptcha');
 
+
 var nock = require('nock');
 
 var EMAIL = 'someone@gmail.com';
@@ -28,19 +29,28 @@ function mockGoogle() {
     nock('https://accounts.google.com/')
         .get('o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=621117323323-j048lcbv5khh6lhr1lok4vv17mekijvm.apps.googleusercontent.com')
         .reply(302);
-    nock('https://www.googleapis.com').post('/oauth2/v4/token').reply(
-        200,
+    nock('https://www.googleapis.com')
+        .post('/oauth2/v4/token').reply(200,
         {
             access_token: 'access-token-g1',
         }
     );
-    nock('https://www.googleapis.com').get('/plus/v1/people/me?access_token=access-token-g1').reply(
-        200,
+    nock('https://www.googleapis.com')
+        .get('/plus/v1/people/me?access_token=access-token-g1').reply(200,
         {
             id: 'aa123',
             name: {familyName: 'Wurst', givenName: 'Hans'},
             gender: 'slug',
-            emails: [{value: 'someone@gmail.com', type: 'main'}]
+            emails: [{value: EMAIL, type: 'main'}]
+        }
+    );
+    nock('https://www.googleapis.com')
+        .get('/oauth2/v1/certs').reply(200,
+        {
+            id: 'aa123',
+            name: {familyName: 'Wurst', givenName: 'Hans'},
+            gender: 'slug',
+            emails: [{value: EMAIL, type: 'main'}]
         }
     );
 }
@@ -188,6 +198,39 @@ describe('GET /auth/google/callback', function () {
         it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
                 expect(this.res.statusCode).equal(302);
                 expect(this.res.text).equal('Found. Redirecting to /ap/');
+            }
+        );
+    });
+});
+
+describe('POST /api/google/signup', function () {
+    var googleHelper = require('../../lib/google-helper')
+
+    sinon.stub(googleHelper, "verifyGoogleIdToken").returns({
+        provider_uid: 'google:1234',
+        display_name: 'Hans Wurst',
+        email: EMAIL
+    });
+
+    describe('When user is not in the system', function () {
+
+
+        before(function (done) {
+            mockGoogle();
+
+            requestHelper.sendRequest(this, '/api/google/signup', {
+                method: 'post',
+                type: 'form',
+                data: {
+                    idToken: 'blabla'
+                }
+            }, done);
+        });
+
+        it('should return 200 OK', function () {
+                // expect(this.res.body.success).equal(true);
+                // expect(this.res.body.user.email).equal(EMAIL);
+                expect(this.res.statusCode).equal(200);
             }
         );
     });
