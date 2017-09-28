@@ -1,6 +1,6 @@
 "use strict";
 
-var legacyPasswordHelper = require('../../lib/legacy-password-helper');
+var legacyPasswordHelper = require('../../lib/legacy-password-helper'); //TODO remove it
 var assert = require("assert");
 
 var _12345678_HASHED_PASSWORD_HASH_ONLY = '/JMI1ltVoJXNjsHdusjCnRBZNF24qLBfRguY7g==';
@@ -9,7 +9,7 @@ var _12345678_HASHED_PASSWORD = '{SSHA}' + _12345678_HASHED_PASSWORD_HASH_ONLY;
 var ECE_HASHED_PASSWORD_HASH_ONLY = 'oYj09hRiZHtqvM+c+kSQCmt1duBydHMubXVsdGltZWRpYUBnbWFpbC5jb20=';
 var ECE_HASHED_PASSWORD = '{ECE}' + ECE_HASHED_PASSWORD_HASH_ONLY;
 
-var BTQ_HASHED_PASSWORD_HASH_ONLY = 'cvcJ0S2vucKqf2YNHFuBvDE5';
+var BTQ_HASHED_PASSWORD_HASH_ONLY = 'ZWE5OTU5MGNkZDUyNjg0NWQzMWRhODdjNTM1NzcxMGM=';
 var BTQ_HASHED_PASSWORD = '{BTQ}' + BTQ_HASHED_PASSWORD_HASH_ONLY;
 
 
@@ -32,8 +32,11 @@ describe("Test legacy password ", function () {
 
     });
     describe("Verify legacy password (BTQ)", function () {
+
+        console.log(legacyPasswordHelper.createBTQHash("12341234", "ab")); //TODO remove it
+        //FIXME :
         // describe("When password is correct", function () {
-        //     assert(legacyPasswordHelper.checkLegacyPassBTQ('looking 4 a good password', BTQ_HASHED_PASSWORD_HASH_ONLY, BTQ_HASHED_PASSWORD));
+        //     assert(legacyPasswordHelper.checkLegacyPassBTQ('12341234', BTQ_HASHED_PASSWORD_HASH_ONLY, BTQ_HASHED_PASSWORD));
         // });
         describe("When password is wrong", function () {
             assert(!legacyPasswordHelper.checkLegacyPassBTQ('wrong pass', BTQ_HASHED_PASSWORD_HASH_ONLY, BTQ_HASHED_PASSWORD));
