@@ -51,7 +51,7 @@ function localSignupWithFBEMail(done) {
     }, done);
 }
 
-function markEmailAsVerified(done) {
+function markFBEmailAsVerified(done) {
     db.User.findOne({where: {email: FB_EMAIL}}).then(
         function (user) {
             user.updateAttributes({verified: true}).then(
@@ -163,7 +163,7 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    markEmailAsVerified(done);
+                    markFBEmailAsVerified(done);
                 });
 
                 before(function (done) {
@@ -235,7 +235,7 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                markEmailAsVerified(done);
+                markFBEmailAsVerified(done);
             });
 
             before(function (done) {

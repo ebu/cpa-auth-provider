@@ -8,7 +8,7 @@ var recaptcha = require('express-recaptcha');
 
 var nock = require('nock');
 
-var EMAIL = 'someone@gmail.com';
+var GOOGLE_EMAIL = 'someone@gmail.com';
 var recaptchaResponse = 'a dummy recaptcha response';
 
 // The following recaptcha key should always return ok
@@ -24,6 +24,9 @@ var resetDatabase = function (done) {
         done(err);
     });
 };
+
+
+//////////////
 
 function mockGoogle() {
     nock('https://accounts.google.com/')
@@ -41,7 +44,7 @@ function mockGoogle() {
             id: 'aa123',
             name: {familyName: 'Wurst', givenName: 'Hans'},
             gender: 'slug',
-            emails: [{value: EMAIL, type: 'main'}]
+            emails: [{value: GOOGLE_EMAIL, type: 'main'}]
         }
     );
     nock('https://www.googleapis.com')
@@ -50,8 +53,50 @@ function mockGoogle() {
             id: 'aa123',
             name: {familyName: 'Wurst', givenName: 'Hans'},
             gender: 'slug',
-            emails: [{value: EMAIL, type: 'main'}]
+            emails: [{value: GOOGLE_EMAIL, type: 'main'}]
         }
+    );
+}
+
+function localSignupWithGoogleEMail(done) {
+    requestHelper.sendRequest(this, '/api/local/signup', {
+        method: 'post',
+        cookie: this.cookie,
+        type: 'form',
+        data: {
+            email: GOOGLE_EMAIL,
+            password: STRONG_PASSWORD,
+            gender: 'female',
+            date_of_birth: 249782400000,
+            'g-recaptcha-response': recaptchaResponse
+        }
+    }, done);
+}
+
+function markGoogleEmailAsVerified(done) {
+    db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(
+        function (user) {
+            user.updateAttributes({verified: true}).then(
+                function () {
+                    done();
+                },
+                done
+            );
+        },
+        done
+    );
+}
+
+function googleUISignup(done) {
+    mockGoogle();
+    requestHelper.sendRequest(
+        this,
+        '/auth/google/callback?code=mycodeabc',
+        {
+            method: 'get',
+            cookie: this.cookie
+        },
+        done
     );
 }
 
@@ -75,264 +120,175 @@ describe('GET /auth/google', function () {
 );
 
 
-describe('GET /auth/google/callback', function () {
-    describe('When user is not in the system', function () {
-        before(function (done) {
 
-            mockGoogle();
+describe('Facebook', function () {
 
-            requestHelper.sendRequest(
-                this,
-                '/auth/google/callback?code=mycodeabc',
-                {
-                    method: 'get',
-                    cookie: this.cookie
-                },
-                done
+
+    describe('GET /auth/google/callback', function () {
+        describe('When user is not in the system', function () {
+            before(function (done) {
+                googleUISignup.call(this, done);
+            });
+
+            it('should redirect ?', function () {
+                    expect(this.res.statusCode).equal(302);
+                    expect(this.res.text).equal('Found. Redirecting to /ap/');
+                }
+            );
+        });
+        describe('When user is in the system and hasn\'t validated his mail', function () {
+
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignupWithGoogleEMail.call(this, done);
+            });
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+            });
+
+            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
+                    expect(this.res.statusCode).equal(302);
+                    expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE');
+                }
             );
         });
 
-        it('should redirect ?', function () {
-                expect(this.res.statusCode).equal(302);
-                expect(this.res.text).equal('Found. Redirecting to /ap/');
-            }
-        );
-    });
-    describe('When user is in the system and hasn\'t validated his mail', function () {
+        describe('When user is in the system and has validated his mail', function () {
 
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
 
-        before(resetDatabase);
+            before(resetDatabase);
 
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
+            before(function (done) {
+                localSignupWithGoogleEMail.call(this, done);
+            });
+
+            before(function (done) {
+                markGoogleEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+            });
+
+            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
+                    expect(this.res.statusCode).equal(302);
+                    expect(this.res.text).equal('Found. Redirecting to /ap/');
                 }
-            }, done)
+            );
+        });
+    });
+
+    describe('POST /api/google/signup', function () {
+        var googleHelper = require('../../lib/google-helper')
+
+        sinon.stub(googleHelper, "verifyGoogleIdToken").returns({
+            provider_uid: 'google:1234',
+            display_name: 'Hans Wurst',
+            email: GOOGLE_EMAIL
         });
 
-        before(function (done) {
-            mockGoogle();
+        describe('When user is not in the system', function () {
 
-            requestHelper.sendRequest(
-                this,
-                '/auth/google/callback?code=mycodeabc',
-                {
-                    method: 'get',
-                    cookie: this.cookie
-                },
-                done
+
+            before(function (done) {
+                mockGoogle();
+
+                requestHelper.sendRequest(this, '/api/google/signup', {
+                    method: 'post',
+                    type: 'form',
+                    data: {
+                        idToken: 'blabla'
+                    }
+                }, done);
+            });
+
+            it('should return 200 OK', function () {
+                    // expect(this.res.body.success).equal(true);
+                    // expect(this.res.body.user.email).equal(EMAIL);
+                    expect(this.res.statusCode).equal(200);
+                }
             );
         });
 
-        it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
-                expect(this.res.statusCode).equal(302);
-                expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE');
-            }
-        );
-    });
+        describe('When user is in the system and hasn\'t validated his mail', function () {
 
-    describe('When user is in the system and has validated his mail', function () {
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
 
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
+            before(resetDatabase);
 
-        before(resetDatabase);
+            before(function (done) {
+                localSignupWithGoogleEMail.call(this, done);
+            });
 
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
+            before(function (done) {
+                mockGoogle();
+
+                requestHelper.sendRequest(this, '/api/google/signup', {
+                    method: 'post',
+                    type: 'form',
+                    data: {
+                        idToken: 'blabla'
+                    }
+                }, done);
+            });
+
+            it('should return 400 OK', function () {
+                    expect(this.res.statusCode).equal(400);
+                    expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Google"}');
                 }
-            }, done)
-        });
-
-        before(function (done) {
-            db.User.findOne({where: {email: EMAIL}}).then(
-                function (user) {
-                    user.updateAttributes({verified: true}).then(
-                        function () {
-                            done();
-                        },
-                        done
-                    );
-                },
-                done
             );
         });
 
-        before(function (done) {
-            mockGoogle();
+        describe('When user is in the system and has validated his mail', function () {
 
-            requestHelper.sendRequest(
-                this,
-                '/auth/google/callback?code=mycodeabc',
-                {
-                    method: 'get',
-                    cookie: this.cookie
-                },
-                done
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignupWithGoogleEMail.call(this, done);
+            });
+
+            before(function (done) {
+                markGoogleEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                mockGoogle();
+
+                requestHelper.sendRequest(this, '/api/google/signup', {
+                    method: 'post',
+                    type: 'form',
+                    data: {
+                        idToken: 'blabla'
+                    }
+                }, done);
+            });
+
+            it('should return 200 OK', function () {
+                    expect(this.res.body.success).equal(true);
+                    expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
+                    expect(this.res.statusCode).equal(200);
+                }
             );
         });
-
-        it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
-                expect(this.res.statusCode).equal(302);
-                expect(this.res.text).equal('Found. Redirecting to /ap/');
-            }
-        );
-    });
-});
-
-describe('POST /api/google/signup', function () {
-    var googleHelper = require('../../lib/google-helper')
-
-    sinon.stub(googleHelper, "verifyGoogleIdToken").returns({
-        provider_uid: 'google:1234',
-        display_name: 'Hans Wurst',
-        email: EMAIL
     });
 
-    describe('When user is not in the system', function () {
-
-
-        before(function (done) {
-            mockGoogle();
-
-            requestHelper.sendRequest(this, '/api/google/signup', {
-                method: 'post',
-                type: 'form',
-                data: {
-                    idToken: 'blabla'
-                }
-            }, done);
-        });
-
-        it('should return 200 OK', function () {
-                // expect(this.res.body.success).equal(true);
-                // expect(this.res.body.user.email).equal(EMAIL);
-                expect(this.res.statusCode).equal(200);
-            }
-        );
-    });
-
-    describe('When user is in the system and hasn\'t validated his mail', function () {
-
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
-
-        before(resetDatabase);
-
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            mockGoogle();
-
-            requestHelper.sendRequest(this, '/api/google/signup', {
-                method: 'post',
-                type: 'form',
-                data: {
-                    idToken: 'blabla'
-                }
-            }, done);
-        });
-
-        it('should return 400 OK', function () {
-                expect(this.res.statusCode).equal(400);
-                expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Google"}');
-            }
-        );
-    });
-
-    describe('When user is in the system and has validated his mail', function () {
-
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
-
-        before(resetDatabase);
-
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            db.User.findOne({where: {email: EMAIL}}).then(
-                function (user) {
-                    user.updateAttributes({verified: true}).then(
-                        function () {
-                            done();
-                        },
-                        done
-                    );
-                },
-                done
-            );
-        });
-
-        before(function (done) {
-            mockGoogle();
-
-            requestHelper.sendRequest(this, '/api/google/signup', {
-                method: 'post',
-                type: 'form',
-                data: {
-                    idToken: 'blabla'
-                }
-            }, done);
-        });
-
-        it('should return 200 OK', function () {
-                expect(this.res.body.success).equal(true);
-                expect(this.res.body.user.email).equal(EMAIL);
-                expect(this.res.statusCode).equal(200);
-            }
-        );
-    });
 });
