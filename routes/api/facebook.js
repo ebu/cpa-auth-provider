@@ -34,7 +34,7 @@ module.exports = function (app, options) {
                     });
 
                 } else {
-                    res.status(500).json({error: err.message});
+                    res.status(401).json({error: "No valid facebook profile found"});
                 }
 
             });
