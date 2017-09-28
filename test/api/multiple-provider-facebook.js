@@ -37,51 +37,168 @@ function mockFB() {
         .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: EMAIL});
 }
 
+function localSignup(done) {
+    requestHelper.sendRequest(this, '/api/local/signup', {
+        method: 'post',
+        cookie: this.cookie,
+        type: 'form',
+        data: {
+            email: EMAIL,
+            password: STRONG_PASSWORD,
+            gender: 'female',
+            date_of_birth: 249782400000,
+            'g-recaptcha-response': recaptchaResponse
+        }
+    }, done);
+}
 
-describe('GET /auth/facebook', function () {
+function markEmailAsVerified(done) {
+    db.User.findOne({where: {email: EMAIL}}).then(
+        function (user) {
+            user.updateAttributes({verified: true}).then(
+                function () {
+                    done();
+                },
+                done
+            );
+        },
+        done
+    );
+}
+
+function facebookAPISignup(done) {
+    requestHelper.sendRequest(this, '/api/facebook/signup', {
+        method: 'post',
+        type: 'form',
+        data: {
+            fbToken: 'AccessTokenA'
+        }
+    }, done);
+}
+
+function facebookUISignup(done) {
+    requestHelper.sendRequest(
+        this,
+        '/auth/facebook/callback?code=mycodeabc',
+        {
+            method: 'get',
+            cookie: this.cookie
+        },
+        done
+    );
+}
+
+describe('Facebook', function () {
 
     describe('GET /auth/facebook', function () {
-            before(function (done) {
-                requestHelper.sendRequest(
-                    this,
-                    '/auth/facebook',
-                    {
-                        method: 'get',
-                        cookie: this.cookie
-                    },
-                    done);
+
+        describe('GET /auth/facebook', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(
+                        this,
+                        '/auth/facebook',
+                        {
+                            method: 'get',
+                            cookie: this.cookie
+                        },
+                        done);
+                });
+
+                it('should redirect to facebook', function () {
+                    expect(this.res.statusCode).equal(302);
+                    expect(this.res.headers.location).match(/https:\/\/www\.facebook\.com\/dialog\/oauth\?response_type=code&redirect_uri=.*/);
+                });
+            }
+        );
+
+
+        describe('GET /auth/facebook/callback', function () {
+            describe('When user is not in the system', function () {
+                before(function (done) {
+                    mockFB();
+                    facebookUISignup.call(this, done);
+                });
+
+                it('should redirect to /ap/', function () {
+                        expect(this.res.statusCode).equal(302);
+                        expect(this.res.text).equal('Found. Redirecting to /ap/');
+                    }
+                );
             });
+            describe('When user is in the system and hasn\'t validated his mail', function () {
 
-            it('should redirect to facebook', function () {
-                expect(this.res.statusCode).equal(302);
-                expect(this.res.headers.location).match(/https:\/\/www\.facebook\.com\/dialog\/oauth\?response_type=code&redirect_uri=.*/);
-            });
-        }
-    );
+                before(function (done) {
+                    recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                    done();
+                });
 
+                before(resetDatabase);
 
-    describe('GET /auth/facebook/callback', function () {
-        describe('When user is not in the system', function () {
-            before(function (done) {
-                mockFB();
+                before(function (done) {
+                    localSignup.call(this, done);
+                });
 
-                requestHelper.sendRequest(
-                    this,
-                    '/auth/facebook/callback?code=mycodeabc',
-                    {
-                        method: 'get',
-                        cookie: this.cookie
-                    },
-                    done
+                before(function (done) {
+                    mockFB();
+                    facebookUISignup.call(this, done);
+                });
+
+                it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
+                        expect(this.res.statusCode).equal(302);
+                        expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB');
+                    }
                 );
             });
 
-            it('should redirect to /ap/', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /ap/');
+            describe('When user is in the system and has validated his mail', function () {
+
+                before(function (done) {
+                    recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                    done();
+                });
+
+                before(resetDatabase);
+
+                before(function (done) {
+                    localSignup.call(this, done);
+                });
+
+                before(function (done) {
+                    markEmailAsVerified(done);
+                });
+
+                before(function (done) {
+                    mockFB();
+                    facebookUISignup.call(this, done);
+                });
+
+                it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
+                        expect(this.res.statusCode).equal(302);
+                        expect(this.res.text).equal('Found. Redirecting to /ap/');
+                    }
+                );
+            });
+        });
+    });
+
+
+    describe('POST /api/facebook/signup', function () {
+
+        describe('When user is not in the system', function () {
+
+            before(function (done) {
+                mockFB();
+                facebookAPISignup.call(this, done);
+            });
+
+            it('should return 200 OK', function () {
+                    expect(this.res.body.success).equal(true);
+                    expect(this.res.body.user.email).equal(EMAIL);
+                    expect(this.res.statusCode).equal(200);
                 }
             );
         });
+
         describe('When user is in the system and hasn\'t validated his mail', function () {
 
             before(function (done) {
@@ -92,37 +209,19 @@ describe('GET /auth/facebook', function () {
             before(resetDatabase);
 
             before(function (done) {
-                requestHelper.sendRequest(this, '/api/local/signup', {
-                    method: 'post',
-                    cookie: this.cookie,
-                    type: 'form',
-                    data: {
-                        email: EMAIL,
-                        password: STRONG_PASSWORD,
-                        gender: 'female',
-                        date_of_birth: 249782400000,
-                        'g-recaptcha-response': recaptchaResponse
-                    }
-                }, done)
+                localSignup.call(this, done);
             });
 
             before(function (done) {
                 mockFB();
 
-                requestHelper.sendRequest(
-                    this,
-                    '/auth/facebook/callback?code=mycodeabc',
-                    {
-                        method: 'get',
-                        cookie: this.cookie
-                    },
-                    done
-                );
+                facebookAPISignup.call(this, done);
             });
 
-            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB');
+            it('should return 400 OK', function () {
+                    expect(this.res.statusCode).equal(400);
+                    expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Facebook"}');
+
                 }
             );
         });
@@ -137,182 +236,27 @@ describe('GET /auth/facebook', function () {
             before(resetDatabase);
 
             before(function (done) {
-                requestHelper.sendRequest(this, '/api/local/signup', {
-                    method: 'post',
-                    cookie: this.cookie,
-                    type: 'form',
-                    data: {
-                        email: EMAIL,
-                        password: STRONG_PASSWORD,
-                        gender: 'female',
-                        date_of_birth: 249782400000,
-                        'g-recaptcha-response': recaptchaResponse
-                    }
-                }, done)
+                localSignup.call(this, done);
             });
 
             before(function (done) {
-                db.User.findOne({where: {email: EMAIL}}).then(
-                    function (user) {
-                        user.updateAttributes({verified: true}).then(
-                            function () {
-                                done();
-                            },
-                            done
-                        );
-                    },
-                    done
-                );
+                markEmailAsVerified(done);
             });
 
             before(function (done) {
                 mockFB();
-
-                requestHelper.sendRequest(
-                    this,
-                    '/auth/facebook/callback?code=mycodeabc',
-                    {
-                        method: 'get',
-                        cookie: this.cookie
-                    },
-                    done
-                );
+                facebookAPISignup.call(this, done);
             });
 
-            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /ap/');
+            it('should return 200 OK', function () {
+                    expect(this.res.body.success).equal(true);
+                    expect(this.res.body.user.email).equal(EMAIL);
+                    expect(this.res.statusCode).equal(200);
                 }
             );
         });
+
+
     });
-});
-
-describe('POST /api/facebook/signup', function () {
-
-    describe('When user is not in the system', function () {
-
-        before(function (done) {
-            mockFB();
-
-            requestHelper.sendRequest(this, '/api/facebook/signup', {
-                method: 'post',
-                type: 'form',
-                data: {
-                    fbToken: 'AccessTokenA'
-                }
-            }, done);
-        });
-
-        it('should return 200 OK', function () {
-            expect(this.res.body.success).equal(true);
-            expect(this.res.body.user.email).equal(EMAIL);
-            expect(this.res.statusCode).equal(200);
-            }
-        );
-    });
-
-    describe('When user is in the system and hasn\'t validated his mail', function () {
-
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
-
-        before(resetDatabase);
-
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            mockFB();
-
-            requestHelper.sendRequest(this, '/api/facebook/signup', {
-                method: 'post',
-                type: 'form',
-                data: {
-                    fbToken: 'AccessTokenA'
-                }
-            }, done);
-        });
-
-        it('should return 400 OK', function () {
-                expect(this.res.statusCode).equal(400);
-                expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Facebook"}');
-
-            }
-        );
-    });
-
-    describe('When user is in the system and has validated his mail', function () {
-
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
-
-        before(resetDatabase);
-
-        before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/signup', {
-                method: 'post',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    email: EMAIL,
-                    password: STRONG_PASSWORD,
-                    gender: 'female',
-                    date_of_birth: 249782400000,
-                    'g-recaptcha-response': recaptchaResponse
-                }
-            }, done);
-        });
-
-        before(function (done) {
-            db.User.findOne({where: {email: EMAIL}}).then(
-                function (user) {
-                    user.updateAttributes({verified: true}).then(
-                        function () {
-                            done();
-                        },
-                        done
-                    );
-                },
-                done
-            );
-        });
-
-        before(function (done) {
-            mockFB();
-
-            requestHelper.sendRequest(this, '/api/facebook/signup', {
-                method: 'post',
-                type: 'form',
-                data: {
-                    fbToken: 'AccessTokenA'
-                }
-            }, done);
-        });
-
-        it('should return 200 OK', function () {
-                expect(this.res.body.success).equal(true);
-                expect(this.res.body.user.email).equal(EMAIL);
-                expect(this.res.statusCode).equal(200);
-            }
-        );
-    });
-
 
 });
