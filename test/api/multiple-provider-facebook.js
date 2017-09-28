@@ -4,11 +4,10 @@ var requestHelper = require('../request-helper');
 var db = require('../../models');
 var dbHelper = require('../db-helper');
 var recaptcha = require('express-recaptcha');
-var config = require('../../config');
 
 var nock = require('nock');
 
-var EMAIL = 'someone@importa.nt';
+var FB_EMAIL = 'someone@importa.nt';
 var recaptchaResponse = 'a dummy recaptcha response';
 
 // The following recaptcha key should always return ok
@@ -31,10 +30,10 @@ function mockFB() {
         .reply(200, {access_token: 'AccessTokenA', token_type: 'Bearer', expires_in: 3600});
     nock('https://graph.facebook.com')
         .get('/v2.5/me?fields=id%2Cemail%2Cname&access_token=AccessTokenA')
-        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: EMAIL});
+        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: FB_EMAIL});
     nock('https://graph.facebook.com')
         .get('/me?fields=id,email,name&access_token=AccessTokenA')
-        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: EMAIL});
+        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: FB_EMAIL});
 }
 
 function localSignup(done) {
@@ -43,7 +42,7 @@ function localSignup(done) {
         cookie: this.cookie,
         type: 'form',
         data: {
-            email: EMAIL,
+            email: FB_EMAIL,
             password: STRONG_PASSWORD,
             gender: 'female',
             date_of_birth: 249782400000,
@@ -53,7 +52,7 @@ function localSignup(done) {
 }
 
 function markEmailAsVerified(done) {
-    db.User.findOne({where: {email: EMAIL}}).then(
+    db.User.findOne({where: {email: FB_EMAIL}}).then(
         function (user) {
             user.updateAttributes({verified: true}).then(
                 function () {
@@ -67,6 +66,7 @@ function markEmailAsVerified(done) {
 }
 
 function facebookAPISignup(done) {
+    mockFB();
     requestHelper.sendRequest(this, '/api/facebook/signup', {
         method: 'post',
         type: 'form',
@@ -77,6 +77,7 @@ function facebookAPISignup(done) {
 }
 
 function facebookUISignup(done) {
+    mockFB();
     requestHelper.sendRequest(
         this,
         '/auth/facebook/callback?code=mycodeabc',
@@ -115,7 +116,6 @@ describe('Facebook', function () {
         describe('GET /auth/facebook/callback', function () {
             describe('When user is not in the system', function () {
                 before(function (done) {
-                    mockFB();
                     facebookUISignup.call(this, done);
                 });
 
@@ -139,7 +139,6 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    mockFB();
                     facebookUISignup.call(this, done);
                 });
 
@@ -168,7 +167,6 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    mockFB();
                     facebookUISignup.call(this, done);
                 });
 
@@ -187,13 +185,12 @@ describe('Facebook', function () {
         describe('When user is not in the system', function () {
 
             before(function (done) {
-                mockFB();
                 facebookAPISignup.call(this, done);
             });
 
             it('should return 200 OK', function () {
                     expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(EMAIL);
+                    expect(this.res.body.user.email).equal(FB_EMAIL);
                     expect(this.res.statusCode).equal(200);
                 }
             );
@@ -213,8 +210,6 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                mockFB();
-
                 facebookAPISignup.call(this, done);
             });
 
@@ -244,13 +239,12 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                mockFB();
                 facebookAPISignup.call(this, done);
             });
 
             it('should return 200 OK', function () {
                     expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(EMAIL);
+                    expect(this.res.body.user.email).equal(FB_EMAIL);
                     expect(this.res.statusCode).equal(200);
                 }
             );
