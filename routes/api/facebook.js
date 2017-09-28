@@ -1,11 +1,8 @@
 "use strict";
 
 var db = require('../../models');
-var config = require('../../config');
-var jwtHelper = require('../../lib/jwt-helper');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var request = require('request');
-var jwt = require('jwt-simple');
 var cors = require('../../lib/cors');
 
 module.exports = function (app, options) {
@@ -25,7 +22,8 @@ module.exports = function (app, options) {
                         if (userInDb && !userInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
-                            performFacebookLogin(fbProfile, function (error, response) {
+                            oAuthProviderHelper.performLogin(fbProfile, oAuthProviderHelper.FB, function (error, response) {
+
                                 if (response) {
                                     res.status(200).json(response);
                                 } else {
@@ -33,8 +31,6 @@ module.exports = function (app, options) {
                                 }
                             });
                         }
-                    // }).catch(function (err) {
-                    //     return done(err, null);
                     });
 
                 } else {
@@ -69,57 +65,3 @@ function verifyFacebookUserAccessToken(token, done) {
     });
 }
 
-function buildResponse(user) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
-    return {
-        success: true,
-        user: user,
-        token: token
-    };
-}
-
-function performFacebookLogin(fbProfile, done) {
-    if (fbProfile) {
-        db.OAuthProvider.findOne({where: {uid: fbProfile.provider_uid}}).then(function (fbProvider) {
-            if (!fbProvider) {
-                db.User.findOrCreate({
-                    where: {
-                        email: fbProfile.email
-                    }, defaults: {
-                        verified: true,
-                        display_name: fbProfile.display_name
-                    }
-                }).spread(function (me) {
-                    me.updateAttributes({display_name: fbProfile.display_name, verified: true}).then(function () {
-                        me.logLogin().then(function (user) {
-                            var provider = db.OAuthProvider.build({
-                                where: {
-                                    name: oAuthProviderHelper.FB,
-                                    uid: fbProfile.provider_uid,
-                                    user_id: user.id
-                                }
-                            });
-                            provider.save().then(function () {
-                                return done(null, buildResponse(user));
-                            });
-                        }, function (error) {
-                            return done(error, null);
-                        });
-                    });
-                }).catch(function (err) {
-                    return done(err, null);
-                });
-            } else {
-                db.User.findOne({where: {email: fbProfile.email}}).then(function (user) {
-                    user.logLogin().then(function () {
-                        return done(null, buildResponse(user));
-                    }, function (error) {
-                        return done(error, null);
-                    });
-                });
-            }
-        }, function (error) {
-            return done(error, null);
-        });
-    }
-}
