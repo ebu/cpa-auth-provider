@@ -22,7 +22,7 @@ module.exports = function (app, options) {
                     }
                 }).then(function (userInDb) {
                     if (userInDb && !userInDb.verified) {
-                        res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
+                        res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
                     } else {
                         oAuthProviderHelper.performLogin(googleProfile, oAuthProviderHelper.GOOGLE, function (error, response) {
                             if (response) {

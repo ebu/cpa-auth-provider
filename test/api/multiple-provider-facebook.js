@@ -250,6 +250,8 @@ describe('POST /api/facebook/signup', function () {
 
         it('should return 400 OK', function () {
                 expect(this.res.statusCode).equal(400);
+                expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Facebook"}');
+
             }
         );
     });

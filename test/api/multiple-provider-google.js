@@ -234,4 +234,105 @@ describe('POST /api/google/signup', function () {
             }
         );
     });
+
+    describe('When user is in the system and hasn\'t validated his mail', function () {
+
+        before(function (done) {
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/signup', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {
+                    email: EMAIL,
+                    password: STRONG_PASSWORD,
+                    gender: 'female',
+                    date_of_birth: 249782400000,
+                    'g-recaptcha-response': recaptchaResponse
+                }
+            }, done)
+        });
+
+        before(function (done) {
+            mockGoogle();
+
+            requestHelper.sendRequest(this, '/api/google/signup', {
+                method: 'post',
+                type: 'form',
+                data: {
+                    idToken: 'blabla'
+                }
+            }, done);
+        });
+
+        it('should return 400 OK', function () {
+                expect(this.res.statusCode).equal(400);
+                expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Google"}');
+            }
+        );
+    });
+
+    describe('When user is in the system and has validated his mail', function () {
+
+        before(function (done) {
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/signup', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {
+                    email: EMAIL,
+                    password: STRONG_PASSWORD,
+                    gender: 'female',
+                    date_of_birth: 249782400000,
+                    'g-recaptcha-response': recaptchaResponse
+                }
+            }, done)
+        });
+
+        before(function (done) {
+            db.User.findOne({where: {email: EMAIL}}).then(
+                function (user) {
+                    user.updateAttributes({verified: true}).then(
+                        function () {
+                            done();
+                        },
+                        done
+                    );
+                },
+                done
+            );
+        });
+
+        before(function (done) {
+            mockGoogle();
+
+            requestHelper.sendRequest(this, '/api/google/signup', {
+                method: 'post',
+                type: 'form',
+                data: {
+                    idToken: 'blabla'
+                }
+            }, done);
+        });
+
+        it('should return 200 OK', function () {
+                expect(this.res.body.success).equal(true);
+                expect(this.res.body.user.email).equal(EMAIL);
+                expect(this.res.statusCode).equal(200);
+            }
+        );
+    });
 });
