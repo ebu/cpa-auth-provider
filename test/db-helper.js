@@ -17,7 +17,8 @@ module.exports = {
             'Users',
             'Permissions',
             'UserProfiles',
-            'OAuthProviders'
+            'OAuthProviders',
+            'OAuth2RefreshTokens'
         ];
 
         var deleteData = function (table, done) {
