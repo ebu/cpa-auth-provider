@@ -111,8 +111,14 @@ module.exports = function (app, options) {
         function (req, res) {
             var fields = userHelper.getRequiredFields();
             var asObject = !req.query.hasOwnProperty('array');
+            var providers = [];
+            for (var idp in config.identity_providers) {
+                if (config.identity_providers[idp].enabled) {
+                    providers.push(idp);
+                }
+            }
             if (asObject) {
-                return res.status(200).json({ fields: fields });
+                return res.status(200).json({ fields: fields, providers: providers});
             } else {
                 var list = [];
                 for(var key in fields) {

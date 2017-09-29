@@ -578,14 +578,16 @@ describe('GET /api/local/profile/required-config', function () {
             it('should return json object with all possible fields', function () {
                 expect(this.res.statusCode).equal(200);
                 expect(this.res.body).eql(
-                    { fields:
-                        {
+                    { fields: {
                             "gender": false,
                             "date_of_birth": false,
                             "firstname": false,
                             "lastname": false,
                             "language": false
-                        }
+                        },
+                        providers: [
+                            "local"
+                        ]
                     }
                 );
             });
@@ -625,7 +627,10 @@ describe('GET /api/local/profile/required-config', function () {
                             "firstname": false,
                             "lastname": false,
                             "language": false
-                        }
+                        },
+                        providers: [
+                            "local"
+                        ]
                     }
                 );
             });
