@@ -1,14 +1,11 @@
 "use strict";
 
 var config = require('../../config');
-var db = require('../../models/index');
 var authHelper = require('../../lib/auth-helper');
-var util = require('util');
-var xssFilters = require('xss-filters');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
-var i18n = require('i18n');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 
@@ -102,27 +99,28 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        if (!user.password && (user.isFacebookUser() || user.isGoogleUser())) {
-
-            user.destroy();
-            return res.status(204).send();
-        }
-
-        user.verifyPassword(req.body.password).then(function (isMatch) {
-                if (isMatch) {
-                    return user.destroy();
-                } else {
-                    if (req.body.password) {
-                        throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
-                    } else {
-                        throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+        oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (isExt) {
+            if (isExt) {
+                user.destroy();
+                return res.status(204).send();
+            } else {
+                user.verifyPassword(req.body.password).then(function (isMatch) {
+                        if (isMatch) {
+                            return user.destroy();
+                        } else {
+                            if (req.body.password) {
+                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
+                            } else {
+                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+                            }
+                        }
                     }
-                }
+                ).then(function () {
+                    return res.status(204).send();
+                }).catch(function (e) {
+                    res.status(401).send({success: false, msg: e.message});
+                });
             }
-        ).then(function () {
-            return res.status(204).send();
-        }).catch(function (e) {
-            res.status(401).send({success: false, msg: e.message});
         });
     });
 };

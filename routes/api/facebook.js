@@ -1,10 +1,8 @@
 "use strict";
 
 var db = require('../../models');
-var config = require('../../config');
-var jwtHelper = require('../../lib/jwt-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var request = require('request');
-var jwt = require('jwt-simple');
 var cors = require('../../lib/cors');
 
 module.exports = function (app, options) {
@@ -12,19 +10,20 @@ module.exports = function (app, options) {
         var facebookAccessToken = req.body.fbToken;
         if (facebookAccessToken && facebookAccessToken.length > 0) {
             // Get back user object from Facebook
-            verifyFacebookUserAccessToken(facebookAccessToken, function (err, user) {
-                if (user) {
+            verifyFacebookUserAccessToken(facebookAccessToken, function (err, fbProfile) {
+                if (fbProfile) {
                     // If the user already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
                         where: {
-                            email: user.email
+                            email: fbProfile.email
                         }
                     }).then(function (userInDb) {
                         if (userInDb && !userInDb.verified) {
-                            res.status(500).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
+                            res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
-                            performFacebookLogin(user, facebookAccessToken, function (error, response) {
+                            oAuthProviderHelper.performLogin(fbProfile, oAuthProviderHelper.FB, function (error, response) {
+
                                 if (response) {
                                     res.status(200).json(response);
                                 } else {
@@ -34,9 +33,8 @@ module.exports = function (app, options) {
                         }
                     });
 
-
                 } else {
-                    res.status(500).json({error: err.message});
+                    res.status(401).json({error: "No valid facebook profile found"});
                 }
 
             });
@@ -51,62 +49,19 @@ module.exports = function (app, options) {
 };
 
 function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,name,email&access_token=' + token;
+    var path = 'https://graph.facebook.com/me?fields=id,email,name&access_token=' + token;
     request(path, function (error, response, body) {
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode === 200) {
-            var user = {
+            var fbProfile = {
                 provider_uid: "fb:" + data.id,
-                // display_name: data.name,
+                display_name: data.name,
                 email: data.email
             };
-            done(null, user);
+            done(null, fbProfile);
         } else {
-            console.log(data.error);
             done({code: response.statusCode, message: data.error.message}, null);
         }
     });
 }
 
-function buildResponse(user) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60);
-    return {
-        success: true,
-        user: user,
-        token: token
-    };
-}
-
-function performFacebookLogin(profile, fbAccessToken, done) {
-    if (profile && fbAccessToken) {
-        db.User.findOne({where: {provider_uid: profile.provider_uid}}).then(function (me) {
-            if (me) {
-                me.logLogin().then(function (user) {
-                    return done(null, buildResponse(user));
-                }, function (error) {
-                    return done(error, null);
-                });
-            } else {
-                db.User.findOrCreate({
-                    where: {
-                        provider_uid: profile.provider_uid,
-                        // display_name: profile.name,
-                        email: profile.email
-                    }
-                }).spread(function (me) {
-                    me.updateAttributes({verified:true}).then(function(){
-                        me.logLogin().then(function (user) {
-                            return done(null, buildResponse(user));
-                        }, function (error) {
-                            return done(error, null);
-                        });
-                    });
-                }).catch(function (err) {
-                    return done(err, null);
-                });
-            }
-        }, function (error) {
-            return done(error, null);
-        });
-    }
-}

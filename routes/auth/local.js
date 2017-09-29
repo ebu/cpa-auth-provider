@@ -6,16 +6,12 @@ var requestHelper = require('../../lib/request-helper');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var util = require('util');
 
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
-var permissionName = require('../../lib/permission-name');
 var passwordHelper = require('../../lib/password-helper');
-
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
-
-var i18n = require('i18n');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
@@ -27,25 +23,28 @@ var localStrategyCallback = function (req, username, password, done) {
         .then(function (user) {
                 if (!user) {
                     doneWithError();
-                }
-
-                if (user.isFacebookUser && !user.password) {
-                    doneWithError();
-                }
-
-                user.verifyPassword(password).then(function (isMatch) {
-                        if (isMatch) {
-                            user.logLogin().then(function () {
-                            }, function () {
-                            });
-                            done(null, user);
-                        } else {
+                } else {
+                    oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (res) {
+                        if (res) {
                             doneWithError();
                         }
-                    },
-                    function (err) {
-                        done(err);
+                        else {
+                            return user.verifyPassword(password).then(function (isMatch) {
+                                    if (isMatch) {
+                                        user.logLogin().then(function () {
+                                        }, function () {
+                                        });
+                                        done(null, user);
+                                    } else {
+                                        doneWithError();
+                                    }
+                                },
+                                function (err) {
+                                    done(err);
+                                });
+                        }
                     });
+                }
             },
             function (error) {
                 done(error);
