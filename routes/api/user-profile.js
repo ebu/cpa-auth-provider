@@ -67,10 +67,11 @@ module.exports = function (app, options) {
         req.getValidationResult().then(
             function (result) {
                 if (!result.isEmpty()) {
+                    result.useFirstErrorOnly();
                     // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
-                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array
+                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array({onlyFirstError: true})
                     });
                 } else {
                     userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(

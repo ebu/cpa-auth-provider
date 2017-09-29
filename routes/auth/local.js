@@ -81,17 +81,23 @@ var localSignupStrategyCallback = function (req, username, password, done) {
     }
     if (required.date_of_birth) {
         req.checkBody('date_of_birth', req.__('BACK_SIGNUP_DATE_OF_BIRTH_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
-        var date = new Date(req.body.date_of_birth);
-        attributes.date_of_birth = date.getTime();
+        // date format is dd/mm/yyyy
+        var parsed = /(\d\d)\/(\d\d)\/(\d\d\d\d)/.exec(req.body.date_of_birth);
+        if (parsed) {
+            var date = new Date(parsed[2] + '/' + parsed[1] + '/' + parsed[3]);
+            attributes.date_of_birth = date.getTime();
+        } else {
+            attributes.date_of_birth = undefined;
+        }
     }
 
     req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
-                done(null, false, req.flash('signupMessage', result.array()[0].msg));
+                result.useFirstErrorOnly();
+                return doneWithError(result.array({onlyFirstError: true})[0].msg, done);
             } else {
                 if (req.recaptcha.error) {
-                    done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
-                    return;
+                    return doneWithError(req.__('BACK_SIGNUP_PB_RECAPTCHA'), done);
                 }
 
                 attributes.language = req.getLocale();
@@ -101,16 +107,16 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     },
                     function (err) {
                         if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH')));
+                            doneWithError(req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
+                            doneWithError(req.__('BACK_SIGNUP_EMAIL_TAKEN'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
                             // TODO properly log the missing fields ?
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                            doneWithError(req.__('BACK_SIGNUP_MISSING_FIELDS'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                            doneWithError(req.__('BACK_SIGNUP_MISSING_FIELDS'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_DATE_OF_BIRTH) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                            doneWithError(req.__('BACK_SIGNUP_MISSING_FIELDS'), done);
                         } else {
                             done(err);
                         }
@@ -119,6 +125,13 @@ var localSignupStrategyCallback = function (req, username, password, done) {
             }
         }
     );
+
+    function doneWithError(e, done) {
+        req.flash('signupMessage', e);
+        req.session.save(function () {
+            done(null, false, e);
+        });
+    }
 };
 
 var localStrategyConf = {

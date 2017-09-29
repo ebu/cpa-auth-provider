@@ -42,7 +42,8 @@ var routes = function (router) {
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
-                res.status(400).json({errors: result.array()});
+                result.useFirstErrorOnly();
+                res.status(400).json({errors: result.array({onlyFirstError: true})});
                 return;
             }
             userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(

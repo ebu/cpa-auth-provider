@@ -631,5 +631,89 @@ describe('GET /api/local/profile/required-fields', function () {
             requestHelper.sendRequest(this, url, {method: 'get'}, done);
         }
     }
+});
 
+describe('PUT /user/profile', function () {
+    var URL = '/user/profile';
+    var userHelper = require('../../lib/user-helper');
+    var config = require('../../config');
+
+    context('for required fields date_of_birth,firstname', function () {
+        var preReq;
+        before(function () {
+            preReq = config.userProfiles.requiredFields;
+            config.userProfiles.requiredFields = ['date_of_birth', 'gender'];
+            userHelper.reloadConfig();
+        });
+        after(function () {
+            config.userProfiles.requiredFields = preReq;
+            userHelper.reloadConfig();
+        });
+
+        context('doing everything correctly', function () {
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.loginCustom(USER_EMAIL, STRONG_PASSWORD, this, done)
+            });
+
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'put',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            date_of_birth: '12345',
+                            gender: 'other',
+                            firstname: 'Trûdì',
+                        }
+                    },
+                    done
+                );
+            });
+
+            it('should return a success', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body.msg).equal('Profile updated.');
+            });
+        });
+
+        context('empty date_of_birth', function () {
+            before(resetDatabase);
+            before(function (done) {
+                requestHelper.loginCustom(USER_EMAIL, STRONG_PASSWORD, this, done)
+            });
+
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'put',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            date_of_birth: '',
+                            gender: 'other',
+                            firstname: 'Trûdì',
+                        }
+                    },
+                    done
+                );
+            });
+
+            it('should fail with one error message', function () {
+                expect(this.res.statusCode).equal(400);
+                expect(this.res.body.errors).a('array');
+                expect(this.res.body.errors.length).equal(1);
+                expect(this.res.body.errors[0]).eql({
+                    param: 'date_of_birth',
+                    msg: '\'Date of birth\' is empty or invalid',
+                    value: ''
+                });
+            });
+        });
+    });
 });
