@@ -566,8 +566,8 @@ describe('GET /api/local/profile', function () {
     });
 });
 
-describe('GET /api/local/profile/required-fields', function () {
-    var URL = '/api/local/profile/required-fields';
+describe('GET /api/local/profile/required-config', function () {
+    var URL = '/api/local/profile/required-config';
     var userHelper = require('../../lib/user-helper');
     var config = require('../../config');
 
@@ -578,7 +578,20 @@ describe('GET /api/local/profile/required-fields', function () {
             it('should return json object with all possible fields', function () {
                 expect(this.res.statusCode).equal(200);
                 expect(this.res.body).eql(
-                    {"gender": false, "date_of_birth": false, "firstname": false, "lastname": false, "language": false}
+                    {
+                        fields: {
+                            "gender": false,
+                            "date_of_birth": false,
+                            "firstname": false,
+                            "lastname": false,
+                            "language": false
+                        },
+                        providers: [
+                            "facebook",
+                            "google",
+                            "local"
+                        ]
+                    }
                 );
             });
         });
@@ -610,7 +623,20 @@ describe('GET /api/local/profile/required-fields', function () {
             it('should return json object with the fields gender and date_of_birth true', function () {
                 expect(this.res.statusCode).equal(200);
                 expect(this.res.body).eql(
-                    {"gender": true, "date_of_birth": true, "firstname": false, "lastname": false, "language": false}
+                    {
+                        fields: {
+                            "gender": true,
+                            "date_of_birth": true,
+                            "firstname": false,
+                            "lastname": false,
+                            "language": false
+                        },
+                        providers: [
+                            "facebook",
+                            "google",
+                            "local"
+                        ]
+                    }
                 );
             });
         });
