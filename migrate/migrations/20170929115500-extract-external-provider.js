@@ -23,11 +23,14 @@ module.exports = {
                             uid: Sequelize.STRING,
                             //foreign key usage
                             user_id: {
-                                type: Sequelize.INTEGER,
-                                references: {
-                                    model: 'Users',
-                                    key: 'id'
-                                }
+                                "type": Sequelize.INTEGER,
+                                "onUpdate": "CASCADE",
+                                "onDelete": "SET NULL",
+                                "references": {
+                                    "model": "Users",
+                                    "key": "id"
+                                },
+                                "allowNull": true
                             }
                         });
 
