@@ -4,48 +4,11 @@ var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var callbackHelper = require('../../lib/callback-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-function findOrCreateExternalUser(email, defaults) {
-    return new Promise(function (resolve, reject) {
-        db.User.find(
-            {
-                where: {
-                    email: email
-                }
-            }
-        ).then(
-            function (user) {
-                if (!user) {
-                    return db.User.findOrCreate(
-                        {
-                            where: {
-                                email: email
-                            },
-                            defaults: defaults
-                        }
-                    ).spread(
-                        function (user, created) {
-                            return resolve(user);
-                        }
-                    ).catch(reject);
-                }
-                if (!user.verified) {
-                    return resolve(false);
-                }
-                if(user.display_name) {
-                    defaults.display_name = user.display_name;
-                }
-                return user.updateAttributes(
-                    defaults
-                ).then(resolve, reject);
-            },
-            reject
-        );
-    });
-}
 
 passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
@@ -66,14 +29,7 @@ passport.use(new FacebookStrategy({
 
         var providerUid = 'fb:' + profile.id;
 
-        return findOrCreateExternalUser(
-            email,
-            {
-                provider_uid: providerUid,
-                // display_name: profile.displayName,
-                verified: true
-            }
-        ).then(
+        return oAuthProviderHelper.findOrCreateExternalUser(email, providerUid, profile.displayName, oAuthProviderHelper.FB).then(
             function (u) {
                 if (u) {
                     u.logLogin();

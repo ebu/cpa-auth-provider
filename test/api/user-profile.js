@@ -578,7 +578,8 @@ describe('GET /api/local/profile/required-config', function () {
             it('should return json object with all possible fields', function () {
                 expect(this.res.statusCode).equal(200);
                 expect(this.res.body).eql(
-                    { fields: {
+                    {
+                        fields: {
                             "gender": false,
                             "date_of_birth": false,
                             "firstname": false,
@@ -586,6 +587,8 @@ describe('GET /api/local/profile/required-config', function () {
                             "language": false
                         },
                         providers: [
+                            "facebook",
+                            "google",
                             "local"
                         ]
                     }
@@ -629,6 +632,8 @@ describe('GET /api/local/profile/required-config', function () {
                             "language": false
                         },
                         providers: [
+                            "facebook",
+                            "google",
                             "local"
                         ]
                     }

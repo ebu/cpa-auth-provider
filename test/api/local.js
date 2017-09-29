@@ -94,7 +94,7 @@ describe('POST /api/local/signup', function () {
     context('When unauthenticated user signup with good recaptcha', function () {
 
         before(function (done){
-            recaptcha.init(OK_RECATCHA_SECRET, OK_RECATCHA_SECRET);
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
             done();
         });
 
