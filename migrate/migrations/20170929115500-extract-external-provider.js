@@ -38,7 +38,7 @@ module.exports = {
 
     down: function (queryInterface, Sequelize) {
         return new Promise(function (resolve, reject) {
-            queryInterface.removeColumn('UserProfiles', 'date_of_birth').then(
+            queryInterface.removeColumn('UserProfiles', 'provider_uid').then(
                 function () {
                     return queryInterface.dropTable('OAuthProviders');
                 }
