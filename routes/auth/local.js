@@ -10,7 +10,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
-var oAuthProviderHelper = require ('../../lib/oAuth-provider-helper');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
 
 // Google reCAPTCHA
@@ -22,38 +22,41 @@ var localStrategyCallback = function (req, username, password, done) {
     db.User.findOne({where: {email: username}})
         .then(function (user) {
                 if (!user) {
-                    done(null, false, req.flash('loginMessage', loginError));
-                    return;
+                    doneWithError();
+                } else {
+                    oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (res) {
+                        if (res) {
+                            doneWithError();
+                        }
+                        else {
+                            return user.verifyPassword(password).then(function (isMatch) {
+                                    if (isMatch) {
+                                        user.logLogin().then(function () {
+                                        }, function () {
+                                        });
+                                        done(null, user);
+                                    } else {
+                                        doneWithError();
+                                    }
+                                },
+                                function (err) {
+                                    done(err);
+                                });
+                        }
+                    });
                 }
-
-                oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (res){
-                    if (res){
-                        done(null, false, req.flash('loginMessage', loginError));
-                        return;
-                    }
-                    else {
-                        return user.verifyPassword(password).then(function (isMatch) {
-                                if (isMatch) {
-                                    user.logLogin().then(function () {
-                                    }, function () {
-                                    });
-                                    done(null, user);
-                                } else {
-                                    done(null, false, req.flash('loginMessage', loginError));
-                                }
-                            },
-                            function (err) {
-                                done(err);
-                            });
-
-                    }
-                });
-
-
             },
             function (error) {
                 done(error);
             });
+
+    function doneWithError(e) {
+        e = e || loginError;
+        req.flash('loginMessage', e);
+        req.session.save(function () {
+            return done(null, false, e);
+        });
+    }
 };
 
 var localSignupStrategyCallback = function (req, username, password, done) {
@@ -136,8 +139,9 @@ module.exports = function (app, options) {
         if (req.query && req.query.error) {
             message = req.__(req.query.error);
         }
-        if (req.flash('loginMessage').length > 0) {
-            message = req.flash('loginMessage');
+        var loginMessage = req.flash('loginMessage');
+        if (loginMessage && loginMessage.length > 0) {
+            message = loginMessage;
         }
         res.render('login.ejs', {message: message});
     });
