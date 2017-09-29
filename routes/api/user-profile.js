@@ -103,16 +103,16 @@ module.exports = function (app, options) {
     });
 
 
-    var requiredFieldsQueryPath = '/api/local/profile/required-fields';
-    app.options(requiredFieldsQueryPath, cors);
+    var requiredConfigQueryPath = '/api/local/profile/required-config';
+    app.options(requiredConfigQueryPath, cors);
     app.get(
-        requiredFieldsQueryPath,
+        requiredConfigQueryPath,
         cors,
         function (req, res) {
             var fields = userHelper.getRequiredFields();
             var asObject = !req.query.hasOwnProperty('array');
             if (asObject) {
-                return res.status(200).json(fields);
+                return res.status(200).json({ fields: fields });
             } else {
                 var list = [];
                 for(var key in fields) {

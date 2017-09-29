@@ -81,7 +81,7 @@ module.exports = function (app, options) {
     app.get('/user/profile/menu', cors, function (req, res, next) {
         if (!req.user) {
             // Return 200 to avoid error in browser console
-            res.json({connected: false, required_fields: userHelper.getRequiredFields()});
+            res.json({connected: false});
         } else {
             returnMenuInfos(req.user, req, res);
         }
@@ -95,11 +95,8 @@ module.exports = function (app, options) {
     app.options('/api/logout', cors);
 
     app.get('/api/logout', cors, function (req, res, next) {
-
         req.logout();
-
-        res.json({connected: false, required_fields: userHelper.getRequiredFields()});
-
+        res.json({connected: false});
     });
 
     function returnMenuInfos(user, req, res) {
