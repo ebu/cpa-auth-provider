@@ -228,7 +228,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                 function (verifyToken) {
                     var confirmLink = host + '/email/move/' + encodeURIComponent(key);
                     if (redirectUri) {
-                        confirmLink = redirectUri + '?auth=account_moved&username=' + encodeURIComponent(user.email) + '&token=' + encodeURIComponent(key);
+                        confirmLink = redirectUri + APPEND_MOVED + '&username=' + encodeURIComponent(user.email) + '&token=' + encodeURIComponent(key);
                     }
                     console.log('send email', confirmLink);
                     return emailHelper.send(
