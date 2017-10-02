@@ -93,6 +93,7 @@ docker_push:
   only:
     - develop
     - prod
+    - fix-google-login
   tags:
     - dind
 
