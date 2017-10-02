@@ -12,7 +12,10 @@ module.exports = function (app, options) {
 
             if (googleIdToken && googleIdToken.length > 0) {
                 try {
-                    var googleProfile = googleHelper.verifyGoogleIdToken(googleIdToken)
+                    console.log('googleProfile...');
+
+                    var googleProfile = googleHelper.verifyGoogleIdToken(googleIdToken);
+                    console.log('googleProfile :', googleProfile);
                     // If the googleProfile already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
