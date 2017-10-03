@@ -56,7 +56,7 @@ describe('Local login after', function () {
             localSignup.call(this, done);
         });
 
-        it('should return 400 OK', function () {
+        it( 'should return 400 OK', function () {
                 expect(this.res.statusCode).equal(400);
                 expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
             }
@@ -64,442 +64,448 @@ describe('Local login after', function () {
     });
 });
 
-describe('Facebook', function () {
-
-    describe('GET /auth/facebook', function () {
-
-        describe('GET /auth/facebook', function () {
-                before(function (done) {
-                    requestHelper.sendRequest(
-                        this,
-                        '/auth/facebook',
-                        {
-                            method: 'get',
-                            cookie: this.cookie
-                        },
-                        done);
-                });
-
-                it('should redirect to facebook', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.headers.location).match(/https:\/\/www\.facebook\.com\/dialog\/oauth\?response_type=code&redirect_uri=.*/);
-                });
-            }
-        );
-
-
-        describe('GET /auth/facebook/callback', function () {
-            describe('When user is not in the system', function () {
-
-                before(resetDatabase);
-
-                before(function (done) {
-                    facebookUISignup.call(this, done);
-                });
-
-                it('should redirect to /ap/', function () {
-                        expect(this.res.statusCode).equal(302);
-                        expect(this.res.text).equal('Found. Redirecting to /ap/');
-                    }
-                );
-            });
-            describe('When user is in the system and hasn\'t validated his mail', function () {
-
-                before(function (done) {
-                    recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                    done();
-                });
-
-                before(resetDatabase);
-
-                before(function (done) {
-                    localSignup.call(this, done);
-                });
-
-                before(function (done) {
-                    facebookUISignup.call(this, done);
-                });
-
-                it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
-                        expect(this.res.statusCode).equal(302);
-                        expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB');
-                    }
-                );
-            });
-
-            describe('When user is in the system and has validated his mail', function () {
-
-                before(function (done) {
-                    recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                    done();
-                });
-
-                before(resetDatabase);
-
-                before(function (done) {
-                    localSignup.call(this, done);
-                });
-
-                before(function (done) {
-                    markEmailAsVerified(done);
-                });
-
-                before(function (done) {
-                    facebookUISignup.call(this, done);
-                });
-
-                it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
-                        expect(this.res.statusCode).equal(302);
-                        expect(this.res.text).equal('Found. Redirecting to /ap/');
-                    }
-                );
-            });
-        });
-    });
-
-
-    describe('POST /api/facebook/signup', function () {
-
-        describe('When user is not in the system', function () {
-
-            before(resetDatabase);
-
-            before(function (done) {
-                facebookAPISignup.call(this, done);
-            });
-
-            it('should return 200 OK', function () {
-                    expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
-                    expect(this.res.statusCode).equal(200);
-                }
-            );
-        });
-
-        describe('When user is in the system and hasn\'t validated his mail', function () {
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                facebookAPISignup.call(this, done);
-            });
-
-            it('should return 400 OK', function () {
-                    expect(this.res.statusCode).equal(400);
-                    expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Facebook"}');
-
-                }
-            );
-        });
-
-        describe('When user is in the system and has validated his mail', function () {
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                markEmailAsVerified(done);
-            });
-
-            before(function (done) {
-                facebookAPISignup.call(this, done);
-            });
-
-            it('should return 200 OK', function () {
-                    expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
-                    expect(this.res.statusCode).equal(200);
-                }
-            );
-        });
-
-
-    });
-
-});
-
-describe('Google', function () {
-
-    describe('GET /auth/google', function () {
-            before(function (done) {
-                requestHelper.sendRequest(
-                    this,
-                    '/auth/google',
-                    {
-                        method: 'get',
-                        cookie: this.cookie
-                    },
-                    done);
-            });
-
-            it('should redirect to google', function () {
-                expect(this.res.statusCode).equal(302);
-                expect(this.res.headers.location).equal('https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=abc');
-            });
-        }
-    );
-
-
-    describe('GET /auth/google/callback', function () {
-        describe('When user is not in the system', function () {
-
-            before(resetDatabase);
-
-            before(function (done) {
-                googleUISignup.call(this, done);
-            });
-
-            it('should redirect ?', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /ap/');
-                }
-            );
-        });
-        describe('When user is in the system and hasn\'t validated his mail', function () {
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                googleUISignup.call(this, done);
-            });
-
-            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE');
-                }
-            );
-        });
-
-        describe('When user is in the system and has validated his mail', function () {
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                markEmailAsVerified(done);
-            });
-
-            before(function (done) {
-                googleUISignup.call(this, done);
-            });
-
-            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
-                    expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /ap/');
-                }
-            );
-        });
-    });
-
-    describe('POST /api/google/signup', function () {
-        var googleHelper = require('../../lib/google-helper')
-
-        sinon.stub(googleHelper, "verifyGoogleIdToken").returns({
-            provider_uid: 'google:1234',
-            display_name: 'Hans Wurst',
-            email: GOOGLE_EMAIL
-        });
-
-        describe('When user is not in the system', function () {
-
-            before(resetDatabase);
-
-            before(function (done) {
-                googleAPISignup.call(this, done);
-            });
-
-            it('should return 200 OK', function () {
-                    // expect(this.res.body.success).equal(true);
-                    // expect(this.res.body.user.email).equal(EMAIL);
-                    expect(this.res.statusCode).equal(200);
-                }
-            );
-        });
-
-        describe('When user is in the system and hasn\'t validated his mail', function () {
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                googleAPISignup.call(this, done);
-
-            });
-
-            it('should return 400 OK', function () {
-                    expect(this.res.statusCode).equal(400);
-                    expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Google"}');
-                }
-            );
-        });
-
-        describe('When user is in the system and has validated his mail', function () {
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                markEmailAsVerified(done);
-            });
-
-            before(function (done) {
-                googleAPISignup.call(this, done);
-
-            });
-
-            it('should return 200 OK', function () {
-                    expect(this.res.body.success).equal(true);
-                    expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
-                    expect(this.res.statusCode).equal(200);
-                }
-            );
-        });
-    });
-
-});
-
-describe('Facebook and Google', function () {
-    describe('using UI', function () {
-        describe('When user is in the system and has validated his mail and add facebook and google', function () {
-
-            var providersInDb;
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                markEmailAsVerified(done);
-            });
-
-            before(function (done) {
-                googleUISignup.call(this, done);
-
-            });
-            before(function (done) {
-                facebookUISignup.call(this, done);
-
-            });
-
-            before(function (done) {
-                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
-                        providersInDb = providers;
-                        done();
-                    });
-                });
-            });
-
-            it('it should return 2 entries in oAuthProvider', function () {
-                    expect(providersInDb.length).equal(2);
-                }
-            );
-        });
-
-
-    });
-    describe('using API', function () {
-        describe('When user is in the system and has validated his mail and add facebook and google', function () {
-
-            var providersInDb;
-
-            before(function (done) {
-                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-                done();
-            });
-
-            before(resetDatabase);
-
-            before(function (done) {
-                localSignup.call(this, done);
-            });
-
-            before(function (done) {
-                markEmailAsVerified(done);
-            });
-
-            before(function (done) {
-                googleAPISignup.call(this, done);
-            });
-            before(function (done) {
-                facebookAPISignup.call(this, done);
-            });
-
-            before(function (done) {
-                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
-                        providersInDb = providers;
-                        done();
-                    });
-                });
-            });
-
-            it('it should return 2 entries in oAuthProvider', function () {
-                    expect(providersInDb.length).equal(2);
-                }
-            );
-        });
-
-
-    });
-});
+// describe('Facebook', function () {
+//
+//     describe('GET /auth/facebook', function () {
+//
+//         describe('GET /auth/facebook', function () {
+//                 before(function (done) {
+//                     requestHelper.sendRequest(
+//                         this,
+//                         '/auth/facebook',
+//                         {
+//                             method: 'get',
+//                             cookie: this.cookie
+//                         },
+//                         done);
+//                 });
+//
+//                 it('should redirect to facebook', function () {
+//                     expect(this.res.statusCode).equal(302);
+//                     expect(this.res.headers.location).match(/https:\/\/www\.facebook\.com\/dialog\/oauth\?response_type=code&redirect_uri=.*/);
+//                 });
+//             }
+//         );
+//
+//
+//         describe('GET /auth/facebook/callback', function () {
+//             describe('When user is not in the system', function () {
+//
+//                 before(resetDatabase);
+//
+//                 before(function (done) {
+//                     facebookUISignup.call(this, done);
+//                 });
+//
+//                 it('should redirect to /ap/', function () {
+//                         expect(this.res.statusCode).equal(302);
+//                         expect(this.res.text).equal('Found. Redirecting to /ap/');
+//                     }
+//                 );
+//             });
+//             describe('When user is in the system and hasn\'t validated his mail', function () {
+//
+//                 before(function (done) {
+//                     recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                     done();
+//                 });
+//
+//                 before(resetDatabase);
+//
+//                 before(function (done) {
+//                     localSignup.call(this, done);
+//                 });
+//
+//                 before(function (done) {
+//                     facebookUISignup.call(this, done);
+//                 });
+//
+//                 it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
+//                         expect(this.res.statusCode).equal(302);
+//                         expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB');
+//                     }
+//                 );
+//             });
+//
+//             describe('When user is in the system and has validated his mail', function () {
+//
+//                 before(function (done) {
+//                     recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                     done();
+//                 });
+//
+//                 before(resetDatabase);
+//
+//                 before(function (done) {
+//                     localSignup.call(this, done);
+//                 });
+//
+//                 before(function (done) {
+//                     markEmailAsVerified(done);
+//                 });
+//
+//                 before(function (done) {
+//                     facebookUISignup.call(this, done);
+//                 });
+//
+//                 it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
+//                         expect(this.res.statusCode).equal(302);
+//                         expect(this.res.text).equal('Found. Redirecting to /ap/');
+//                     }
+//                 );
+//             });
+//         });
+//     });
+//
+//
+//     describe('POST /api/facebook/signup', function () {
+//
+//         describe('When user is not in the system', function () {
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 facebookAPISignup.call(this, done);
+//             });
+//
+//             it('should return 200 OK', function () {
+//                     expect(this.res.body.success).equal(true);
+//                     expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
+//                     expect(this.res.statusCode).equal(200);
+//                 }
+//             );
+//         });
+//
+//         describe('When user is in the system and hasn\'t validated his mail', function () {
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 facebookAPISignup.call(this, done);
+//             });
+//
+//             it('should return 400 OK', function () {
+//                     expect(this.res.statusCode).equal(400);
+//                     expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Facebook"}');
+//
+//                 }
+//             );
+//         });
+//
+//         describe('When user is in the system and has validated his mail', function () {
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 markEmailAsVerified(done);
+//             });
+//
+//             before(function (done) {
+//                 facebookAPISignup.call(this, done);
+//             });
+//
+//             it('should return 200 OK', function () {
+//                     expect(this.res.body.success).equal(true);
+//                     expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
+//                     expect(this.res.statusCode).equal(200);
+//                 }
+//             );
+//         });
+//
+//
+//     });
+//
+// });
+//
+// describe('Google', function () {
+//
+//     describe('GET /auth/google', function () {
+//             before(function (done) {
+//                 requestHelper.sendRequest(
+//                     this,
+//                     '/auth/google',
+//                     {
+//                         method: 'get',
+//                         cookie: this.cookie
+//                     },
+//                     done);
+//             });
+//
+//             it('should redirect to google', function () {
+//                 expect(this.res.statusCode).equal(302);
+//                 expect(this.res.headers.location).equal('https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=abc');
+//             });
+//         }
+//     );
+//
+//
+//     describe('GET /auth/google/callback', function () {
+//         describe('When user is not in the system', function () {
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 googleUISignup.call(this, done);
+//             });
+//
+//             it('should redirect ?', function () {
+//                     expect(this.res.statusCode).equal(302);
+//                     expect(this.res.text).equal('Found. Redirecting to /ap/');
+//                 }
+//             );
+//         });
+//         describe('When user is in the system and hasn\'t validated his mail', function () {
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 googleUISignup.call(this, done);
+//             });
+//
+//             it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
+//                     expect(this.res.statusCode).equal(302);
+//                     expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE');
+//                 }
+//             );
+//         });
+//
+//         describe('When user is in the system and has validated his mail', function () {
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 markEmailAsVerified(done);
+//             });
+//
+//             before(function (done) {
+//                 googleUISignup.call(this, done);
+//             });
+//
+//             it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
+//                     expect(this.res.statusCode).equal(302);
+//                     expect(this.res.text).equal('Found. Redirecting to /ap/');
+//                 }
+//             );
+//         });
+//     });
+//
+//     describe('POST /api/google/signup', function () {
+//         var googleHelper = require('../../lib/google-helper')
+//
+//         sinon.stub(googleHelper, "verifyGoogleIdToken").returns({
+//             provider_uid: 'google:1234',
+//             display_name: 'Hans Wurst',
+//             email: GOOGLE_EMAIL
+//         });
+//
+//         describe('When user is not in the system', function () {
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 googleAPISignup.call(this, done);
+//             });
+//
+//             before(function (done){
+//                 before(            .then(function (res){
+//                     oAuthProviderHelper.performLogin(profile, providerName, done)
+//                 });)
+//             });
+//
+//             it('should return 200 OK', function () {
+//                     // expect(this.res.body.success).equal(true);
+//                     // expect(this.res.body.user.email).equal(EMAIL);
+//                     expect(this.res.statusCode).equal(200);
+//                 }
+//             );
+//         });
+//
+//         describe('When user is in the system and hasn\'t validated his mail', function () {
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 googleAPISignup.call(this, done);
+//
+//             });
+//
+//             it('should return 400 OK', function () {
+//                     expect(this.res.statusCode).equal(400);
+//                     expect(this.res.error.text).equal('{"error":"You must validate your email before connecting with Google"}');
+//                 }
+//             );
+//         });
+//
+//         describe('When user is in the system and has validated his mail', function () {
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 markEmailAsVerified(done);
+//             });
+//
+//             before(function (done) {
+//                 googleAPISignup.call(this, done);
+//
+//             });
+//
+//             it('should return 200 OK', function () {
+//                     expect(this.res.body.success).equal(true);
+//                     expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
+//                     expect(this.res.statusCode).equal(200);
+//                 }
+//             );
+//         });
+//     });
+//
+// });
+//
+// describe('Facebook and Google', function () {
+//     describe('using UI', function () {
+//         describe('When user is in the system and has validated his mail and add facebook and google', function () {
+//
+//             var providersInDb;
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 markEmailAsVerified(done);
+//             });
+//
+//             before(function (done) {
+//                 googleUISignup.call(this, done);
+//
+//             });
+//             before(function (done) {
+//                 facebookUISignup.call(this, done);
+//
+//             });
+//
+//             before(function (done) {
+//                 db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
+//                     oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+//                         providersInDb = providers;
+//                         done();
+//                     });
+//                 });
+//             });
+//
+//             it('it should return 2 entries in oAuthProvider', function () {
+//                     expect(providersInDb.length).equal(2);
+//                 }
+//             );
+//         });
+//
+//
+//     });
+//     describe('using API', function () {
+//         describe('When user is in the system and has validated his mail and add facebook and google', function () {
+//
+//             var providersInDb;
+//
+//             before(function (done) {
+//                 recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+//                 done();
+//             });
+//
+//             before(resetDatabase);
+//
+//             before(function (done) {
+//                 localSignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 markEmailAsVerified(done);
+//             });
+//
+//             before(function (done) {
+//                 googleAPISignup.call(this, done);
+//             });
+//             before(function (done) {
+//                 facebookAPISignup.call(this, done);
+//             });
+//
+//             before(function (done) {
+//                 db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
+//                     oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+//                         providersInDb = providers;
+//                         done();
+//                     });
+//                 });
+//             });
+//
+//             it('it should return 2 entries in oAuthProvider', function () {
+//                     expect(providersInDb.length).equal(2);
+//                 }
+//             );
+//         });
+//
+//
+//     });
+// });
 
 
 function localSignup(done) {
