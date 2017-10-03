@@ -12,11 +12,7 @@ module.exports = function (app, options) {
 
             if (googleIdToken && googleIdToken.length > 0) {
                 try {
-                    console.log('googleProfile...');
-
-                    googleHelper.verifyGoogleIdToken(googleIdToken).then(function (googleProfile) {
-
-                        console.log('googleProfile :', googleProfile);
+                    googleHelper.verifyGoogleIdToken(googleIdToken, function(googleProfile){
                         // If the googleProfile already exists and his account is not validated
                         // i.e.: there is a user in the database with the same id and this user email is not validated
                         db.User.find({
@@ -37,8 +33,7 @@ module.exports = function (app, options) {
                             }
                         });
                     });
-                } catch
-                    (error) {
+                } catch (error) {
                     res.status(500).json({error: error.message});
                 }
             }
