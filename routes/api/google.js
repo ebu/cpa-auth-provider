@@ -14,31 +14,30 @@ module.exports = function (app, options) {
                 try {
                     console.log('googleProfile...');
 
-                    var googleProfile = googleHelper.verifyGoogleIdToken(googleIdToken);
-                    console.log('googleProfile :', googleProfile);
-                    // If the googleProfile already exists and his account is not validated
-                    // i.e.: there is a user in the database with the same id and this user email is not validated
-                    db.User.find({
-                        where: {
-                            email: googleProfile.email
-                        }
-                    }).then(function (userInDb) {
-                        if (userInDb && !userInDb.verified) {
-                            res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
-                        } else {
-                            oAuthProviderHelper.performLogin(googleProfile, oAuthProviderHelper.GOOGLE, function (error, response) {
-                                if (response) {
-                                    res.status(200).json(response);
-                                } else {
-                                    res.status(500).json({error: error.message});
-                                }
-                            });
-                        }
+                    googleHelper.verifyGoogleIdToken(googleIdToken).then(function (googleProfile) {
+
+                        console.log('googleProfile :', googleProfile);
+                        // If the googleProfile already exists and his account is not validated
+                        // i.e.: there is a user in the database with the same id and this user email is not validated
+                        db.User.find({
+                            where: {
+                                email: googleProfile.email
+                            }
+                        }).then(function (userInDb) {
+                            if (userInDb && !userInDb.verified) {
+                                res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
+                            } else {
+                                oAuthProviderHelper.performLogin(googleProfile, oAuthProviderHelper.GOOGLE, function (error, response) {
+                                    if (response) {
+                                        res.status(200).json(response);
+                                    } else {
+                                        res.status(500).json({error: error.message});
+                                    }
+                                });
+                            }
+                        });
                     });
-
-
-                }
-                catch
+                } catch
                     (error) {
                     res.status(500).json({error: error.message});
                 }
