@@ -32,7 +32,12 @@
             <div id="personnal-data">
                 <form id="form-personnal-data">
                     <div class="panel <% if (!profile.firstname) { %> hidden <% } %>">
-                        <h4><%= __('PROFILE_FIRST_NAME_LABEL') %></h4>
+                        <h4>
+                            <%= __('PROFILE_FIRST_NAME_LABEL') %>
+                            <% if (config.userProfiles && config.userProfiles.requiredFields && config.userProfiles.requiredFields.indexOf('firstname') !== -1) { %>
+                            <span class="text-danger required-asterisk">*</span>
+                            <% } %>
+                        </h4>
                         <% if (profile.firstname) { %>
                         <span class="data-value"><%= profile.firstname %></span>
                         <% } else { %>
@@ -42,7 +47,12 @@
                                placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER') %>"/>
                     </div>
                     <div class="panel <% if (!profile.lastname) { %> hidden <% } %>">
-                        <h4><%= __('PROFILE_LAST_NAME_LABEL') %></h4>
+                        <h4>
+                            <%= __('PROFILE_LAST_NAME_LABEL') %>
+                            <% if (config.userProfiles && config.userProfiles.requiredFields && config.userProfiles.requiredFields.indexOf('lastname') !== -1) { %>
+                            <span class="text-danger required-asterisk">*</span>
+                            <% } %>
+                        </h4>
                         <% if (profile.lastname) { %>
                         <span class="data-value"><%= profile.lastname %></span>
                         <% } else { %>
@@ -52,7 +62,12 @@
                                placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"/>
                     </div>
                     <div class="panel <% if (!profile.date_of_birth) { %> hidden <% } %>">
-                        <h4><%= __('PROFILE_DATE_OF_BIRTH_LABEL') %></h4>
+                        <h4>
+                            <%= __('PROFILE_DATE_OF_BIRTH_LABEL') %>
+                            <% if (config.userProfiles && config.userProfiles.requiredFields && config.userProfiles.requiredFields.indexOf('date_of_birth') !== -1) { %>
+                            <span class="text-danger required-asterisk">*</span>
+                            <% } %>
+                        </h4>
                         <span class="data-value"></span>
                         <div class="input-group date personnal-data-input" data-provide="datepicker"
                              data-language="en">
@@ -63,18 +78,23 @@
                         </div>
                     </div>
                     <div class="panel <% if (!profile.gender) { %> hidden <% } %>">
-                        <h4><%= __('PROFILE_SEXE_LABEL') %></h4>
-                        <% if (profile.gender) { %>
-                            <% if (profile.gender === "female") { %>
-                            <span class="data-value"
-                                  data-selected="<%= profile.gender %>"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION') %></span>
-                            <% } else if (profile.gender === "male"){ %>
-                            <span class="data-value"
-                                  data-selected="<%= profile.gender %>"><%= __('PROFILE_MAN_SEXE_FORM_OPTION') %></span>
-                            <% } else { %>
-                            <span class="data-value"
-                                  data-selected="<%= profile.gender %>"><%= __('PROFILE_OTHER_SEX_FORM_OPTION') %></span>
+                        <h4>
+                            <%= __('PROFILE_SEXE_LABEL') %>
+                            <% if (config.userProfiles && config.userProfiles.requiredFields && config.userProfiles.requiredFields.indexOf('gender') !== -1) { %>
+                            <span class="text-danger required-asterisk">*</span>
                             <% } %>
+                        </h4>
+                        <% if (profile.gender) { %>
+                        <% if (profile.gender === "female") { %>
+                        <span class="data-value"
+                              data-selected="<%= profile.gender %>"><%= __('PROFILE_WOMAN_SEXE_FORM_OPTION') %></span>
+                        <% } else if (profile.gender === "male"){ %>
+                        <span class="data-value"
+                              data-selected="<%= profile.gender %>"><%= __('PROFILE_MAN_SEXE_FORM_OPTION') %></span>
+                        <% } else { %>
+                        <span class="data-value"
+                              data-selected="<%= profile.gender %>"><%= __('PROFILE_OTHER_SEX_FORM_OPTION') %></span>
+                        <% } %>
                         <% } else { %>
                         <span class="data-value" data-selected="other"></span>
                         <% } %>
@@ -123,6 +143,7 @@
                                 class="btn btn-primary btn-large-submit"><%= __('PROFILE_SAVE_BUTTON') %></button>
                         <button id="btn-cancel-save" type="submit"
                                 class="btn btn-link"><%= __('PROFILE_CANCEL_BUTTON') %></button>
+                        <span class="pull-right text-danger">* <%= __('PROFILE_REQUIRED_FIELDS_CAPTION') %></span>
                     </div>
                 </form>
             </div>
@@ -171,7 +192,9 @@
                     <input type="password" class="form-control password-test" id="password"
                            placeholder="<%= __('PROFILE_NEW_PASSWORD_PLACEHOLDER') %>">
                     <p id="password-error-label" class="password-error error-message text-danger"></p>
-                    <div id="password-bar"><div id="password-progress"></div></div>
+                    <div id="password-bar">
+                        <div id="password-progress"></div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="confirm-password"><%= __('PROFILE_CONFIRM_PASSWORD_LABEL') %></label>
@@ -190,7 +213,7 @@
 
     </div>
 
-    <%if (profile.facebook || profile.twitter || profile.google) { %>
+    <% if (profile.facebook || profile.twitter || profile.google) { %>
 
     <hr/>
 
@@ -203,19 +226,19 @@
         </div>
 
         <div class="col-sm-9">
-            <%if (profile.facebook) { %>
+            <% if (profile.facebook) { %>
             <div class="providers-container first">
                 <span class="facebook-text"><i class="fa fa-facebook-official" aria-hidden="true"></i></span>
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK') %></span>
             </div>
             <% } %>
-            <%if (profile.twitter) { %>
+            <% if (profile.twitter) { %>
             <div class="providers-container first">
                 <span class="twitter-text"><i class="fa fa-twitter-square" aria-hidden="true"></i></span>
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_TWITTER') %></span>
             </div>
             <% } %>
-            <%if (profile.google) { %>
+            <% if (profile.google) { %>
             <div class="providers-container first">
                 <span class="google-text"><i class="fa fa-google-plus-square" aria-hidden="true"></i></span>
                 <span><%= __('PROFILE_ACCOUNT_LINKED_PROVIDER_GOOGLEPLUS') %></span>
@@ -236,10 +259,10 @@
                 <%= __('PROFILE_ACCOUNT_TITLE') %>
                 <% if (profile.verified) { %>
                 <span class="glyphicon glyphicon-info-sign status-info" data-toggle="tooltip" data-placement="right"
-                      title="<%= __('PROFILE_VERIFIED_MORE_INFO')%>"></span>
+                      title="<%= __('PROFILE_VERIFIED_MORE_INFO') %>"></span>
                 <% } else { %>
                 <span class="glyphicon glyphicon-info-sign status-info" data-toggle="tooltip" data-placement="right"
-                      title="<%= __('PROFILE_NOT_VERIFIED_MORE_INFO')%>"></span>
+                      title="<%= __('PROFILE_NOT_VERIFIED_MORE_INFO') %>"></span>
                 <% } %>
             </h4>
 
@@ -318,7 +341,6 @@
 
 <!-- Add client Modal -->
 <% include ./modales/user-delete.ejs %>
-
 <% include ../util/password-support %>
 
 <script type="text/javascript">
@@ -348,14 +370,14 @@
         var $birthday = $("#birthday");
         var $inputs = $('.personnal-data-input');
         var $datepicker = $(".input-group.date");
-        var $elementsWithPassword =  $(".hasPassword");
-        var $elementsWithoutPassword =  $(".hasNoPassword");
+        var $elementsWithPassword = $(".hasPassword");
+        var $elementsWithoutPassword = $(".hasNoPassword");
         var $previousPasswordBlock = $("#previousPasswordBlock");
         var $passwordStrengthProgress = $("#password-progress");
         var hasPassword = '<%= profile.hasPassword %>';
         var date = "";
 
-        if(hasPassword !== "true") {
+        if (hasPassword !== "true") {
             $elementsWithPassword.hide();
             $elementsWithoutPassword.show();
             $previousPasswordBlock.hide();
@@ -374,12 +396,14 @@
                 var $element = $(element);
                 var $dataField = $element.find(".data-value").first();
                 var $inputField = $element.find('.personnal-data-input').first();
+                var $asterisks = $element.find('.required-asterisk').first();
 
                 if (!$dataField.text()) {
                     $element.addClass('hidden');
                 }
 
                 //Show labels and hide fields
+                $asterisks.hide();
                 $inputField.hide();
                 $btnContainer.hide();
                 $dataField.show();
@@ -431,6 +455,7 @@
                 var $dataField = $element.find(".data-value").first();
                 var value = String($dataField.text());
                 var $inputField = $element.find('.personnal-data-input').first();
+                var $asterisks = $element.find('.required-asterisk').first();
 
                 $element.removeClass('hidden');
 
@@ -445,6 +470,7 @@
 
                 //Show fields and hide labels with data values
                 $dataField.hide();
+                $asterisks.css('display', 'inline-block');
                 $inputField.show();
             });
 
@@ -624,7 +650,7 @@
                 password: $password.val(),
                 confirm_password: $confirmPassword.val()
             }
-            if(hasPassword !== "true") {
+            if (hasPassword !== "true") {
                 url = "<%= link('/user/') %>" + userId + "/password/create";
             } else {
                 data["previous_password"] = $previousPassword.val();

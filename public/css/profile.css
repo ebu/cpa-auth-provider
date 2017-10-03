@@ -16,6 +16,10 @@
     display: none;
 }
 
+#profile .required-asterisk {
+    display: none;
+}
+
 #profile .personnal-data-input {
     visibility: hidden;
 }
