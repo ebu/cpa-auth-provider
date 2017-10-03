@@ -6,10 +6,8 @@ var passport = require('passport');
 var cors = require('../../lib/cors');
 var authHelper = require('../../lib/auth-helper');
 var util = require('util');
-var xssFilters = require('xss-filters');
 var userHelper = require('../../lib/user-helper');
 
-var jwtHelpers = require('../../lib/jwt-helper');
 var i18n = require('i18n');
 
 module.exports = function (app, options) {
