@@ -18,7 +18,7 @@ stages:
 npm_test:
   stage: test
   script: 
-    - npm install --silent -g jshint istanbul
+    - npm install -g jshint istanbul
     - npm --silent install
     - make all
     - make coverage
