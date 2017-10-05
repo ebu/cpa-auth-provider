@@ -78,19 +78,19 @@
     "serve-favicon": "~2.4.3",
     "serve-static": "~1.12.4",
     "sha1": "^1.1.1",
+    "sqlite3": "~3.1.9",
     "ssha": "^1.0.1",
     "uuid": "^3.1.0",
-    "winston": "2.3.1",
+    "winston": "^2.3.1",
     "xss-filters": "^1.2.7",
-    "yargs": "~1.3.1"
+    "yargs": "^1.3.3"
   },
   "devDependencies": {
     "chai": "~4.1.1",
     "chai-jquery": "^2.0.0",
-    "mocha": "~3.5.0",
+    "mocha": "^3.5.3",
     "sinon": "~3.2.1",
     "sinon-chai": "~2.13.0",
-    "sqlite3": "~3.1.9",
     "supertest": "~3.0.0"
   },
   "license": "BSD 3"

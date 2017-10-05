@@ -122,7 +122,7 @@ describe('User profile page:', function () {
     before(resetDatabase);
 
     before(function () {
-        config.userProfiles.requiredFields = ['firstname', 'lastname'];
+        config.userProfiles.requiredFields = ['firstname', 'lastname', 'date_of_birth'];
     });
 
     context('when requesting profile with mandatory fields', function () {
@@ -136,13 +136,13 @@ describe('User profile page:', function () {
         });
 
         it('should return a status 200', function () {
-            console.log("Result", this.res);
+            config.userProfiles.requiredFields = [];
             expect(this.res.statusCode).to.equal(200);
         });
 
-        // it('should show asterisks for each mandatory field in the profile', function () {
-        //     expect(this.$('span.data-value').length).to.equal(2);
-        // });
+        it('should show asterisks for each mandatory field in the profile', function () {
+            expect(this.$('span.required-asterisk').length).to.equal(3);
+        });
 
     });
 
