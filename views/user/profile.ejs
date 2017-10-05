@@ -78,25 +78,10 @@
                         </div>
                     </div>
                     <div class="panel <% if (!profile.gender) { %> hidden <% } %>">
-<<<<<<< HEAD
                         <h4>
                             <%= __('PROFILE_SEXE_LABEL') %>
                             <% if (config.userProfiles && config.userProfiles.requiredFields && config.userProfiles.requiredFields.indexOf('gender') !== -1) { %>
                             <span class="text-danger required-asterisk">*</span>
-=======
-                        <h4><%= __('PROFILE_SEX_LABEL') %></h4>
-                        <% if (profile.gender) { %>
-                            <% if (profile.gender === "female") { %>
-                            <span class="data-value"
-                                  data-selected="<%= profile.gender %>"><%= __('PROFILE_WOMAN_SEX_FORM_OPTION') %></span>
-                            <% } else if (profile.gender === "male"){ %>
-                            <span class="data-value"
-                                  data-selected="<%= profile.gender %>"><%= __('PROFILE_MAN_SEX_FORM_OPTION') %></span>
-                            <% } else { %>
-                            <span class="data-value"
-                                  data-selected="<%= profile.gender %>"><%= __('PROFILE_OTHER_SEX_FORM_OPTION') %></span>
->>>>>>> a03535b5019a95a8859faa9a67569c0e49b6ea5c
-                            <% } %>
                         </h4>
                         <% if (profile.gender) { %>
                         <% if (profile.gender === "female") { %>
