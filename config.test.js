@@ -23,6 +23,13 @@ module.exports = {
         default_locale: 'en'
     },
 
+    userProfiles: {
+        requiredFields: [
+            'firstname',
+            'lastname'
+        ]
+    },
+
     identity_providers: {
         facebook: {
             enabled: true,
