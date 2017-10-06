@@ -18,7 +18,7 @@ stages:
 npm_test:
   stage: test
   script: 
-    - npm install -g jshint istanbul
+    - npm install --silent -g jshint istanbul
     - npm --silent install
     - make all
     - make coverage
@@ -93,7 +93,6 @@ docker_push:
   only:
     - develop
     - prod
-    - fix-google-login
   tags:
     - dind
 
