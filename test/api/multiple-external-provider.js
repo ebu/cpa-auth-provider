@@ -11,6 +11,8 @@ var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var googleHelper = require('../../lib/google-helper');
 
 var GOOGLE_EMAIL = 'someone@gmail.com';
+var GOOGLE_PROVIDER_UID = 'google:1234';
+var GOOGLE_DISPLAY_NAME = 'Hans Wurst';
 
 var recaptchaResponse = 'a dummy recaptcha response';
 
@@ -27,10 +29,6 @@ var resetDatabase = function (done) {
         done(err);
     });
 };
-
-// mock verifyGoogleIdToken
-sinon.stub(googleHelper);
-googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: 'google:1234', display_name: 'Hans Wurst', email: GOOGLE_EMAIL});
 
 describe('Local login after', function () {
     describe('Facebook API login first', function () {
@@ -52,6 +50,16 @@ describe('Local login after', function () {
     });
     describe('Google API login first', function () {
         before(resetDatabase);
+
+        before(function () {
+            // mock verifyGoogleIdToken
+            sinon.stub(googleHelper);
+            googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+        });
+
+        after(function () {
+            googleHelper.verifyGoogleIdToken.restore();
+        });
 
         before(function (done) {
             googleAPISignup.call(this, done);
@@ -335,6 +343,16 @@ describe('Google', function () {
 
             before(resetDatabase);
 
+            before(function () {
+                // mock verifyGoogleIdToken
+                sinon.stub(googleHelper);
+                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
+            });
+
             before(function (done) {
                 googleAPISignup.call(this, done);
             });
@@ -356,6 +374,16 @@ describe('Google', function () {
 
             before(function (done) {
                 localSignup.call(this, done);
+            });
+
+            before(function () {
+                // mock verifyGoogleIdToken
+                sinon.stub(googleHelper);
+                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
             });
 
             before(function (done) {
@@ -385,6 +413,16 @@ describe('Google', function () {
 
             before(function (done) {
                 markEmailAsVerified(done);
+            });
+
+            before(function () {
+                // mock verifyGoogleIdToken
+                sinon.stub(googleHelper);
+                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
             });
 
             before(function (done) {
@@ -468,6 +506,16 @@ describe('Facebook and Google', function () {
 
             before(function (done) {
                 markEmailAsVerified(done);
+            });
+
+            before(function () {
+                // mock verifyGoogleIdToken
+                sinon.stub(googleHelper);
+                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
             });
 
             before(function (done) {
