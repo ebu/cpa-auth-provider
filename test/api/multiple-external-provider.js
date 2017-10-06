@@ -401,8 +401,7 @@ describe('Google', function () {
         });
     });
 
-})
-;
+});
 
 describe('Facebook and Google', function () {
     describe('using UI', function () {
