@@ -214,6 +214,7 @@ function routes(router) {
 function triggerAccountChangeEmails(user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
+            console.log('triggerAccountChangeEmails(', user, ',', client, ',', newUsername, ')');
             if (!client) {
                 return reject('UNKNOWN_CLIENT');
             }
@@ -226,6 +227,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
             var baseUid = uuid.v4();
             var key = new Buffer(uuid.parse(baseUid)).toString('base64');
 
+            console.log('triggerAccountChangeEmails - creating UserEmailToken');
             db.UserEmailToken.create({
                 key: key,
                 type: 'MOV$' + newUsername,
