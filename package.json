@@ -55,6 +55,7 @@
     "mysql": "~2.12.0",
     "node-uuid": "~1.4.1",
     "nodemailer": "2.7.2",
+    "nodemailer-ses-transport": "^1.5.1",
     "oauth2orize": "~1.10.0",
     "passport": "~0.1.17",
     "passport-facebook": "~1.0.2",
