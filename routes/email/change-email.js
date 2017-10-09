@@ -57,7 +57,15 @@ function routes(router) {
 
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUser, req.authInfo.client, newUsername);
+                    triggerAccountChangeEmails(oldUser, req.authInfo.client, newUsername).then(
+                        function() {
+                            logger.debug('[POST /email/change][EMAILS][SENT]');
+                        },
+                        function(e) {
+                            logger.warn('[POST /email/change][EMAILS][ERROR][', e, ']');
+                            console.log('[POST /email/change][EMAILS][ERROR][', e, ']');
+                        }
+                    );
                     return res.status(200).json({success: true});
                 }
             ).catch(
@@ -235,7 +243,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                         config.mail.from,
                         newUsername,
                         "email-change-validation",
-                        {},
+                        { log: true },
                         {
                             oldEmail: user.email,
                             newEmail: newUsername,
@@ -250,7 +258,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                             config.mail.from,
                             user.email,
                             'email-change-information',
-                            {},
+                            { log: true },
                             {
                                 oldEmail: user.email,
                                 newEmail: newUsername
