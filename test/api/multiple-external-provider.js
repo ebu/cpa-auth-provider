@@ -52,9 +52,15 @@ describe('Local login after', function () {
         before(resetDatabase);
 
         before(function () {
-            // mock verifyGoogleIdToken
-            sinon.stub(googleHelper);
-            googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+            sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                new Promise(function (resolve, reject) {
+                    resolve({
+                        provider_uid: GOOGLE_PROVIDER_UID,
+                        display_name: GOOGLE_DISPLAY_NAME,
+                        email: GOOGLE_EMAIL
+                    })
+                })
+            );
         });
 
         after(function () {
@@ -344,9 +350,15 @@ describe('Google', function () {
             before(resetDatabase);
 
             before(function () {
-                // mock verifyGoogleIdToken
-                sinon.stub(googleHelper);
-                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    new Promise(function (resolve, reject) {
+                        resolve({
+                            provider_uid: GOOGLE_PROVIDER_UID,
+                            display_name: GOOGLE_DISPLAY_NAME,
+                            email: GOOGLE_EMAIL
+                        })
+                    })
+                );
             });
 
             after(function () {
@@ -377,9 +389,15 @@ describe('Google', function () {
             });
 
             before(function () {
-                // mock verifyGoogleIdToken
-                sinon.stub(googleHelper);
-                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    new Promise(function (resolve, reject) {
+                        resolve({
+                            provider_uid: GOOGLE_PROVIDER_UID,
+                            display_name: GOOGLE_DISPLAY_NAME,
+                            email: GOOGLE_EMAIL
+                        })
+                    })
+                );
             });
 
             after(function () {
@@ -416,9 +434,15 @@ describe('Google', function () {
             });
 
             before(function () {
-                // mock verifyGoogleIdToken
-                sinon.stub(googleHelper);
-                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    new Promise(function (resolve, reject) {
+                        resolve({
+                            provider_uid: GOOGLE_PROVIDER_UID,
+                            display_name: GOOGLE_DISPLAY_NAME,
+                            email: GOOGLE_EMAIL
+                        })
+                    })
+                );
             });
 
             after(function () {
@@ -509,9 +533,15 @@ describe('Facebook and Google', function () {
             });
 
             before(function () {
-                // mock verifyGoogleIdToken
-                sinon.stub(googleHelper);
-                googleHelper.verifyGoogleIdToken.callsArgWith(1, {provider_uid: GOOGLE_PROVIDER_UID, display_name: GOOGLE_DISPLAY_NAME, email: GOOGLE_EMAIL});
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    new Promise(function (resolve, reject) {
+                        resolve({
+                            provider_uid: GOOGLE_PROVIDER_UID,
+                            display_name: GOOGLE_DISPLAY_NAME,
+                            email: GOOGLE_EMAIL
+                        })
+                    })
+                );
             });
 
             after(function () {
