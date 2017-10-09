@@ -236,7 +236,8 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                 oauth2_client_id: client ? client.id : undefined
             }).then(
                 function (verifyToken) {
-                    var confirmLink = host + '/email/move/' + encodeURIComponent(key);
+                    let host = config.mail.host || '';
+                    let confirmLink = host + '/email/move/' + encodeURIComponent(key);
                     if (redirectUri) {
                         confirmLink = redirectUri + APPEND_MOVED + '&username=' + encodeURIComponent(user.email) + '&token=' + encodeURIComponent(key);
                     }
