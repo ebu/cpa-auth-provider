@@ -58,10 +58,10 @@ function routes(router) {
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, ']');
                     triggerAccountChangeEmails(oldUser, req.authInfo.client, newUsername).then(
-                        function() {
+                        function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
-                        function(e) {
+                        function (e) {
                             logger.warn('[POST /email/change][EMAILS][ERROR][', e, ']');
                             console.log('[POST /email/change][EMAILS][ERROR][', e, ']');
                         }
@@ -214,7 +214,6 @@ function routes(router) {
 function triggerAccountChangeEmails(user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
-            console.log('triggerAccountChangeEmails(', user, ',', client, ',', newUsername, ')');
             if (!client) {
                 return reject('UNKNOWN_CLIENT');
             }
@@ -227,7 +226,6 @@ function triggerAccountChangeEmails(user, client, newUsername) {
             var baseUid = uuid.v4();
             var key = new Buffer(uuid.parse(baseUid)).toString('base64');
 
-            console.log('triggerAccountChangeEmails - creating UserEmailToken');
             db.UserEmailToken.create({
                 key: key,
                 type: 'MOV$' + newUsername,
@@ -246,7 +244,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                         config.mail.from,
                         newUsername,
                         "email-change-validation",
-                        { log: true },
+                        {},
                         {
                             oldEmail: user.email,
                             newEmail: newUsername,
@@ -261,7 +259,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                             config.mail.from,
                             user.email,
                             'email-change-information',
-                            { log: true },
+                            {},
                             {
                                 oldEmail: user.email,
                                 newEmail: newUsername
