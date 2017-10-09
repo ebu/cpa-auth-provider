@@ -78,6 +78,7 @@
     "serve-favicon": "~2.4.3",
     "serve-static": "~1.12.4",
     "sha1": "^1.1.1",
+    "sqlite3": "^3.1.13",
     "ssha": "^1.0.1",
     "uuid": "^3.1.0",
     "winston": "2.3.1",
@@ -90,7 +91,6 @@
     "mocha": "~3.5.0",
     "sinon": "~3.2.1",
     "sinon-chai": "~2.13.0",
-    "sqlite3": "~3.1.9",
     "supertest": "~3.0.0"
   },
   "license": "BSD 3"
