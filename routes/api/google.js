@@ -7,35 +7,40 @@ var googleHelper = require('../../lib/google-helper');
 
 module.exports = function (app, options) {
     app.post('/api/google/signup', cors, function (req, res) {
-
+            var googleProfile;
             var googleIdToken = req.body.idToken;
 
             if (googleIdToken && googleIdToken.length > 0) {
-                try {
-                    googleHelper.verifyGoogleIdToken(googleIdToken, function(googleProfile){
+                googleHelper.verifyGoogleIdToken(googleIdToken).then(
+                    function (profile) {
                         // If the googleProfile already exists and his account is not validated
                         // i.e.: there is a user in the database with the same id and this user email is not validated
-                        db.User.find({
+                        googleProfile = profile;
+                        return db.User.findOne({
                             where: {
                                 email: googleProfile.email
                             }
-                        }).then(function (userInDb) {
-                            if (userInDb && !userInDb.verified) {
-                                res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
-                            } else {
-                                oAuthProviderHelper.performLogin(googleProfile, oAuthProviderHelper.GOOGLE, function (error, response) {
-                                    if (response) {
-                                        res.status(200).json(response);
-                                    } else {
-                                        res.status(500).json({error: error.message});
-                                    }
-                                });
-                            }
                         });
-                    });
-                } catch (error) {
-                    res.status(500).json({error: error.message});
-                }
+                    }
+                ).then(
+                    function (userInDb) {
+                        if (userInDb && !userInDb.verified) {
+                            res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
+                        } else {
+                            oAuthProviderHelper.performLogin(googleProfile, oAuthProviderHelper.GOOGLE, function (error, response) {
+                                if (response) {
+                                    res.status(200).json(response);
+                                } else {
+                                    res.status(500).json({error: error.message});
+                                }
+                            });
+                        }
+                    }
+                ).catch(
+                    function (error) {
+                        res.status(500).json({error: error.message});
+                    }
+                );
             }
             else {
                 res.status(400).json({error: 'Missing google IDtoken to connect with Google account'});
