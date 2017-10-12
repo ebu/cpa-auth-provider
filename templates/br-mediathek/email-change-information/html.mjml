@@ -8,13 +8,13 @@
             Servus,
           </mj-text>
           <mj-text>
-            Du hast beantragt, dass Dein Nutzerprofil mit der Email <%= newEmail %>
+            Du hast beantragt, dass Dein Nutzerkonto mit der E-Mail-Adresse <%= newEmail %>
             verknüpft wird, statt wie bisher mit <%= oldEmail %>.
           </mj-text>
           <mj-text>
-            Dazu wurde eine Email an Deine neue Adresse verschickt, mit der Du den
+            Dazu wurde eine E-Mail an Deine neue Adresse verschickt, mit der Du die
             Änderung bestätigen kannst. Erst danach kannst Du die neue
-            Email-Adresse verwenden um Dich an Deinen Geräten anzumelden.
+            E-Mail-Adresse verwenden, um Dich an Deinen Geräten anzumelden.
           </mj-text>
           <mj-text padding-bottom='0px'>
             Viel Spaß beim Stöbern und Schauen!

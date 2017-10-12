@@ -8,20 +8,20 @@
             Servus,
           </mj-text>
           <mj-text>
-            Du hast beantragt, dass Dein Nutzerprofil mit der Email <%= newEmail %> verknüpft wird, statt
+            Du hast beantragt, dass Dein Nutzerkonto mit der E-Mail-Adresse <%= newEmail %> verknüpft wird, statt
             wie bisher mit <%= oldEmail %>.
           </mj-text>
           <mj-text>
             Bitte bestätige diese Änderung mit einem Klick auf diesen Button:
           </mj-text>
           <mj-button href="<%- confirmLink %" background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
-            Email-Adresse ändern
+            E-Mail-Adresse ändern
           </mj-button>
           <mj-text color='#a8a8a8'>
             <a style='color: inherit; text-decoration: none;' href='<%- confirmLink %>'><%= confirmLink %></a>
           </mj-text>
           <mj-text>
-            Erst nach der Änderung kannst Du die neue Email-Adresse verwenden um Dich
+            Erst nach der Änderung kannst Du die neue E-Mail-Adresse verwenden um Dich
             an Deinen Geräten anzumelden.
           </mj-text>
           <mj-text padding-bottom='0px'>
