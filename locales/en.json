@@ -141,6 +141,7 @@
     "PROFILE_EMAIL_LABEL": "Email",
     "PROFILE_SAVE_BUTTON": "Save",
     "PROFILE_CANCEL_BUTTON": "Cancel",
+    "PROFILE_REQUIRED_FIELDS_CAPTION": "required fields",
     "PROFILE_SECURITY_TITLE": "Security",
     "PROFILE_SECURITY_TITLE_MOBILE": "Security",
     "PROFILE_PASSWORD_TITLE": "Password",
