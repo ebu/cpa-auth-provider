@@ -9,7 +9,6 @@ RUN npm install -g node-gyp
 RUN yarn global add sequelize-cli
 
 ADD package.json /src/package.json
-ADD passport-openam /src/passport-openam
 
 # Install Node.js dependencies
 WORKDIR /src

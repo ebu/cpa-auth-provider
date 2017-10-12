@@ -45,7 +45,6 @@ function issueToken(client, token, scope, reqBody, done) {
                 if (logger && typeof(logger.error) === 'function') {
                     logger.error('[OAuth2][issueToken]', error);
                 }
-                console.log(error);
                 return done(error);
             }
         );

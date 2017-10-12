@@ -1,12 +1,14 @@
 "use strict";
 
-let db = require('../models');
-let bcrypt = require('bcrypt');
+const db = require('../models');
+const bcrypt = require('bcrypt');
+const requestHelper = require('./request-helper');
 
 
 module.exports = {
     createOAuth2Clients,
     createUsers,
+    getAccessToken,
 };
 
 function createOAuth2Clients(clientList) {
@@ -84,5 +86,24 @@ function createUsers(userList) {
     );
 }
 
-
-
+function getAccessToken(user, client) {
+    return function (done) {
+        requestHelper.sendRequest(
+            this,
+            '/oauth2/token',
+            {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {
+                    grant_type: 'password',
+                    username: user.email,
+                    password: user.password,
+                    client_id: client.client_id,
+                    client_secret: client.client_secret
+                }
+            },
+            done
+        );
+    }
+}
