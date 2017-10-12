@@ -1,4 +1,0 @@
-[submodule "passport-openam"]
-	path = passport-openam
-	url = git@git.ebu.io:pipe/passport-openam.git
-	branch = ebu-rts
