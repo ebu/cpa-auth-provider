@@ -18,6 +18,7 @@ var cors = require('cors');
 var CreateUser = require('./create-user').createUser;
 var logger = require('../../lib/logger');
 
+var RateLimit = require('express-rate-limit');
 
 module.exports = function (router) {
 
@@ -164,9 +165,20 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
+    let createAccountLimiter = new RateLimit({
+        windowMs: 10 * 60 * 1000, // 10 minutes
+        delayAfter: 1, // start slowing down after first request
+        delayMs: 1000,
+        max: 0, // 0: disabled denied request
+        message: "TOO_MANY_ATTEMPTS", // denied request message
+        skip: isRecaptchaRequest // allow google recaptcha enhanced things to bypass rate limiting
+    });
+
     var createUser = [
+        createAccountLimiter,
         confirmOAuth2Client,
         cors_header,
+        optionalConfirmRecaptcha(createAccountLimiter),
         CreateUser
     ];
 
@@ -214,4 +226,36 @@ module.exports = function (router) {
 			}
 		);
 	}
+
+	/** check if a request contains a recaptcha information */
+	function isRecaptchaRequest(req) {
+        return config.recaptcha.enabled && req.body.hasOwnProperty('g-recaptcha-response');
+    }
+
+    /** confirm recaptcha (if it is present) */
+	function optionalConfirmRecaptcha(rateLimiter) {
+        return function (req, res, next) {
+            if (!isRecaptchaRequest(req)) {
+                return next();
+            }
+            let recaptcha = require('express-recaptcha');
+            recaptcha.verify(
+                req,
+                function (error, data) {
+                    // could also check data.hostname for validity
+                    if (error) {
+                        logger.warn('[Recaptcha][Optional Check][FAIL][error', error, ']');
+                        return res.status(400).json({error: 'bad_request', error_description: 'BAD_CAPTCHA'})
+                    } else {
+                        if (rateLimiter) {
+                            rateLimiter.resetKey(req.ip);
+                        }
+                        return next();
+                    }
+                }
+            );
+        };
+    }
+
+
 };

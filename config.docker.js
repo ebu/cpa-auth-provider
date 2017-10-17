@@ -95,9 +95,9 @@ module.exports = {
     },
 
     recaptcha: {
-        enabled: false,
-        site_key: process.env.IDP_RECAPCHA_SITEKEY,
-        secret_key: process.env.IDP_RECAPCHA_SECRETKEY
+        enabled: ('true' === process.env.IDP_RECAPTCHA_ENABLED),
+        site_key: process.env.IDP_RECAPTCHA_SITEKEY,
+        secret_key: process.env.IDP_RECAPTCHA_SECRETKEY
     },
 
     // When accessing the home page, if defined, users are automatically
