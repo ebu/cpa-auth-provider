@@ -165,11 +165,12 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
+    config.rateLimiting = config.rateLimiting || {};
     let createAccountLimiter = new RateLimit({
-        windowMs: 10 * 60 * 1000, // 10 minutes
-        delayAfter: 1, // start slowing down after first request
-        delayMs: 1000,
-        max: 0, // 0: disabled denied request
+        windowMs: config.rateLimiting.windowMs || 10 * 60 * 1000,
+        delayAfter: config.rateLimiting.delayAfter || 1,
+        delayMs: config.rateLimiting.delayMs || 1000,
+        max: config.rateLimiting.max || 0,
         message: "TOO_MANY_ATTEMPTS", // denied request message
         skip: isRecaptchaRequest // allow google recaptcha enhanced things to bypass rate limiting
     });

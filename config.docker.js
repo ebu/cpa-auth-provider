@@ -217,4 +217,15 @@ module.exports = {
         // how long before a verification is considered failed, in seconds
         verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
     },
+
+    rateLimiting: {
+        // delay per request
+        delayMs: process.env.RATE_LIMIT_DELAY_MS || 1000,
+        // start delaying after which number of requests (0 to disable)
+        delayAfter: process.env.RATE_LIMIT_DELAY_AFTER === undefined ? 1 : process.env.RATE_LIMIT_DELAY_AFTER,
+        // max allowed requests (0 to disable)
+        max: 0,
+        // how long to keep track of an ip on one instance
+        windowMs: 10 * 60 * 1000
+    },
 };
