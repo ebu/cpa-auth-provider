@@ -51,7 +51,7 @@ module.exports = {
         }
     },
 
-    displayUsersInfos: true,
+    displayUsersInfos: ('true' === process.env.DISPLAY_USER_INFOS),
 
     displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
 
