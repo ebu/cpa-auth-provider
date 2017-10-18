@@ -3,6 +3,7 @@
 var db = require('../../models/index');
 var logger = require('../../lib/logger');
 var cors = require('cors');
+const monitor = require('../../lib/monitor');
 
 var APPEND_VERIFY = '?auth=account_created';
 var APPEND_DELETE = '?auth=account_removed';
@@ -44,6 +45,7 @@ function routes(router) {
 					user.verified = true;
 					return user.save().then(
 						function () {
+                            monitor.counter.inc(monitor.METRICS.ACCOUNT_VERIFIED, 1);
 							res.status(200).json({success: true, reason: 'CONFIRMED'});
 							return deleteToken(verifyToken);
 						}

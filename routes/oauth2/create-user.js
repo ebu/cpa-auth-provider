@@ -5,6 +5,7 @@ var db = require('../../models');
 var oauth2Token = require('../../lib/oauth2-token');
 var generate = require('../../lib/generate');
 var emailUtil = require('../../lib/email-util');
+const monitor = require('../../lib/monitor');
 
 exports.createUser = createUser;
 
@@ -106,6 +107,7 @@ function sendSuccess(user, req, res) {
     ).then(
         function (_token_extras) {
             token_extras = _token_extras;
+            monitor.counter.inc(monitor.METRICS.ACCOUNT_CREATED, 1);
             return res.status(201).json(
                 {
                     access_token: access_token,
