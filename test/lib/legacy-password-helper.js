@@ -1,6 +1,6 @@
 "use strict";
 
-var legacyPasswordHelper = require('../../lib/legacy-password-helper'); //TODO remove it
+var legacyPasswordHelper = require('../../lib/legacy-password-helper');
 var assert = require("assert");
 
 var _12345678_HASHED_PASSWORD_HASH_ONLY = '/JMI1ltVoJXNjsHdusjCnRBZNF24qLBfRguY7g==';
