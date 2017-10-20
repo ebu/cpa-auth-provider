@@ -131,7 +131,7 @@ describe("POST /authorized", function () {
         describe("the returned data", function () {
             it("should include the user id", function () {
                 expect(this.res.body).to.have.property('user_id');
-                expect(this.res.body.user_id).to.equal("3");
+                expect(this.res.body.user_id).to.equal(3);
             });
 
             it("should include the client id", function () {

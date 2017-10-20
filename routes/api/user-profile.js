@@ -6,10 +6,8 @@ var passport = require('passport');
 var cors = require('../../lib/cors');
 var authHelper = require('../../lib/auth-helper');
 var util = require('util');
-var xssFilters = require('xss-filters');
 var userHelper = require('../../lib/user-helper');
 
-var jwtHelpers = require('../../lib/jwt-helper');
 var i18n = require('i18n');
 
 module.exports = function (app, options) {
@@ -36,7 +34,7 @@ module.exports = function (app, options) {
                         firstname: user_profile.firstname,
                         lastname: user_profile.lastname,
                         gender: user_profile.gender,
-                        birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
+                        date_of_birth: user_profile.date_of_birth ? parseInt(user_profile.date_of_birth) : user_profile.date_of_birth,
                         language: user_profile.language,
                         email: user.email,
                         display_name: user_profile.getDisplayName(user, req.query.policy)
@@ -54,8 +52,8 @@ module.exports = function (app, options) {
         if (req.body.lastname) {
             req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).matches(userHelper.NAME_REGEX);
         }
-        if (req.body.birthdate) {
-            req.checkBody('birthdate', req.__('API_PROFILE_BIRTHDATE_INVALIDE')).isInt();
+        if (req.body.date_of_birth) {
+            req.checkBody('date_of_birth', req.__('API_PROFILE_DATE_OF_BIRTH_INVALIDE')).isInt();
         }
         if (req.body.gender) {
             req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male', 'female', 'other']);
@@ -67,10 +65,11 @@ module.exports = function (app, options) {
         req.getValidationResult().then(
             function (result) {
                 if (!result.isEmpty()) {
+                    result.useFirstErrorOnly();
                     // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
-                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array
+                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array({onlyFirstError: true})
                     });
                 } else {
                     userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(
@@ -100,4 +99,33 @@ module.exports = function (app, options) {
             }
         );
     });
+
+
+    var requiredConfigQueryPath = '/api/local/profile/required-config';
+    app.options(requiredConfigQueryPath, cors);
+    app.get(
+        requiredConfigQueryPath,
+        cors,
+        function (req, res) {
+            var fields = userHelper.getRequiredFields();
+            var asObject = !req.query.hasOwnProperty('array');
+            var providers = [];
+            for (var idp in config.identity_providers) {
+                if (config.identity_providers[idp].enabled) {
+                    providers.push(idp);
+                }
+            }
+            if (asObject) {
+                return res.status(200).json({ fields: fields, providers: providers});
+            } else {
+                var list = [];
+                for(var key in fields) {
+                    if (fields.hasOwnProperty(key) && fields[key]) {
+                        list.push(key);
+                    }
+                }
+                return res.status(200).json(list);
+            }
+        }
+    );
 };

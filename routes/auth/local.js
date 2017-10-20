@@ -6,16 +6,12 @@ var requestHelper = require('../../lib/request-helper');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var util = require('util');
 
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
-var permissionName = require('../../lib/permission-name');
 var passwordHelper = require('../../lib/password-helper');
-
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
-
-var i18n = require('i18n');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
@@ -26,32 +22,41 @@ var localStrategyCallback = function (req, username, password, done) {
     db.User.findOne({where: {email: username}})
         .then(function (user) {
                 if (!user) {
-                    done(null, false, req.flash('loginMessage', loginError));
-                    return;
-                }
-
-                if (user.isFacebookUser && !user.password) {
-                    done(null, false, req.flash('loginMessage', loginError));
-                    return;
-                }
-
-                user.verifyPassword(password).then(function (isMatch) {
-                        if (isMatch) {
-                            user.logLogin().then(function () {
-                            }, function () {
-                            });
-                            done(null, user);
-                        } else {
-                            done(null, false, req.flash('loginMessage', loginError));
+                    doneWithError();
+                } else {
+                    oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (res) {
+                        if (res) {
+                            doneWithError();
                         }
-                    },
-                    function (err) {
-                        done(err);
+                        else {
+                            return user.verifyPassword(password).then(function (isMatch) {
+                                    if (isMatch) {
+                                        user.logLogin().then(function () {
+                                        }, function () {
+                                        });
+                                        done(null, user);
+                                    } else {
+                                        doneWithError();
+                                    }
+                                },
+                                function (err) {
+                                    done(err);
+                                });
+                        }
                     });
+                }
             },
             function (error) {
                 done(error);
             });
+
+    function doneWithError(e) {
+        e = e || loginError;
+        req.flash('loginMessage', e);
+        req.session.save(function () {
+            return done(null, false, e);
+        });
+    }
 };
 
 var localSignupStrategyCallback = function (req, username, password, done) {
@@ -74,19 +79,25 @@ var localSignupStrategyCallback = function (req, username, password, done) {
         req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female', 'other']);
         attributes.gender = req.body.gender;
     }
-    if (required.birthdate) {
-        req.checkBody('birthdate', req.__('BACK_SIGNUP_BIRTHDATE_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
-        var date = new Date(req.body.birthdate);
-        attributes.birthdate = date.getTime();
+    if (required.date_of_birth) {
+        req.checkBody('date_of_birth', req.__('BACK_SIGNUP_DATE_OF_BIRTH_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
+        // date format is dd/mm/yyyy
+        var parsed = /(\d\d)\/(\d\d)\/(\d\d\d\d)/.exec(req.body.date_of_birth);
+        if (parsed) {
+            var date = new Date(parsed[2] + '/' + parsed[1] + '/' + parsed[3]);
+            attributes.date_of_birth = date.getTime();
+        } else {
+            attributes.date_of_birth = undefined;
+        }
     }
 
     req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
-                done(null, false, req.flash('signupMessage', result.array()[0].msg));
+                result.useFirstErrorOnly();
+                return doneWithError(result.array({onlyFirstError: true})[0].msg, done);
             } else {
                 if (req.recaptcha.error) {
-                    done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PB_RECAPTCHA')));
-                    return;
+                    return doneWithError(req.__('BACK_SIGNUP_PB_RECAPTCHA'), done);
                 }
 
                 attributes.language = req.getLocale();
@@ -96,16 +107,16 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     },
                     function (err) {
                         if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH')));
+                            doneWithError(req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_EMAIL_TAKEN')));
+                            doneWithError(req.__('BACK_SIGNUP_EMAIL_TAKEN'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
                             // TODO properly log the missing fields ?
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                            doneWithError(req.__('BACK_SIGNUP_MISSING_FIELDS'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                            doneWithError(req.__('BACK_SIGNUP_MISSING_FIELDS'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_DATE_OF_BIRTH) {
-                            done(null, false, req.flash('signupMessage', req.__('BACK_SIGNUP_MISSING_FIELDS')));
+                            doneWithError(req.__('BACK_SIGNUP_MISSING_FIELDS'), done);
                         } else {
                             done(err);
                         }
@@ -114,6 +125,13 @@ var localSignupStrategyCallback = function (req, username, password, done) {
             }
         }
     );
+
+    function doneWithError(e, done) {
+        req.flash('signupMessage', e);
+        req.session.save(function () {
+            done(null, false, e);
+        });
+    }
 };
 
 var localStrategyConf = {
@@ -134,8 +152,9 @@ module.exports = function (app, options) {
         if (req.query && req.query.error) {
             message = req.__(req.query.error);
         }
-        if (req.flash('loginMessage').length > 0) {
-            message = req.flash('loginMessage');
+        var loginMessage = req.flash('loginMessage');
+        if (loginMessage && loginMessage.length > 0) {
+            message = loginMessage;
         }
         res.render('login.ejs', {message: message});
     });
