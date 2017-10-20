@@ -49,6 +49,7 @@
     "jsonschema": "~1.2.0",
     "jwt-simple": "^0.5.1",
     "lodash": "~4.17.4",
+    "md5": "^2.2.1",
     "method-override": "~2.3.9",
     "morgan": "~1.8.2",
     "mysql": "~2.14.1",
