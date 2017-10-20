@@ -90,7 +90,7 @@ function routes(router) {
 								res.render('./email/verify.ejs', {
 									user: user,
                                     was_verified: wasVerified,
-									forward_address: 'https://beta.mediathek.br.de'
+									forward_address: 'https://www.br.de/mediathek'
 								});
 								return deleteToken(verifyToken);//req.params.key);
 							}
@@ -122,7 +122,7 @@ function routes(router) {
 					} else {
 						res.render('./email/delete.ejs', {
 							user: user,
-							forward_address: 'http://beta.mediathek.br.de'
+							forward_address: 'https://www.br.de/mediathek'
 						});
 					}
 					deleteUser(user).then(
