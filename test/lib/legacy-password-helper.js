@@ -38,6 +38,9 @@ describe("Test legacy password ", function () {
         describe("When password is correct", function () {
             assert(legacyPasswordHelper.checkLegacyPassBTQ('thisisatest', "lgbo+yiXpY6VuaaIY6WwwPeB", "{BTQ}lgbo+yiXpY6VuaaIY6WwwPeB"));
         });
+        describe("When password is correct", function () {
+            assert(legacyPasswordHelper.checkLegacyPassBTQ('coucou', "gADTlcY8qrAQDuXrFFkGO5CO", "{BTQ}gADTlcY8qrAQDuXrFFkGO5CO"));
+        });
         describe("When password is wrong", function () {
             assert(!legacyPasswordHelper.checkLegacyPassBTQ('wrong pass', BTQ_HASHED_PASSWORD_HASH_ONLY, BTQ_HASHED_PASSWORD));
         });
