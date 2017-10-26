@@ -58,12 +58,12 @@ module.exports = function (app, options) {
     app.post('/api/local/signup', cors, recaptcha.middleware.verify, function (req, res) {
 
         if (req.recaptcha.error) {
-            res.json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
+            res.status(400).json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
             return;
         }
 
         if (!req.body.email || !req.body.password) {
-            res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
+            res.status(400).json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
             var username = req.body.email;
             var password = req.body.password;
