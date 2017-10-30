@@ -58,12 +58,12 @@ module.exports = function (app, options) {
     app.post('/api/local/signup', cors, recaptcha.middleware.verify, function (req, res) {
 
         if (req.recaptcha.error) {
-            res.status(400).json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
+            res.status(400).json({success: false, msg: i18n.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
             return;
         }
 
         if (!req.body.email || !req.body.password) {
-            res.status(400).json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
+            res.status(400).json({success: false, msg: i18n.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
             var username = req.body.email;
             var password = req.body.password;
@@ -78,37 +78,37 @@ module.exports = function (app, options) {
 
             userHelper.createUser(username, password, attributes).then(
                 function (user) {
-                    res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
+                    res.json({success: true, msg: i18n.__('API_SIGNUP_SUCCESS')});
                 },
                 function (err) {
                     if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
-                        return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
+                        return res.status(400).json({success: false, msg: i18n.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
                     } else if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
                         return res.status(400).json({
                             success: false,
-                            msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
+                            msg: i18n.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
                             password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
                         logger.debug('[POST /api/local/signup][email', username, '][ERR', err, ']');
                         return res.status(400).json({
                             success: false,
-                            msg: req.__('API_SIGNUP_MISSING_FIELDS'),
+                            msg: i18n.__('API_SIGNUP_MISSING_FIELDS'),
                             missingFields: err.data ? err.data.missingFields : undefined
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
                         return res.status(400).json({
                             success: false,
-                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                            msg: i18n.__('API_SIGNUP_MISSING_FIELDS')
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_DATE_OF_BIRTH) {
                         return res.status(400).json({
                             success: false,
-                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                            msg: i18n.__('API_SIGNUP_MISSING_FIELDS')
                         });
                     } else {
                         logger.error('[POST /api/local/signup][email', username, '][ERR', err, ']');
-                        res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
+                        res.status(500).json({success: false, msg: i18n.__('API_ERROR') + err});
                     }
                 }
             );
@@ -118,11 +118,11 @@ module.exports = function (app, options) {
     app.post('/api/local/password/recover', cors, recaptcha.middleware.verify, function (req, res) {
 
         if (req.recaptcha.error) {
-            res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});
+            res.status(400).json({msg: i18n.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});
             return;
         }
 
-        req.checkBody('email', req.__('API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL')).isEmail();
+        req.checkBody('email', i18n.__('API_PASSWORD_RECOVER_PLEASE_PASS_EMAIL')).isEmail();
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -145,7 +145,7 @@ module.exports = function (app, options) {
                                     mail: user.email,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },
@@ -155,10 +155,10 @@ module.exports = function (app, options) {
                             return res.status(200).send();
                         });
                     } else {
-                        return res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_USER_NOT_FOUND')});
+                        return res.status(400).json({msg: i18n.__('API_PASSWORD_RECOVER_USER_NOT_FOUND')});
                     }
                 }, function (error) {
-                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
+                    res.status(500).json({success: false, msg: i18n.__('API_ERROR') + error});
                 });
         });
     });
@@ -167,7 +167,7 @@ module.exports = function (app, options) {
         db.User.findOne({where: {email: req.body.email}})
             .then(function (user) {
                     if (!user || !req.body.password) {
-                        res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
+                        res.status(401).json({success: false, msg: i18n.__('API_INCORRECT_LOGIN_OR_PASS')});
                         return;
                     }
 
@@ -181,16 +181,16 @@ module.exports = function (app, options) {
                                 // return the information including token as JSON
                                 res.json({success: true, token: 'JWT ' + token});
                             } else {
-                                res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
+                                res.status(401).json({success: false, msg: i18n.__('API_INCORRECT_LOGIN_OR_PASS')});
                                 return;
                             }
                         },
                         function (err) {
-                            res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
+                            res.status(500).json({success: false, msg: i18n.__('API_ERROR') + err});
                         });
                 },
                 function (error) {
-                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
+                    res.status(500).json({success: false, msg: i18n.__('API_ERROR') + error});
                 });
     });
 
@@ -211,7 +211,7 @@ module.exports = function (app, options) {
                 }
             }).then(function (user) {
                 if (!user) {
-                    return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
+                    return res.status(403).send({success: false, msg: i18n.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
 
                     db.UserProfile.findOrCreate({
@@ -231,7 +231,7 @@ module.exports = function (app, options) {
                 }
             });
         } else {
-            return res.status(403).send({success: false, msg: req.__('API_INFO_NO_TOKEN')});
+            return res.status(403).send({success: false, msg: i18n.__('API_INFO_NO_TOKEN')});
         }
     });
 
@@ -240,7 +240,7 @@ module.exports = function (app, options) {
         var user = authHelper.getAuthenticatedUser(req);
 
         if (!user) {
-            return res.status(403).send({success: false, msg: req.__('API_VERIF_MAIL_NOT_AUTH')});
+            return res.status(403).send({success: false, msg: i18n.__('API_VERIF_MAIL_NOT_AUTH')});
         } else {
             return codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
 
@@ -255,14 +255,14 @@ module.exports = function (app, options) {
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                 ).then(
                     function () {
                     },
                     function (err) {
                     }
                 );
-                return res.status(204).send({success: true, msg: req.__('API_VERIF_MAIL_SENT')});
+                return res.status(204).send({success: true, msg: i18n.__('API_VERIF_MAIL_SENT')});
             });
         }
     });
