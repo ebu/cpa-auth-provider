@@ -15,7 +15,7 @@ var userHelper = require('../../lib/user-helper');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
-
+var i18n = require('i18n');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
@@ -100,7 +100,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     return doneWithError(req.__('BACK_SIGNUP_PB_RECAPTCHA'), done);
                 }
 
-                attributes.language = req.getLocale();
+                attributes.language = i18n.getLocale();
                 userHelper.createUser(username, password, attributes).then(
                     function (user) {
                         done(null, user);
@@ -273,7 +273,7 @@ module.exports = function (app, options) {
                                     mail: user.email,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },

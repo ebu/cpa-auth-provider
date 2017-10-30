@@ -145,7 +145,7 @@ module.exports = function (app, options) {
                                     mail: user.email,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },
@@ -255,7 +255,7 @@ module.exports = function (app, options) {
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                 ).then(
                     function () {
                     },

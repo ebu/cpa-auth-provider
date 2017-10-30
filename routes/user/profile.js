@@ -8,6 +8,7 @@ var codeHelper = require('../../lib/code-helper');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
+var i18n = require('i18n');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
@@ -82,7 +83,7 @@ var routes = function (router) {
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(code)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                 ).then(
                     function () {
                     },
