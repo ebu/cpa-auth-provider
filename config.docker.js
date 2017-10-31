@@ -70,9 +70,9 @@ module.exports = {
             // transport: 'smtp',
             username: process.env.MAIL_USER_NAME,
             password: process.env.MAIL_PASSWORD,
-            // host: '',
-            // port: 465,
-            // secure: true
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
+            secure: process.env.MAIL_SECURE,
         },
         from: process.env.MAIL_FROM,
         host: process.env.IDP_HOST,
