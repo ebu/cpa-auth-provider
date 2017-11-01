@@ -27,7 +27,7 @@ passport.use(new GoogleStrategy({
 
         var providerUid = 'google:' + profile.id;
 
-        return oAuthProviderHelper.findOrCreateExternalUser(email, providerUid, profile.displayName, oAuthProviderHelper.GOOGLE).then(
+        return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.GOOGLE, email, providerUid, profile.displayName).then(
             function (u) {
                 if (u) {
                     u.logLogin();

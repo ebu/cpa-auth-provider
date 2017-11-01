@@ -21,8 +21,22 @@ var recaptchaResponse = 'a dummy recaptcha response';
 var OK_RECATCHA_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
 var OK_RECATCHA_SECRET = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
 
-
 var STRONG_PASSWORD = 'correct horse battery staple';
+
+var USER_PROFILE = {
+    first_name: 'Hans',
+    last_name: 'Wurst',
+    gender: 'male',
+    birthday: '08/31/1978',
+    birthday_ts: 273369600000
+}
+var USER_PROFILE2 = {
+    first_name: 'Hans2',
+    last_name: 'Wurst2',
+    gender: 'female',
+    birthday: '11/01/2017',
+    birthday_ts: 1509494400000
+}
 
 var resetDatabase = function (done) {
     dbHelper.clearDatabase(function (err) {
@@ -167,9 +181,96 @@ describe('Facebook', function () {
                     facebookUISignup.call(this, done);
                 });
 
-                it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
+                it('should redirect to / without error', function () {
                         expect(this.res.statusCode).equal(302);
                         expect(this.res.text).equal('Found. Redirecting to /ap/');
+                    }
+                );
+            });
+
+            describe('When user is in the system and log with facebook', function () {
+                var self = this;
+                before(function (done) {
+                    recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                    done();
+                });
+
+                before(resetDatabase);
+
+                before(function (done) {
+                    localSignup.call(this, done);
+                });
+
+                before(function (done) {
+                    markEmailAsVerified(done);
+                });
+
+                before(function (done) {
+                    facebookUISignup.call(this, done);
+                });
+
+                before(function (done) {
+                    db.UserProfile.findOne().then(function (profile) {
+                        self.userProfile = profile;
+                    }).then(function () {
+                        done();
+                    });
+                });
+
+                it('Profile should be completed', function () {
+                        expect(USER_PROFILE.gender).equal(self.userProfile.gender);
+                        expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
+                        expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                        expect(USER_PROFILE.birthday_ts).equal(self.userProfile.date_of_birth);
+                    }
+                );
+            });
+            describe('When user is in the system with a full profile and log with facebook', function () {
+                var self = this;
+                before(function (done) {
+                    recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                    done();
+                });
+
+                before(resetDatabase);
+
+                before(function (done) {
+                    localSignup.call(this, done);
+                });
+
+                before(function (done) {
+                    markEmailAsVerified(done);
+                });
+
+                before(function (done) {
+                    db.UserProfile.findOne().then(function (profile) {
+                        profile.gender = USER_PROFILE2.gender;
+                        profile.firstname = USER_PROFILE2.first_name;
+                        profile.lastname = USER_PROFILE2.last_name;
+                        profile.date_of_birth = USER_PROFILE2.birthday_ts;
+                        profile.save().then(function () {
+                            done();
+                        });
+                    });
+                });
+
+                before(function (done) {
+                    facebookUISignup.call(this, done);
+                });
+
+                before(function (done) {
+                    db.UserProfile.findOne().then(function (profile) {
+                        self.userProfile = profile;
+                    }).then(function () {
+                        done();
+                    });
+                });
+
+                it('Profile should no be updated completed', function () {
+                        expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
+                        expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
+                        expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                        expect(USER_PROFILE2.birthday_ts).equal(self.userProfile.date_of_birth);
                     }
                 );
             });
@@ -245,6 +346,93 @@ describe('Facebook', function () {
                     expect(this.res.body.success).equal(true);
                     expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
                     expect(this.res.statusCode).equal(200);
+                }
+            );
+        });
+        describe('When user is in the system and log with facebook', function () {
+            var self = this;
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                facebookAPISignup.call(this, done);
+            });
+
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    self.userProfile = profile;
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('Profile should be completed', function () {
+                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
+                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE.birthday_ts).equal(self.userProfile.date_of_birth);
+                }
+            );
+        });
+        describe('When user is in the system with a full profile and log with facebook', function () {
+            var self = this;
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    profile.gender = USER_PROFILE2.gender;
+                    profile.firstname = USER_PROFILE2.first_name;
+                    profile.lastname = USER_PROFILE2.last_name;
+                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
+                    profile.save().then(function () {
+                        done();
+                    });
+                });
+            });
+
+            before(function (done) {
+                facebookAPISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    self.userProfile = profile;
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('Profile should no be updated completed', function () {
+                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE2.birthday_ts).equal(self.userProfile.date_of_birth);
                 }
             );
         });
@@ -583,12 +771,11 @@ function localSignup(done) {
         data: {
             email: GOOGLE_EMAIL,
             password: STRONG_PASSWORD,
-            gender: 'female',
-            date_of_birth: 249782400000,
             'g-recaptcha-response': recaptchaResponse
         }
     }, done);
 }
+
 
 function markEmailAsVerified(done) {
     db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(
@@ -611,11 +798,27 @@ function mockFB() {
         .post('/oauth/access_token', "grant_type=authorization_code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Ffacebook%2Fcallback&client_id=abc&client_secret=123&code=mycodeabc")
         .reply(200, {access_token: 'AccessTokenA', token_type: 'Bearer', expires_in: 3600});
     nock('https://graph.facebook.com')
-        .get('/v2.5/me?fields=id%2Cemail%2Cname&access_token=AccessTokenA')
-        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: GOOGLE_EMAIL});
+        .get('/v2.5/me?fields=id%2Cemail%2Cname%2Cfirst_name%2Clast_name%2Cgender%2Cbirthday&access_token=AccessTokenA')
+        .reply(200, {
+            id: 'fffaaa-123',
+            name: 'Cool Name',
+            email: GOOGLE_EMAIL,
+            first_name: USER_PROFILE.first_name,
+            last_name: USER_PROFILE.last_name,
+            gender: USER_PROFILE.gender,
+            birthday: USER_PROFILE.birthday
+        });
     nock('https://graph.facebook.com')
-        .get('/me?fields=id,email,name&access_token=AccessTokenA')
-        .reply(200, {id: 'fffaaa-123', name: 'Cool Name', email: GOOGLE_EMAIL});
+        .get('/me?fields=id,email,name,first_name,last_name,gender,birthday&access_token=AccessTokenA')
+        .reply(200, {
+            id: 'fffaaa-123',
+            name: 'Cool Name',
+            email: GOOGLE_EMAIL,
+            first_name: USER_PROFILE.first_name,
+            last_name: USER_PROFILE.last_name,
+            gender: USER_PROFILE.gender,
+            birthday: USER_PROFILE.birthday
+        });
 }
 
 function facebookAPISignup(done) {

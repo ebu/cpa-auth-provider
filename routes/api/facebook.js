@@ -4,6 +4,7 @@ var db = require('../../models');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var request = require('request');
 var cors = require('../../lib/cors');
+var facebookHelper = require('../../lib/facebook-helper');
 
 module.exports = function (app, options) {
     app.post('/api/facebook/signup', cors, function (req, res) {
@@ -49,14 +50,18 @@ module.exports = function (app, options) {
 };
 
 function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,email,name&access_token=' + token;
+    var path = 'https://graph.facebook.com/me?fields=id,email,name,first_name,last_name,gender,birthday&access_token=' + token;
     request(path, function (error, response, body) {
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode === 200) {
             var fbProfile = {
                 provider_uid: "fb:" + data.id,
                 display_name: data.name,
-                email: data.email
+                email: data.email,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                gender: data.gender,
+                birthday: facebookHelper.fbDateOfBirthToTimestamp(data.birthday),
             };
             done(null, fbProfile);
         } else {
