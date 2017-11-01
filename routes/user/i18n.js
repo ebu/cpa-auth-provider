@@ -3,6 +3,7 @@
 var config = require('../../config');
 var authHelper = require('../../lib/auth-helper');
 var db = require('../../models');
+var i18n = require('i18n');
 
 var routes = function (router) {
 
@@ -13,6 +14,7 @@ var routes = function (router) {
                 maxAge: config.i18n.cookie_duration,
                 httpOnly: true
             });
+            i18n.setLocale(req.body.language);
             return res.status(200).send();
         } else {
             return res.status(400).send();
@@ -41,6 +43,7 @@ var routes = function (router) {
                 }
             }).spread(function (userProfile) {
                 return userProfile.updateAttributes({language: req.body.language}).then(function () {
+                    i18n.setLocale(req.body.language);
                     return res.status(200).send();
                 });
             });
