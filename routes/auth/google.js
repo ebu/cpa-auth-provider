@@ -4,6 +4,7 @@ var db = require('../../models/index');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var googleHelper = require('../../lib/google-helper');
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20');
@@ -25,9 +26,9 @@ passport.use(new GoogleStrategy({
             return done(new Error('NO_EMAIL', null));
         }
 
-        var providerUid = 'google:' + profile.id;
+        var providerUid = googleHelper.buildGoogleId(profile.id);
 
-        return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.GOOGLE, email, providerUid, profile.displayName).then(
+        return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.GOOGLE, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, null).then(
             function (u) {
                 if (u) {
                     u.logLogin();

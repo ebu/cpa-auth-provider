@@ -34,7 +34,7 @@ passport.use(new FacebookStrategy({
             return done(new Error('NO_EMAIL', null));
         }
 
-        var providerUid = 'fb:' + profile.id;
+        var providerUid = facebookHelper.buildFBId(profile.id);
 
         return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
             function (u) {

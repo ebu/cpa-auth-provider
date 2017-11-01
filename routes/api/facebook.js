@@ -11,19 +11,19 @@ module.exports = function (app, options) {
         var facebookAccessToken = req.body.fbToken;
         if (facebookAccessToken && facebookAccessToken.length > 0) {
             // Get back user object from Facebook
-            verifyFacebookUserAccessToken(facebookAccessToken, function (err, fbProfile) {
-                if (fbProfile) {
+            verifyFacebookUserAccessToken(facebookAccessToken, function (err, remoteProfile) {
+                if (remoteProfile) {
                     // If the user already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
                         where: {
-                            email: fbProfile.email
+                            email: remoteProfile.email
                         }
                     }).then(function (userInDb) {
                         if (userInDb && !userInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
-                            oAuthProviderHelper.performLogin(fbProfile, oAuthProviderHelper.FB, function (error, response) {
+                            oAuthProviderHelper.performLogin(remoteProfile, oAuthProviderHelper.FB, function (error, response) {
 
                                 if (response) {
                                     res.status(200).json(response);
@@ -54,16 +54,8 @@ function verifyFacebookUserAccessToken(token, done) {
     request(path, function (error, response, body) {
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode === 200) {
-            var fbProfile = {
-                provider_uid: "fb:" + data.id,
-                display_name: data.name,
-                email: data.email,
-                first_name: data.first_name,
-                last_name: data.last_name,
-                gender: data.gender,
-                birthday: facebookHelper.fbDateOfBirthToTimestamp(data.birthday),
-            };
-            done(null, fbProfile);
+            var remoteProfile = oAuthProviderHelper.buildRemoteProfile(facebookHelper.buildFBId(data.id), data.name,data.email,data.first_name,data.last_name,data.gender,facebookHelper.fbDateOfBirthToTimestamp(data.birthday));
+            done(null, remoteProfile);
         } else {
             done({code: response.statusCode, message: data.error.message}, null);
         }

@@ -67,13 +67,7 @@ describe('Local login after', function () {
 
         before(function () {
             sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
-                new Promise(function (resolve, reject) {
-                    resolve({
-                        provider_uid: GOOGLE_PROVIDER_UID,
-                        display_name: GOOGLE_DISPLAY_NAME,
-                        email: GOOGLE_EMAIL
-                    })
-                })
+                mockVerifyGoogleIdToken()
             );
         });
 
@@ -445,9 +439,9 @@ describe('Facebook', function () {
 describe('Google', function () {
 
     describe('GET /auth/google', function () {
-            before(function (done) {
-                requestHelper.sendRequest(
-                    this,
+        before(function (done) {
+            requestHelper.sendRequest(
+                this,
                     '/auth/google',
                     {
                         method: 'get',
@@ -524,12 +518,98 @@ describe('Google', function () {
                 googleUISignup.call(this, done);
             });
 
-            it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
+            it('should redirect to / with no error', function () {
                     expect(this.res.statusCode).equal(302);
                     expect(this.res.text).equal('Found. Redirecting to /ap/');
                 }
             );
         });
+
+        describe('When user is in the system and log with google', function () {
+            var self = this;
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    self.userProfile = profile;
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('Profile should be completed', function () {
+                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
+                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                }
+            );
+        });
+        describe('When user is in the system with a full profile and log with google', function () {
+            var self = this;
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    profile.gender = USER_PROFILE2.gender;
+                    profile.firstname = USER_PROFILE2.first_name;
+                    profile.lastname = USER_PROFILE2.last_name;
+                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
+                    profile.save().then(function () {
+                        done();
+                    });
+                });
+            });
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    self.userProfile = profile;
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('Profile should no be updated completed', function () {
+                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                }
+            );
+        });
+
     });
 
     describe('POST /api/google/signup', function () {
@@ -539,13 +619,7 @@ describe('Google', function () {
 
             before(function () {
                 sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
-                    new Promise(function (resolve, reject) {
-                        resolve({
-                            provider_uid: GOOGLE_PROVIDER_UID,
-                            display_name: GOOGLE_DISPLAY_NAME,
-                            email: GOOGLE_EMAIL
-                        })
-                    })
+                    mockVerifyGoogleIdToken()
                 );
             });
 
@@ -578,13 +652,7 @@ describe('Google', function () {
 
             before(function () {
                 sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
-                    new Promise(function (resolve, reject) {
-                        resolve({
-                            provider_uid: GOOGLE_PROVIDER_UID,
-                            display_name: GOOGLE_DISPLAY_NAME,
-                            email: GOOGLE_EMAIL
-                        })
-                    })
+                    mockVerifyGoogleIdToken()
                 );
             });
 
@@ -623,13 +691,7 @@ describe('Google', function () {
 
             before(function () {
                 sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
-                    new Promise(function (resolve, reject) {
-                        resolve({
-                            provider_uid: GOOGLE_PROVIDER_UID,
-                            display_name: GOOGLE_DISPLAY_NAME,
-                            email: GOOGLE_EMAIL
-                        })
-                    })
+                    mockVerifyGoogleIdToken()
                 );
             });
 
@@ -646,6 +708,112 @@ describe('Google', function () {
                     expect(this.res.body.success).equal(true);
                     expect(this.res.body.user.email).equal(GOOGLE_EMAIL);
                     expect(this.res.statusCode).equal(200);
+                }
+            );
+        });
+
+        describe('When user is in the system and log with google', function () {
+            var self = this;
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function () {
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    mockVerifyGoogleIdToken()
+                );
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
+            });
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                googleAPISignup.call(this, done);
+            });
+
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    self.userProfile = profile;
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('Profile should be completed', function () {
+                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
+                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                }
+            );
+        });
+        describe('When user is in the system with a full profile and log with google', function () {
+            var self = this;
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function () {
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    mockVerifyGoogleIdToken()
+                );
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
+            });
+
+            before(function (done) {
+                localSignup.call(this, done);
+            });
+
+            before(function (done) {
+                markEmailAsVerified(done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    profile.gender = USER_PROFILE2.gender;
+                    profile.firstname = USER_PROFILE2.first_name;
+                    profile.lastname = USER_PROFILE2.last_name;
+                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
+                    profile.save().then(function () {
+                        done();
+                    });
+                });
+            });
+
+            before(function (done) {
+                googleAPISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.UserProfile.findOne().then(function (profile) {
+                    self.userProfile = profile;
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('Profile should no be updated completed', function () {
+                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
                 }
             );
         });
@@ -722,13 +890,7 @@ describe('Facebook and Google', function () {
 
             before(function () {
                 sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
-                    new Promise(function (resolve, reject) {
-                        resolve({
-                            provider_uid: GOOGLE_PROVIDER_UID,
-                            display_name: GOOGLE_DISPLAY_NAME,
-                            email: GOOGLE_EMAIL
-                        })
-                    })
+                    mockVerifyGoogleIdToken()
                 );
             });
 
@@ -862,8 +1024,8 @@ function mockGoogle() {
         .get('/plus/v1/people/me?access_token=access-token-g1').reply(200,
         {
             id: 'aa123',
-            name: {familyName: 'Wurst', givenName: 'Hans'},
-            gender: 'slug',
+            name: {familyName: USER_PROFILE.last_name, givenName: USER_PROFILE.first_name},
+            gender: USER_PROFILE.gender,
             emails: [{value: GOOGLE_EMAIL, type: 'main'}]
         }
     );
@@ -871,11 +1033,27 @@ function mockGoogle() {
         .get('/oauth2/v1/certs').reply(200,
         {
             id: 'aa123',
-            name: {familyName: 'Wurst', givenName: 'Hans'},
-            gender: 'slug',
+            name: {familyName: USER_PROFILE.last_name, givenName: USER_PROFILE.first_name},
+            gender: USER_PROFILE.gender,
             emails: [{value: GOOGLE_EMAIL, type: 'main'}]
         }
     );
+}
+
+function mockVerifyGoogleIdToken() {
+    return new Promise(function (resolve, reject) {
+        resolve({
+            provider_uid: GOOGLE_PROVIDER_UID,
+            display_name: GOOGLE_DISPLAY_NAME,
+            email: GOOGLE_EMAIL,
+            name: {
+                givenName: USER_PROFILE.first_name,
+                familyName: USER_PROFILE.last_name
+            },
+            gender: USER_PROFILE.gender,
+            birthday: null
+        });
+    });
 }
 
 
