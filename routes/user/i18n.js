@@ -14,7 +14,6 @@ var routes = function (router) {
                 maxAge: config.i18n.cookie_duration,
                 httpOnly: true
             });
-            i18n.setLocale(req.body.language);
             return res.status(200).send();
         } else {
             return res.status(400).send();
@@ -43,7 +42,6 @@ var routes = function (router) {
                 }
             }).spread(function (userProfile) {
                 return userProfile.updateAttributes({language: req.body.language}).then(function () {
-                    i18n.setLocale(req.body.language);
                     return res.status(200).send();
                 });
             });
