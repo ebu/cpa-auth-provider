@@ -679,7 +679,7 @@ describe('PUT /user/profile', function () {
         context('doing everything correctly', function () {
             before(resetDatabase);
             before(function (done) {
-                requestHelper.loginCustom(USER_EMAIL, STRONG_PASSWORD, this, done)
+                requestHelper.loginCustom(USER_EMAIL, STRONG_PASSWORD, this, done);
             });
 
             before(function (done) {
