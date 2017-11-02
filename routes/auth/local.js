@@ -183,6 +183,10 @@ module.exports = function (app, options) {
         //if parameter lang is sent in url apply it to this page
         if(req.query.lang) {
             i18n.setLocale(req, req.query.lang);
+            res.cookie(config.i18n.cookie_name, req.query.lang, {
+                maxAge: config.i18n.cookie_duration,
+                httpOnly: true
+            });
         }
         res.render('password-edit.ejs', {email: req.query.email, code: req.query.code});
     });
@@ -196,6 +200,10 @@ module.exports = function (app, options) {
         //if parameter lang is sent in url apply it to this page
         if(req.query.lang) {
             i18n.setLocale(req, req.query.lang);
+            res.cookie(config.i18n.cookie_name, req.query.lang, {
+                maxAge: config.i18n.cookie_duration,
+                httpOnly: true
+            });
         }
         db.User.findOne({where: {email: req.query.email}})
             .then(function (user) {
