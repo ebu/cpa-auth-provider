@@ -60,7 +60,15 @@ var localStrategyCallback = function (req, username, password, done) {
 };
 
 var localSignupStrategyCallback = function (req, username, password, done) {
-    var attributes = {};
+
+    var optionnalAttributes = {};
+    for (var element in userHelper.getRequiredFields()) {
+        if (req.body[element] && !config.userProfiles.requiredFields.includes(element)) {
+            optionnalAttributes[element] = req.body[element];
+        }
+    }
+
+    var requiredAttributes = {};
 
     var required = userHelper.getRequiredFields();
 
@@ -71,13 +79,13 @@ var localSignupStrategyCallback = function (req, username, password, done) {
     // general required copy
     for (var key in required) {
         if (required.hasOwnProperty(key) && required[key]) {
-            attributes[key] = req.body[key];
+            requiredAttributes[key] = req.body[key];
         }
     }
     // specialized required copies
     if (required.gender) {
         req.checkBody('gender', req.__('BACK_SIGNUP_GENDER_FAIL')).notEmpty().isIn(['male', 'female', 'other']);
-        attributes.gender = req.body.gender;
+        requiredAttributes.gender = req.body.gender;
     }
     if (required.date_of_birth) {
         req.checkBody('date_of_birth', req.__('BACK_SIGNUP_DATE_OF_BIRTH_FAIL')).notEmpty().matches(/\d\d\/\d\d\/\d\d\d\d/);
@@ -85,9 +93,9 @@ var localSignupStrategyCallback = function (req, username, password, done) {
         var parsed = /(\d\d)\/(\d\d)\/(\d\d\d\d)/.exec(req.body.date_of_birth);
         if (parsed) {
             var date = new Date(parsed[2] + '/' + parsed[1] + '/' + parsed[3]);
-            attributes.date_of_birth = date.getTime();
+            requiredAttributes.date_of_birth = date.getTime();
         } else {
-            attributes.date_of_birth = undefined;
+            requiredAttributes.date_of_birth = undefined;
         }
     }
 
@@ -100,8 +108,8 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     return doneWithError(req.__('BACK_SIGNUP_PB_RECAPTCHA'), done);
                 }
 
-                attributes.language = i18n.getLocale();
-                userHelper.createUser(username, password, attributes).then(
+                requiredAttributes.language = i18n.getLocale();
+                userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
                     function (user) {
                         done(null, user);
                     },

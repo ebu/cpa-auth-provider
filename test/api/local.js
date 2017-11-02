@@ -2,6 +2,8 @@
 
 var generate = require('../../lib/generate');
 var db = require('../../models');
+var config = require('../../config');
+var userHelper = require('../../lib/user-helper');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
@@ -40,7 +42,7 @@ describe('POST /api/local/signup', function () {
 
     context('When unauthenticated user signup with bad recaptcha', function () {
 
-        before(function (done){
+        before(function (done) {
             recaptcha.init(KO_RECATCHA_KEY, KO_RECATCHA_SECRET);
             done();
         });
@@ -67,7 +69,7 @@ describe('POST /api/local/signup', function () {
 
     context('When unauthenticated user signup with weak password', function () {
 
-        before(function (done){
+        before(function (done) {
             recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
             done();
         });
@@ -93,7 +95,7 @@ describe('POST /api/local/signup', function () {
 
     context('When unauthenticated user signup with good recaptcha', function () {
 
-        before(function (done){
+        before(function (done) {
             recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
             done();
         });
@@ -221,12 +223,10 @@ describe('POST /api/local/signup', function () {
     });
 
     context('and some required fields', function () {
-        var config = require('../../config');
-        var userHelper = require('../../lib/user-helper');
         var preFields;
         before(function () {
-            preFields =config.userProfiles.requiredFields;
-            config.userProfiles.requiredFields = ['gender','date_of_birth'];
+            preFields = config.userProfiles.requiredFields;
+            config.userProfiles.requiredFields = ['gender', 'date_of_birth'];
             userHelper.reloadConfig();
         });
         after(function () {
@@ -316,6 +316,59 @@ describe('POST /api/local/signup', function () {
             });
         });
     });
+
+    context('When unauthenticated user signup with optionnals fields and no fields are required', function () {
+        var self = this;
+
+        var preFields;
+        before(function () {
+            preFields = config.userProfiles.requiredFields;
+            config.userProfiles.requiredFields = [];
+            userHelper.reloadConfig();
+        });
+        after(function () {
+            config.userProfiles.requiredFields = preFields;
+            userHelper.reloadConfig();
+        });
+
+        before(resetDatabase);
+
+        before(function (done) {
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/signup', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {
+                    email: 'someone@somewhere.com',
+                    password: STRONG_PASSWORD,
+                    gender: 'female',
+                    date_of_birth: 249782400000,
+                    firstname: 'firstname',
+                    lastname: 'lastname',
+                    'g-recaptcha-response': recaptchaResponse
+                }
+            }, done);
+        });
+
+        before(function (done) {
+            db.UserProfile.findOne().then(function (profile) {
+                self.userProfile = profile;
+            }).then(function () {
+                done();
+            });
+        });
+
+        it('should save fields', function () {
+            expect('female').equal(self.userProfile.gender);
+            expect('firstname').equal(self.userProfile.firstname);
+            expect('lastname').equal(self.userProfile.lastname);
+            expect(249782400000).equal(self.userProfile.date_of_birth);
+        });
+    });
 });
 
 // Test password recovery
@@ -327,7 +380,7 @@ describe('POST /api/local/password/recover', function () {
         before(resetDatabase);
 
         // Google reCAPTCHA
-        before(function (done){
+        before(function (done) {
             recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
             done();
         });
@@ -372,7 +425,7 @@ describe('POST /api/local/password/recover', function () {
         before(resetDatabase);
 
         // Google reCAPTCHA
-        before(function (done){
+        before(function (done) {
             recaptcha.init(KO_RECATCHA_KEY, KO_RECATCHA_SECRET);
             done();
         });
@@ -416,7 +469,7 @@ describe('POST /api/local/password/recover', function () {
         before(resetDatabase);
 
         // Google reCAPTCHA
-        before(function (done){
+        before(function (done) {
             recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
             done();
         });
@@ -628,7 +681,11 @@ describe('POST /signup', function () {
             before(function (done) {
                 var redirectUrl = this.res.header.location;
                 redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
-                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+                requestHelper.sendRequest(this, redirectUrl, {
+                    method: 'get',
+                    cookie: this.cookie,
+                    parseDOM: true
+                }, done);
             });
 
             it('should have errors displayed', function () {
@@ -677,7 +734,11 @@ describe('POST /signup', function () {
             before(function (done) {
                 var redirectUrl = this.res.header.location;
                 redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
-                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+                requestHelper.sendRequest(this, redirectUrl, {
+                    method: 'get',
+                    cookie: this.cookie,
+                    parseDOM: true
+                }, done);
             });
 
             it('should have invalid date of birth error displayed', function () {
@@ -714,7 +775,11 @@ describe('POST /signup', function () {
             before(function (done) {
                 var redirectUrl = this.res.header.location;
                 redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
-                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+                requestHelper.sendRequest(this, redirectUrl, {
+                    method: 'get',
+                    cookie: this.cookie,
+                    parseDOM: true
+                }, done);
             });
 
             it('should have invalid gender error', function () {
@@ -751,7 +816,11 @@ describe('POST /signup', function () {
             before(function (done) {
                 var redirectUrl = this.res.header.location;
                 redirectUrl = redirectUrl.substring(requestHelper.urlPrefix.length);
-                requestHelper.sendRequest(this, redirectUrl, {method: 'get', cookie: this.cookie, parseDOM: true}, done);
+                requestHelper.sendRequest(this, redirectUrl, {
+                    method: 'get',
+                    cookie: this.cookie,
+                    parseDOM: true
+                }, done);
             });
 
             it('should have no errors displayed', function () {
