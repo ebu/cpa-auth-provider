@@ -255,3 +255,56 @@ describe('DELETE /user/', function () {
         });
     });
 });
+
+describe('DELETE user', function () {
+
+    var self = this;
+    before(resetDatabase);
+    before(function (done) {
+        requestHelper.login(this, done);
+    });
+
+    before(function (done) {
+        requestHelper.sendRequest(
+            this,
+            '/user/profile',
+            {
+                method: 'put',
+                cookie: this.cookie,
+                type: 'form',
+                data: {
+                    firstname: 'firstname',
+                    lastname: 'lastname',
+                    date_of_birth: 123456789,
+                    gender: 'male',
+                    language: 'fr'
+                }
+            },
+            done
+        );
+    });
+
+    before(function (done) {
+        requestHelper.sendRequest(this, '/user', {
+            method: 'post',
+            type: 'form',
+            cookie: this.cookie,
+            data: {password: 'testpassword'}
+        }, done);
+    });
+
+    before(function (done) {
+        db.User.count().then(function (userNb) {
+            self.userNb = userNb;
+            db.UserProfile.count().then(function (profileNb) {
+                self.profileNb = profileNb;
+                done();
+            });
+        });
+    });
+
+    it('should also delete profile', function () {
+        expect(self.userNb).to.equal(0);
+        expect(self.profileNb).to.equal(0);
+    });
+});
