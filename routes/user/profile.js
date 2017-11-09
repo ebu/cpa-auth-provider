@@ -9,6 +9,7 @@ var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var i18n = require('i18n');
+var db = require('../../models/index');
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
@@ -107,7 +108,13 @@ var routes = function (router) {
             } else {
                 user.verifyPassword(req.body.password).then(function (isMatch) {
                         if (isMatch) {
-                            return user.destroy();
+                            return db.UserProfile.destroy({
+                                where: {
+                                    user_id: user.id
+                                }
+                            }).then(function (affectedRows) {
+                                return user.destroy();
+                            });
                         } else {
                             if (req.body.password) {
                                 throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
