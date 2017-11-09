@@ -3,6 +3,7 @@
 var config = require('../../config');
 var authHelper = require('../../lib/auth-helper');
 var db = require('../../models');
+var i18n = require('i18n');
 
 var routes = function (router) {
 

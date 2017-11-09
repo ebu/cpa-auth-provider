@@ -5,8 +5,6 @@ var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 var passwordHelper = require('../../lib/password-helper');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
-
-
 var i18n = require('i18n');
 
 // Google reCAPTCHA
