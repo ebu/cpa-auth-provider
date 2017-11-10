@@ -68,16 +68,22 @@ module.exports = function (app, options) {
         } else {
             var username = req.body.email;
             var password = req.body.password;
-            var attributes = {};
+            var requiredAttributes = {};
             config.userProfiles.requiredFields.forEach(
                 function (element) {
                     if (req.body[element]) {
-                        attributes[element] = req.body[element];
+                        requiredAttributes[element] = req.body[element];
                     }
                 }
             );
+            var optionnalAttributes = {};
+            for (var element in userHelper.getRequiredFields()) {
+                if (req.body[element] && !config.userProfiles.requiredFields.includes(element)) {
+                    optionnalAttributes[element] = req.body[element];
+                }
+            }
 
-            userHelper.createUser(username, password, attributes).then(
+            userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
                 function (user) {
                     res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
                 },
