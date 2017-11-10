@@ -4,25 +4,26 @@ var db = require('../../models');
 var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 var request = require('request');
 var cors = require('../../lib/cors');
+var facebookHelper = require('../../lib/facebook-helper');
 
 module.exports = function (app, options) {
     app.post('/api/facebook/signup', cors, function (req, res) {
         var facebookAccessToken = req.body.fbToken;
         if (facebookAccessToken && facebookAccessToken.length > 0) {
             // Get back user object from Facebook
-            verifyFacebookUserAccessToken(facebookAccessToken, function (err, fbProfile) {
-                if (fbProfile) {
+            verifyFacebookUserAccessToken(facebookAccessToken, function (err, remoteProfile) {
+                if (remoteProfile) {
                     // If the user already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
                     db.User.find({
                         where: {
-                            email: fbProfile.email
+                            email: remoteProfile.email
                         }
                     }).then(function (userInDb) {
                         if (userInDb && !userInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
-                            oAuthProviderHelper.performLogin(fbProfile, oAuthProviderHelper.FB, function (error, response) {
+                            oAuthProviderHelper.performLogin(remoteProfile, oAuthProviderHelper.FB, function (error, response) {
 
                                 if (response) {
                                     res.status(200).json(response);
@@ -49,16 +50,12 @@ module.exports = function (app, options) {
 };
 
 function verifyFacebookUserAccessToken(token, done) {
-    var path = 'https://graph.facebook.com/me?fields=id,email,name&access_token=' + token;
+    var path = 'https://graph.facebook.com/me?fields=id,email,name,first_name,last_name,gender,birthday&access_token=' + token;
     request(path, function (error, response, body) {
         var data = JSON.parse(body);
         if (!error && response && response.statusCode && response.statusCode === 200) {
-            var fbProfile = {
-                provider_uid: "fb:" + data.id,
-                display_name: data.name,
-                email: data.email
-            };
-            done(null, fbProfile);
+            var remoteProfile = oAuthProviderHelper.buildRemoteProfile(facebookHelper.buildFBId(data.id), data.name,data.email,data.first_name,data.last_name,data.gender,facebookHelper.fbDateOfBirthToTimestamp(data.birthday));
+            done(null, remoteProfile);
         } else {
             done({code: response.statusCode, message: data.error.message}, null);
         }
