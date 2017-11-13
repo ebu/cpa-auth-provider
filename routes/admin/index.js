@@ -228,8 +228,48 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
+        var offset = 0;
+        if (req.query.offset) {
+            offset = req.query.offset;
+        }
+
+        var limit = 50;
+        if (req.query.limit) {
+            if (req.query.limit <= 100) {
+                limit = req.query.limit;
+            }
+        }
+
+        var user_where = {};
+
+        if (req.query.email) {
+            user_where.email = {$iLike: '%' + req.query.email.toLowerCase() + '%'};
+        }
+
         db.Permission.findAll().then(function (permissions) {
-            db.User.findAll().then(
+            var users_promise;
+            if (!req.query.firstname && !req.query.lastname) {
+                users_promise = db.User.findAll({
+                    offset: offset,
+                    limit: limit,
+                    where: user_where
+                });
+            } else {
+                var profile_where = {}
+                if (req.query.firstname) {
+                    profile_where.firstname = {$iLike: '%' + req.query.firstname.toLowerCase() + '%'};
+                }
+                if (req.query.lastname) {
+                    profile_where.lastname = {$iLike: '%' + req.query.lastname.toLowerCase() + '%'};
+                }
+                users_promise = db.User.findAll({
+                    offset: offset,
+                    limit: limit,
+                    where: user_where,
+                    include: [{model: db.UserProfile, where: profile_where}]
+                });
+            }
+            users_promise.then(
                 function (users) {
                     return res.render('./admin/users.ejs', {users: users, permissions: permissions});
                 },
