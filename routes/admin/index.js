@@ -255,7 +255,7 @@ module.exports = function (router) {
                     where: user_where
                 });
             } else {
-                var profile_where = {}
+                var profile_where = {};
                 if (req.query.firstname) {
                     profile_where.firstname = {$iLike: '%' + req.query.firstname.toLowerCase() + '%'};
                 }
