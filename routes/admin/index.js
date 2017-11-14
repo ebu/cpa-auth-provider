@@ -2,6 +2,7 @@
 
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
+var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
@@ -227,57 +228,28 @@ module.exports = function (router) {
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
-
-        var offset = 0;
-        if (req.query.offset) {
-            offset = req.query.offset;
-        }
-
-        var limit = 50;
-        if (req.query.limit) {
-            if (req.query.limit <= 100) {
-                limit = req.query.limit;
-            }
-        }
-
-        var user_where = {};
-
-        if (req.query.email) {
-            user_where.email = {$iLike: '%' + req.query.email.toLowerCase() + '%'};
-        }
-
-        db.Permission.findAll().then(function (permissions) {
-            var users_promise;
-            if (!req.query.firstname && !req.query.lastname) {
-                users_promise = db.User.findAll({
-                    offset: offset,
-                    limit: limit,
-                    where: user_where
-                });
-            } else {
-                var profile_where = {};
-                if (req.query.firstname) {
-                    profile_where.firstname = {$iLike: '%' + req.query.firstname.toLowerCase() + '%'};
-                }
-                if (req.query.lastname) {
-                    profile_where.lastname = {$iLike: '%' + req.query.lastname.toLowerCase() + '%'};
-                }
-                users_promise = db.User.findAll({
-                    offset: offset,
-                    limit: limit,
-                    where: user_where,
-                    include: [{model: db.UserProfile, where: profile_where}]
-                });
-            }
-            users_promise.then(
-                function (users) {
-                    return res.render('./admin/users.ejs', {users: users, permissions: permissions});
-                },
-                function (err) {
-                    res.send(500);
-                    logger.debug('[Admins][get /admin/users][error', err, ']');
-                });
+        return db.Permission.findAll().then(function (permissions) {
+            userHelper.getUsers(req).then(function (users) {
+                return res.render('./admin/users.ejs', {users: users, permissions: permissions});
+            }, function (err) {
+                logger.debug('[Admins][get /admin/users][error', err, ']');
+                return res.send(500);
+            });
         });
+    });
+
+    router.get('/api/admin/users', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+
+        //Depending on countries user protection laws, set this config variable to deny access to user infos
+        if (!config.displayUsersInfos) {
+            return res.sendStatus(404);
+        }
+        userHelper.getUsers(req).then(
+            function (users) {
+                return res.status(200).json(userHelper.getDisplayableUser(users));
+            }, function () {
+                return res.send(500);
+            });
     });
 
 
