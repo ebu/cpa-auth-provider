@@ -35,6 +35,8 @@ var initDatabase = function (done) {
                     id: 6,
                     email: 'user@user.ch',
                     provider_uid: 'testuser'
+                }).then(function (user) {
+                    return db.UserProfile.create({firstname: 'Scott', lastname: 'Tiger', user_id: user.id});
                 });
             })
 
@@ -51,6 +53,9 @@ var initDatabase = function (done) {
                         return user.updateAttributes({permission_id: 1});
                     })
                     .then(function (user) {
+                        return db.UserProfile.create({firstname: 'John', lastname: 'Doe', user_id: user.id});
+                    })
+                    .then(function () {
                         return db.Domain.create({
                             id: 5,
                             name: 'example-service.bbc.co.uk',
@@ -1056,6 +1061,55 @@ describe('GET /api/admin/users', function () {
             context('with mail exact matching ', function () {
                 before(function (done) {
                     requestHelper.sendRequest(this, '/api/admin/users?email=user@user.ch', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 1 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(1);
+                    expect(json.count).to.equal(1);
+                    expect(json.users[0].email).to.equal('user@user.ch');
+                });
+            });
+            context('with mail exact matching ', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?email=user', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 1 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(2);
+                    expect(json.count).to.equal(2);
+                    expect(json.users[0].email).to.equal('testuser');
+                    expect(json.users[1].email).to.equal('user@user.ch');
+                });
+            });
+            context('with partial firstname ', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?firstname=ot', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 1 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(1);
+                    expect(json.count).to.equal(1);
+                    expect(json.users[0].email).to.equal('user@user.ch');
+                });
+            });
+            context('with partial firstname, lastname and mail', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?firstname=ot&lastname=ige&email=user', {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
