@@ -40,10 +40,10 @@ var initDatabase = function (done) {
 
             .then(function () {
                 db.User.create({
-                        id: 5,
-                        email: 'testuser',
-                        provider_uid: 'testuser'
-                    })
+                    id: 5,
+                    email: 'testuser',
+                    provider_uid: 'testuser'
+                })
                     .then(function (user) {
                         return user.setPassword('testpassword');
                     })
@@ -910,4 +910,92 @@ describe('POST /api/admin/clients', function () {
 
 });
 
+describe('GET /api/admin/users', function () {
+
+    context('with pagination', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            var promiseChain = [];
+            for (var i = 1000; i < 1150; i++) {
+                promiseChain.push(db.User.create({
+                    id: i,
+                    email: 'zzzzzzzzzz' + i,
+                    provider_uid: 'zzzzzzzzzzz'
+                }));
+
+            }
+
+            Promise.all(promiseChain)
+                .then(function () {
+                    done();
+                });
+        });
+
+        before(function (done) {
+            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+        });
+
+        before(function (done) {
+            self.displayUsersInfos = config.displayUsersInfos;
+            config.displayUsersInfos = true;
+            done();
+        });
+
+        after(function (done) {
+            config.displayUsersInfos = self.displayUsersInfos;
+            done();
+        });
+        context('empty', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/admin/users', {
+                    cookie: self.cookie,
+                    parseDOM: true
+                }, done);
+            });
+
+            it('should return status 200 and contains 50 elements', function () {
+                expect(this.res.statusCode).to.equal(200);
+                var json = JSON.parse(this.res.text);
+                expect(json.length).to.equal(50);
+                expect(json[2].email).to.equal('zzzzzzzzzz1000');
+
+            });
+        });
+        context('limited to 10', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/admin/users?limit=10', {
+                    cookie: self.cookie,
+                    parseDOM: true
+                }, done);
+            });
+
+            it('should return status 200 and contains 10 elements', function () {
+                expect(this.res.statusCode).to.equal(200);
+                var json = JSON.parse(this.res.text);
+                expect(json.length).to.equal(10);
+                expect(json[2].email).to.equal('zzzzzzzzzz1000');
+            });
+        });
+        context('limited to 1000000', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/admin/users?limit=1000000', {
+                    cookie: self.cookie,
+                    parseDOM: true
+                }, done);
+            });
+
+            it('should return status 200 and contains 10 elements', function () {
+                expect(this.res.statusCode).to.equal(200);
+                var json = JSON.parse(this.res.text);
+                expect(json.length).to.equal(100);
+                expect(json[2].email).to.equal('zzzzzzzzzz1000');
+            });
+        });
+
+    });
+
+});
 
