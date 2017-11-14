@@ -948,53 +948,110 @@ describe('GET /api/admin/users', function () {
             config.displayUsersInfos = self.displayUsersInfos;
             done();
         });
-        context('empty', function () {
-            before(function (done) {
-                requestHelper.sendRequest(this, '/api/admin/users', {
-                    cookie: self.cookie,
-                    parseDOM: true
-                }, done);
+        context('when limit is', function () {
+            context('empty', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 50 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(50);
+                    expect(json.count).to.equal(152);
+                    expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
+
+                });
             });
+            context('limited to 10', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?limit=10', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
 
-            it('should return status 200 and contains 50 elements', function () {
-                expect(this.res.statusCode).to.equal(200);
-                var json = JSON.parse(this.res.text);
-                expect(json.length).to.equal(50);
-                expect(json[2].email).to.equal('zzzzzzzzzz1000');
+                it('should return status 200 and contains 10 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(10);
+                    expect(json.count).to.equal(152);
+                    expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
+                });
+            });
+            context('limited to 1000000', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?limit=1000000', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
 
+                it('should return status 200 and contains 10 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(100);
+                    expect(json.count).to.equal(152);
+                    expect(json.users[0].email).to.equal('testuser');
+                    expect(json.users[1].email).to.equal('user@user.ch');
+                    expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
+                });
             });
         });
-        context('limited to 10', function () {
-            before(function (done) {
-                requestHelper.sendRequest(this, '/api/admin/users?limit=10', {
-                    cookie: self.cookie,
-                    parseDOM: true
-                }, done);
+        context('when offset is ', function () {
+            context('2', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?offset=2', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 50 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(50);
+                    expect(json.count).to.equal(152);
+                    expect(json.users[0].email).to.equal('zzzzzzzzzz1000');
+
+                });
+            });
+            context(' more that the number of elements', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?offset=999999', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 0 element', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.count).to.equal(152);
+                    expect(json.users.length).to.equal(0);
+                });
+            });
+            context(' 2 less than the number of elements (152) ', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?offset=150', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 2 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(2);
+                    expect(json.count).to.equal(152);
+                    expect(json.users[0].email).to.equal('zzzzzzzzzz1148');
+                });
             });
 
-            it('should return status 200 and contains 10 elements', function () {
-                expect(this.res.statusCode).to.equal(200);
-                var json = JSON.parse(this.res.text);
-                expect(json.length).to.equal(10);
-                expect(json[2].email).to.equal('zzzzzzzzzz1000');
-            });
         });
-        context('limited to 1000000', function () {
-            before(function (done) {
-                requestHelper.sendRequest(this, '/api/admin/users?limit=1000000', {
-                    cookie: self.cookie,
-                    parseDOM: true
-                }, done);
-            });
-
-            it('should return status 200 and contains 10 elements', function () {
-                expect(this.res.statusCode).to.equal(200);
-                var json = JSON.parse(this.res.text);
-                expect(json.length).to.equal(100);
-                expect(json[2].email).to.equal('zzzzzzzzzz1000');
-            });
-        });
-
     });
 
 });

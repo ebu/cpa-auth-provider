@@ -244,12 +244,14 @@ module.exports = function (router) {
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
-        userHelper.getUsers(req).then(
-            function (users) {
-                return res.status(200).json(userHelper.getDisplayableUser(users));
-            }, function () {
-                return res.send(500);
-            });
+        userHelper.countUsers(req).then(function (count) {
+            userHelper.getUsers(req).then(
+                function (users) {
+                    return res.status(200).json({users: userHelper.getDisplayableUser(users), count:count});
+                }, function () {
+                    return res.send(500);
+                });
+        });
     });
 
 
