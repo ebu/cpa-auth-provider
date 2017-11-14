@@ -434,6 +434,21 @@ describe('GET /admin/users', function () {
     });
 
     context('When the user is not authenticated', function () {
+        var self = this;
+
+        before(resetDatabase);
+
+        before(function (done) {
+            config.displayUsersInfos = true;
+            requestHelper.sendRequest(this, '/admin/users', {
+                parseDOM: true
+            }, done);
+        });
+
+        it('should return redirect to login (status 302)', function () {
+            expect(this.res.statusCode).to.equal(302);
+            expect(this.res.text).to.equal('Found. Redirecting to /ap/auth');
+        });
 
     });
 });
