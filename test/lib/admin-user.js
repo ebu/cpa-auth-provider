@@ -962,10 +962,10 @@ describe('GET /api/admin/users', function () {
                     }, done);
                 });
 
-                it('should return status 200 and contains 50 elements', function () {
+                it('should return status 200 and contains 20 elements', function () {
                     expect(this.res.statusCode).to.equal(200);
                     var json = JSON.parse(this.res.text);
-                    expect(json.users.length).to.equal(50);
+                    expect(json.users.length).to.equal(20);
                     expect(json.count).to.equal(152);
                     expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
 
@@ -1018,7 +1018,7 @@ describe('GET /api/admin/users', function () {
                 it('should return status 200 and contains 50 elements', function () {
                     expect(this.res.statusCode).to.equal(200);
                     var json = JSON.parse(this.res.text);
-                    expect(json.users.length).to.equal(50);
+                    expect(json.users.length).to.equal(20);
                     expect(json.count).to.equal(152);
                     expect(json.users[0].email).to.equal('zzzzzzzzzz1000');
 

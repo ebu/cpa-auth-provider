@@ -16,12 +16,12 @@ var moment = require('moment');
 
 
 module.exports = function (router) {
-    router.get('/admin', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/admin', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         res.render('./admin/index.ejs');
     });
 
 
-    router.get('/admin/clients', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -34,7 +34,7 @@ module.exports = function (router) {
                 });
     });
 
-    router.get('/api/admin/clients', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/api/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
@@ -47,7 +47,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/api/admin/clients/:id', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findOne({
             where: {id: req.params.id}
         }).then(
@@ -61,7 +61,7 @@ module.exports = function (router) {
     });
 
 
-    router.post('/api/admin/clients', [authHelper.authenticateFirst], function (req, res) {
+    router.post('/api/admin/clients', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         var client = req.body;
 
@@ -148,7 +148,7 @@ module.exports = function (router) {
 
     });
 
-    router.get('/api/admin/clients/:clientId/secret', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/api/admin/clients/:clientId/secret', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.findOne({where: {id: req.params.clientId}})
             .then(
                 function (client) {
@@ -178,7 +178,7 @@ module.exports = function (router) {
     });
 
 
-    router.delete('/api/admin/clients/:id', [authHelper.authenticateFirst], function (req, res) {
+    router.delete('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.OAuth2Client.destroy({where: {id: req.params.id}})
             .then(
                 function () {
@@ -187,7 +187,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/domains', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/admin/domains', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Domain.findAll()
             .then(
                 function (domains) {
@@ -199,11 +199,11 @@ module.exports = function (router) {
                 });
     });
 
-    router.get('/admin/domains/add', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/admin/domains/add', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         res.render('./admin/add_domain.ejs');
     });
 
-    router.post('/admin/domains', [authHelper.ensureAuthenticated], function (req, res, next) {
+    router.post('/admin/domains', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res, next) {
         var domain = {
             name: req.body.name,
             display_name: req.body.display_name,
@@ -223,17 +223,13 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/users', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/admin/users', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
         return db.Permission.findAll().then(function (permissions) {
-            //display 20 users only by default
-            if(!req.query.limit) {
-                req.query.limit = 20;
-            }
             userHelper.getUsers(req).then(function (users) {
                 return res.render('./admin/users.ejs', {users: users, permissions: permissions, moment: moment });
             }, function (err) {
@@ -243,7 +239,7 @@ module.exports = function (router) {
         });
     });
 
-    router.get('/api/admin/users', [authHelper.ensureAuthenticated], function (req, res) {
+    router.get('/api/admin/users', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if (!config.displayUsersInfos) {
@@ -260,7 +256,7 @@ module.exports = function (router) {
     });
 
 
-    router.get('/admin/users/csv', [authHelper.authenticateFirst], function (req, res) {
+    router.get('/admin/users/csv', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
 
         //Depending on countries user protection laws, set this config variable to deny access to user infos
         if (!config.displayUsersInfos) {
@@ -299,7 +295,7 @@ module.exports = function (router) {
 
     });
 
-    router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated], function (req, res) {
+    router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
             if (!permission) {
                 return res.status(400).send({
