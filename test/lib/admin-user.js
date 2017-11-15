@@ -1058,7 +1058,7 @@ describe('GET /api/admin/users', function () {
 
         });
         context('when search on ', function () {
-            context('with mail exact matching ', function () {
+            context(' mail with exact matching ', function () {
                 before(function (done) {
                     requestHelper.sendRequest(this, '/api/admin/users?email=user@user.ch', {
                         cookie: self.cookie,
@@ -1074,7 +1074,7 @@ describe('GET /api/admin/users', function () {
                     expect(json.users[0].email).to.equal('user@user.ch');
                 });
             });
-            context('with mail exact matching ', function () {
+            context(' mail with exact matching ', function () {
                 before(function (done) {
                     requestHelper.sendRequest(this, '/api/admin/users?email=user', {
                         cookie: self.cookie,
@@ -1091,7 +1091,7 @@ describe('GET /api/admin/users', function () {
                     expect(json.users[1].email).to.equal('user@user.ch');
                 });
             });
-            context('with partial firstname ', function () {
+            context('firstname with partial matching ', function () {
                 before(function (done) {
                     requestHelper.sendRequest(this, '/api/admin/users?firstname=ot', {
                         cookie: self.cookie,
@@ -1107,7 +1107,7 @@ describe('GET /api/admin/users', function () {
                     expect(json.users[0].email).to.equal('user@user.ch');
                 });
             });
-            context('with partial firstname, lastname and mail', function () {
+            context('firstname, lastname and mail with partial matching', function () {
                 before(function (done) {
                     requestHelper.sendRequest(this, '/api/admin/users?firstname=ot&lastname=ige&email=user', {
                         cookie: self.cookie,
@@ -1121,6 +1121,38 @@ describe('GET /api/admin/users', function () {
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
                     expect(json.users[0].email).to.equal('user@user.ch');
+                });
+            });
+            context('id only', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?id=5', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 1 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(1);
+                    expect(json.count).to.equal(1);
+                    expect(json.users[0].email).to.equal('testuser');
+                });
+            });
+            context('id and other parameter', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?id=5&firstname=this_is_not_existing_in_the_db&lastname=this_is_not_existing_in_the_db&email=this_is_not_existing_in_the_db', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 1 elements other query parameters than id are ignored', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(1);
+                    expect(json.count).to.equal(1);
+                    expect(json.users[0].email).to.equal('testuser');
                 });
             });
         });
