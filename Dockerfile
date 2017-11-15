@@ -1,18 +1,15 @@
-FROM node:7.7
+FROM node:9.1.0-alpine
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-  libsqlite3-dev apt-transport-https
+RUN apk add --no-cache sqlite-libs
 
-RUN npm install -g node-gyp
+RUN npm install -g sequelize-cli
 
-RUN yarn global add sequelize-cli
-
-ADD package.json /src/package.json
+ADD package.json package-lock.json /src/
 
 # Install Node.js dependencies
 WORKDIR /src
-RUN npm install
+RUN apk add --no-cache --virtual build python build-base && npm install && apk del build
 
 # Configure
 ADD config.docker.js /src/config.local.js

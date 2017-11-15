@@ -10,7 +10,7 @@
     "Matthew Glubb (https://github.com/mglubb)"
   ],
   "scripts": {
-    "start": "bin/server",
+    "start": "bin/server -- $NODE_OPTS",
     "dev": "bin/server",
     "docker-dev": "yarn install && nodemon --watch package.json --exec \"yarn install && yarn run dev\"",
     "test-dev": "NODE_ENV=test mocha --bail --timeout 10000 --reporter dot --require test/test-helper test/lib/setup",
