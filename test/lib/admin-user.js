@@ -1109,7 +1109,7 @@ describe('GET /api/admin/users', function () {
             });
             context('firstname, lastname and mail with partial matching', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?firstname=ot&lastname=ige&email=user', {
+                    requestHelper.sendRequest(this, '/api/admin/users?firstname=Sco&lastname=ige&email=user', {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);

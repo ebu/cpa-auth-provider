@@ -248,7 +248,7 @@ module.exports = function (router) {
         userHelper.countUsers(req).then(function (count) {
             userHelper.getUsers(req).then(
                 function (users) {
-                    return res.status(200).json({users: userHelper.getDisplayableUser(users), count:count});
+                    return res.status(200).json({users: userHelper.getDisplayableUser(users[0]), count:count["0"]["0"].count});
                 }, function () {
                     return res.send(500);
                 });
