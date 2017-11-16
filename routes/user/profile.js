@@ -103,8 +103,15 @@ var routes = function (router) {
         //If facebook user then we do not check for account password as it can be empty
         oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (isExt) {
             if (isExt) {
-                user.destroy();
-                return res.status(204).send();
+                return db.UserProfile.destroy({
+                    where: {
+                        user_id: user.id
+                    }
+                }).then(function () {
+                    return user.destroy().then(function (){
+                        return res.status(204).send();
+                    });
+                });
             } else {
                 user.verifyPassword(req.body.password).then(function (isMatch) {
                         if (isMatch) {
