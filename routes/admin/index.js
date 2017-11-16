@@ -231,7 +231,7 @@ module.exports = function (router) {
         }
         return db.Permission.findAll().then(function (permissions) {
             userHelper.getUsers(req).then(function (users) {
-                return res.render('./admin/users.ejs', {users: users, permissions: permissions, moment: moment });
+                return res.render('./admin/users.ejs', {users: users[0], permissions: permissions, moment: moment });
             }, function (err) {
                 logger.debug('[Admins][get /admin/users][error', err, ']');
                 return res.send(500);

@@ -79,10 +79,13 @@
                     </select>
                 </td>
                 <td><%= moment(users[i].created_at).format('DD/MM/YYYY - HH:mm'); %></td>
-                <td><%= moment(new Date(users[i].password_changed_at)).format('DD/MM/YYYY - HH:mm'); %></td>
-                <td>
+                <td><% if(users[i].password_changed_at) { %>
+                    <%= moment(new Date(parseInt(users[i].password_changed_at))).format('DD/MM/YYYY - HH:mm'); %>
+                    <% } %>
+                </td>
+                <td><%= users[i].last_login_at%>
                     <% if(users[i].last_login_at) { %>
-                    <%= moment(new Date(users[i].last_login_at)).format('DD/MM/YYYY - HH:mm'); %>
+                    <%= moment(new Date(parseInt(users[i].last_login_at))).format('DD/MM/YYYY - HH:mm'); %>
                     <% } %>
                 </td>
             </tr>
@@ -240,8 +243,16 @@
 
                 row += "<td>" + select + "</td>";
                 row += "<td>" + moment(user.created_at).format('DD/MM/YYYY - HH:mm'); + "</td>";
-                row += "<td>" + moment(new Date(user.password_changed_at)).format('DD/MM/YYYY - HH:mm'); + "</td>";
-                row += "<td>" + moment(new Date(user.last_login_at)).format('DD/MM/YYYY - HH:mm'); + "</td>";
+                if(user.password_changed_at) {
+                row += "<td>" + moment(new Date(parseInt(user.password_changed_at))).format('DD/MM/YYYY - HH:mm'); + "</td>";
+                } else {
+                    row += "<td></td>";
+                }
+                if(user.last_login_at) {
+                    row += "<td>" + moment(new Date(parseInt(user.last_login_at))).format('DD/MM/YYYY - HH:mm');+"</td>";
+                } else {
+                    row += "<td></td>";
+                }
                 row += "</tr>";
                 rows += row;
             });
