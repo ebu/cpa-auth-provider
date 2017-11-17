@@ -55,7 +55,7 @@ module.exports = function (app, options) {
     app.get('/auth/facebook', passport.authenticate('facebook', {scope: REQUESTED_PERMISSIONS}));
 
     app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', {failureRedirect: '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB'}),
+        passport.authenticate('facebook', {failureRedirect: config.urlPrefix + '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB'}),
         function (req, res) {
 
             var redirectUri = req.session.auth_origin;
