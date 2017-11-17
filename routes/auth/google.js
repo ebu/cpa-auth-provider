@@ -46,7 +46,7 @@ passport.use(new GoogleStrategy({
 module.exports = function (app, options) {
     app.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 
-    app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE'}), function (req, res) {
+    app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: config.urlPrefix + '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE'}), function (req, res) {
 
         var redirectUri = req.session.auth_origin;
         delete req.session.auth_origin;
