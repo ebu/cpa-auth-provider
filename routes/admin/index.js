@@ -231,7 +231,7 @@ module.exports = function (router) {
         }
         return db.Permission.findAll().then(function (permissions) {
             userHelper.getUsers(req).then(function (users) {
-                return res.render('./admin/users.ejs', {users: users[0], permissions: permissions, moment: moment });
+                return res.render('./admin/users.ejs', {users: users, permissions: permissions, moment: moment });
             }, function (err) {
                 logger.debug('[Admins][get /admin/users][error', err, ']');
                 return res.send(500);
@@ -248,7 +248,7 @@ module.exports = function (router) {
         userHelper.countUsers(req).then(function (count) {
             userHelper.getUsers(req).then(
                 function (users) {
-                    return res.status(200).json({users: userHelper.getDisplayableUser(users[0]), count:count["0"]["0"].count});
+                    return res.status(200).json({users: userHelper.getDisplayableUser(users), count:count});
                 }, function () {
                     return res.send(500);
                 });
