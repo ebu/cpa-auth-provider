@@ -139,9 +139,10 @@ module.exports = {
     // Cross-origin resource sharing
     cors: {
         enabled: true,
-        allowed_domains: [
+        allowed_domains:
             process.env.IDP_CLIENT_URL
-        ]
+                ? process.env.IDP_CLIENT_URL.toLowerCase().split(',')
+                : [],
     },
 
     // URL path prefix, e.g., '/myapp'
