@@ -149,7 +149,7 @@ describe('Facebook', function () {
 
                 it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB', function () {
                         expect(this.res.statusCode).equal(302);
-                        expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB');
+                        expect(this.res.text).equal('Found. Redirecting to /ap/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB');
                     }
                 );
             });
@@ -492,7 +492,7 @@ describe('Google', function () {
 
             it('should redirect to login with error LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE', function () {
                     expect(this.res.statusCode).equal(302);
-                    expect(this.res.text).equal('Found. Redirecting to /auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE');
+                    expect(this.res.text).equal('Found. Redirecting to /ap/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE');
                 }
             );
         });

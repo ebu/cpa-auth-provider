@@ -3,6 +3,7 @@ var db = require('../../models/index');
 var openamConfig = require('../../config.js').identity_providers.openam;
 var passport = require('passport');
 var callbackHelper = require('../../lib/callback-helper');
+var requestHelper = require('../../lib/request-helper');
 
 var OpenAMStrategy = require('passport-openam').Strategy;
 
@@ -36,7 +37,7 @@ module.exports = function (app, options) {
         if (redirectUri) {
             return res.redirect(redirectUri);
         }
-        res.redirect('/');
+        requestHelper.redirect(res, '/auth_code');
     });
     app.get('/auth/openam/logout', function (req, res) {
         req.logout();
