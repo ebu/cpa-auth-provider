@@ -50,24 +50,30 @@ batch.push(db.User.findOrCreate({
     });
 }));
 
+function generateProfile(user) {
+    return db.UserProfile.create({
+        firstname: faker.name.firstName(),
+        lastname: faker.name.lastName(),
+        gender: faker.random.number(1) ? 'male' : 'female',
+        date_of_birth: faker.date.past(80).getTime(),
+        language: 'fr',
+        user_id: user.id
+    });
+}
+
+function generatePasswordAndProfile(user) {
+    return user.setPassword(faker.internet.password()).then(function () {
+        return generateProfile(user);
+    });
+}
+
 for (var i = 0; i < nbOfUserToGenerate; i++) {
     batch.push(db.User.create({
         email: faker.internet.email(),
         verified: true,
         password_changed_at: faker.date.past(10).getTime(),
         last_login_at: faker.date.past(10).getTime()
-    }).then(function (user) {
-        return user.setPassword(faker.internet.password()).then(function () {
-            return db.UserProfile.create({
-                firstname: faker.name.firstName(),
-                lastname: faker.name.lastName(),
-                gender: faker.random.number(1) ? 'male' : 'female',
-                date_of_birth: faker.date.past(80).getTime(),
-                language: 'fr',
-                user_id: user.id
-            });
-        });
-    }));
+    }).then(generatePasswordAndProfile));
 }
 
 Promise.all(batch);
