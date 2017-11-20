@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+
+"use strict";
+
+/**
+ * Usage: $ bin/generate-data --nb=<number of account to generate if not present default value is 100>
+ */
+
+var faker = require('faker');
+var db = require('../models');
+
+var NB = '--nb=';
+
+var nbOfUserToGenerate = 100;
+
+for (var i in process.argv) {
+    if (process.argv[i].startsWith(NB)) {
+        nbOfUserToGenerate = process.argv[i].slice(NB.length);
+        break;
+    }
+}
+
+var batch = [];
+
+batch.push(db.User.findOrCreate({
+    where: {
+        email: 'admin@admin.com'
+    },
+    default: {
+        verified: true,
+        password_changed_at: faker.date.past(10).getTime(),
+        last_login_at: faker.date.past(10).getTime(),
+        permission_id: 1
+    }
+}).spread(function (user) {
+    return user.updateAttributes({permission_id: 1}).then(function () {
+        return user.setPassword('admin').then(function () {
+            return db.UserProfile.findOrCreate({
+                where: {
+                    user_id: user.id
+                }, defaults: {
+                    firstname: 'Ad',
+                    lastname: 'Min',
+                    gender: faker.random.number(1) ? 'male' : 'female',
+                    date_of_birth: faker.date.past(80).getTime(),
+                    language: 'fr'
+                }
+            });
+        });
+    });
+}));
+
+for (var i = 0; i < nbOfUserToGenerate; i++) {
+    batch.push(db.User.create({
+        email: faker.internet.email(),
+        verified: true,
+        password_changed_at: faker.date.past(10).getTime(),
+        last_login_at: faker.date.past(10).getTime()
+    }).then(function (user) {
+        return user.setPassword(faker.internet.password()).then(function () {
+            return db.UserProfile.create({
+                firstname: faker.name.firstName(),
+                lastname: faker.name.lastName(),
+                gender: faker.random.number(1) ? 'male' : 'female',
+                date_of_birth: faker.date.past(80).getTime(),
+                language: 'fr',
+                user_id: user.id
+            });
+        });
+    }));
+}
+
+Promise.all(batch);
