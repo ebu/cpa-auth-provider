@@ -10,45 +10,53 @@ var faker = require('faker');
 var db = require('../models');
 
 var NB = '--nb=';
+var ADMIN_PASS = '--password=';
 
 var nbOfUserToGenerate = 100;
+var adminPass = '';
 
 for (var i in process.argv) {
     if (process.argv[i].startsWith(NB)) {
         nbOfUserToGenerate = process.argv[i].slice(NB.length);
-        break;
+    }
+    if (process.argv[i].startsWith(ADMIN_PASS)) {
+        adminPass = process.argv[i].slice(ADMIN_PASS.length);
     }
 }
 
 var batch = [];
 
-batch.push(db.User.findOrCreate({
-    where: {
-        email: 'admin@admin.com'
-    },
-    default: {
-        verified: true,
+
+for (var i = 0; i < nbOfUserToGenerate; i++) {
+    batch.push(db.User.create({
+        email: faker.internet.email(),
+        verified: faker.random.number(1),
         password_changed_at: faker.date.past(10).getTime(),
-        last_login_at: faker.date.past(10).getTime(),
-        permission_id: 1
-    }
-}).spread(function (user) {
-    return user.updateAttributes({permission_id: 1}).then(function () {
-        return user.setPassword('admin').then(function () {
-            return db.UserProfile.findOrCreate({
-                where: {
-                    user_id: user.id
-                }, defaults: {
-                    firstname: 'Ad',
-                    lastname: 'Min',
-                    gender: faker.random.number(1) ? 'male' : 'female',
-                    date_of_birth: faker.date.past(80).getTime(),
-                    language: 'fr'
-                }
+        last_login_at: faker.date.past(10).getTime()
+    }).then(generatePasswordAndProfile));
+}
+
+Promise.all(batch).then(function () {
+    // Create an admin if a password had been provided:
+    if (adminPass !== '') {
+        batch.push(db.User.findOrCreate({
+            where: {
+                email: 'peach-review@ebu.io'
+            },
+            default: {
+                verified: true,
+                password_changed_at: faker.date.past(10).getTime(),
+                last_login_at: faker.date.past(10).getTime(),
+                // permission_id: 1
+            }
+        }).spread(function (user) {
+            return user.updateAttributes({permission_id: 1}).then(function () {
+                return user.setPassword(adminPass);
             });
-        });
-    });
-}));
+        }));
+    }
+});
+
 
 function generateProfile(user) {
     return db.UserProfile.create({
@@ -66,14 +74,3 @@ function generatePasswordAndProfile(user) {
         return generateProfile(user);
     });
 }
-
-for (var i = 0; i < nbOfUserToGenerate; i++) {
-    batch.push(db.User.create({
-        email: faker.internet.email(),
-        verified: true,
-        password_changed_at: faker.date.past(10).getTime(),
-        last_login_at: faker.date.past(10).getTime()
-    }).then(generatePasswordAndProfile));
-}
-
-Promise.all(batch);
