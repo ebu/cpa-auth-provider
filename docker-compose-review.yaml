@@ -1,8 +1,9 @@
 version: '3'
 
 services:
-  service:
+  idp:
     image: ${CONTAINER_SHA_IMAGE}
+    command: bash -c "sequelize db:migrate && bin/generate-data --password=$IDP_REVIEW_ADMIN_PASSWORD && bin/server"
     environment:
       - MAIL_FROM=no-reply@nobody.nowhere
       - IDP_HOST=http://{$DEPLOY_URL}
@@ -17,6 +18,7 @@ services:
       - DB_PASSWORD=jlkjs88j3niusuufffff
       - MAIL_TRANSPORT_TYPE=test
       - TRACKING_COOKIE=true
+      - IDP_REVIEW_ADMIN_PASSWORD=${IDP_REVIEW_ADMIN_PASSWORD}
     networks:
       - default
       - traefik-net
