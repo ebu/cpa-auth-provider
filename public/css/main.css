@@ -334,12 +334,21 @@ nav .peach-title {
 #users .toolbar {
     background-color: #eee;
     padding: 10px;
-    text-align: right;
-    margin: 20px auto;
+    margin: 20px auto 0 auto;
+}
+
+#users .subtoolbar {
+    background-color: #d8d8d8;
+    padding: 10px;
+    margin: 0 auto 20px auto;
 }
 
 #users #alert-success, #users #alert-error {
     display: none;
+}
+
+#users .search {
+    text-align: right;
 }
 
 /*
