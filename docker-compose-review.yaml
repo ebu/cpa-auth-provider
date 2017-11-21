@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  idp:
+  service:
     image: ${CONTAINER_SHA_IMAGE}
     environment:
       - MAIL_FROM=no-reply@nobody.nowhere
@@ -17,7 +17,6 @@ services:
       - DB_PASSWORD=jlkjs88j3niusuufffff
       - MAIL_TRANSPORT_TYPE=test
       - TRACKING_COOKIE=true
-      - IDP_REVIEW_ADMIN_PASSWORD=${IDP_REVIEW_ADMIN_PASSWORD}
     networks:
       - default
       - traefik-net
