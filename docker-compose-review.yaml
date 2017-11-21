@@ -3,7 +3,6 @@ version: '3'
 services:
   idp:
     image: ${CONTAINER_SHA_IMAGE}
-    command: bash -c "sequelize db:migrate && bin/generate-data --password=$IDP_REVIEW_ADMIN_PASSWORD && bin/server"
     environment:
       - MAIL_FROM=no-reply@nobody.nowhere
       - IDP_HOST=http://{$DEPLOY_URL}
