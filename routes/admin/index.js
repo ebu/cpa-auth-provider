@@ -2,6 +2,7 @@
 
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
+var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
@@ -11,6 +12,7 @@ var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
 var bcrypt = require('bcrypt');
+var moment = require('moment');
 
 
 module.exports = function (router) {
@@ -227,15 +229,28 @@ module.exports = function (router) {
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
+        return db.Permission.findAll().then(function (permissions) {
+            userHelper.getUsers(req).then(function (users) {
+                return res.render('./admin/users.ejs', {users: users, permissions: permissions, moment: moment });
+            }, function (err) {
+                logger.debug('[Admins][get /admin/users][error', err, ']');
+                return res.send(500);
+            });
+        });
+    });
 
-        db.Permission.findAll().then(function (permissions) {
-            db.User.findAll().then(
+    router.get('/api/admin/users', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+
+        //Depending on countries user protection laws, set this config variable to deny access to user infos
+        if (!config.displayUsersInfos) {
+            return res.sendStatus(404);
+        }
+        userHelper.countUsers(req).then(function (count) {
+            userHelper.getUsers(req).then(
                 function (users) {
-                    return res.render('./admin/users.ejs', {users: users, permissions: permissions});
-                },
-                function (err) {
-                    res.send(500);
-                    logger.debug('[Admins][get /admin/users][error', err, ']');
+                    return res.status(200).json({users: userHelper.getDisplayableUser(users), count:count});
+                }, function () {
+                    return res.send(500);
                 });
         });
     });
