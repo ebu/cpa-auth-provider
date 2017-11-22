@@ -41,7 +41,7 @@ Promise.all(batch).then(function () {
     if (adminPass !== '') {
         batch.push(db.User.findOrCreate({
             where: {
-                email: 'peach-review@ebu.io'
+                    email: 'peach-review@ebu.io'
             },
             default: {
                 verified: true,
