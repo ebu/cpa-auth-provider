@@ -115,7 +115,7 @@
         errorSuccess.hide();
         errorAlert.hide();
 
-        $('.permission').on('change', function () {
+        $(document).on('change', '.permission', function () {
 
             if ($(this).val() == "default") {
                 return;
@@ -133,6 +133,9 @@
             }).done(function (data) {
                 errorSuccess.html("Successfully changed " + data.user.email + " permission");
                 errorSuccess.show();
+                $('html, body').animate({
+                    scrollTop: $("#users").offset().top
+                }, 2000);
             }).fail(function (error) {
                 errorAlert.html("Error changin " + data.user.email + " permission, please try again");
                 errorAlert.show();
@@ -239,11 +242,11 @@
                 select += '<option value="default" disabled selected> none </option>';
 
                 if (user.permission_id !== <%= permAdminId %>) {
-                    select += '<option value="<%= user.id %>_<%= permUserId %>"  selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
-                    select += '<option value="<%= user.id %>_<%= permAdminId %>" ><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
+                    select += '<option value="' + user.id + '_<%= permUserId %>"  selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
+                    select += '<option value="' + user.id + '_<%= permAdminId %>" ><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
                 } else {
-                    select += '<option value="<%= user.id %>_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
-                    select += '<option value="<%= user.id %>_<%= permUserId %>"  ><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
+                    select += '<option value="' + user.id + '_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
+                    select += '<option value="' + user.id + '_<%= permUserId %>"  ><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
                 }
 
                 select += '</select>';
