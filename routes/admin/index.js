@@ -279,23 +279,23 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
-        db.User.findAll({include: [{model: db.Permission}]})
+        db.User.findAll({include: [{model: db.Permission}], order: ['email']})
             .then(
                 function (resultset) {
-                    var head = ['email', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
+                    var head = ['id', 'email', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
                     var lines = [];
                     lines.push(head);
                     for (var i = 0; i < resultset.length; i++) {
-                        var id = '';
+                        var permissionId = '';
                         var label = '';
                         if (resultset[i].Permission) {
-                            id = resultset[i].Permission.id;
+                            permissionId = resultset[i].Permission.id;
                             label = resultset[i].Permission.label;
                         }
                         var createdAt = resultset[i].created_at;
                         var passwordChangedAt = resultset[i].password_changed_at ? new Date(parseInt(resultset[i].password_changed_at)) : '';
                         var lastLoginAt = resultset[i].last_login_at ? new Date(parseInt(resultset[i].last_login_at)) : '';
-                        lines.push([resultset[i].email, id, label, createdAt, passwordChangedAt, lastLoginAt]);
+                        lines.push([resultset[i].id, resultset[i].email, permissionId, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 
                     var toDownload = csv.stringify(lines);
