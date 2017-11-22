@@ -33,7 +33,7 @@ var initDatabase = function (done) {
             .then(function () {
                 db.User.create({
                     id: 6,
-                    email: 'user@user.ch',
+                    email: 'User@User.ch',
                     provider_uid: 'testuser'
                 }).then(function (user) {
                     return db.UserProfile.create({firstname: 'Scott', lastname: 'Tiger', user_id: user.id});
@@ -488,8 +488,8 @@ describe('GET /admin/users/csv', function () {
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
         expect(self.res).to.have.header('content-length', '303'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
-        expect(self.res.text).match(/email,permission_id,permission,created,password_changed,last_login\r\ntestuser,1,admin,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\nuser@user.ch,,,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\n/);
-        // expect(self.res.text).to.equal('email,permission_id,permission\r\ntestuser,1,admin\r\nuser@user.ch,,\r\n');
+        expect(self.res.text).match(/email,permission_id,permission,created,password_changed,last_login\r\ntestuser,1,admin,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\nUser@User.ch,,,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\n/);
+        // expect(self.res.text).to.equal('email,permission_id,permission\r\ntestuser,1,admin\r\nUser@User.ch,,\r\n');
     });
 
 
@@ -1000,8 +1000,8 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(100);
                     expect(json.count).to.equal(152);
-                    expect(json.users[0].email).to.equal('testuser');
-                    expect(json.users[1].email).to.equal('user@user.ch');
+                    expect(json.users[0].email).to.equal('User@User.ch');
+                    expect(json.users[1].email).to.equal('testuser');
                     expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
                 });
             });
@@ -1060,7 +1060,7 @@ describe('GET /api/admin/users', function () {
         context('when search on ', function () {
             context(' mail with exact matching ', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?email=user@user.ch', {
+                    requestHelper.sendRequest(this, '/api/admin/users?email=User@User.ch', {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
@@ -1071,7 +1071,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('user@user.ch');
+                    expect(json.users[0].email).to.equal('User@User.ch');
                 });
             });
             context(' mail with exact matching ', function () {
@@ -1087,8 +1087,8 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(2);
                     expect(json.count).to.equal(2);
-                    expect(json.users[0].email).to.equal('testuser');
-                    expect(json.users[1].email).to.equal('user@user.ch');
+                    expect(json.users[0].email).to.equal('User@User.ch');
+                    expect(json.users[1].email).to.equal('testuser');
                 });
             });
             context('firstname with partial matching ', function () {
@@ -1104,7 +1104,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('user@user.ch');
+                    expect(json.users[0].email).to.equal('User@User.ch');
                 });
             });
             context('firstname, lastname and mail with partial matching', function () {
@@ -1120,7 +1120,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('user@user.ch');
+                    expect(json.users[0].email).to.equal('User@User.ch');
                 });
             });
             context('id only', function () {
