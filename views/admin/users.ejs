@@ -185,19 +185,28 @@
             if ($('#search-id-users').val()) {
                 data.id = $('#search-id-users').val();
                 savedData.id = data.id;
+            } else {
+                savedData.id = '';
             }
             if ($('#search-email-users').val()) {
                 data.email = $('#search-email-users').val();
                 savedData.email = data.email;
+            } else {
+                savedData.email = '';
             }
             if ($('#search-lastname-users').val()) {
                 data.lastname = $('#search-lastname-users').val();
                 savedData.lastname = data.lastname;
+            } else {
+                savedData.lastname = '';
             }
             if ($('#search-firstname-users').val()) {
                 data.firstname = $('#search-firstname-users').val();
                 savedData.firstname = data.firstname;
+            } else {
+                savedData.firstname = '';
             }
+
             $.ajax({
                 url: '/api/admin/users',
                 type: 'GET',
