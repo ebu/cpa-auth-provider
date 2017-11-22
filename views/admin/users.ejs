@@ -7,20 +7,25 @@
     <div class="toolbar">
         <div class="row">
             <div class="col-sm-1">
-                <input id="search-id-users" type="text" class="form-control input-lg" placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_ID') %>" />
+                <input id="search-id-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_ID') %>"/>
             </div>
             <div class="col-sm-3">
-                <input id="search-email-users" type="text" class="form-control input-lg" placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_EMAIL') %>" />
+                <input id="search-email-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_EMAIL') %>"/>
             </div>
             <div class="col-sm-3">
-                <input id="search-lastname-users" type="text" class="form-control input-lg" placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_LASTNAME') %>" />
+                <input id="search-lastname-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_LASTNAME') %>"/>
             </div>
             <div class="col-sm-3">
-                <input id="search-firstname-users" type="text" class="form-control input-lg" placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_FIRSTNAME') %>" />
+                <input id="search-firstname-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_FIRSTNAME') %>"/>
             </div>
             <div class="col-sm-2 text-right">
                 <button id="search-users" type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> <%= __('ADMIN_USERS_SEARCH_BUTTON') %>
+                    <span class="glyphicon glyphicon-search"
+                          aria-hidden="true"></span> <%= __('ADMIN_USERS_SEARCH_BUTTON') %>
                 </button>
             </div>
         </div>
@@ -64,22 +69,18 @@
                 <td><%= users[i].email %></td>
                 <td>
                     <select class="permission form-control">
-                        <option value="default" disabled selected>
-                            none
-                        </option>
-                        <% for (var j = 0; j < permissions.length; j++) { %>
-                        <option value="<%= users[i].id %>_<%= permissions[j].id %>"
-                                <% if(typeof users[i].permission_id !== "undefined" && permissions[j].id === users[i].permission_id){ %>
-                                selected
-                                <% } %>
-                        >
-                            <%= permissions[j].label %>
-                        </option>
+                        <% if(users[i].permission_id !== permAdminId) { %>
+                        <option value="<%= users[i].id %>_<%= permUserId %>" selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
+                        <option value="<%= users[i].id %>_<%= permAdminId %>"><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
+                        <% } else { %>
+                        <option value="<%= users[i].id %>_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
+                        <option value="<%= users[i].id %>_<%= permUserId %>"><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
                         <% } %>
                     </select>
                 </td>
                 <td><%= moment(users[i].created_at).format('DD/MM/YYYY - HH:mm'); %></td>
-                <td><% if(users[i].password_changed_at) { %>
+                <td>
+                    <% if(users[i].password_changed_at) { %>
                     <%= moment(new Date(parseInt(users[i].password_changed_at))).format('DD/MM/YYYY - HH:mm'); %>
                     <% } %>
                 </td>
@@ -119,7 +120,6 @@
             if ($(this).val() == "default") {
                 return;
             }
-
             var params = $(this).val().split("_");
             var userId = params[0];
             var permissionId = params[1];
@@ -139,28 +139,28 @@
             });
         });
 
-        $(window).scroll(function() {
+        $(window).scroll(function () {
             if ($(window).scrollTop() + $(window).height() >=
                 $('main').offset().top + $('main').height() && !loaded) {
 
                 loaded = true;
                 offset += 20;
-                
+
                 var data = {
                     offset: offset,
                     limit: LIMIT
                 };
 
-                if(savedData.id) {
+                if (savedData.id) {
                     data.id = savedData.id;
                 }
-                if(savedData.email) {
+                if (savedData.email) {
                     data.email = savedData.email;
                 }
-                if(savedData.firstname) {
+                if (savedData.firstname) {
                     data.firstname = savedData.firstname;
                 }
-                if(savedData.lastname) {
+                if (savedData.lastname) {
                     data.lastname = savedData.lastname;
                 }
 
@@ -169,7 +169,7 @@
                     type: 'GET',
                     data: data
                 }).done(function (data) {
-                    if(data.users.length > 0) {
+                    if (data.users.length > 0) {
                         fillUserTable(data.users, "append");
                     }
                 }).fail(function (error) {
@@ -178,23 +178,23 @@
             }
         });
 
-        search.on('click', function() {
+        search.on('click', function () {
             var data = {
                 limit: LIMIT
             };
-            if($('#search-id-users').val()) {
-               data.id = $('#search-id-users').val();
-               savedData.id = data.id;
+            if ($('#search-id-users').val()) {
+                data.id = $('#search-id-users').val();
+                savedData.id = data.id;
             }
-            if($('#search-email-users').val()) {
+            if ($('#search-email-users').val()) {
                 data.email = $('#search-email-users').val();
                 savedData.email = data.email;
             }
-            if($('#search-lastname-users').val()) {
+            if ($('#search-lastname-users').val()) {
                 data.lastname = $('#search-lastname-users').val();
                 savedData.lastname = data.lastname;
             }
-            if($('#search-firstname-users').val()) {
+            if ($('#search-firstname-users').val()) {
                 data.firstname = $('#search-firstname-users').val();
                 savedData.firstname = data.firstname;
             }
@@ -211,20 +211,16 @@
 
         function fillUserTable(users, type) {
             var body = table.find('tbody').first();
-            if(type === "reset") {
+            if (type === "reset") {
                 body.html('');
             }
-            if(!users || users.length === 0) {
+            if (!users || users.length === 0) {
                 return;
             }
 
-            var permissions = [];
-            <% for (var j = 0; j < permissions.length; j++) { %>
-                permissions.push({id: <%= permissions[j].id %>, label: "<%= permissions[j].label %>"});
-            <% } %>
             var rows = '';
 
-            $.each(users, function(index, user) {
+            $.each(users, function (index, user) {
                 var row = "<tr id='user-" + user.id + "'>";
                 var select = "";
                 row += "<td>" + user.id + "</td>";
@@ -232,24 +228,29 @@
 
                 select += '<select class="permission form-control">';
                 select += '<option value="default" disabled selected> none </option>';
-                $.each(permissions, function(key, permission) {
-                    select += '<option value="' + user.id + '_' + permission.id + '"';
-                    if(typeof user.permission_id !== "undefined" && permission.id === user.permission_id) {
-                        select += 'selected';
-                    }
-                    select += '> ' + permission.label;
-                });
+
+                if (user.permission_id !== <%= permAdminId %>) {
+                    select += '<option value="<%= user.id %>_<%= permUserId %>"  selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
+                    select += '<option value="<%= user.id %>_<%= permAdminId %>" ><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
+                } else {
+                    select += '<option value="<%= user.id %>_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
+                    select += '<option value="<%= user.id %>_<%= permUserId %>"  ><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
+                }
+
                 select += '</select>';
 
                 row += "<td>" + select + "</td>";
-                row += "<td>" + moment(user.created_at).format('DD/MM/YYYY - HH:mm'); + "</td>";
-                if(user.password_changed_at) {
-                row += "<td>" + moment(new Date(parseInt(user.password_changed_at))).format('DD/MM/YYYY - HH:mm'); + "</td>";
+                row += "<td>" + moment(user.created_at).format('DD/MM/YYYY - HH:mm');
+                +"</td>";
+                if (user.password_changed_at) {
+                    row += "<td>" + moment(new Date(parseInt(user.password_changed_at))).format('DD/MM/YYYY - HH:mm');
+                    +"</td>";
                 } else {
                     row += "<td></td>";
                 }
-                if(user.last_login_at) {
-                    row += "<td>" + moment(new Date(parseInt(user.last_login_at))).format('DD/MM/YYYY - HH:mm');+"</td>";
+                if (user.last_login_at) {
+                    row += "<td>" + moment(new Date(parseInt(user.last_login_at))).format('DD/MM/YYYY - HH:mm');
+                    +"</td>";
                 } else {
                     row += "<td></td>";
                 }
