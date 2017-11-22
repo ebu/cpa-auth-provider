@@ -83,7 +83,7 @@
                     <%= moment(new Date(parseInt(users[i].password_changed_at))).format('DD/MM/YYYY - HH:mm'); %>
                     <% } %>
                 </td>
-                <td><%= users[i].last_login_at%>
+                <td>
                     <% if(users[i].last_login_at) { %>
                     <%= moment(new Date(parseInt(users[i].last_login_at))).format('DD/MM/YYYY - HH:mm'); %>
                     <% } %>
