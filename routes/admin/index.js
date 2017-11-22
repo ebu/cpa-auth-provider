@@ -293,8 +293,8 @@ module.exports = function (router) {
                             label = resultset[i].Permission.label;
                         }
                         var createdAt = resultset[i].created_at;
-                        var passwordChangedAt = new Date(resultset[i].password_changed_at);
-                        var lastLoginAt = resultset[i].last_login_at ? new Date(resultset[i].last_login_at) : '';
+                        var passwordChangedAt = resultset[i].password_changed_at ? new Date(parseInt(resultset[i].password_changed_at)) : '';
+                        var lastLoginAt = resultset[i].last_login_at ? new Date(parseInt(resultset[i].last_login_at)) : '';
                         lines.push([resultset[i].email, id, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 
