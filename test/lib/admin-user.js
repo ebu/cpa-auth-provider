@@ -487,7 +487,7 @@ describe('GET /admin/users/csv', function () {
         expect(self.res.statusCode).to.equal(200);
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
-        expect(self.res).to.have.header('content-length', '303'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
+        expect(self.res).to.have.header('content-length', '264'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
         expect(self.res.text).match(/email,permission_id,permission,created,password_changed,last_login\r\ntestuser,1,admin,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\nUser@User.ch,,,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]+,[A-Za-z0-9 :+()]*\r\n/);
         // expect(self.res.text).to.equal('email,permission_id,permission\r\ntestuser,1,admin\r\nUser@User.ch,,\r\n');
     });
