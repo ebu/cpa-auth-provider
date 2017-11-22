@@ -94,6 +94,7 @@
             </tbody>
         </table>
     </div>
+    <div class="loader"></div>
 
 </div>
 
@@ -104,6 +105,7 @@
 
         var search = $('#search-users');
         var table = $('#table-users');
+        var loader = $('.loader');
 
         var errorSuccess = $("#alert-success");
         var errorAlert = $("#alert-error");
@@ -146,6 +148,7 @@
             if ($(window).scrollTop() + $(window).height() >=
                 $('main').offset().top + $('main').height() && !loaded) {
 
+                loader.show();
                 loaded = true;
                 offset += 20;
 
@@ -175,7 +178,9 @@
                     if (data.users.length > 0) {
                         fillUserTable(data.users, "append");
                     }
+                    loader.hide();
                 }).fail(function (error) {
+                    loader.hide();
                     console.log("error", error);
                 });
             }
