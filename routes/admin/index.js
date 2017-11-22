@@ -312,7 +312,7 @@ module.exports = function (router) {
     });
 
     router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
-        db.Permission.findOne({where: {id: req.body.permissionId}}).then(function (permission) {
+        db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
             if (!permission) {
                 return res.status(400).send({
                     success: false,

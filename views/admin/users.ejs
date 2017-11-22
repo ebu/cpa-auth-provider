@@ -128,7 +128,7 @@
                 url: '/admin/users/' + userId + '/permission',
                 type: 'POST',
                 data: {
-                    permissionId: permissionId
+                    permission: permissionId
                 }
             }).done(function (data) {
                 errorSuccess.html("Successfully changed " + data.user.email + " permission");
