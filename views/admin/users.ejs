@@ -244,7 +244,6 @@
                 row += "<td>" + user.email + "</td>";
 
                 select += '<select class="permission form-control">';
-                select += '<option value="default" disabled selected> none </option>';
 
                 if (user.permission_id !== <%= permAdminId %>) {
                     select += '<option value="' + user.id + '_<%= permUserId %>"  selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
