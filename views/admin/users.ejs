@@ -187,6 +187,10 @@
         });
 
         search.on('click', function () {
+            //reinit messages
+            errorSuccess.hide();
+            errorAlert.hide();
+
             var data = {
                 limit: LIMIT
             };
