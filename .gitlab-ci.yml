@@ -46,6 +46,9 @@ deploy_review_environment:
   variables:
     DEPLOY_URL: ${PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.pipe-swarm.ebu.io
     DOCKER_HOST: tcp://$SWARM_IP:2375
+  before_script:
+    - mkdir -pv ~/.docker; echo "$DOCKER_CA" > ~/.docker/ca.pem; echo "$DOCKER_CERT" > ~/.docker/cert.pem; echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD $CONTAINER_REGISTRY
   script:
     - docker login -u dind-runner -p $REGISTRY_PASSWORD $CONTAINER_REGISTRY
     - docker stack deploy --with-registry-auth --compose-file=docker-compose-review.yaml ${REVIEW_SERVICE_NAME}
@@ -68,6 +71,9 @@ stop_review_environment:
   variables:
     GIT_STRATEGY: none
     DOCKER_HOST: tcp://$SWARM_IP:2375
+  before_script:
+    - mkdir -pv ~/.docker; echo "$DOCKER_CA" > ~/.docker/ca.pem; echo "$DOCKER_CERT" > ~/.docker/cert.pem; echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD $CONTAINER_REGISTRY
   script:
     - docker stack rm ${REVIEW_SERVICE_NAME}
   when: manual
