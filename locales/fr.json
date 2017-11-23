@@ -93,8 +93,7 @@
 	"ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Dernière connexion",
 	"ADMIN_USERS_MSG_OK_1": "La permission de ",
 	"ADMIN_USERS_MSG_OK_2": " a été changée avec succès.",
-	"ADMIN_USERS_MSG_ERROR_1": "Erreur lors de la tentative de changement de permission de  ",
-	"ADMIN_USERS_MSG_ERROR_2": ".",
+	"ADMIN_USERS_MSG_ERROR": "Erreur lors de la tentative de changement de permission  ",
 
 	"AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Providers disponibles",
 	"AUTH_MAIN_LOGIN_FB_LINK": "Se connecter avec Facebook",

@@ -231,7 +231,7 @@ module.exports = function (router) {
         }
         return db.Permission.findAll().then(function (permissions) {
             var permAdminId = -1;
-            var permUserId = -2;
+            var permUserId = '';
             for (var i = 0; i < permissions.length; i++) {
                 if (permissions[i].label === permissionName.ADMIN_PERMISSION) {
                     permAdminId = permissions[i].id;
@@ -261,7 +261,7 @@ module.exports = function (router) {
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
-        db.Permission.find({where: {label : permissionName.ADMIN_PERMISSION}}).then(function (permission) {
+        db.Permission.find({where: {label: permissionName.ADMIN_PERMISSION}}).then(function (permission) {
             userHelper.countUsers(req, permission.id).then(function (count) {
                 userHelper.getUsers(req, permission.id).then(
                     function (users) {
@@ -316,21 +316,31 @@ module.exports = function (router) {
     });
 
     router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
-        db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
-            if (!permission) {
-                return res.status(400).send({
-                    success: false,
-                    msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')
-                });
-            }
+        if (!req.body.permission) {
             db.User.findOne({where: {id: req.params.user_id}})
                 .then(
                     function (user) {
-                        user.updateAttributes({permission_id: permission.id}).then(function () {
+                        user.updateAttributes({permission_id: null}).then(function () {
                             return res.status(200).send({success: true, user: user});
                         });
                     });
-        });
+        } else {
+            db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
+                if (!permission) {
+                    return res.status(400).send({
+                        success: false,
+                        msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')
+                    });
+                }
+                db.User.findOne({where: {id: req.params.user_id}})
+                    .then(
+                        function (user) {
+                            user.updateAttributes({permission_id: permission.id}).then(function () {
+                                return res.status(200).send({success: true, user: user});
+                            });
+                        });
+            });
+        }
 
 
     });

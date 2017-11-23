@@ -90,8 +90,7 @@
     "ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Last Login",
     "ADMIN_USERS_MSG_OK_1": "Successfully changed ",
     "ADMIN_USERS_MSG_OK_2": " permission.",
-    "ADMIN_USERS_MSG_ERROR_1": "Error changin ",
-    "ADMIN_USERS_MSG_ERROR_2": " permission, please try again.",
+    "ADMIN_USERS_MSG_ERROR": "Error changing permission:",
 
     "AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Available providers",
     "AUTH_MAIN_LOGIN_FB_LINK": "Login with Facebook",
