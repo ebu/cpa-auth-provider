@@ -44,7 +44,8 @@ var initDatabase = function (done) {
                 db.User.create({
                     id: 5,
                     email: 'testuser',
-                    provider_uid: 'testuser'
+                    provider_uid: 'testuser',
+                    permission_id: 1
                 })
                     .then(function (user) {
                         return user.setPassword('testpassword');
@@ -1119,6 +1120,22 @@ describe('GET /api/admin/users', function () {
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
                     expect(json.users[0].email).to.equal('User@User.ch');
+                });
+            });
+            context('admin only', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/api/admin/users?admin=true', {
+                        cookie: self.cookie,
+                        parseDOM: true
+                    }, done);
+                });
+
+                it('should return status 200 and contains 1 elements', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    var json = JSON.parse(this.res.text);
+                    expect(json.users.length).to.equal(1);
+                    expect(json.count).to.equal(1);
+                    expect(json.users[0].email).to.equal('testuser');
                 });
             });
             context('id only', function () {

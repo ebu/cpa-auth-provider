@@ -14,13 +14,20 @@
                 <input id="search-email-users" type="text" class="form-control input-lg"
                        placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_EMAIL') %>"/>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <input id="search-lastname-users" type="text" class="form-control input-lg"
                        placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_LASTNAME') %>"/>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <input id="search-firstname-users" type="text" class="form-control input-lg"
                        placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_FIRSTNAME') %>"/>
+            </div>
+            <div class="col-sm-2">
+                <div class="checkbox">
+                    <label><input id="search-admin-users" type="checkbox"
+                                  value=""><%= __('ADMIN_USERS_SEARCH_ADMIN_ONLY') %></label>
+                </div>
+
             </div>
             <div class="col-sm-2 text-right">
                 <button id="search-users" type="button" class="btn btn-default">
@@ -70,10 +77,12 @@
                 <td>
                     <select class="permission form-control">
                         <% if(users[i].permission_id !== permAdminId) { %>
-                        <option value="<%= users[i].id %>_<%= permUserId %>" selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
+                        <option value="<%= users[i].id %>_<%= permUserId %>"
+                                selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
                         <option value="<%= users[i].id %>_<%= permAdminId %>"><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
                         <% } else { %>
-                        <option value="<%= users[i].id %>_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
+                        <option value="<%= users[i].id %>_<%= permAdminId %>"
+                                selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
                         <option value="<%= users[i].id %>_<%= permUserId %>"><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
                         <% } %>
                     </select>
@@ -169,6 +178,9 @@
                 if (savedData.lastname) {
                     data.lastname = savedData.lastname;
                 }
+                if (savedData.admin) {
+                    data.admin = savedData.admin;
+                }
 
                 $.ajax({
                     url: '/api/admin/users',
@@ -218,6 +230,12 @@
             } else {
                 savedData.firstname = '';
             }
+            if ($('#search-admin-users').is(':checked')) {
+                data.admin = $('#search-admin-users').is(':checked');
+                savedData.admin = data.admin;
+            } else {
+                savedData.admin = '';
+            }
 
             $.ajax({
                 url: '/api/admin/users',
@@ -251,9 +269,9 @@
 
                 if (user.permission_id !== <%= permAdminId %>) {
                     select += '<option value="' + user.id + '_<%= permUserId %>"  selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
-                    select += '<option value="' + user.id + '_<%= permAdminId %>" ><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
+                    select += '<option value="' + user.id + '_<%= permAdminId %>" ><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>';
                 } else {
-                    select += '<option value="' + user.id + '_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE')  %></option>';
+                    select += '<option value="' + user.id + '_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>';
                     select += '<option value="' + user.id + '_<%= permUserId %>"  ><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
                 }
 

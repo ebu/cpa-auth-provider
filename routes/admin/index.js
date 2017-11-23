@@ -240,7 +240,7 @@ module.exports = function (router) {
                     permUserId = permissions[i].id;
                 }
             }
-            userHelper.getUsers(req).then(function (users) {
+            userHelper.getUsers(req, permAdminId).then(function (users) {
 
                 return res.render('./admin/users.ejs', {
                     users: users,
@@ -261,14 +261,18 @@ module.exports = function (router) {
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
-        userHelper.countUsers(req).then(function (count) {
-            userHelper.getUsers(req).then(
-                function (users) {
-                    return res.status(200).json({users: userHelper.getDisplayableUser(users), count: count});
-                }, function () {
-                    return res.send(500);
-                });
+        db.Permission.find({where: {label : permissionName.ADMIN_PERMISSION}}).then(function (permission) {
+            userHelper.countUsers(req, permission.id).then(function (count) {
+                userHelper.getUsers(req, permission.id).then(
+                    function (users) {
+                        return res.status(200).json({users: userHelper.getDisplayableUser(users), count: count});
+                    }, function () {
+                        return res.send(500);
+                    });
+            });
         });
+
+
     });
 
 
