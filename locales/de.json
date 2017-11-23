@@ -88,6 +88,10 @@
 	"ADMIN_USERS_CREATED_TABLE_COL_TITLE": "Erstellt",
 	"ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE": "Passwort geändert",
 	"ADMIN_USERS_LAST_LOGIN_TABLE_COL_TITLE": "Letzte Anmeldung",
+	"ADMIN_USERS_MSG_OK_1": "Successfully changed ",
+	"ADMIN_USERS_MSG_OK_2": " permission.",
+	"ADMIN_USERS_MSG_ERROR_1": "Error changin ",
+	"ADMIN_USERS_MSG_ERROR_2": " permission, please try again.",
 
 	"AUTH_MAIN_AVAILABLE_PROVIDERS_TITLE": "Verfügbare Anbieter",
 	"AUTH_MAIN_LOGIN_FB_LINK": "Mit Facebook einloggen",

@@ -133,13 +133,13 @@
                     permission: permissionId
                 }
             }).done(function (data) {
-                errorSuccess.html("Successfully changed " + data.user.email + " permission");
+                errorSuccess.html("<%= __('ADMIN_USERS_MSG_OK_1') %>" + data.user.email + "<%= __('ADMIN_USERS_MSG_OK_2') %>");
                 errorSuccess.show();
                 $('html, body').animate({
                     scrollTop: $("#users").offset().top
                 }, 2000);
             }).fail(function (error) {
-                errorAlert.html("Error changin " + data.user.email + " permission, please try again");
+                errorAlert.html("<%= __('ADMIN_USERS_MSG_ERROR_1') %>" + data.user.email + "<%= __('ADMIN_USERS_MSG_ERROR_1') %>");
                 errorAlert.show();
             });
         });
