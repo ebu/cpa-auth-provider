@@ -157,6 +157,11 @@
             if ($(window).scrollTop() + $(window).height() >=
                 $('main').offset().top + $('main').height() && !loaded) {
 
+                //do not try to load more if an ID is fullfilled
+                if (savedData.id) {
+                    return;
+                }
+
                 loader.show();
                 loaded = true;
                 offset += 20;
@@ -166,9 +171,6 @@
                     limit: LIMIT
                 };
 
-                if (savedData.id) {
-                    data.id = savedData.id;
-                }
                 if (savedData.email) {
                     data.email = savedData.email;
                 }
