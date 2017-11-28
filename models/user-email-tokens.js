@@ -23,20 +23,19 @@ module.exports = function (sequelize, DataTypes) {
 		{
 			underscored: true,
 
-			instanceMethods: {
-				consume: function() {
-					return this.updateAttributes({sub: 'used'});
-				},
-				isAvailable: function() {
-					return !this.sub;
-				}
-			},
-
 			associate: function (models) {
 				UserEmailToken.belongsTo(models.User);
 				UserEmailToken.belongsTo(models.OAuth2Client, { foreignKey: 'oauth2_client_id' });
 			}
 		});
+
+	UserEmailToken.prototype.consume = function () {
+        return this.updateAttributes({sub: 'used'});
+	};
+
+	UserEmailToken.prototype.isAvailable = function () {
+        return !this.sub;
+	};
 
 	return UserEmailToken;
 };

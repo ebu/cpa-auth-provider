@@ -15,6 +15,8 @@ var STATES = {
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
 };
 
+const APPEND_MOVED = '?auth=account_moved';
+
 module.exports = routes;
 
 function routes(router) {
@@ -83,13 +85,8 @@ function routes(router) {
             db.UserEmailToken.findOne({where: {key: req.params.token}, include: [db.User, db.OAuth2Client]}).then(
                 function (token_) {
                     token = token_;
-                    clientId = req.query.client_id;
                     if (!token || !token.type.startsWith('MOV')) {
                         throw new Error(STATES.INVALID_TOKEN);
-                    }
-
-                    if (token.OAuth2Client.client_id !== clientId) {
-                        throw new Error(STATES.MISMATCHED_CLIENT_ID);
                     }
 
                     user = token.User;
@@ -155,12 +152,9 @@ function triggerAccountChangeEmails(user, client, newUsername) {
             }
 
             var redirectUri = client.email_redirect_uri;
-            if (!client.mayEmailRedirect(redirectUri)) {
-                redirectUri = undefined;
-            }
-
-            var baseUid = uuid.v4();
-            var key = new Buffer(uuid.parse(baseUid)).toString('base64');
+            const buffer = new Buffer(16);
+            uuid.v4({}, buffer);
+            var key = buffer.toString('base64');
 
             db.UserEmailToken.create({
                 key: key,

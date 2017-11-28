@@ -190,7 +190,7 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should redirect', function () {
-            expect(this.res.statusCode).equal(301);
+            expect(this.res.statusCode).equal(302);
         });
 
         it('should change the email', function (done) {
