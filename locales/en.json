@@ -188,6 +188,15 @@
     "PROFILE_JS_ERROR_DELETE_ACCOUNT": "An error occurred while deleting the account.",
     "PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Your account has been deleted successfully.",
 
+    "PROFILE_CHANGE_EMAIL_LINK": "change",
+    "PROFILE_CHANGE_EMAIL_MODAL_TITLE": "Change Email Address",
+    "PROFILE_CHANGE_EMAIL_MODAL_TEXT": "You can request to change your email address. This will send an email to the new address with a link that allows you to confirm this process.",
+    "PROFILE_CHANGE_EMAIL_MODAL_FORM_NEW_EMAIL_LABEL": "new email address",
+    "PROFILE_CHANGE_EMAIL_MODAL_CLOSE": "Cancel",
+    "PROFILE_CHANGE_EMAIL_MODAL_SUBMIT": "Send Email",
+    "PROFILE_CHANGE_EMAIL_NO_EMAIL": "You need to provide a valid new email address.",
+    "PROFILE_CHANGE_EMAIL_ERROR": "Couldn't request the change to this new email address.",
+
     "ACCESS_DENIED_TITLE": "Access Denied",
     "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content",
 

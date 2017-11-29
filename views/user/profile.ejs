@@ -131,6 +131,9 @@
                         <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
                         <% if (profile.email !== null) { %>
                         <span class="data-value"><%= profile.email %></span>
+                        <button class="btn btn-primary btn-large-submit" type="button" data-toggle="modal" data-target="#changeEmailModal">
+                            <span class="button-label"><%= __('PROFILE_CHANGE_EMAIL_LINK') %></span>
+                        </button>
                         <% } else { %>
                         <span></span>
                         <% } %>
@@ -340,6 +343,7 @@
 </div>
 
 <!-- Add client Modal -->
+<% include ./modales/email-change.ejs %>
 <% include ./modales/user-delete.ejs %>
 <% include ../util/password-support %>
 
@@ -507,6 +511,10 @@
             });
         });
 
+        $('#changeEmailModal').on('show.bs.modal', function () {
+            this.classList.remove('fade');
+        });
+
         $deleteUserModal.on('show.bs.modal', function () {
             $deleteUserModal.removeClass('fade');
         })
@@ -520,6 +528,63 @@
                 $('#delete-user').click();
                 return false;
             }
+        });
+
+        $('button#change-email').on('click', function (e) {
+            e.preventDefault();
+            var $btn = $(e.target);
+            var label = $btn.find('.button-label').first();
+            var spinner = $btn.find(".spinner").first();
+            var $changeEmailError = $("#change-email-error");
+            var $changeEmailNew = $("#change-email-new");
+            var $changeEmailForm = $("#changeEmailForm");
+
+            spinner.show();
+            label.hide();
+
+            $changeEmailError.hide();
+            $changeEmailError.html("");
+            $changeEmailForm.first('div.form-group').removeClass('has-error');
+
+            if (!$changeEmailNew.val()) {
+                $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_NO_EMAIL') %>");
+                $changeEmailForm.first('div.form-group').addClass('has-error');
+                $changeEmailError.show();
+                spinner.hide();
+                label.show();
+                return;
+            }
+
+            $.ajax(
+                {
+                    // TODO daniel: replace with proper request!
+                    url: 'somewhere',
+                    type: 'POST',
+                    data: {
+                        new_email: $changeEmailNew.val(),
+                    },
+                    success: function(result) {
+                        $("#changeEmailModal").modal('toggle');
+                        spinner.hide();
+                        label.show();
+                    },
+                    error: function(error) {
+                        if (error.responseJSON && error.responseJSON.msg) {
+                            $changeEmailError.html(error.responseJSON.msg);
+                            $changeEmailForm.first('div.form-group').addClass('has-error');
+                            $changeEmailError.show();
+                            spinner.hide()
+                            label.show();
+                        } else {
+                            $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_ERROR') %>");
+                            $changeEmailForm.first('div.form-group').addClass('has-error');
+                            $changeEmailError.show();
+                            spinner.hide();
+                            label.show();
+                        }
+                    }
+                }
+            )
         });
 
         $btnDeleteAccount.on('click', function (e) {
