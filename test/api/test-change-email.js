@@ -242,6 +242,7 @@ describe('GET /email/move/:token', function () {
                 function (u) {
                     expect(u).a('object');
                     expect(u.id).equal(USER1.id);
+                    expect(u.verified).equal(true);
                     done();
                 }
             ).catch(done);

@@ -107,7 +107,8 @@ function routes(router) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
                     return user.updateAttributes({
-                        email: newUsername
+                        email: newUsername,
+                        verified: true,
                     });
                 }
             ).then(
