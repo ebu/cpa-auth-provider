@@ -1,4 +1,5 @@
 {
   "node": true,
+  "esversion": 6,
   "globals": {"Promise": true}
 }

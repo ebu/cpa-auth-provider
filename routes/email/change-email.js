@@ -34,7 +34,7 @@ function routes(router) {
             if (!oldUser) {
                 console.log('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ']');
                 console.log(oldUser);
-                return res.status(401).json({success: false, reason: 'Unauthorized'})
+                return res.status(401).json({success: false, reason: 'Unauthorized'});
             }
             console.log('[POST /email/change][user_id', oldUser.id, '][from',
                 oldUser.email, '][to', newUsername, ']');
@@ -130,14 +130,16 @@ function routes(router) {
             );
 
             function redirectOnSuccess(message) {
-                var fields = [
+                let fields = [
                     'username=' + encodeURIComponent(user.email),
                     'old=' + encodeURIComponent(oldEmail)
                 ];
                 if (message) {
                     fields.push('message=' + encodeURIComponent(message));
                 }
-                return res.redirect(token.OAuth2Client.email_redirect_url + APPEND_MOVED + '&' + fields.join('&'));
+
+                const redirectUri = token.OAuth2Client.redirect_uri || config.mail.host;
+                return res.redirect(redirectUri + APPEND_MOVED + '&' + fields.join('&'));
             }
         }
     );

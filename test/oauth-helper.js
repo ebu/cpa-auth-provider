@@ -105,5 +105,5 @@ function getAccessToken(user, client) {
             },
             done
         );
-    }
+    };
 }
