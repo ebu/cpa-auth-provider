@@ -196,6 +196,10 @@
     "PROFILE_CHANGE_EMAIL_MODAL_SUBMIT": "Send Email",
     "PROFILE_CHANGE_EMAIL_NO_EMAIL": "You need to provide a valid new email address.",
     "PROFILE_CHANGE_EMAIL_ERROR": "Couldn't request the change to this new email address.",
+    "CHANGE_EMAIL_API_INVALID_TOKEN": "Invalid token for authentication.",
+    "CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID": "This client is not allowed.",
+    "CHANGE_EMAIL_API_ALREADY_USED": "Email has already been changed.",
+    "CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "This email is not available.",
 
     "ACCESS_DENIED_TITLE": "Access Denied",
     "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content",

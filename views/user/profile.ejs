@@ -537,6 +537,7 @@
             var spinner = $btn.find(".spinner").first();
             var $changeEmailError = $("#change-email-error");
             var $changeEmailNew = $("#change-email-new");
+            var $changeEmailPassword = $("#change-email-password");
             var $changeEmailForm = $("#changeEmailForm");
 
             spinner.show();
@@ -558,10 +559,11 @@
             $.ajax(
                 {
                     // TODO daniel: replace with proper request!
-                    url: 'somewhere',
+                    url: '/email/change',
                     type: 'POST',
                     data: {
                         new_email: $changeEmailNew.val(),
+                        password: $changeEmailPassword.val(),
                     },
                     success: function(result) {
                         $("#changeEmailModal").modal('toggle');

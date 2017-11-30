@@ -24,7 +24,13 @@ function routes(router) {
     router.post(
         '/email/change',
         cors(),
-        passport.authenticate('bearer', {session: false}),
+        function (req, res, next) {
+            if (!!req.user) {
+                return next();
+            } else {
+                return passport.authenticate('bearer', {session: false})(req, res, next);
+            }
+        },
         // authHelper.ensureAuthenticated,
         function (req, res) {
             var oldUser = req.user;
@@ -71,7 +77,14 @@ function routes(router) {
                 function (err) {
                     logger.warn('[POST /email/change][FAIL bad password][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, '][err', err, ']');
-                    return res.status(400).json({success: false, reason: err.message});
+                    var message = '';
+                    for (var key in STATES) {
+                        if (STATES.hasOwnProperty(key) && STATES[key] === err.message) {
+                            message = req.__('CHANGE_EMAIL_API_' + err.message);
+                            break;
+                        }
+                    }
+                    return res.status(400).json({success: false, reason: err.message, msg: message});
                 }
             );
         }
