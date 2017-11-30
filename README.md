@@ -11,7 +11,8 @@ More information on the [EBU Cross-Platform Authentication project](http://tech.
 
 ## Prerequisites
 
-Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
+- Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
+- Ensure your system has [Yarn](https://yarnpkg.com/en/) installed. (on mac, you can do so with [Homebrew](https://brew.sh/) with `brew install yarn --without-node`)
 
 ## Getting started
 
