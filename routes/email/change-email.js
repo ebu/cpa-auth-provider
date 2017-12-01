@@ -13,6 +13,7 @@ var STATES = {
     MISMATCHED_CLIENT_ID: 'MISMATCHED_CLIENT_ID',
     ALREADY_USED: 'ALREADY_USED',
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
+    WRONG_PASSWORD: 'WRONG_PASSWORD',
 };
 
 const APPEND_MOVED = '?auth=account_moved';
@@ -55,9 +56,7 @@ function routes(router) {
             ).then(
                 function (correct) {
                     if (!correct) {
-                        logger.warn('[POST /email/change][FAIL bad password][user_id', oldUser.id, '][from',
-                            oldUser.email, '][to', newUsername, ']');
-                        return res.status(403).json({success: false, reason: 'Forbidden'});
+                        throw new Error(STATES.WRONG_PASSWORD);
                     }
 
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
@@ -75,7 +74,7 @@ function routes(router) {
                 }
             ).catch(
                 function (err) {
-                    logger.warn('[POST /email/change][FAIL bad password][user_id', oldUser.id, '][from',
+                    logger.warn('[POST /email/change][FAIL][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, '][err', err, ']');
                     var message = '';
                     for (var key in STATES) {
@@ -84,7 +83,11 @@ function routes(router) {
                             break;
                         }
                     }
-                    return res.status(400).json({success: false, reason: err.message, msg: message});
+                    var status = 400;
+                    if (err.message === STATES.WRONG_PASSWORD) {
+                        status = 403;
+                    }
+                    return res.status(status).json({success: false, reason: err.message, msg: message});
                 }
             );
         }
@@ -104,7 +107,7 @@ function routes(router) {
 
                     user = token.User;
                     oldEmail = user.email;
-                    newUsername = token.type.split('$')[1];
+                    newUsername = token.type.substring('MOV$'.length);
                     if (!token.isAvailable()) {
                         var err = new Error(STATES.ALREADY_USED);
                         err.data = {success: newUsername === oldEmail};

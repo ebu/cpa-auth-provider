@@ -202,6 +202,7 @@
 	"CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID": "Ce client n'est pas autorisé.",
 	"CHANGE_EMAIL_API_ALREADY_USED": "Votre adresse email a déjé été changée.",
 	"CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "Cet adresse email n'est pas disponible.",
+	"CHANGE_EMAIL_API_WRONG_PASSWORD": "TODO Ce mot de passe est kaput.",
 
 	"ACCESS_DENIED_TITLE": "Accès refusé",
 	"ACCESS_DENIED_MSG": "Nous sommes désolés, mais vous n'avez pas la permission d'accéder à ce contenu",
