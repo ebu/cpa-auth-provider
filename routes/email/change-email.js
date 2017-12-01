@@ -104,7 +104,7 @@ function routes(router) {
 
                     user = token.User;
                     oldEmail = user.email;
-                    newUsername = token.type.split('$')[1];
+                    newUsername = token.type.substring('MOV$'.length);
                     if (!token.isAvailable()) {
                         var err = new Error(STATES.ALREADY_USED);
                         err.data = {success: newUsername === oldEmail};
