@@ -62,7 +62,7 @@ function routes(router) {
 
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUser, req.authInfo.client, newUsername).then(
+                    triggerAccountChangeEmails(oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
                         function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
@@ -150,11 +150,7 @@ function routes(router) {
 function triggerAccountChangeEmails(user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
-            if (!client) {
-                return reject('UNKNOWN_CLIENT');
-            }
-
-            var redirectUri = client.email_redirect_uri;
+            var redirectUri = client ? client.email_redirect_uri : undefined;
             const buffer = new Buffer(16);
             uuid.v4({}, buffer);
             var key = buffer.toString('base64');
