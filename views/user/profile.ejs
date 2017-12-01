@@ -131,9 +131,12 @@
                         <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
                         <% if (profile.email !== null) { %>
                         <span class="data-value"><%= profile.email %></span>
-                        <button class="btn btn-primary btn-large-submit" type="button" data-toggle="modal" data-target="#changeEmailModal">
+                        <span class="data-value">
+                        <button class="btn btn-link" type="button" data-toggle="modal" data-target="#changeEmailModal">
+                            <i class='glyphicon glyphicon-pencil'></i>
                             <span class="button-label"><%= __('PROFILE_CHANGE_EMAIL_LINK') %></span>
                         </button>
+                        </span>
                         <% } else { %>
                         <span></span>
                         <% } %>
@@ -513,6 +516,7 @@
 
         $('#changeEmailModal').on('show.bs.modal', function () {
             this.classList.remove('fade');
+            $("#change-email-password").val('');
         });
 
         $deleteUserModal.on('show.bs.modal', function () {
@@ -558,7 +562,6 @@
 
             $.ajax(
                 {
-                    // TODO daniel: replace with proper request!
                     url: '/email/change',
                     type: 'POST',
                     data: {
@@ -567,10 +570,12 @@
                     },
                     success: function(result) {
                         $("#changeEmailModal").modal('toggle');
+                        $changeEmailPassword.val('');
                         spinner.hide();
                         label.show();
                     },
                     error: function(error) {
+                        $changeEmailPassword.val('');
                         if (error.responseJSON && error.responseJSON.msg) {
                             $changeEmailError.html(error.responseJSON.msg);
                             $changeEmailForm.first('div.form-group').addClass('has-error');

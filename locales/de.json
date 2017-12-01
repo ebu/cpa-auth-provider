@@ -189,6 +189,19 @@
 	"PROFILE_JS_ERROR_DELETE_ACCOUNT": "Beim Löschen des Kontos ist ein Fehler aufgetreten.",
 	"PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Your account has been deleted successfully.",
 
+	"PROFILE_CHANGE_EMAIL_LINK": "Email-Adresse ändern",
+	"PROFILE_CHANGE_EMAIL_MODAL_TITLE": "Email-Adresse ändern",
+	"PROFILE_CHANGE_EMAIL_MODAL_TEXT": "Sie können eine Änderung Ihrer Email-Adresse anfordern. Das wird eine Email an die neue Adresse schicken, mit der Sie die Änderung dann bestätigen können. Geben Sie bitte auch Ihr Passwort ein, damit nur Sie das machen können.",
+	"PROFILE_CHANGE_EMAIL_MODAL_FORM_NEW_EMAIL_LABEL": "Neue Email-Adresse",
+	"PROFILE_CHANGE_EMAIL_MODAL_CLOSE": "Abbrechen",
+	"PROFILE_CHANGE_EMAIL_MODAL_SUBMIT": "Email schicken",
+	"PROFILE_CHANGE_EMAIL_NO_EMAIL": "Sie müssen eine gültige neue Email-Adresse angeben.",
+	"PROFILE_CHANGE_EMAIL_ERROR": "Die Email-Adresse konnte nicht geändert werden.",
+	"CHANGE_EMAIL_API_INVALID_TOKEN": "Ungültiges Token für die Authentifizierung.",
+	"CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID": "Client nicht erlaubt.",
+	"CHANGE_EMAIL_API_ALREADY_USED": "Email-Adresse wurde bereits geändert.",
+	"CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "Die Email-Adresse ist nicht verfügbar.",
+
 	"ACCESS_DENIED_TITLE": "Zugriff abgelehnt",
 	"ACCESS_DENIED_MSG": "Sie haben keine Berechtigung, auf diesen Inhalt zuzugreifen",
 
