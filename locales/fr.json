@@ -192,7 +192,7 @@
 
 	"PROFILE_CHANGE_EMAIL_LINK": "Changer",
 	"PROFILE_CHANGE_EMAIL_MODAL_TITLE": "Changement d'adresse email",
-	"PROFILE_CHANGE_EMAIL_MODAL_TEXT": "Vous pouvez changer votre adresse email. En validant ce formulaire vous allez recevoir un mail contenant unlien qui vous permttra de terminer le processus. Pour s'assurer que seul vous puissiez faire cela, merci de saisir votre mots de passe"
+	"PROFILE_CHANGE_EMAIL_MODAL_TEXT": "Vous pouvez changer votre adresse email. En validant ce formulaire vous allez recevoir un mail contenant unlien qui vous permttra de terminer le processus. Pour s'assurer que seul vous puissiez faire cela, merci de saisir votre mots de passe",
 	"PROFILE_CHANGE_EMAIL_MODAL_FORM_NEW_EMAIL_LABEL": "Nouvelle adresse email",
 	"PROFILE_CHANGE_EMAIL_MODAL_CLOSE": "Annuler ",
 	"PROFILE_CHANGE_EMAIL_MODAL_SUBMIT": "Envoyer l'email.",
