@@ -31,7 +31,20 @@
                         <%= __('MOVE_MAIL_EMAIL_VALIDATION_LABEL') %>
                     </h1>
 
-                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE') %><%= message %>
+                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE') %>
+                    <% if (message) { %>
+                        <% if (message === 'INVALID_TOKEN') { %>
+                            <%= __('CHANGE_EMAIL_API_INVALID_TOKEN') %>
+                        <% } else if (message === 'MISMATCHED_CLIENT_ID') { %>
+                            <%= __('CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID') %>
+                        <% } else if (message === 'ALREADY_USED') { %>
+                            <%= __('CHANGE_EMAIL_API_ALREADY_USED') %>
+                        <% } else if (message === 'EMAIL_ALREADY_TAKEN') { %>
+                            <%= __('CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN') %>
+                        <% } else  { %>
+                            <%= message %>
+                        <% } %>
+                    <% } %>
 
                 </div>
             </div>
