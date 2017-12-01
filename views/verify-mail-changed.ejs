@@ -1,0 +1,46 @@
+<% include layout/header %>
+
+<div id="verify-mail" xmlns="http://www.w3.org/1999/html">
+
+    <div class="container">
+
+        <div class="col-sm-6 col-sm-offset-3">
+
+            <% if (success) { %>
+
+            <div id="success-panel" class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <h1 class="title text-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span>
+                        <%= __('MOVE_MAIL_EMAIL_VALIDATION_LABEL') %>
+                    </h1>
+
+                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE') %>
+
+                </div>
+            </div>
+
+            <% } else { %>
+
+            <div id="error-panel" class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <h1 class="title text-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span>
+                        <%= __('MOVE_MAIL_EMAIL_VALIDATION_LABEL') %>
+                    </h1>
+
+                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE') %><%= message %>
+
+                </div>
+            </div>
+
+            <% } %>
+
+        </div>
+    </div>
+
+</div>
+
+<% include layout/foot %>

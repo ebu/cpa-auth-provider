@@ -130,30 +130,17 @@ function routes(router) {
                 }
             ).then(
                 function () {
-                    return redirectOnSuccess(undefined);
+                    return redirectOnSuccess(true, undefined);
                 }
             ).catch(
                 function (err) {
                     logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
-                    if (err.data && err.data.success) {
-                        return redirectOnSuccess(err.message);
-                    } else {
-                        return res.status(400).json({success: false, reason: err.message});
-                    }
+                    return redirectOnSuccess(err.data && err.data.success, err.message);
                 }
             );
 
-            function redirectOnSuccess(message) {
-                let fields = [
-                    'username=' + encodeURIComponent(user.email),
-                    'old=' + encodeURIComponent(oldEmail)
-                ];
-                if (message) {
-                    fields.push('message=' + encodeURIComponent(message));
-                }
-
-                const redirectUri = token.OAuth2Client.redirect_uri || config.mail.host;
-                return res.redirect(redirectUri + APPEND_MOVED + '&' + fields.join('&'));
+            function redirectOnSuccess(success, message) {
+                res.render('./verify-mail-changed.ejs', {success : success, message: message});
             }
         }
     );

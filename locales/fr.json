@@ -245,6 +245,11 @@
 	"VERIFY_YES_RADIO": " Oui",
 	"VERIFY_NO_RADIO": " Non",
 
+	"MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Changement d'email",
+	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Votre email a été changé avec succès",
+	"MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Votre email n'a pas pu être changé.",
+	"MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Votre email n'a pas pu être changé pour la raison suivante : ",
+
 	"VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Validation Email",
 	"VERIFY_MAIL_SUCCESS_LABEL": "Votre compte a été vérifié avec succès.",
 	"VERIFY_MAIL_SUCCESS_THX_LABEL": "Merci",
