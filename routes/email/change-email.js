@@ -39,7 +39,7 @@ function routes(router) {
             var password = req.body.password;
 
             if (!oldUser) {
-                logger.debug('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ' where old user is ',oldUser,']');
+                logger.debug('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ' where old user is ', oldUser, ']');
                 return res.status(401).json({success: false, reason: 'Unauthorized'});
             }
             logger.debug('[POST /email/change][user_id', oldUser.id, '][from',
@@ -69,9 +69,7 @@ function routes(router) {
                             logger.debug('[POST /email/change][EMAILS][ERROR][', e, ']');
                         }
                     );
-                    var redirectUri = req.session.auth_origin;
-                    delete req.session.auth_origin;
-                    return res.status(200).json({success: true, redirect :redirectUri});
+                    return res.status(200).json({success: true});
                 }
             ).catch(
                 function (err) {
@@ -88,9 +86,11 @@ function routes(router) {
                     if (err.message === STATES.WRONG_PASSWORD) {
                         status = 403;
                     }
-                    var redirectUri = req.session.auth_origin;
-                    delete req.session.auth_origin;
-                    return res.status(status).json({success: false, reason: err.message, msg: message, redirect :redirectUri});
+                    return res.status(status).json({
+                        success: false,
+                        reason: err.message,
+                        msg: message
+                    });
                 }
             );
         }
@@ -146,7 +146,9 @@ function routes(router) {
             );
 
             function redirectOnSuccess(success, message) {
-                res.render('./verify-mail-changed.ejs', {success : success, message: message});
+                var redirectUri = req.session.auth_origin;
+                delete req.session.auth_origin;
+                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirectUri});
             }
         }
     );
