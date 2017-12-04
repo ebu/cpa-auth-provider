@@ -202,6 +202,7 @@
     "CHANGE_EMAIL_API_ALREADY_USED": "Email has already been changed.",
     "CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "This email is not available.",
     "CHANGE_EMAIL_API_WRONG_PASSWORD": "Wrong password.",
+    "CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN": "Cannot change your email since your account is linked to a social network",
 
     "ACCESS_DENIED_TITLE": "Access Denied",
     "ACCESS_DENIED_MSG": "Sorry, you don't have permission to access this content",

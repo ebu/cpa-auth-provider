@@ -7,6 +7,7 @@ var passport = require('passport');
 var emailHelper = require('../../lib/email-helper');
 var config = require('../../config');
 var uuid = require('uuid');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 
 var STATES = {
     INVALID_TOKEN: 'INVALID_TOKEN',
@@ -14,6 +15,7 @@ var STATES = {
     ALREADY_USED: 'ALREADY_USED',
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
     WRONG_PASSWORD: 'WRONG_PASSWORD',
+    HAS_SOCIAL_LOGIN: 'HAS_SOCIAL_LOGIN'
 };
 
 const APPEND_MOVED = '?auth=account_moved';
@@ -56,6 +58,13 @@ function routes(router) {
                 function (correct) {
                     if (!correct) {
                         throw new Error(STATES.WRONG_PASSWORD);
+                    }
+                    return oAuthProviderHelper.hasSocialLogin(oldUser);
+                }
+            ).then(
+                function (hasSocialLogin) {
+                    if (hasSocialLogin) {
+                        throw new Error(STATES.HAS_SOCIAL_LOGIN);
                     }
 
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
