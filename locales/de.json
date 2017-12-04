@@ -204,6 +204,7 @@
 	"CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "Die Email-Adresse ist nicht verfügbar.",
 	"CHANGE_EMAIL_API_WRONG_PASSWORD": "Das Passwort stimmt nicht.",
 	"CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN": "Da Ihr Account mit einem Sozialen Netzwerk verknüpft ist, kann die Email-Adresse nicht geändert werden.",
+	"CHANGE_EMAIL_API_TOO_MANY_REQUESTS": "Zu viele Versuche. Bitte versuchen Sie es später nochmals.",
 
 	"ACCESS_DENIED_TITLE": "Zugriff abgelehnt",
 	"ACCESS_DENIED_MSG": "Sie haben keine Berechtigung, auf diesen Inhalt zuzugreifen",
