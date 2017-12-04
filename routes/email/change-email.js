@@ -69,7 +69,7 @@ function routes(router) {
                             logger.debug('[POST /email/change][EMAILS][ERROR][', e, ']');
                         }
                     );
-                    return res.status(200).json({success: true});
+                    return res.status(200).json({success: true, redirect :req.session.auth_origin});
                 }
             ).catch(
                 function (err) {
@@ -86,7 +86,7 @@ function routes(router) {
                     if (err.message === STATES.WRONG_PASSWORD) {
                         status = 403;
                     }
-                    return res.status(status).json({success: false, reason: err.message, msg: message});
+                    return res.status(status).json({success: false, reason: err.message, msg: message, redirect :req.session.auth_origin});
                 }
             );
         }
