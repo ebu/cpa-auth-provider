@@ -191,7 +191,7 @@
 	"PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Votre compte a bien été supprimé.",
 
 	"PROFILE_CHANGE_EMAIL_LINK": "Changer",
-	"PROFILE_CHANGE_EMAIL_SUCCESS": "TODO An email is being sent to the new email address. Please follow its instructions to complete the change.",
+	"PROFILE_CHANGE_EMAIL_SUCCESS": "Un email a été envoyé à votre nouvelle adresse. Merci de suivre les instructions de ce dernier pour finaliser le changement d'adresse.",
 	"PROFILE_CHANGE_EMAIL_MODAL_TITLE": "Changement d'adresse email",
 	"PROFILE_CHANGE_EMAIL_MODAL_TEXT": "Vous pouvez changer votre adresse email. En validant ce formulaire vous allez recevoir un mail contenant unlien qui vous permttra de terminer le processus. Pour s'assurer que seul vous puissiez faire cela, merci de saisir votre mots de passe",
 	"PROFILE_CHANGE_EMAIL_MODAL_FORM_NEW_EMAIL_LABEL": "Nouvelle adresse email",
