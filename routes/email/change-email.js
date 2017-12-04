@@ -19,6 +19,12 @@ var STATES = {
 };
 
 const APPEND_MOVED = '?auth=account_moved';
+const CHANGE_CONF = config.emailChange || {};
+const VALIDITY_DURATION = CHANGE_CONF.validity || 24 * 60 * 60;
+const DELETION_INTERVAL = CHANGE_CONF.deletionInterval || 8 * 60 * 60;
+let activeInterval = 0;
+startCycle();
+
 
 module.exports = routes;
 
@@ -225,4 +231,42 @@ function triggerAccountChangeEmails(user, client, newUsername) {
 
         }
     );
+}
+
+function cycle() {
+    if (DELETION_INTERVAL <= 0) {
+        return;
+    }
+
+    const deletionDate = new Date(new Date().getTime() - VALIDITY_DURATION);
+
+    db.UserEmailToken.destroy(
+        {
+            where: {
+                created_at: {
+                    $lt: deletionDate
+                }
+            }
+        }
+    ).then(
+        count => {
+            logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
+        }
+    ).catch(
+        error => {
+            logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
+        }
+    );
+
+    activeInterval = setTimeout(
+        cycle,
+        DELETION_INTERVAL * 1000
+    );
+}
+
+function startCycle() {
+    if (activeInterval) {
+        return;
+    }
+    cycle();
 }
