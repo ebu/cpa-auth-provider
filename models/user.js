@@ -2,7 +2,8 @@
 
 var Promise = require('bluebird');
 var bcrypt = require('bcrypt');
-var config = require('../config');
+var monitor = require('../lib/monitor');
+
 
 
 module.exports = function (sequelize, DataTypes) {
@@ -28,6 +29,7 @@ module.exports = function (sequelize, DataTypes) {
             },
             logLogin: function (transaction) {
                 var self = this;
+                monitor.counter.inc(monitor.METRICS.LOGIN_REQUESTED);
                 return self.updateAttributes(
                     {last_login_at: Date.now()},
                     {transaction: transaction}
