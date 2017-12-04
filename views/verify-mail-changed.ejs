@@ -18,6 +18,15 @@
 
                     <%= __('MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE') %>
 
+                    <% if (redirect) { %>
+                        <span class="link">
+                            <a href="<%= redirect %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
+                        </span>
+                    <% } else { %>
+                        <span class="link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX') %>
+                                <a href="<%= link('/user/profile') %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX') %></a>
+                        </span>
+                    <% } %>
                 </div>
             </div>
 

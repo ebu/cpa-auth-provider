@@ -262,6 +262,9 @@
     "MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Your email had been changed successfully",
     "MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Your email cannot be changed.",
     "MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Your email cannot be changed for the following reason: ",
+    "MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX": "Go to",
+    "MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX": "profile page",
+    "MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT": "Ok",
 
     "VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Email validation",
     "VERIFY_MAIL_SUCCESS_LABEL": "Your account has been verified successfully.",
