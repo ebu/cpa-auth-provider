@@ -116,7 +116,7 @@ describe('POST /email/change', function () {
         it('should report a failure forbidden', function () {
             expect(this.res.statusCode).equal(403);
             expect(this.res.body.success).equal(false);
-            expect(this.res.body.reason).equal('Forbidden');
+            expect(this.res.body.reason).equal('WRONG_PASSWORD');
         });
 
         it('should not have generated a token', function (done) {
@@ -190,7 +190,7 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should redirect', function () {
-            expect(this.res.statusCode).equal(302);
+            expect(this.res.statusCode).equal(200);
         });
 
         it('should change the email', function (done) {
@@ -234,7 +234,7 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should redirect', function () {
-            expect(this.res.statusCode).equal(302);
+            expect(this.res.statusCode).equal(200);
         });
 
         it('should have changed the email', function (done) {
@@ -282,9 +282,8 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should report a failure', function () {
-            expect(this.res.statusCode).equal(400);
-            expect(this.res.body.success).equal(false);
-            expect(this.res.body.reason).equal('INVALID_TOKEN');
+            expect(this.res.statusCode).equal(200);
+            expect(this.res.text.indexOf("Invalid token for authentication") > 0).equal(true);
         });
 
         it('should not have changed the email', function (done) {

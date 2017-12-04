@@ -39,11 +39,10 @@ function routes(router) {
             var password = req.body.password;
 
             if (!oldUser) {
-                console.log('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ']');
-                console.log(oldUser);
+                logger.debug('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ' where old user is ',oldUser,']');
                 return res.status(401).json({success: false, reason: 'Unauthorized'});
             }
-            console.log('[POST /email/change][user_id', oldUser.id, '][from',
+            logger.debug('[POST /email/change][user_id', oldUser.id, '][from',
                 oldUser.email, '][to', newUsername, ']');
 
             db.User.findOne({where: {email: newUsername}}).then(
@@ -67,7 +66,7 @@ function routes(router) {
                         },
                         function (e) {
                             logger.warn('[POST /email/change][EMAILS][ERROR][', e, ']');
-                            console.log('[POST /email/change][EMAILS][ERROR][', e, ']');
+                            logger.debug('[POST /email/change][EMAILS][ERROR][', e, ']');
                         }
                     );
                     return res.status(200).json({success: true});
@@ -168,7 +167,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                 function (verifyToken) {
                     let host = config.mail.host || '';
                     let confirmLink = host + '/email/move/' + encodeURIComponent(key);
-                    console.log('send email', confirmLink);
+                    logger.debug('send email', confirmLink);
                     return emailHelper.send(
                         config.mail.from,
                         newUsername,
