@@ -153,7 +153,7 @@ function routes(router) {
 function triggerAccountChangeEmails(user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
-            var redirectUri = client ? client.email_redirect_uri : undefined;
+            var redirectUri = client ? client.redirect_uri : undefined;
             const buffer = new Buffer(16);
             uuid.v4({}, buffer);
             var key = buffer.toString('base64');

@@ -116,7 +116,7 @@ describe('POST /email/change', function () {
         it('should report a failure forbidden', function () {
             expect(this.res.statusCode).equal(403);
             expect(this.res.body.success).equal(false);
-            expect(this.res.body.reason).equal('Forbidden');
+            expect(this.res.body.reason).equal('WRONG_PASSWORD');
         });
 
         it('should not have generated a token', function (done) {
