@@ -101,13 +101,14 @@ function routes(router) {
         function (req, res) {
             var user, token;
             var clientId, oldEmail, newUsername;
+            var redirect;
             db.UserEmailToken.findOne({where: {key: req.params.token}, include: [db.User, db.OAuth2Client]}).then(
                 function (token_) {
                     token = token_;
                     if (!token || !token.type.startsWith('MOV')) {
                         throw new Error(STATES.INVALID_TOKEN);
                     }
-
+                    redirect = token.redirect_uri;
                     user = token.User;
                     oldEmail = user.email;
                     newUsername = token.type.substring('MOV$'.length);
@@ -136,19 +137,17 @@ function routes(router) {
                 }
             ).then(
                 function () {
-                    return redirectOnSuccess(true, undefined);
+                    return renderLandingPage(true, undefined);
                 }
             ).catch(
                 function (err) {
                     logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
-                    return redirectOnSuccess(err.data && err.data.success, err.message);
+                    return renderLandingPage(err.data && err.data.success, err.message);
                 }
             );
 
-            function redirectOnSuccess(success, message) {
-                var redirectUri = req.session.auth_origin;
-                delete req.session.auth_origin;
-                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirectUri});
+            function renderLandingPage(success, message) {
+                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirect});
             }
         }
     );
