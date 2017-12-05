@@ -127,30 +127,7 @@
                             <option value="de"><%= __('PROFILE_LANGUAGE_DE_FORM_OPTION') %></option>
                         </select>
                     </div>
-                    <div class="panel <% if (!profile.email) { %> hidden <% } %>">
-                        <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
-                        <div id="form-change-email-success" class="alert alert-success alert-dismissible error-block" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            <span id="change-email-success" class="content"><%= __('PROFILE_CHANGE_EMAIL_SUCCESS') %></span>
-                        </div>
-                        <% if (profile.email !== null ) { %>
-                        <span class="data-value"><%= profile.email %></span>
-                        <%if (!profile.hasSocialLogin) {%>
-                        <span class="data-value">
-                        <button class="btn btn-link" type="button" data-toggle="modal" data-target="#changeEmailModal">
-                            <i class='glyphicon glyphicon-pencil'></i>
-                            <span class="button-label"><%= __('PROFILE_CHANGE_EMAIL_LINK') %></span>
-                        </button>
-                        </span>
-                        <% } %>
-                        <% } else { %>
-                        <span></span>
-                        <% } %>
-                        <% if (profile.email !== null) { %>
-                        <span class="personnal-data-input"><%= profile.email %></span>
-                        <% } %>
-                    </div>
+
                     <div id="btn-container">
                         <button id="btn-save-data" type="submit"
                                 class="btn btn-primary btn-large-submit"><%= __('PROFILE_SAVE_BUTTON') %></button>
@@ -171,6 +148,32 @@
             <hr class="visible-xs-block hidden-sm"/>
         </div>
         <div class="col-sm-9">
+
+
+            <div class="panel <% if (!profile.email) { %> hidden <% } %>">
+                <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
+                <div id="form-change-email-success" class="alert alert-success alert-dismissible error-block" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <span id="change-email-success" class="content"><%= __('PROFILE_CHANGE_EMAIL_SUCCESS') %></span>
+                </div>
+                <% if (profile.email !== null ) { %>
+                <span class="data-value"><%= profile.email %></span>
+                <%if (!profile.hasSocialLogin) {%>
+                <span class="data-value">
+                        <button class="btn btn-link" type="button" data-toggle="modal" data-target="#changeEmailModal">
+                            <i class='glyphicon glyphicon-pencil'></i>
+                            <span class="button-label"><%= __('PROFILE_CHANGE_EMAIL_LINK') %></span>
+                        </button>
+                        </span>
+                <% } %>
+                <% } else { %>
+                <span></span>
+                <% } %>
+                <% if (profile.email !== null) { %>
+                <span class="personnal-data-input"><%= profile.email %></span>
+                <% } %>
+            </div>
 
             <div id="form-security-errors" class="alert alert-danger alert-dismissible error-block"
                  role="alert">
