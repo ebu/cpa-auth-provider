@@ -109,6 +109,8 @@ function routes(router) {
                     var status = 400;
                     if (err.message === STATES.WRONG_PASSWORD) {
                         status = 403;
+                    } else if (err.message === STATES.TOO_MANY_REQUESTS) {
+                        status = 429;
                     }
                     return res.status(status).json({
                         success: false,
