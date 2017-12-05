@@ -52,6 +52,8 @@
                             <%= __('CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN') %>
                         <% } else if (message === 'HAS_SOCIAL_LOGIN') { %>
                             <%= __('CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN') %>
+                        <% } else if (message === 'TOO_MANY_REQUESTS') { %>
+                            <%= __('CHANGE_EMAIL_API_TOO_MANY_REQUESTS') %>
                         <% } else  { %>
                             <%= message %>
                         <% } %>
