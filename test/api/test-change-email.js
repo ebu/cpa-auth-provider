@@ -289,7 +289,7 @@ describe('GET /email/move/:token', function () {
             );
         });
 
-        it('should redirect', function () {
+        it('should send success status', function () {
             expect(this.res.statusCode).equal(200);
         });
 
@@ -333,7 +333,7 @@ describe('GET /email/move/:token', function () {
             );
         });
 
-        it('should redirect', function () {
+        it('should send success status', function () {
             expect(this.res.statusCode).equal(200);
         });
 

@@ -42,7 +42,6 @@ function routes(router) {
                 return passport.authenticate('bearer', {session: false})(req, res, next);
             }
         },
-        // authHelper.ensureAuthenticated,
         function (req, res) {
             var oldUser = req.user;
             var newUsername = req.body.new_email;
