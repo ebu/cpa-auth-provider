@@ -167,6 +167,106 @@ describe('POST /email/change', function () {
             ).catch(done)
         });
     });
+
+    context('trying five times', function () {
+        before(resetDatabase);
+        before(oauthHelper.getAccessToken(USER1, CLIENT));
+
+        before(function () {
+            this.accessToken = this.res.body.access_token;
+        });
+        before(requestNewEmail('n1@one.org'));
+        before(requestNewEmail('n2@two.org'));
+        before(requestNewEmail('n3@three.org'));
+        before(requestNewEmail('n4@four.org'));
+        before(requestNewEmail('n5@five.org'));
+
+        it('should report a success', function () {
+            expect(this.res.statusCode).equal(200);
+            expect(this.res.body.success).equal(true);
+        });
+
+        it('should have five tokens', function (done) {
+            db.UserEmailToken.count({where: {user_id: USER1.id, oauth2_client_id: CLIENT.id}}).then(
+                function (count) {
+                    expect(count).equal(5);
+                    done();
+                }
+            ).catch(done)
+        });
+
+        function requestNewEmail(email) {
+            return function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        accessToken: this.accessToken,
+                        tokenType: 'Bearer',
+                        data: {
+                            new_email: email,
+                            password: USER1.password,
+                        },
+                        type: 'form'
+                    },
+                    done
+                );
+            };
+        }
+    });
+
+
+    context('trying too often', function () {
+        before(resetDatabase);
+        before(oauthHelper.getAccessToken(USER1, CLIENT));
+
+        before(function () {
+            this.accessToken = this.res.body.access_token;
+        });
+        before(requestNewEmail('n1@second.org'));
+        before(requestNewEmail('n2@third.org'));
+        before(requestNewEmail('n3@fourth.org'));
+        before(requestNewEmail('n4@fifth.org'));
+        before(requestNewEmail('n5@sixth.org'));
+        before(requestNewEmail('n6@seventh.org'));
+
+        it('should report a failure', function () {
+            expect(this.res.statusCode).equal(429);
+            expect(this.res.body.success).equal(false);
+        });
+
+        it('should have five tokens', function (done) {
+            db.UserEmailToken.count({where: {user_id: USER1.id, oauth2_client_id: CLIENT.id}}).then(
+                function (count) {
+                    expect(count).equal(5);
+                    done();
+                }
+            ).catch(done)
+        });
+
+        function requestNewEmail(email) {
+            return function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    URL,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        accessToken: this.accessToken,
+                        tokenType: 'Bearer',
+                        data: {
+                            new_email: email,
+                            password: USER1.password,
+                        },
+                        type: 'form'
+                    },
+                    done
+                );
+            };
+        }
+    });
 });
 
 describe('GET /email/move/:token', function () {
