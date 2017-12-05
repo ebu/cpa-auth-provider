@@ -16,6 +16,7 @@ module.exports = {
             'PairingCodes',
             'Users',
             'Permissions',
+            'UserEmailTokens',
             'UserProfiles',
             'OAuthProviders',
             'OAuth2RefreshTokens'

@@ -51,10 +51,14 @@ module.exports = function (app, options) {
         var redirectUri = req.session.auth_origin;
         delete req.session.auth_origin;
 
-        if (redirectUri) {
-            return res.redirect(redirectUri);
-        }
+        req.session.save(
+            function () {
+                if (redirectUri) {
+                    return res.redirect(redirectUri);
+                }
 
-        requestHelper.redirect(res, '/');
+                requestHelper.redirect(res, '/');
+            }
+        );
     });
 };

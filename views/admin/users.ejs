@@ -41,7 +41,7 @@
         <div class="search">
             <div class="row">
                 <div class="col-xs-12">
-                    <a class="btn btn-default" id="export-csv" href="/admin/users/csv">
+                    <a class="btn btn-default" id="export-csv" href="<%= link('/admin/users/csv') %>">
                         <span class="glyphicon glyphicon-download"></span>&nbsp;<%= __('ADMIN_USERS_CSV_DOWNLOAD_LINK') %>
                     </a>
                 </div>
@@ -140,7 +140,7 @@
             var permissionId = params[1];
 
             $.ajax({
-                url: '/admin/users/' + userId + '/permission',
+                url: '<%= link('/admin/users/') %>' + userId + '/permission',
                 type: 'POST',
                 data: {
                     permission: permissionId
@@ -152,7 +152,7 @@
                     scrollTop: $("#users").offset().top
                 }, 2000);
             }).fail(function (error) {
-                errorAlert.html("<%= __('ADMIN_USERS_MSG_ERROR') %>"+error);
+                errorAlert.html("<%= __('ADMIN_USERS_MSG_ERROR') %>" + error);
                 errorAlert.show();
             });
         });
@@ -189,7 +189,7 @@
                 }
 
                 $.ajax({
-                    url: '/api/admin/users',
+                    url: '<%= link('/api/admin/users/') %>',
                     type: 'GET',
                     data: data
                 }).done(function (data) {
@@ -244,7 +244,7 @@
             }
 
             $.ajax({
-                url: '/api/admin/users',
+                url: '<%= link('/api/admin/users/') %>',
                 type: 'GET',
                 data: data
             }).done(function (data) {
