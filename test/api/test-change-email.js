@@ -194,27 +194,6 @@ describe('POST /email/change', function () {
                 }
             ).catch(done)
         });
-
-        function requestNewEmail(email) {
-            return function (done) {
-                requestHelper.sendRequest(
-                    this,
-                    URL,
-                    {
-                        method: 'post',
-                        cookie: this.cookie,
-                        accessToken: this.accessToken,
-                        tokenType: 'Bearer',
-                        data: {
-                            new_email: email,
-                            password: USER1.password,
-                        },
-                        type: 'form'
-                    },
-                    done
-                );
-            };
-        }
     });
 
 
@@ -245,28 +224,28 @@ describe('POST /email/change', function () {
                 }
             ).catch(done)
         });
-
-        function requestNewEmail(email) {
-            return function (done) {
-                requestHelper.sendRequest(
-                    this,
-                    URL,
-                    {
-                        method: 'post',
-                        cookie: this.cookie,
-                        accessToken: this.accessToken,
-                        tokenType: 'Bearer',
-                        data: {
-                            new_email: email,
-                            password: USER1.password,
-                        },
-                        type: 'form'
-                    },
-                    done
-                );
-            };
-        }
     });
+
+    function requestNewEmail(email) {
+        return function (done) {
+            requestHelper.sendRequest(
+                this,
+                URL,
+                {
+                    method: 'post',
+                    cookie: this.cookie,
+                    accessToken: this.accessToken,
+                    tokenType: 'Bearer',
+                    data: {
+                        new_email: email,
+                        password: USER1.password,
+                    },
+                    type: 'form'
+                },
+                done
+            );
+        };
+    }
 });
 
 describe('GET /email/move/:token', function () {
