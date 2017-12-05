@@ -243,7 +243,7 @@ module.exports = function (router) {
             userHelper.getUsers(req, permAdminId).then(function (users) {
 
                 return res.render('./admin/users.ejs', {
-                    users: users,
+                    users: userHelper.getDisplayableUser(users),
                     permAdminId: permAdminId,
                     permUserId: permUserId,
                     moment: moment
@@ -283,10 +283,10 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
-        db.User.findAll({include: [{model: db.Permission}], order: ['email']})
+        db.User.findAll({include: [{model: db.Permission}, {model: db.UserProfile}], order: ['email']})
             .then(
                 function (resultset) {
-                    var head = ['id', 'email', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
+                    var head = ['id', 'email', 'firstname', 'lastname', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
                     var lines = [];
                     lines.push(head);
                     for (var i = 0; i < resultset.length; i++) {
@@ -299,7 +299,7 @@ module.exports = function (router) {
                         var createdAt = resultset[i].created_at;
                         var passwordChangedAt = resultset[i].password_changed_at ? new Date(parseInt(resultset[i].password_changed_at)) : '';
                         var lastLoginAt = resultset[i].last_login_at ? new Date(parseInt(resultset[i].last_login_at)) : '';
-                        lines.push([resultset[i].id, resultset[i].email, permissionId, label, createdAt, passwordChangedAt, lastLoginAt]);
+                        lines.push([resultset[i].id, resultset[i].email, resultset[i].UserProfile ? resultset[i].UserProfile.firstname : '', resultset[i].UserProfile ? resultset[i].UserProfile.lastname : '', permissionId, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 
                     var toDownload = csv.stringify(lines);
