@@ -262,12 +262,12 @@
 	"VERIFY_NO_RADIO": " Nein",
 	"VERIFY_VERIFY_BUTTON": "Überprüfen",
 
-	"MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Change email",
-	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Your email had been changed successfully",
-	"MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Your email cannot be changed.",
-	"MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Your email cannot be changed for the following reason: ",
-	"MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX": "Go to",
-	"MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX": "profile page",
+	"MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Email ändern",
+	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Ihre Email-Adresse wurde erfolgreich geändert.",
+	"MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Ihre Email-Adresse kann nicht geändert werden.",
+	"MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Die Änderung der Email-Adresse schlug fehl: ",
+	"MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX": "Weiter",
+	"MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX": "Profil",
 	"MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT": "Ok",
 
 	"VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "E-Mail-Validierung",

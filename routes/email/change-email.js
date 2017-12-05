@@ -89,7 +89,6 @@ function routes(router) {
                         },
                         function (e) {
                             logger.warn('[POST /email/change][EMAILS][ERROR][', e, ']');
-                            logger.debug('[POST /email/change][EMAILS][ERROR][', e, ']');
                         }
                     );
                     return res.status(200).json({success: true});
