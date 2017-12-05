@@ -204,12 +204,12 @@ describe('POST /email/change', function () {
         before(function () {
             this.accessToken = this.res.body.access_token;
         });
-        before(requestNewEmail('n1@second.org'));
-        before(requestNewEmail('n2@third.org'));
-        before(requestNewEmail('n3@fourth.org'));
-        before(requestNewEmail('n4@fifth.org'));
-        before(requestNewEmail('n5@sixth.org'));
-        before(requestNewEmail('n6@seventh.org'));
+        before(requestNewEmail('n1@one.org'));
+        before(requestNewEmail('n2@two.org'));
+        before(requestNewEmail('n3@three.org'));
+        before(requestNewEmail('n4@four.org'));
+        before(requestNewEmail('n5@five.org'));
+        before(requestNewEmail('n6@six.org'));
 
         it('should report a failure', function () {
             expect(this.res.statusCode).equal(429);
