@@ -247,24 +247,28 @@ function cycle() {
         return;
     }
 
-    const deletionDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
-    db.UserEmailToken.destroy(
-        {
-            where: {
-                created_at: {
-                    $lt: deletionDate
+    try {
+        const deletionDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
+        db.UserEmailToken.destroy(
+            {
+                where: {
+                    created_at: {
+                        $lt: deletionDate
+                    }
                 }
             }
-        }
-    ).then(
-        count => {
-            logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
-        }
-    ).catch(
-        error => {
-            logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
-        }
-    );
+        ).then(
+            count => {
+                logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
+            }
+        ).catch(
+            error => {
+                logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
+            }
+        );
+    } catch(e) {
+        logger.error('[EmailChange][DELETE/FAIL][error', e, ']');
+    }
 
     activeInterval = setTimeout(
         cycle,
