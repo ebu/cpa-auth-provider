@@ -15,10 +15,18 @@ var STATES = {
     ALREADY_USED: 'ALREADY_USED',
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
     WRONG_PASSWORD: 'WRONG_PASSWORD',
-    HAS_SOCIAL_LOGIN: 'HAS_SOCIAL_LOGIN'
+    HAS_SOCIAL_LOGIN: 'HAS_SOCIAL_LOGIN',
+    TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
 };
 
 const APPEND_MOVED = '?auth=account_moved';
+const CHANGE_CONF = config.emailChange || {};
+const VALIDITY_DURATION = CHANGE_CONF.validity || 24 * 60 * 60;
+const DELETION_INTERVAL = CHANGE_CONF.deletionInterval || 8 * 60 * 60;
+const REQUEST_LIMIT = CHANGE_CONF.requestLimit || 5;
+let activeInterval = 0;
+startCycle();
+
 
 module.exports = routes;
 
@@ -66,7 +74,14 @@ function routes(router) {
                     if (hasSocialLogin) {
                         throw new Error(STATES.HAS_SOCIAL_LOGIN);
                     }
-
+                    const validityDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
+                    return db.UserEmailToken.count({where: {user_id: oldUser.id, created_at: {$gte: validityDate}}});
+                }
+            ).then(
+                function (tokenCount) {
+                    if (tokenCount >= REQUEST_LIMIT) {
+                        throw new Error(STATES.TOO_MANY_REQUESTS);
+                    }
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, ']');
                     triggerAccountChangeEmails(oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
@@ -94,6 +109,8 @@ function routes(router) {
                     var status = 400;
                     if (err.message === STATES.WRONG_PASSWORD) {
                         status = 403;
+                    } else if (err.message === STATES.TOO_MANY_REQUESTS) {
+                        status = 429;
                     }
                     return res.status(status).json({
                         success: false,
@@ -225,4 +242,41 @@ function triggerAccountChangeEmails(user, client, newUsername) {
 
         }
     );
+}
+
+function cycle() {
+    if (DELETION_INTERVAL <= 0) {
+        return;
+    }
+
+    const deletionDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
+    db.UserEmailToken.destroy(
+        {
+            where: {
+                created_at: {
+                    $lt: deletionDate
+                }
+            }
+        }
+    ).then(
+        count => {
+            logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
+        }
+    ).catch(
+        error => {
+            logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
+        }
+    );
+
+    activeInterval = setTimeout(
+        cycle,
+        DELETION_INTERVAL * 1000
+    );
+}
+
+function startCycle() {
+    if (activeInterval) {
+        return;
+    }
+    cycle();
 }
