@@ -283,7 +283,7 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
-        db.User.findAll({include: [{model: db.Permission}, {model: db.UserProfile}], order: ['email']})
+        db.User.findAll({include: [db.Permission, db.UserProfile], order: ['email']})
             .then(
                 function (resultset) {
                     var head = ['id', 'email', 'firstname', 'lastname', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
