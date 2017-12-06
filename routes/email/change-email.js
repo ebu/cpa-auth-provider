@@ -157,6 +157,9 @@ function routes(router) {
                 }
             ).then(
                 function () {
+                    if (req.user.id === user.id) {
+                        req.user.email = newUsername;
+                    }
                     return token.consume();
                 }
             ).then(
