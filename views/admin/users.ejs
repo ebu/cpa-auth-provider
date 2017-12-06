@@ -15,12 +15,12 @@
                        placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_EMAIL') %>"/>
             </div>
             <div class="col-sm-2">
-                <input id="search-lastname-users" type="text" class="form-control input-lg"
-                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_LASTNAME') %>"/>
-            </div>
-            <div class="col-sm-2">
                 <input id="search-firstname-users" type="text" class="form-control input-lg"
                        placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_FIRSTNAME') %>"/>
+            </div>
+            <div class="col-sm-2">
+                <input id="search-lastname-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_LASTNAME') %>"/>
             </div>
             <div class="col-sm-2">
                 <div class="checkbox">
@@ -63,6 +63,8 @@
             <tr>
                 <th><%= __('ADMIN_USERS_ID_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_EMAIL_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_FIRSTNAME_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_LASTNAME_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_PERMISSIONS_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_CREATED_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE') %></th>
@@ -74,6 +76,8 @@
             <tr id="user-<%= users[i].id %>">
                 <td><%= users[i].id %></td>
                 <td><%= users[i].email %></td>
+                <td><%= users[i].UserProfile.firstname %></td>
+                <td><%= users[i].UserProfile.lastname %></td>
                 <td>
                     <select class="permission form-control">
                         <% if(users[i].permission_id !== permAdminId) { %>
@@ -266,6 +270,8 @@
                 var select = "";
                 row += "<td>" + user.id + "</td>";
                 row += "<td>" + user.email + "</td>";
+                row += "<td>" + user.UserProfile.firstname + "</td>";
+                row += "<td>" + user.UserProfile.lastname + "</td>";
 
                 select += '<select class="permission form-control">';
 
