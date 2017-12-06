@@ -488,7 +488,7 @@ describe('GET /admin/users/csv', function () {
         expect(self.res.statusCode).to.equal(200);
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
-        expect(self.res).to.have.header('content-length', '271'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
+        expect(self.res).to.have.header('content-length', '311'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
     });
 
 
