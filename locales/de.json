@@ -270,6 +270,7 @@
 	"BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH": "Passwort respektiert unsere Sicherheitsregeln nicht",
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASS": "falsche Email oder Passwort",
 	"BACK_SIGNUP_EMAIL_TAKEN": "Diese eMail ist bereits vergeben",
+	"BACK_SIGNUP_EMAIL_EQUALS_PASSWORD": "You cannot use your email as password",
 	"BACK_SIGNUP_PB_RECAPTCHA": "Etwas ging mit dem reCAPTCHA schief",
 	"BACK_SIGNUP_PASS_STRENGTH": "The password you provide is not strength enough:",
 	"BACK_SIGNUP_PASS_STRENGTH_0": "Das Passwort muss mindestens 10 Zeichen lang sein.",

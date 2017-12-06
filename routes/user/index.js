@@ -84,10 +84,12 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                if (!passwordHelper.isStrong(req.body.password)) {
+                if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
+                    var customErrors = passwordHelper.customCheck(req.user.email, req.body.password, req);
                     res.status(400).json({
                         errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
-                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
+                        custom_errors: customErrors
                     });
                 } else {
                     db.User.findOne({
@@ -129,30 +131,34 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                if (!passwordHelper.isStrong(req.body.password)) {
-                    return res.status(400).json({
+                if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
+                    var customErrors = passwordHelper.customCheck(req.user.email, req.body.password, req);
+                    res.status(400).json({
                         errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
-                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
+                        custom_errors: customErrors
+                    });
+                } else {
+                    db.User.findOne({
+                        where: {
+                            id: req.user.id
+                        }
+                    }).then(function (user) {
+                        if (!user) {
+                            return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
+                        } else {
+                            user.setPassword(req.body.password).then(
+                                function () {
+                                    res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
+                                },
+                                function (err) {
+                                    res.status(500).json({errors: [err]});
+                                }
+                            );
+                        }
                     });
                 }
-                db.User.findOne({
-                    where: {
-                        id: req.user.id
-                    }
-                }).then(function (user) {
-                    if (!user) {
-                        return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
-                    } else {
-                        user.setPassword(req.body.password).then(
-                            function () {
-                                res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
-                            },
-                            function (err) {
-                                res.status(500).json({errors: [err]});
-                            }
-                        );
-                    }
-                });
+
             }
         });
     });
