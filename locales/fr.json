@@ -265,7 +265,7 @@
 	"VERIFY_NO_RADIO": " Non",
 
 	"MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Changement d'email",
-	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Votre email a été changé avec succès",
+	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Votre email a été changé avec succès pour : ",
 	"MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Votre email n'a pas pu être changé.",
 	"MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Votre email n'a pas pu être changé pour la raison suivante : ",
 	"MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX": "Aller à",

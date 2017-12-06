@@ -265,7 +265,7 @@
 	"VERIFY_VERIFY_BUTTON": "Überprüfen",
 
 	"MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Email ändern",
-	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Ihre Email-Adresse wurde erfolgreich geändert.",
+	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Ihre Email-Adresse wurde erfolgreich geändert für: ",
 	"MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Ihre Email-Adresse kann nicht geändert werden.",
 	"MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Die Änderung der Email-Adresse schlug fehl: ",
 	"MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX": "Weiter zum",

@@ -142,7 +142,6 @@ function routes(router) {
                         throw err;
                     }
 
-
                     return db.User.findOne({where: {email: newUsername}});
                 }
             ).then(
@@ -171,7 +170,7 @@ function routes(router) {
             );
 
             function renderLandingPage(success, message) {
-                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirect});
+                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirect, newMail: newUsername});
             }
         }
     );
