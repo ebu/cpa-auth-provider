@@ -116,7 +116,7 @@ describe('POST /email/change', function () {
         it('should report a failure forbidden', function () {
             expect(this.res.statusCode).equal(403);
             expect(this.res.body.success).equal(false);
-            expect(this.res.body.reason).equal('Forbidden');
+            expect(this.res.body.reason).equal('WRONG_PASSWORD');
         });
 
         it('should not have generated a token', function (done) {
@@ -167,6 +167,85 @@ describe('POST /email/change', function () {
             ).catch(done)
         });
     });
+
+    context('trying five times', function () {
+        before(resetDatabase);
+        before(oauthHelper.getAccessToken(USER1, CLIENT));
+
+        before(function () {
+            this.accessToken = this.res.body.access_token;
+        });
+        before(requestNewEmail('n1@one.org'));
+        before(requestNewEmail('n2@two.org'));
+        before(requestNewEmail('n3@three.org'));
+        before(requestNewEmail('n4@four.org'));
+        before(requestNewEmail('n5@five.org'));
+
+        it('should report a success', function () {
+            expect(this.res.statusCode).equal(200);
+            expect(this.res.body.success).equal(true);
+        });
+
+        it('should have five tokens', function (done) {
+            db.UserEmailToken.count({where: {user_id: USER1.id, oauth2_client_id: CLIENT.id}}).then(
+                function (count) {
+                    expect(count).equal(5);
+                    done();
+                }
+            ).catch(done)
+        });
+    });
+
+
+    context('trying too often', function () {
+        before(resetDatabase);
+        before(oauthHelper.getAccessToken(USER1, CLIENT));
+
+        before(function () {
+            this.accessToken = this.res.body.access_token;
+        });
+        before(requestNewEmail('n1@one.org'));
+        before(requestNewEmail('n2@two.org'));
+        before(requestNewEmail('n3@three.org'));
+        before(requestNewEmail('n4@four.org'));
+        before(requestNewEmail('n5@five.org'));
+        before(requestNewEmail('n6@six.org'));
+
+        it('should report a failure', function () {
+            expect(this.res.statusCode).equal(429);
+            expect(this.res.body.success).equal(false);
+        });
+
+        it('should have five tokens', function (done) {
+            db.UserEmailToken.count({where: {user_id: USER1.id, oauth2_client_id: CLIENT.id}}).then(
+                function (count) {
+                    expect(count).equal(5);
+                    done();
+                }
+            ).catch(done)
+        });
+    });
+
+    function requestNewEmail(email) {
+        return function (done) {
+            requestHelper.sendRequest(
+                this,
+                URL,
+                {
+                    method: 'post',
+                    cookie: this.cookie,
+                    accessToken: this.accessToken,
+                    tokenType: 'Bearer',
+                    data: {
+                        new_email: email,
+                        password: USER1.password,
+                    },
+                    type: 'form'
+                },
+                done
+            );
+        };
+    }
 });
 
 describe('GET /email/move/:token', function () {
@@ -189,8 +268,8 @@ describe('GET /email/move/:token', function () {
             );
         });
 
-        it('should redirect', function () {
-            expect(this.res.statusCode).equal(302);
+        it('should send success status', function () {
+            expect(this.res.statusCode).equal(200);
         });
 
         it('should change the email', function (done) {
@@ -233,8 +312,8 @@ describe('GET /email/move/:token', function () {
             );
         });
 
-        it('should redirect', function () {
-            expect(this.res.statusCode).equal(302);
+        it('should send success status', function () {
+            expect(this.res.statusCode).equal(200);
         });
 
         it('should have changed the email', function (done) {
@@ -282,9 +361,8 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should report a failure', function () {
-            expect(this.res.statusCode).equal(400);
-            expect(this.res.body.success).equal(false);
-            expect(this.res.body.reason).equal('INVALID_TOKEN');
+            expect(this.res.statusCode).equal(200);
+            expect(this.res.text.indexOf("Invalid token for authentication") > 0).equal(true);
         });
 
         it('should not have changed the email', function (done) {

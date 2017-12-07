@@ -1,5 +1,5 @@
 #profile .panel {
-    height: 75px;
+    padding-bottom: 0.5em;
     border-bottom: 1px solid #eee;
     box-shadow: none;
 }

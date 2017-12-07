@@ -24,7 +24,7 @@ var localStrategyCallback = function (req, username, password, done) {
                 if (!user) {
                     doneWithError();
                 } else {
-                    oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (res) {
+                    oAuthProviderHelper.hasSocialLogin(user).then(function (res) {
                         if (res) {
                             doneWithError();
                         }

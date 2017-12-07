@@ -1,0 +1,78 @@
+<% include layout/header %>
+
+<div id="verify-mail" xmlns="http://www.w3.org/1999/html">
+
+    <div class="container">
+
+        <div class="col-sm-6 col-sm-offset-3">
+
+            <% if (success) { %>
+
+            <div id="success-panel" class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <h1 class="title text-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span>
+                        <%= __('MOVE_MAIL_EMAIL_VALIDATION_LABEL') %>
+                    </h1>
+
+                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE') %><%= newMail%>
+
+                    <% if (redirect) { %>
+                        <span class="link">
+                            <a href="<%= redirect %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
+                        </span>
+                    <% } else { %>
+                        <span class="link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX') %>
+                                <a href="<%= link('/user/profile') %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX') %></a>
+                        </span>
+                    <% } %>
+                </div>
+            </div>
+
+            <% } else { %>
+
+            <div id="error-panel" class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <h1 class="title text-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span>
+                        <%= __('MOVE_MAIL_EMAIL_VALIDATION_LABEL') %>
+                    </h1>
+
+                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE') %>
+                    <% if (message) { %>
+                        <% if (message === 'INVALID_TOKEN') { %>
+                            <%= __('CHANGE_EMAIL_API_INVALID_TOKEN') %>
+                        <% } else if (message === 'MISMATCHED_CLIENT_ID') { %>
+                            <%= __('CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID') %>
+                        <% } else if (message === 'ALREADY_USED') { %>
+                            <%= __('CHANGE_EMAIL_API_ALREADY_USED') %>
+                        <% } else if (message === 'EMAIL_ALREADY_TAKEN') { %>
+                            <%= __('CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN') %>
+                        <% } else if (message === 'HAS_SOCIAL_LOGIN') { %>
+                            <%= __('CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN') %>
+                        <% } else if (message === 'TOO_MANY_REQUESTS') { %>
+                            <%= __('CHANGE_EMAIL_API_TOO_MANY_REQUESTS') %>
+                        <% } else  { %>
+                            <%= message %>
+                        <% } %>
+                    <% } %>
+
+                    <% if (redirect) { %>
+                    <span class="link">
+                            <a href="<%= redirect %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
+                        </span>
+                    <% } %>
+
+                </div>
+            </div>
+
+            <% } %>
+
+        </div>
+    </div>
+
+</div>
+
+<% include layout/foot %>
