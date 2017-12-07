@@ -32,6 +32,7 @@ var OK_RECATCHA_SECRET = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
 var KO_RECATCHA_KEY = 'ko';
 var KO_RECATCHA_SECRET = 'ko';
 
+var LONG_MAIL = 'thisis@nemailthatisvery.cool';
 
 var STRONG_PASSWORD = 'correct horse battery staple';
 var WEAK_PASSWORD = 'weak';
@@ -82,6 +83,32 @@ describe('POST /api/local/signup', function () {
                 cookie: this.cookie,
                 type: 'form',
                 data: {email: 'qsdf@qsdf.fr', password: WEAK_PASSWORD, 'g-recaptcha-response': recaptchaResponse}
+            }, done);
+        });
+
+        it('should return a success false', function () {
+            expect(this.res.body.msg.indexOf("API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH")).to.equal(0);
+            expect(this.res.statusCode).to.equal(400);
+            expect(this.res.body.success).to.equal(false);
+        });
+
+    });
+
+    context('When unauthenticated user signup with email as passord', function () {
+
+        before(function (done) {
+            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+            done();
+        });
+
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/api/local/signup', {
+                method: 'post',
+                cookie: this.cookie,
+                type: 'form',
+                data: {email: LONG_MAIL, password: LONG_MAIL, 'g-recaptcha-response': recaptchaResponse}
             }, done);
         });
 

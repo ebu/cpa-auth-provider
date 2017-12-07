@@ -309,7 +309,7 @@ module.exports = function (app, options) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
-            if (!passwordHelper.isStrong(req.body.email, req.body.password, req)) {
+            if (!passwordHelper.isStrong(req.body.email, req.body.password)) {
                 res.status(400).json({
                     errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.email, req.body.password, req)}],
                     password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)

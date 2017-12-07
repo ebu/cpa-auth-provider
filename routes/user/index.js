@@ -85,7 +85,7 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
+                if (!passwordHelper.isStrong(req.user.email, req.body.password)) {
                     res.status(400).json({
                         errors: [{msg: passwordHelper.getWeaknessesMsg(req.user.email,req.body.password, req)}],
                         password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
@@ -130,7 +130,7 @@ var routes = function (router) {
             if (!result.isEmpty()) {
                 res.status(400).json({errors: result.array()});
             } else {
-                if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
+                if (!passwordHelper.isStrong(req.user.email, req.body.password)) {
                     res.status(400).json({
                         errors: [{msg: passwordHelper.getWeaknessesMsg(req.user.email, req.body.password, req)}],
                         password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
