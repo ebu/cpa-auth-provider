@@ -599,6 +599,10 @@
                             spinner.hide()
                             label.show();
                         } else {
+                            try {
+                                console.log("Error: ", error);
+                            }
+                            catch(err) {}
                             $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_ERROR') %>");
                             $changeEmailForm.first('div.form-group').addClass('has-error');
                             $changeEmailError.show();
