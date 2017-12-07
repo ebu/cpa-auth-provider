@@ -158,7 +158,7 @@
     "PROFILE_SECURITY_TITLE": "Access",
     "PROFILE_SECURITY_TITLE_MOBILE": "Access",
     "PROFILE_PASSWORD_TITLE": "Password",
-    "PROFILE_EDIT_YOUR_PASSWORD_LINK": "Edit your password",
+    "PROFILE_EDIT_YOUR_PASSWORD_LINK": "Edit",
     "PROFILE_CREATE_YOUR_PASSWORD_LINK": "Create a password",
     "PROFILE_PREVIOUS_PASSWORD_LABEL": "Previous password",
     "PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER": "Previous",
@@ -190,7 +190,7 @@
     "PROFILE_JS_ERROR_DELETE_ACCOUNT": "An error occurred while deleting the account.",
     "PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Your account has been deleted successfully.",
 
-    "PROFILE_CHANGE_EMAIL_LINK": "Edit email",
+    "PROFILE_CHANGE_EMAIL_LINK": "Edit",
     "PROFILE_CHANGE_EMAIL_SUCCESS": "An email is being sent to the new email address. Please follow its instructions to complete the change.",
     "PROFILE_CHANGE_EMAIL_MODAL_TITLE": "Change Email Address",
     "PROFILE_CHANGE_EMAIL_MODAL_TEXT": "You can request to change your email address. This will send an email to the new address with a link that allows you to confirm this process. To ensure only you can do this, please enter your current password.",

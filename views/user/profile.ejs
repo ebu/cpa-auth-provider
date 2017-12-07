@@ -189,8 +189,10 @@
             </div>
 
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
+            <span id="fake-password-display" class="hasPassword">******</span>
             <button id="btn-modify-password" type="button" class="btn btn-link">
                 <span id="hasPasswordButtonLabel" class="hasPassword">
+                    <i class='glyphicon glyphicon-pencil'></i>
                     <%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %>
                 </span>
                 <span id="hasNoPasswordButtonLabel" class="hasNoPassword">
@@ -370,6 +372,7 @@
         var $savePasswordBtn = $('#btn-save-password');
         var $cancelPasswordBtn = $('#btn-cancel-password');
         var $modifyPassBtn = $('#btn-modify-password');
+        var $fakePasswordDisplay = $('#fake-password-display');
         var $formModifyPass = $('#form-modify-pass');
         var $btnContainer = $('#btn-container');
         var $btnVerificationLink = $('#btn-send-verification-link');
@@ -720,6 +723,7 @@
         $modifyPassBtn.on('click', function (e) {
             e.preventDefault();
             $formModifyPass.show();
+            $fakePasswordDisplay.hide();
             $modifyPassBtn.hide();
         });
 
@@ -756,6 +760,7 @@
                     $password.val("");
                     $confirmPassword.val("");
                     $formModifyPass.hide();
+                    $fakePasswordDisplay.show();
                     $modifyPassBtn.show();
                     $('html, body').animate({
                         scrollTop: $("#security-success").offset().top
@@ -777,6 +782,7 @@
             e.preventDefault();
             resetMessages("form-security-errors", "security-errors");
             $formModifyPass.hide();
+            $fakePasswordDisplay.show();
             $modifyPassBtn.show();
         });
     })();

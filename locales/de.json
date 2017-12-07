@@ -159,7 +159,7 @@
 	"PROFILE_SECURITY_TITLE": "Sicherheit",
 	"PROFILE_SECURITY_TITLE_MOBILE": "Sicherheit",
 	"PROFILE_PASSWORD_TITLE": "Passwort",
-	"PROFILE_EDIT_YOUR_PASSWORD_LINK": "Bearbeiten Sie Ihr Passwort",
+	"PROFILE_EDIT_YOUR_PASSWORD_LINK": "Ändern",
 	"PROFILE_CREATE_YOUR_PASSWORD_LINK": "Erstelle ein Passwort",
 	"PROFILE_PREVIOUS_PASSWORD_LABEL": "Vorheriges Passwort",
 	"PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER": "Bisherige",
@@ -191,7 +191,7 @@
 	"PROFILE_JS_ERROR_DELETE_ACCOUNT": "Beim Löschen des Kontos ist ein Fehler aufgetreten.",
 	"PROFILE_JS_SUCCESS_DELETE_ACCOUNT": "Your account has been deleted successfully.",
 
-	"PROFILE_CHANGE_EMAIL_LINK": "Email-Adresse ändern",
+	"PROFILE_CHANGE_EMAIL_LINK": "Ändern",
 	"PROFILE_CHANGE_EMAIL_SUCCESS": "Eine Email wurde an die neue Adresse geschickt. Befolgen Sie bitte die Anleitung in dieser Email, um die Änderung abzuschließen.",
 	"PROFILE_CHANGE_EMAIL_MODAL_TITLE": "Email-Adresse ändern",
 	"PROFILE_CHANGE_EMAIL_MODAL_TEXT": "Sie können eine Änderung Ihrer Email-Adresse anfordern. Das wird eine Email an die neue Adresse schicken, mit der Sie die Änderung dann bestätigen können. Geben Sie bitte auch Ihr Passwort ein, damit nur Sie das machen können.",
