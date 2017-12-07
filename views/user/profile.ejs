@@ -577,7 +577,7 @@
 
             $.ajax(
                 {
-                    url: '/email/change',
+                    url: '<%= link('/email/change') %>',
                     type: 'POST',
                     data: {
                         new_email: $changeEmailNew.val(),
