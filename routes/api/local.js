@@ -63,7 +63,6 @@ module.exports = function (app, options) {
         }
 
         if (!req.body.email || !req.body.password) {
-
             res.status(400).json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
             var username = req.body.email;
@@ -83,7 +82,7 @@ module.exports = function (app, options) {
                 }
             }
 
-            userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
+            userHelper.createUser(username, password, requiredAttributes, optionnalAttributes, req).then(
                 function (user) {
                     res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
                 },
@@ -94,7 +93,8 @@ module.exports = function (app, options) {
                         return res.status(400).json({
                             success: false,
                             msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
-                            password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                            password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
+                            errors: [{msg: passwordHelper.getWeaknessesMsg(username, req.body.password, req)}]
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
                         logger.debug('[POST /api/local/signup][email', username, '][ERR', err, ']');

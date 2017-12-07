@@ -107,7 +107,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                 }
 
                 requiredAttributes.language = i18n.getLocale();
-                userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
+                userHelper.createUser(username, password, requiredAttributes, optionnalAttributes, req).then(
                     function (user) {
                         done(null, user);
                     },
@@ -309,12 +309,10 @@ module.exports = function (app, options) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
-            if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
-                var customErrors = passwordHelper.customCheck(req.user.email, req.body.password, req);
+            if (!passwordHelper.isStrong(req.body.email, req.body.password, req)) {
                 res.status(400).json({
-                    errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
-                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
-                    custom_errors: customErrors
+                    errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.email, req.body.password, req)}],
+                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
                 });
                 return;
             } else {

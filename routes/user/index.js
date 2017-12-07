@@ -86,11 +86,9 @@ var routes = function (router) {
                 res.status(400).json({errors: result.array()});
             } else {
                 if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
-                    var customErrors = passwordHelper.customCheck(req.user.email, req.body.password, req);
                     res.status(400).json({
-                        errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
-                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
-                        custom_errors: customErrors
+                        errors: [{msg: passwordHelper.getWeaknessesMsg(req.user.email,req.body.password, req)}],
+                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
                     });
                 } else {
                     db.User.findOne({
@@ -133,11 +131,9 @@ var routes = function (router) {
                 res.status(400).json({errors: result.array()});
             } else {
                 if (!passwordHelper.isStrong(req.user.email, req.body.password, req)) {
-                    var customErrors = passwordHelper.customCheck(req.user.email, req.body.password, req);
                     res.status(400).json({
-                        errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.password, req)}],
-                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
-                        custom_errors: customErrors
+                        errors: [{msg: passwordHelper.getWeaknessesMsg(req.user.email, req.body.password, req)}],
+                        password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
                     });
                 } else {
                     db.User.findOne({
