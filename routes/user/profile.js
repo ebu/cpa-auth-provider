@@ -101,7 +101,7 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        oAuthProviderHelper.isExternalOAuthUserOnly(user).then(function (isExt) {
+        oAuthProviderHelper.hasSocialLogin(user).then(function (isExt) {
             if (isExt) {
                 return db.UserProfile.destroy({
                     where: {

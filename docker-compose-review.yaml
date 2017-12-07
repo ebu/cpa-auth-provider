@@ -18,6 +18,9 @@ services:
       - MAIL_TRANSPORT_TYPE=test
       - TRACKING_COOKIE=true
       - IDP_REVIEW_ADMIN_PASSWORD=${IDP_REVIEW_ADMIN_PASSWORD}
+      - MAIL_TRANSPORT_TYPE=gmail
+      - MAIL_USER_NAME=ebuidp@gmail.com
+      - MAIL_PASSWORD=${IDP_TEST_GMAIL_ACCOUNT_PASSWORD}
     networks:
       - default
       - traefik-net

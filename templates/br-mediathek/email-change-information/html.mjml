@@ -1,0 +1,38 @@
+<mjml>
+  <mj-body background-color='#edece8'>
+    <mj-container background-color='#edece8'>
+      <mj-section background-color='#ffffff'>
+        <mj-column>
+          <mj-image width="270" src="https://login.br.de/img/BR_Mediathek_Logo.png" alt="BR Mediathek" align="left"/>
+          <mj-text>
+            Servus,
+          </mj-text>
+          <mj-text>
+            Du hast beantragt, dass Dein Nutzerkonto mit der E-Mail-Adresse <%= newEmail %>
+            verknüpft wird, statt wie bisher mit <%= oldEmail %>.
+          </mj-text>
+          <mj-text>
+            Dazu wurde eine E-Mail an Deine neue Adresse verschickt, mit der Du die
+            Änderung bestätigen kannst. Erst danach kannst Du die neue
+            E-Mail-Adresse verwenden, um Dich an Deinen Geräten anzumelden.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Viel Spaß beim Stöbern und Schauen!
+          </mj-text>
+          <mj-text color='#0082c5' padding-top='0px'>
+            Dein BR Mediatheks-Team
+          </mj-text>
+          <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
+          <mj-text padding-bottom='0px'>
+            Du brauchst Hilfe?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Wende Dich bitte an den Support unter
+            <a style='color: inherit; text-decoration: none;' href='mailto:mediathek@br.de?subject=Email-Address-Anpassung'>mediathek@br.de</a>
+            und teile uns Dein Problem mit.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>

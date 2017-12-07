@@ -58,7 +58,8 @@ var routes = function (router) {
                                 verified: user.verified,
                                 hasPassword: !!user.password,
                                 facebook: providers.indexOf(oAuthProviderHelper.FB) > -1,
-                                google: providers.indexOf(oAuthProviderHelper.GOOGLE) > -1
+                                google: providers.indexOf(oAuthProviderHelper.GOOGLE) > -1,
+                                hasSocialLogin: providers.length > 0
                             },
                             captcha: req.recaptcha
                         };

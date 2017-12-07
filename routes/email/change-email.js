@@ -7,15 +7,26 @@ var passport = require('passport');
 var emailHelper = require('../../lib/email-helper');
 var config = require('../../config');
 var uuid = require('uuid');
+var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
 
 var STATES = {
     INVALID_TOKEN: 'INVALID_TOKEN',
     MISMATCHED_CLIENT_ID: 'MISMATCHED_CLIENT_ID',
     ALREADY_USED: 'ALREADY_USED',
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
+    WRONG_PASSWORD: 'WRONG_PASSWORD',
+    HAS_SOCIAL_LOGIN: 'HAS_SOCIAL_LOGIN',
+    TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
 };
 
 const APPEND_MOVED = '?auth=account_moved';
+const CHANGE_CONF = config.emailChange || {};
+const VALIDITY_DURATION = CHANGE_CONF.validity || 24 * 60 * 60;
+const DELETION_INTERVAL = CHANGE_CONF.deletionInterval || 8 * 60 * 60;
+const REQUEST_LIMIT = CHANGE_CONF.requestLimit || 5;
+let activeInterval = 0;
+startCycle();
+
 
 module.exports = routes;
 
@@ -24,19 +35,23 @@ function routes(router) {
     router.post(
         '/email/change',
         cors(),
-        passport.authenticate('bearer', {session: false}),
-        // authHelper.ensureAuthenticated,
+        function (req, res, next) {
+            if (!!req.user) {
+                return next();
+            } else {
+                return passport.authenticate('bearer', {session: false})(req, res, next);
+            }
+        },
         function (req, res) {
             var oldUser = req.user;
             var newUsername = req.body.new_email;
             var password = req.body.password;
 
             if (!oldUser) {
-                console.log('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ']');
-                console.log(oldUser);
+                logger.debug('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ' where old user is ', oldUser, ']');
                 return res.status(401).json({success: false, reason: 'Unauthorized'});
             }
-            console.log('[POST /email/change][user_id', oldUser.id, '][from',
+            logger.debug('[POST /email/change][user_id', oldUser.id, '][from',
                 oldUser.email, '][to', newUsername, ']');
 
             db.User.findOne({where: {email: newUsername}}).then(
@@ -49,29 +64,57 @@ function routes(router) {
             ).then(
                 function (correct) {
                     if (!correct) {
-                        logger.warn('[POST /email/change][FAIL bad password][user_id', oldUser.id, '][from',
-                            oldUser.email, '][to', newUsername, ']');
-                        return res.status(403).json({success: false, reason: 'Forbidden'});
+                        throw new Error(STATES.WRONG_PASSWORD);
                     }
-
+                    return oAuthProviderHelper.hasSocialLogin(oldUser);
+                }
+            ).then(
+                function (hasSocialLogin) {
+                    if (hasSocialLogin) {
+                        throw new Error(STATES.HAS_SOCIAL_LOGIN);
+                    }
+                    const validityDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
+                    return db.UserEmailToken.count({where: {user_id: oldUser.id, created_at: {$gte: validityDate}}});
+                }
+            ).then(
+                function (tokenCount) {
+                    if (tokenCount >= REQUEST_LIMIT) {
+                        throw new Error(STATES.TOO_MANY_REQUESTS);
+                    }
                     logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUser, req.authInfo.client, newUsername).then(
+                    triggerAccountChangeEmails(oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
                         function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
                         function (e) {
                             logger.warn('[POST /email/change][EMAILS][ERROR][', e, ']');
-                            console.log('[POST /email/change][EMAILS][ERROR][', e, ']');
                         }
                     );
                     return res.status(200).json({success: true});
                 }
             ).catch(
                 function (err) {
-                    logger.warn('[POST /email/change][FAIL bad password][user_id', oldUser.id, '][from',
+                    logger.warn('[POST /email/change][FAIL][user_id', oldUser.id, '][from',
                         oldUser.email, '][to', newUsername, '][err', err, ']');
-                    return res.status(400).json({success: false, reason: err.message});
+                    var message = '';
+                    for (var key in STATES) {
+                        if (STATES.hasOwnProperty(key) && STATES[key] === err.message) {
+                            message = req.__('CHANGE_EMAIL_API_' + err.message);
+                            break;
+                        }
+                    }
+                    var status = 400;
+                    if (err.message === STATES.WRONG_PASSWORD) {
+                        status = 403;
+                    } else if (err.message === STATES.TOO_MANY_REQUESTS) {
+                        status = 429;
+                    }
+                    return res.status(status).json({
+                        success: false,
+                        reason: err.message,
+                        msg: message
+                    });
                 }
             );
         }
@@ -82,13 +125,14 @@ function routes(router) {
         function (req, res) {
             var user, token;
             var clientId, oldEmail, newUsername;
+            var redirect;
             db.UserEmailToken.findOne({where: {key: req.params.token}, include: [db.User, db.OAuth2Client]}).then(
                 function (token_) {
                     token = token_;
                     if (!token || !token.type.startsWith('MOV')) {
                         throw new Error(STATES.INVALID_TOKEN);
                     }
-
+                    redirect = token.redirect_uri;
                     user = token.User;
                     oldEmail = user.email;
                     newUsername = token.type.substring('MOV$'.length);
@@ -97,7 +141,6 @@ function routes(router) {
                         err.data = {success: newUsername === oldEmail};
                         throw err;
                     }
-
 
                     return db.User.findOne({where: {email: newUsername}});
                 }
@@ -113,34 +156,24 @@ function routes(router) {
                 }
             ).then(
                 function () {
+                    if (req.user.id === user.id) {
+                        req.user.email = newUsername;
+                    }
                     return token.consume();
                 }
             ).then(
                 function () {
-                    return redirectOnSuccess(undefined);
+                    return renderLandingPage(true, undefined);
                 }
             ).catch(
                 function (err) {
                     logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
-                    if (err.data && err.data.success) {
-                        return redirectOnSuccess(err.message);
-                    } else {
-                        return res.status(400).json({success: false, reason: err.message});
-                    }
+                    return renderLandingPage(err.data && err.data.success, err.message);
                 }
             );
 
-            function redirectOnSuccess(message) {
-                let fields = [
-                    'username=' + encodeURIComponent(user.email),
-                    'old=' + encodeURIComponent(oldEmail)
-                ];
-                if (message) {
-                    fields.push('message=' + encodeURIComponent(message));
-                }
-
-                const redirectUri = token.OAuth2Client.redirect_uri || config.mail.host;
-                return res.redirect(redirectUri + APPEND_MOVED + '&' + fields.join('&'));
+            function renderLandingPage(success, message) {
+                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirect, newMail: newUsername});
             }
         }
     );
@@ -150,11 +183,7 @@ function routes(router) {
 function triggerAccountChangeEmails(user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
-            if (!client) {
-                return reject('UNKNOWN_CLIENT');
-            }
-
-            var redirectUri = client.email_redirect_uri;
+            var redirectUri = client ? client.redirect_uri : undefined;
             const buffer = new Buffer(16);
             uuid.v4({}, buffer);
             var key = buffer.toString('base64');
@@ -169,7 +198,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                 function (verifyToken) {
                     let host = config.mail.host || '';
                     let confirmLink = host + '/email/move/' + encodeURIComponent(key);
-                    console.log('send email', confirmLink);
+                    logger.debug('send email', confirmLink);
                     return emailHelper.send(
                         config.mail.from,
                         newUsername,
@@ -213,4 +242,45 @@ function triggerAccountChangeEmails(user, client, newUsername) {
 
         }
     );
+}
+
+function cycle() {
+    if (DELETION_INTERVAL <= 0) {
+        return;
+    }
+
+    try {
+        const deletionDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
+        db.UserEmailToken.destroy(
+            {
+                where: {
+                    created_at: {
+                        $lt: deletionDate
+                    }
+                }
+            }
+        ).then(
+            count => {
+                logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
+            }
+        ).catch(
+            error => {
+                logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
+            }
+        );
+    } catch(e) {
+        logger.error('[EmailChange][DELETE/FAIL][error', e, ']');
+    }
+
+    activeInterval = setTimeout(
+        cycle,
+        DELETION_INTERVAL * 1000
+    );
+}
+
+function startCycle() {
+    if (activeInterval) {
+        return;
+    }
+    cycle();
 }

@@ -127,17 +127,7 @@
                             <option value="de"><%= __('PROFILE_LANGUAGE_DE_FORM_OPTION') %></option>
                         </select>
                     </div>
-                    <div class="panel <% if (!profile.email) { %> hidden <% } %>">
-                        <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
-                        <% if (profile.email !== null) { %>
-                        <span class="data-value"><%= profile.email %></span>
-                        <% } else { %>
-                        <span></span>
-                        <% } %>
-                        <% if (profile.email !== null) { %>
-                        <span class="personnal-data-input"><%= profile.email %></span>
-                        <% } %>
-                    </div>
+
                     <div id="btn-container">
                         <button id="btn-save-data" type="submit"
                                 class="btn btn-primary btn-large-submit"><%= __('PROFILE_SAVE_BUTTON') %></button>
@@ -159,6 +149,32 @@
         </div>
         <div class="col-sm-9">
 
+
+            <div class="panel <% if (!profile.email) { %> hidden <% } %>">
+                <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
+                <div id="form-change-email-success" class="alert alert-success alert-dismissible error-block" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <span id="change-email-success" class="content"><%= __('PROFILE_CHANGE_EMAIL_SUCCESS') %></span>
+                </div>
+                <% if (profile.email !== null ) { %>
+                <span class="data-value"><%= profile.email %></span>
+                <%if (!profile.hasSocialLogin) {%>
+                <span class="data-value">
+                        <button class="btn btn-link" type="button" data-toggle="modal" data-target="#changeEmailModal">
+                            <i class='glyphicon glyphicon-pencil'></i>
+                            <span class="button-label"><%= __('PROFILE_CHANGE_EMAIL_LINK') %></span>
+                        </button>
+                        </span>
+                <% } %>
+                <% } else { %>
+                <span></span>
+                <% } %>
+                <% if (profile.email !== null) { %>
+                <span class="personnal-data-input"><%= profile.email %></span>
+                <% } %>
+            </div>
+
             <div id="form-security-errors" class="alert alert-danger alert-dismissible error-block"
                  role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
@@ -173,8 +189,10 @@
             </div>
 
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
+            <span id="fake-password-display" class="hasPassword">******</span>
             <button id="btn-modify-password" type="button" class="btn btn-link">
                 <span id="hasPasswordButtonLabel" class="hasPassword">
+                    <i class='glyphicon glyphicon-pencil'></i>
                     <%= __('PROFILE_EDIT_YOUR_PASSWORD_LINK') %>
                 </span>
                 <span id="hasNoPasswordButtonLabel" class="hasNoPassword">
@@ -340,6 +358,7 @@
 </div>
 
 <!-- Add client Modal -->
+<% include ./modales/email-change.ejs %>
 <% include ./modales/user-delete.ejs %>
 <% include ../util/password-support %>
 
@@ -353,6 +372,7 @@
         var $savePasswordBtn = $('#btn-save-password');
         var $cancelPasswordBtn = $('#btn-cancel-password');
         var $modifyPassBtn = $('#btn-modify-password');
+        var $fakePasswordDisplay = $('#fake-password-display');
         var $formModifyPass = $('#form-modify-pass');
         var $btnContainer = $('#btn-container');
         var $btnVerificationLink = $('#btn-send-verification-link');
@@ -507,6 +527,11 @@
             });
         });
 
+        $('#changeEmailModal').on('show.bs.modal', function () {
+            this.classList.remove('fade');
+            $("#change-email-password").val('');
+        });
+
         $deleteUserModal.on('show.bs.modal', function () {
             $deleteUserModal.removeClass('fade');
         })
@@ -520,6 +545,73 @@
                 $('#delete-user').click();
                 return false;
             }
+        });
+
+        $('button#change-email').on('click', function (e) {
+            e.preventDefault();
+            var $btn = $(e.target);
+            var label = $btn.find('.button-label').first();
+            var spinner = $btn.find(".spinner").first();
+            var $changeEmailError = $("#change-email-error");
+            var $changeEmailNew = $("#change-email-new");
+            var $changeEmailPassword = $("#change-email-password");
+            var $changeEmailForm = $("#changeEmailForm");
+            var $formChangeEmailSuccess = $('#form-change-email-success');
+            $formChangeEmailSuccess.hide();
+
+            spinner.show();
+            label.hide();
+
+            $changeEmailError.hide();
+            $changeEmailError.html("");
+            $changeEmailForm.first('div.form-group').removeClass('has-error');
+
+            if (!$changeEmailNew.val()) {
+                $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_NO_EMAIL') %>");
+                $changeEmailForm.first('div.form-group').addClass('has-error');
+                $changeEmailError.show();
+                spinner.hide();
+                label.show();
+                return;
+            }
+
+            $.ajax(
+                {
+                    url: '<%= link('/email/change') %>',
+                    type: 'POST',
+                    data: {
+                        new_email: $changeEmailNew.val(),
+                        password: $changeEmailPassword.val(),
+                    },
+                    success: function(result) {
+                        $("#changeEmailModal").modal('toggle');
+                        $changeEmailPassword.val('');
+                        spinner.hide();
+                        label.show();
+                        $formChangeEmailSuccess.show();
+                    },
+                    error: function(error) {
+                        $changeEmailPassword.val('');
+                        if (error.responseJSON && error.responseJSON.msg) {
+                            $changeEmailError.html(error.responseJSON.msg);
+                            $changeEmailForm.first('div.form-group').addClass('has-error');
+                            $changeEmailError.show();
+                            spinner.hide()
+                            label.show();
+                        } else {
+                            try {
+                                console.log("Error: ", error);
+                            }
+                            catch(err) {}
+                            $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_ERROR') %>");
+                            $changeEmailForm.first('div.form-group').addClass('has-error');
+                            $changeEmailError.show();
+                            spinner.hide();
+                            label.show();
+                        }
+                    }
+                }
+            )
         });
 
         $btnDeleteAccount.on('click', function (e) {
@@ -635,6 +727,7 @@
         $modifyPassBtn.on('click', function (e) {
             e.preventDefault();
             $formModifyPass.show();
+            $fakePasswordDisplay.hide();
             $modifyPassBtn.hide();
         });
 
@@ -671,6 +764,7 @@
                     $password.val("");
                     $confirmPassword.val("");
                     $formModifyPass.hide();
+                    $fakePasswordDisplay.show();
                     $modifyPassBtn.show();
                     $('html, body').animate({
                         scrollTop: $("#security-success").offset().top
@@ -692,6 +786,7 @@
             e.preventDefault();
             resetMessages("form-security-errors", "security-errors");
             $formModifyPass.hide();
+            $fakePasswordDisplay.show();
             $modifyPassBtn.show();
         });
     })();
