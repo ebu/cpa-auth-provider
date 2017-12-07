@@ -93,7 +93,7 @@ module.exports = function (app, options) {
                         return res.status(400).json({
                             success: false,
                             msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
-                            password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req),
+                            password_strength_errors: passwordHelper.getWeaknesses(username, req.body.password, req),
                             errors: [{msg: passwordHelper.getWeaknessesMsg(username, req.body.password, req)}]
                         });
                     } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {

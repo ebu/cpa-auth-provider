@@ -113,7 +113,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     },
                     function (err) {
                         if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
-                            doneWithError(req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), done);
+                            doneWithError(passwordHelper.getWeaknessesMsg(username, password, req), done);
                         } else if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
                             doneWithError(req.__('BACK_SIGNUP_EMAIL_TAKEN'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
@@ -312,7 +312,7 @@ module.exports = function (app, options) {
             if (!passwordHelper.isStrong(req.body.email, req.body.password)) {
                 res.status(400).json({
                     errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.email, req.body.password, req)}],
-                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                    password_strength_errors: passwordHelper.getWeaknesses(req.body.email, req.body.password, req)
                 });
                 return;
             } else {
@@ -343,7 +343,7 @@ module.exports = function (app, options) {
         delete req.session.auth_origin;
 
         req.session.save(
-            function() {
+            function () {
                 if (redirectUri) {
                     return res.redirect(redirectUri);
                 }
