@@ -82,7 +82,7 @@ module.exports = function (app, options) {
                 }
             }
 
-            userHelper.createUser(username, password, requiredAttributes, optionnalAttributes, req).then(
+            userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
                 function (user) {
                     res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
                 },

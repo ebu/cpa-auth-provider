@@ -107,7 +107,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                 }
 
                 requiredAttributes.language = i18n.getLocale();
-                userHelper.createUser(username, password, requiredAttributes, optionnalAttributes, req).then(
+                userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
                     function (user) {
                         done(null, user);
                     },
