@@ -303,6 +303,7 @@
     "BACK_SIGNUP_PASS_STRENGTH_4": "The password must contain at least one uppercase letter.",
     "BACK_SIGNUP_PASS_STRENGTH_5": "The password must contain at least one number.",
     "BACK_SIGNUP_PASS_STRENGTH_6": "The password must contain at least one special character.",
+    "BACK_SIGNUP_PASS_STRENGTH_EMAIL_EQUALS_PASSWORD": "You cannot use your email as password",
     "BACK_SIGNUP_INVALID_EMAIL": "Invalid email",
     "BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD": "Invalid email or password",
     "BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "User not found.",

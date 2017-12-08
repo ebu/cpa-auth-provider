@@ -113,7 +113,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                     },
                     function (err) {
                         if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
-                            doneWithError(req.__('BACK_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'), done);
+                            doneWithError(passwordHelper.getWeaknessesMsg(username, password, req), done);
                         } else if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
                             doneWithError(req.__('BACK_SIGNUP_EMAIL_TAKEN'), done);
                         } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
@@ -309,30 +309,31 @@ module.exports = function (app, options) {
                 res.status(400).json({errors: result.array()});
                 return;
             }
-            if (!passwordHelper.isStrong(req.body.password)) {
+            if (!passwordHelper.isStrong(req.body.email, req.body.password)) {
                 res.status(400).json({
-                    msg: passwordHelper.getWeaknessesMsg(req.body.password, req),
-                    password_strength_errors: passwordHelper.getWeaknesses(req.body.password, req)
+                    errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.email, req.body.password, req)}],
+                    password_strength_errors: passwordHelper.getWeaknesses(req.body.email, req.body.password, req)
                 });
                 return;
+            } else {
+                db.User.findOne({where: {email: req.body.email}})
+                    .then(function (user) {
+                        if (user) {
+                            return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (success) {
+                                if (success) {
+                                    return res.status(200).send();
+                                } else {
+                                    return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});
+                                }
+                            });
+                        }
+                        else {
+                            return res.status(400).json({msg: req.__('BACK_PWD_UPDATE_USER_NOT_FOUND')});
+                        }
+                    }, function (error) {
+                        next(error);
+                    });
             }
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (success) {
-                            if (success) {
-                                return res.status(200).send();
-                            } else {
-                                return res.status(400).json({msg: req.__('BACK_PWD_WRONG_RECOVERY_CODE')});
-                            }
-                        });
-                    }
-                    else {
-                        return res.status(400).json({msg: req.__('BACK_PWD_UPDATE_USER_NOT_FOUND')});
-                    }
-                }, function (error) {
-                    next(error);
-                });
         });
 
     });
@@ -342,7 +343,7 @@ module.exports = function (app, options) {
         delete req.session.auth_origin;
 
         req.session.save(
-            function() {
+            function () {
                 if (redirectUri) {
                     return res.redirect(redirectUri);
                 }

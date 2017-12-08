@@ -303,6 +303,7 @@
 	"BACK_SIGNUP_PASS_STRENGTH_4": "Le mot de passe doit contenir au moins une lettre majuscule",
 	"BACK_SIGNUP_PASS_STRENGTH_5": "Le mot de passe doit contenir au moins un chiffre",
 	"BACK_SIGNUP_PASS_STRENGTH_6": "Le mot de passe doit contenir au moins un caractère spécial, par exemple '@.;?=-{}%&' etc...",
+	"BACK_SIGNUP_PASS_STRENGTH_EMAIL_EQUALS_PASSWORD": "Vous ne pouvez pas utiliser votre email comme mots de passe",
 	"BACK_SIGNUP_INVALID_EMAIL": "Email invalide",
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD": "Email ou mot de passe invalide",
 	"BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "Utilisateur inconnu.",
@@ -312,7 +313,7 @@
 	"BACK_SIGNUP_USER_NOT_FOUND": "Utilisateur inconnu.",
 	"BACK_SIGNUP_DATE_OF_BIRTH_FAIL": "Date de naissance invalide",
 	"BACK_SIGNUP_GENDER_FAIL": "Sexe invalide",
-	"BACK_SIGNUP_MISSING_FIELDS": "Date de naissance ou sexe invalide",
+	"BACK_SIGNUP_MISSING_FIELDS": "Saisie incomplète ou erronée",
 
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Utilisateur inconnu.",
 	"BACK_PWD_WRONG_RECOVERY_CODE": "Code de récupération de mot de passe erroné.",
