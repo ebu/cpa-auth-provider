@@ -11,7 +11,7 @@ var i18n4test = require("i18n");
 var requestHelper = require('../request-helper');
 
 i18n4test.configure({
-    locales:['en'],
+    locales: ['en'],
     directory: __dirname + '/../../locales'
 });
 
@@ -38,7 +38,46 @@ var resetDatabase = function (done) {
 describe('GET /', function () {
     before(resetDatabase);
 
-    context('with a signed in user', function () {
+    context('with a signed in user and no landing page', function () {
+        var use_landing_page_redirect = config.use_landing_page_redirect;
+        before(function (done) {
+            config.use_landing_page_redirect = false;
+            done();
+        });
+
+        after(function (done) {
+            config.use_landing_page_redirect = use_landing_page_redirect;
+            done();
+        });
+
+        before(function (done) {
+            requestHelper.login(this, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/', {cookie: this.cookie}, done);
+        });
+
+        it('should redirect to /user/profile', function () {
+            var urlPrefix = requestHelper.urlPrefix;
+            expect(this.res.statusCode).to.equal(302);
+            expect(this.res.headers).to.have.property('location');
+            expect(this.res.headers.location).to.equal(urlPrefix + '/user/profile');
+        });
+    });
+
+    context('with a signed in user and using landing page', function () {
+        var use_landing_page_redirect = config.use_landing_page_redirect;
+        before(function (done) {
+            config.use_landing_page_redirect = true;
+            done();
+        });
+
+        after(function (done) {
+            config.use_landing_page_redirect = use_landing_page_redirect;
+            done();
+        });
+
         before(function (done) {
             requestHelper.login(this, done);
         });
@@ -69,7 +108,7 @@ describe('GET /', function () {
     });
 });
 
-describe('GET home', function() {
+describe('GET home', function () {
 
     before(resetDatabase);
 

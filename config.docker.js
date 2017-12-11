@@ -112,6 +112,7 @@ module.exports = {
     // When accessing the home page, if defined, users are automatically
     // redirected to the specified identity_providers (ie: 'github')
     auto_idp_redirect: process.env.AUTO_IDP_REDIRECT || '',
+    use_landing_page_redirect: process.env.USE_LANDING_PAGE || '',
 
     db: {
         host: process.env.DB_HOST,
