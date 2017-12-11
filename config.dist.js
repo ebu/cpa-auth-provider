@@ -88,6 +88,7 @@ module.exports = {
     // When accessing the home page, if defined, users are automatically
     // redirected to the specified identity_providers (ie: 'github')
     auto_idp_redirect: '',
+    use_landing_page: false,
 
     // if false the list of user is not accessible in the admin
     displayUsersInfos: true,
