@@ -19,7 +19,7 @@ module.exports = function (router) {
             query = '?' + querystring.stringify(req.query);
         }
 
-        requestHelper.redirect(res, config.profile_as_landing_page ? '/home' : '/user/profile' + query);
+        requestHelper.redirect(res, config.use_landing_page ? '/home' : '/user/profile' + query);
     });
 
     router.get('/home', authHelper.authenticateFirst, function (req, res) {

@@ -39,14 +39,14 @@ describe('GET /', function () {
     before(resetDatabase);
 
     context('with a signed in user and no landing page', function () {
-        var profile_as_landing_page = config.profile_as_landing_page;
+        var use_landing_page = config.use_landing_page;
         before(function (done) {
-            config.profile_as_landing_page = false;
+            config.use_landing_page = false;
             done();
         });
 
         after(function (done) {
-            config.profile_as_landing_page = profile_as_landing_page;
+            config.use_landing_page = use_landing_page;
             done();
         });
 
@@ -67,14 +67,14 @@ describe('GET /', function () {
     });
 
     context('with a signed in user and using landing page', function () {
-        var profile_as_landing_page = config.profile_as_landing_page;
+        var use_landing_page = config.use_landing_page;
         before(function (done) {
-            config.profile_as_landing_page = true;
+            config.use_landing_page = true;
             done();
         });
 
         after(function (done) {
-            config.profile_as_landing_page = profile_as_landing_page;
+            config.use_landing_page = use_landing_page;
             done();
         });
 
