@@ -76,8 +76,8 @@
             <tr id="user-<%= users[i].id %>">
                 <td><%= users[i].id %></td>
                 <td><%= users[i].email %></td>
-                <td><%= users[i].UserProfile.firstname %></td>
-                <td><%= users[i].UserProfile.lastname %></td>
+                <td><%= users[i].firstname %></td>
+                <td><%= users[i].lastname %></td>
                 <td>
                     <select class="permission form-control">
                         <% if(users[i].permission_id !== permAdminId) { %>
@@ -270,8 +270,8 @@
                 var select = "";
                 row += "<td>" + user.id + "</td>";
                 row += "<td>" + user.email + "</td>";
-                row += "<td>" + user.UserProfile.firstname + "</td>";
-                row += "<td>" + user.UserProfile.lastname + "</td>";
+                row += "<td>" + user.firstname + "</td>";
+                row += "<td>" + user.lastname + "</td>";
 
                 select += '<select class="permission form-control">';
 

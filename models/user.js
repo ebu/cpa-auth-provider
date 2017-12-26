@@ -20,7 +20,12 @@ module.exports = function (sequelize, DataTypes) {
         photo_url: DataTypes.STRING,
         verified: DataTypes.BOOLEAN,
         password_changed_at: DataTypes.BIGINT,
-        last_login_at: DataTypes.BIGINT
+        last_login_at: DataTypes.BIGINT,
+        firstname: DataTypes.STRING,
+        lastname: DataTypes.STRING,
+        gender: DataTypes.STRING,
+        date_of_birth: DataTypes.BIGINT,
+        language: DataTypes.STRING
     }, {
         underscored: true,
 
@@ -31,7 +36,6 @@ module.exports = function (sequelize, DataTypes) {
             User.hasMany(models.OAuthProvider);
             User.belongsTo(models.IdentityProvider);
             User.belongsTo(models.Permission);
-            User.hasOne(models.UserProfile);
         }
     });
 
@@ -64,6 +68,28 @@ module.exports = function (sequelize, DataTypes) {
         } else { // if (result[1] === BCRYPT_TAG || !result[1]) {
             return bcrypt.compare(password, hash);
         }
+    };
+
+    User.prototype.getDisplayName = function (policy) {
+        if (!policy) {
+            return this.email;
+        }
+        if (policy === "FIRSTNAME") {
+            if (this.firstname) {
+                return this.firstname;
+            }
+        }
+        if (policy === "LASTNAME") {
+            if (this.lastname) {
+                return this.lastname;
+            }
+        }
+        if (policy === "FIRSTNAME_LASTNAME") {
+            if (this.firstname && this.lastname) {
+                return this.firstname + ' ' + this.lastname;
+            }
+        }
+        return this.email;
     };
 
     return User;

@@ -17,7 +17,6 @@ module.exports = {
             'Users',
             'Permissions',
             'UserEmailTokens',
-            'UserProfiles',
             'OAuthProviders',
             'OAuth2RefreshTokens'
         ];

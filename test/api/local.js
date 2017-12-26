@@ -382,18 +382,18 @@ describe('POST /api/local/signup', function () {
         });
 
         before(function (done) {
-            db.UserProfile.findOne().then(function (profile) {
-                self.userProfile = profile;
+            db.User.findOne().then(function (profile) {
+                self.user = profile;
             }).then(function () {
                 done();
             });
         });
 
         it('should save fields', function () {
-            expect('female').equal(self.userProfile.gender);
-            expect('firstname').equal(self.userProfile.firstname);
-            expect('lastname').equal(self.userProfile.lastname);
-            expect(249782400000).equal(self.userProfile.date_of_birth);
+            expect('female').equal(self.user.gender);
+            expect('firstname').equal(self.user.firstname);
+            expect('lastname').equal(self.user.lastname);
+            expect(249782400000).equal(self.user.date_of_birth);
         });
     });
 });

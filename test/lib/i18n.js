@@ -90,8 +90,8 @@ describe('POST /i18n/profile', function () {
         });
 
         before(function (done) {
-            db.UserProfile.find({where: {user_id: 5}}).then(function (profile) {
-                self.profile = profile;
+            db.User.find({where: {id: 5}}).then(function (user) {
+                self.user = user;
             }).then(function () {
                 done();
             });
@@ -103,7 +103,7 @@ describe('POST /i18n/profile', function () {
 
 
         it('should contain the profile with language \'fr\'', function () {
-            expect(self.profile.language).to.equal('fr');
+            expect(self.user.language).to.equal('fr');
         });
 
 

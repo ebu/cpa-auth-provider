@@ -84,7 +84,7 @@ var routes = function (router) {
                         mail: encodeURIComponent(user.email),
                         code: encodeURIComponent(code)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                    (user.language) ? user.language : i18n.getLocale()
                 ).then(
                     function () {
                     },
@@ -103,25 +103,13 @@ var routes = function (router) {
         //If facebook user then we do not check for account password as it can be empty
         oAuthProviderHelper.hasSocialLogin(user).then(function (isExt) {
             if (isExt) {
-                return db.UserProfile.destroy({
-                    where: {
-                        user_id: user.id
-                    }
-                }).then(function () {
-                    return user.destroy().then(function (){
-                        return res.status(204).send();
-                    });
+                return user.destroy().then(function () {
+                    return res.status(204).send();
                 });
             } else {
                 user.verifyPassword(req.body.password).then(function (isMatch) {
                         if (isMatch) {
-                            return db.UserProfile.destroy({
-                                where: {
-                                    user_id: user.id
-                                }
-                            }).then(function (affectedRows) {
-                                return user.destroy();
-                            });
+                            return user.destroy();
                         } else {
                             if (req.body.password) {
                                 throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));

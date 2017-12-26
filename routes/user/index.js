@@ -39,35 +39,27 @@ var routes = function (router) {
             if (!user) {
                 return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
             } else {
-                db.UserProfile.findOrCreate({
-                    where: {
-                        user_id: req.user.id
-                    }
-                }).spread(function (profile) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
 
-                        var data = {
-                            profile: {
-                                firstname: profile.firstname,
-                                lastname: profile.lastname,
-                                gender: profile.gender,
-                                language: profile.language,
-                                date_of_birth: profile.date_of_birth ? parseInt(profile.date_of_birth) : profile.date_of_birth,
-                                email: user.email,
-                                display_name: profile.getDisplayName(user, req.query.policy),
-                                verified: user.verified,
-                                hasPassword: !!user.password,
-                                facebook: providers.indexOf(oAuthProviderHelper.FB) > -1,
-                                google: providers.indexOf(oAuthProviderHelper.GOOGLE) > -1,
-                                hasSocialLogin: providers.length > 0
-                            },
-                            captcha: req.recaptcha
-                        };
+                    var data = {
+                        profile: {
+                            firstname: user.firstname,
+                            lastname: user.lastname,
+                            gender: user.gender,
+                            language: user.language,
+                            date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
+                            email: user.email,
+                            display_name: user.getDisplayName(user, req.query.policy),
+                            verified: user.verified,
+                            hasPassword: !!user.password,
+                            facebook: providers.indexOf(oAuthProviderHelper.FB) > -1,
+                            google: providers.indexOf(oAuthProviderHelper.GOOGLE) > -1,
+                            hasSocialLogin: providers.length > 0
+                        },
+                        captcha: req.recaptcha
+                    };
 
-                        res.render('./user/profile.ejs', data);
-                    });
-
-
+                    res.render('./user/profile.ejs', data);
                 });
             }
         }, function (err) {

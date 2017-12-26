@@ -25,22 +25,18 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
         } else {
-            db.UserProfile.findOrCreate({
-                where: {user_id: user.id}
-            }).spread(function (user_profile) {
                 res.json({
                     success: true,
                     user_profile: {
-                        firstname: user_profile.firstname,
-                        lastname: user_profile.lastname,
-                        gender: user_profile.gender,
-                        date_of_birth: user_profile.date_of_birth ? parseInt(user_profile.date_of_birth) : user_profile.date_of_birth,
-                        language: user_profile.language,
+                        firstname: user.firstname,
+                        lastname: user.lastname,
+                        gender: user.gender,
+                        date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
+                        language: user.language,
                         email: user.email,
-                        display_name: user_profile.getDisplayName(user, req.query.policy)
+                        display_name: user.getDisplayName(req.query.policy)
                     }
                 });
-            });
         }
     });
 

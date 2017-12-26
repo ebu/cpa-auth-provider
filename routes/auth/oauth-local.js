@@ -104,22 +104,16 @@ module.exports = function (app, options) {
             // Return 204 Success No Content
             res.status(204).json({connected: false});
         } else {
-            db.UserProfile.findOrCreate({
-                where: {
-                    user_id: user.id
-                }
-            }).spread(function (profile) {
-                var language = "en";
-                if(req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
-                    language = req.query.lang;
-                }
-                var data = {
-                    display_name: profile.getDisplayName(user, "FIRSTNAME_LASTNAME"),
-                    required_fields: userHelper.getRequiredFields(),
-                    menu : getMenu(req, language)
-                };
-                res.json(data);
-            });
+            var language = "en";
+            if (req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
+                language = req.query.lang;
+            }
+            var data = {
+                display_name: user.getDisplayName(user, "FIRSTNAME_LASTNAME"),
+                required_fields: userHelper.getRequiredFields(),
+                menu: getMenu(req, language)
+            };
+            res.json(data);
         }
     }
 

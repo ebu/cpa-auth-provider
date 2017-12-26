@@ -40,18 +40,16 @@ describe('Test user profile', function () {
                     provider_uid: 'testuser',
                     display_name: 'Test User 1'
                 });
-                var user_profile = db.UserProfile.build({
-                    id: 1,
-                    user_id: 1
-                });
 
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME')).to.equal('user1@earth.com');
-                expect(user_profile.getDisplayName(user, 'LASTNAME')).to.equal('user1@earth.com');
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
-                expect(user_profile.getDisplayName(user, 'EMAIL')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('FIRSTNAME')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('LASTNAME')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('EMAIL')).to.equal('user1@earth.com');
 
-                user_profile = db.UserProfile.build({
+                user = db.User.build({
                     id: 1,
+                    email: 'user1@earth.com',
+                    provider_uid: 'testuser',
                     lastname: 'lastname',
                     gender: 'gender',
                     date_of_birth: 'date_of_birth',
@@ -59,10 +57,12 @@ describe('Test user profile', function () {
                     user_id: 1
                 });
 
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('FIRSTNAME')).to.equal('user1@earth.com');
 
-                user_profile = db.UserProfile.build({
+                user = db.User.build({
                     id: 1,
+                    email: 'user1@earth.com',
+                    provider_uid: 'testuser',
                     firstname: 'firstname',
                     gender: 'gender',
                     date_of_birth: 'date_of_birth',
@@ -70,9 +70,11 @@ describe('Test user profile', function () {
                     user_id: 1
                 });
 
-                expect(user_profile.getDisplayName(user, 'LASTNAME')).to.equal('user1@earth.com');
-                user_profile = db.UserProfile.build({
+                expect(user.getDisplayName('LASTNAME')).to.equal('user1@earth.com');
+                user = db.User.build({
                     id: 1,
+                    email: 'user1@earth.com',
+                    provider_uid: 'testuser',
                     lastname: 'lastname',
                     gender: 'gender',
                     date_of_birth: 'date_of_birth',
@@ -80,10 +82,12 @@ describe('Test user profile', function () {
                     user_id: 1
                 });
 
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
 
-                user_profile = db.UserProfile.build({
+                user = db.User.build({
                     id: 1,
+                    email: 'user1@earth.com',
+                    provider_uid: 'testuser',
                     firstname: 'firstname',
                     gender: 'gender',
                     date_of_birth: 'date_of_birth',
@@ -91,10 +95,12 @@ describe('Test user profile', function () {
                     user_id: 1
                 });
 
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('FIRSTNAME_LASTNAME')).to.equal('user1@earth.com');
 
-                user_profile = db.UserProfile.build({
+                user = db.User.build({
                     id: 1,
+                    email: 'user1@earth.com',
+                    provider_uid: 'testuser',
                     firstname: 'firstname',
                     lastname: 'lastname',
                     gender: 'gender',
@@ -103,10 +109,10 @@ describe('Test user profile', function () {
                     user_id: 1
                 });
 
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME')).to.equal('firstname');
-                expect(user_profile.getDisplayName(user, 'LASTNAME')).to.equal('lastname');
-                expect(user_profile.getDisplayName(user, 'FIRSTNAME_LASTNAME')).to.equal('firstname lastname');
-                expect(user_profile.getDisplayName(user, 'EMAIL')).to.equal('user1@earth.com');
+                expect(user.getDisplayName('FIRSTNAME')).to.equal('firstname');
+                expect(user.getDisplayName('LASTNAME')).to.equal('lastname');
+                expect(user.getDisplayName('FIRSTNAME_LASTNAME')).to.equal('firstname lastname');
+                expect(user.getDisplayName('EMAIL')).to.equal('user1@earth.com');
 
 
                 done();

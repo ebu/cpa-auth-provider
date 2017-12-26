@@ -164,10 +164,6 @@ describe('GET /api/local/profile', function () {
 
 
         before(function (done) {
-            //var accessToken = this.res.body.token;
-
-            //console.log('accessToken : ' + accessToken);
-
             requestHelper.sendRequest(this, '/api/local/profile?policy=FIRSTNAME_LASTNAME', {
                 method: 'get',
                 accessToken: accessToken,
@@ -176,8 +172,6 @@ describe('GET /api/local/profile', function () {
         });
 
         it('get profile should return a success ', function () {
-            //console.log('get profile success:' + this.res.body.success);
-            //console.log('get profile status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user_profile.firstname).to.equal('emile');

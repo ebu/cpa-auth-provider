@@ -283,7 +283,7 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
-        db.User.findAll({include: [db.Permission, db.UserProfile], order: ['email']})
+        db.User.findAll({include: [db.Permission], order: ['email']})
             .then(
                 function (resultset) {
                     var head = ['id', 'email', 'firstname', 'lastname', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
@@ -299,7 +299,7 @@ module.exports = function (router) {
                         var createdAt = resultset[i].created_at;
                         var passwordChangedAt = resultset[i].password_changed_at ? new Date(parseInt(resultset[i].password_changed_at)) : '';
                         var lastLoginAt = resultset[i].last_login_at ? new Date(parseInt(resultset[i].last_login_at)) : '';
-                        lines.push([resultset[i].id, resultset[i].email, resultset[i].UserProfile ? resultset[i].UserProfile.firstname : '', resultset[i].UserProfile ? resultset[i].UserProfile.lastname : '', permissionId, label, createdAt, passwordChangedAt, lastLoginAt]);
+                        lines.push([resultset[i].id, resultset[i].email, resultset[i] ? resultset[i].firstname : '', resultset[i] ? resultset[i].lastname : '', permissionId, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 
                     var toDownload = csv.stringify(lines);

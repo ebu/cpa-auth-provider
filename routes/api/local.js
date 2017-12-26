@@ -220,21 +220,15 @@ module.exports = function (app, options) {
                 if (!user) {
                     return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
-
-                    db.UserProfile.findOrCreate({
-                        where: {user_id: decoded.id}
-                    }).spread(function (user_profile) {
-                        res.json({
-                            success: true,
-                            user: {
-                                email: user.email,
-                                display_name: user_profile.getDisplayName(user, req.query.policy),
-                                admin: user.admin
-                            },
-                            token: 'JWT ' + token
-                        });
+                    res.json({
+                        success: true,
+                        user: {
+                            email: user.email,
+                            display_name: user.getDisplayName(req.query.policy),
+                            admin: user.admin
+                        },
+                        token: 'JWT ' + token
                     });
-
                 }
             });
         } else {

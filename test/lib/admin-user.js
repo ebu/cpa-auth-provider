@@ -26,56 +26,55 @@ var initDatabase = function (done) {
         ).then(function () {
         db.Permission
             .create({
-                    id: 2,
-                    label: "other"
-                }
-            )
+                id: 2,
+                label: "other"
+            })
             .then(function () {
                 db.User.create({
                     id: 6,
                     email: 'User@User.ch',
-                    provider_uid: 'testuser'
-                }).then(function (user) {
-                    return db.UserProfile.create({firstname: 'Scott', lastname: 'Tiger', user_id: user.id});
-                });
-            })
-
-            .then(function () {
-                db.User.create({
-                    id: 5,
-                    email: 'testuser',
                     provider_uid: 'testuser',
-                    permission_id: 1
+                    firstname: 'Scott',
+                    lastname: 'Tiger'
                 })
-                    .then(function (user) {
-                        return user.setPassword('testpassword');
-                    })
-                    .then(function (user) {
-                        return user.updateAttributes({permission_id: 1});
-                    })
-                    .then(function (user) {
-                        return db.UserProfile.create({firstname: 'John', lastname: 'Doe', user_id: user.id});
-                    })
+
                     .then(function () {
-                        return db.Domain.create({
+                        db.User.create({
                             id: 5,
-                            name: 'example-service.bbc.co.uk',
-                            display_name: 'BBC',
-                            access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-                        });
-                    })
-                    .then(
-                        function () {
-                            done();
-                        },
-                        function (error) {
-                            done(new Error(error));
-                        });
+                            email: 'testuser',
+                            provider_uid: 'testuser',
+                            permission_id: 1,
+                            firstname: 'John',
+                            lastname: 'Doe'
+                        })
+                            .then(function (user) {
+                                return user.setPassword('testpassword');
+                            })
+                            .then(function (user) {
+                                return user.updateAttributes({permission_id: 1});
+                            })
+                            .then(function () {
+                                return db.Domain.create({
+                                    id: 5,
+                                    name: 'example-service.bbc.co.uk',
+                                    display_name: 'BBC',
+                                    access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+                                });
+                            })
+                            .then(
+                                function () {
+                                    done();
+                                },
+                                function (error) {
+                                    done(new Error(error));
+                                });
+                    });
             });
+
+
     });
+}
 
-
-};
 
 var resetDatabase = function (done) {
     dbHelper.clearDatabase(function (err) {

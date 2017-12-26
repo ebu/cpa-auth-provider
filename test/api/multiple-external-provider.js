@@ -204,18 +204,18 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    db.UserProfile.findOne().then(function (profile) {
-                        self.userProfile = profile;
+                    db.User.findOne().then(function (user) {
+                        self.user = user;
                     }).then(function () {
                         done();
                     });
                 });
 
                 it('Profile should be completed', function () {
-                        expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                        expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                        expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
-                        expect(USER_PROFILE.birthday_ts).equal(self.userProfile.date_of_birth);
+                        expect(USER_PROFILE.gender).equal(self.user.gender);
+                        expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                        expect(USER_PROFILE.last_name).equal(self.user.lastname);
+                        expect(USER_PROFILE.birthday_ts).equal(self.user.date_of_birth);
                     }
                 );
             });
@@ -237,12 +237,12 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    db.UserProfile.findOne().then(function (profile) {
-                        profile.gender = USER_PROFILE2.gender;
-                        profile.firstname = USER_PROFILE2.first_name;
-                        profile.lastname = USER_PROFILE2.last_name;
-                        profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                        profile.save().then(function () {
+                    db.User.findOne().then(function (user) {
+                        user.gender = USER_PROFILE2.gender;
+                        user.firstname = USER_PROFILE2.first_name;
+                        user.lastname = USER_PROFILE2.last_name;
+                        user.date_of_birth = USER_PROFILE2.birthday_ts;
+                        user.save().then(function () {
                             done();
                         });
                     });
@@ -253,18 +253,18 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    db.UserProfile.findOne().then(function (profile) {
-                        self.userProfile = profile;
+                    db.User.findOne().then(function (user) {
+                        self.user = user;
                     }).then(function () {
                         done();
                     });
                 });
 
                 it('Profile should no be updated completed', function () {
-                        expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                        expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                        expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
-                        expect(USER_PROFILE2.birthday_ts).equal(self.userProfile.date_of_birth);
+                        expect(USER_PROFILE2.gender).equal(self.user.gender);
+                        expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                        expect(USER_PROFILE2.last_name).equal(self.user.lastname);
+                        expect(USER_PROFILE2.birthday_ts).equal(self.user.date_of_birth);
                     }
                 );
             });
@@ -366,18 +366,18 @@ describe('Facebook', function () {
 
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should be completed', function () {
-                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
-                    expect(USER_PROFILE.birthday_ts).equal(self.userProfile.date_of_birth);
+                    expect(USER_PROFILE.gender).equal(self.user.gender);
+                    expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.user.lastname);
+                    expect(USER_PROFILE.birthday_ts).equal(self.user.date_of_birth);
                 }
             );
         });
@@ -399,12 +399,12 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    profile.gender = USER_PROFILE2.gender;
-                    profile.firstname = USER_PROFILE2.first_name;
-                    profile.lastname = USER_PROFILE2.last_name;
-                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                    profile.save().then(function () {
+                db.User.findOne().then(function (user) {
+                    user.gender = USER_PROFILE2.gender;
+                    user.firstname = USER_PROFILE2.first_name;
+                    user.lastname = USER_PROFILE2.last_name;
+                    user.date_of_birth = USER_PROFILE2.birthday_ts;
+                    user.save().then(function () {
                         done();
                     });
                 });
@@ -415,18 +415,18 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should no be updated completed', function () {
-                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
-                    expect(USER_PROFILE2.birthday_ts).equal(self.userProfile.date_of_birth);
+                    expect(USER_PROFILE2.gender).equal(self.user.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.user.lastname);
+                    expect(USER_PROFILE2.birthday_ts).equal(self.user.date_of_birth);
                 }
             );
         });
@@ -547,17 +547,17 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should be completed', function () {
-                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE.gender).equal(self.user.gender);
+                    expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -579,12 +579,12 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    profile.gender = USER_PROFILE2.gender;
-                    profile.firstname = USER_PROFILE2.first_name;
-                    profile.lastname = USER_PROFILE2.last_name;
-                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                    profile.save().then(function () {
+                db.User.findOne().then(function (user) {
+                    user.gender = USER_PROFILE2.gender;
+                    user.firstname = USER_PROFILE2.first_name;
+                    user.lastname = USER_PROFILE2.last_name;
+                    user.date_of_birth = USER_PROFILE2.birthday_ts;
+                    user.save().then(function () {
                         done();
                     });
                 });
@@ -595,17 +595,17 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should no be updated completed', function () {
-                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE2.gender).equal(self.user.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -745,17 +745,17 @@ describe('Google', function () {
 
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should be completed', function () {
-                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE.gender).equal(self.user.gender);
+                    expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -787,12 +787,12 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    profile.gender = USER_PROFILE2.gender;
-                    profile.firstname = USER_PROFILE2.first_name;
-                    profile.lastname = USER_PROFILE2.last_name;
-                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                    profile.save().then(function () {
+                db.User.findOne().then(function (user) {
+                    user.gender = USER_PROFILE2.gender;
+                    user.firstname = USER_PROFILE2.first_name;
+                    user.lastname = USER_PROFILE2.last_name;
+                    user.date_of_birth = USER_PROFILE2.birthday_ts;
+                    user.save().then(function () {
                         done();
                     });
                 });
@@ -803,17 +803,17 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should no be updated completed', function () {
-                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE2.gender).equal(self.user.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.user.lastname);
                 }
             );
         });
