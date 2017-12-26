@@ -7,7 +7,7 @@ var passport = require('passport');
 var emailHelper = require('../../lib/email-helper');
 var config = require('../../config');
 var uuid = require('uuid');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 
 var STATES = {
     INVALID_TOKEN: 'INVALID_TOKEN',
@@ -66,7 +66,7 @@ function routes(router) {
                     if (!correct) {
                         throw new Error(STATES.WRONG_PASSWORD);
                     }
-                    return oAuthProviderHelper.hasSocialLogin(oldUser);
+                    return socialLoginHelper.hasSocialLogin(oldUser);
                 }
             ).then(
                 function (hasSocialLogin) {

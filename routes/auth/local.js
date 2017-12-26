@@ -10,7 +10,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
 
 // Google reCAPTCHA
@@ -24,7 +24,7 @@ var localStrategyCallback = function (req, username, password, done) {
                 if (!user) {
                     doneWithError();
                 } else {
-                    oAuthProviderHelper.hasSocialLogin(user).then(function (res) {
+                    socialLoginHelper.hasSocialLogin(user).then(function (res) {
                         if (res) {
                             doneWithError();
                         }

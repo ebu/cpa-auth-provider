@@ -3,7 +3,7 @@
 
 module.exports = function (sequelize, DataTypes) {
 
-    var OAuthProvider = sequelize.define('OAuthProvider', {
+    var SocialLogin = sequelize.define('SocialLogin', {
         name: DataTypes.STRING,
         uid: DataTypes.STRING,
         firstname: DataTypes.STRING,
@@ -15,9 +15,9 @@ module.exports = function (sequelize, DataTypes) {
     }, {
         underscored: true,
         associate: function (models) {
-            OAuthProvider.belongsTo(models.User);
+            SocialLogin.belongsTo(models.User);
         }
     });
 
-    return OAuthProvider;
+    return SocialLogin;
 };

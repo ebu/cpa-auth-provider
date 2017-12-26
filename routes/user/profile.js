@@ -5,7 +5,7 @@ var authHelper = require('../../lib/auth-helper');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var i18n = require('i18n');
@@ -101,7 +101,7 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        oAuthProviderHelper.hasSocialLogin(user).then(function (isExt) {
+        socialLoginHelper.hasSocialLogin(user).then(function (isExt) {
             if (isExt) {
                 return user.destroy().then(function () {
                     return res.status(204).send();

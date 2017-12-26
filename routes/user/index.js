@@ -4,7 +4,7 @@ var config = require('../../config');
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
 var passwordHelper = require('../../lib/password-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var i18n = require('i18n');
 
 // Google reCAPTCHA
@@ -39,7 +39,7 @@ var routes = function (router) {
             if (!user) {
                 return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
             } else {
-                oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                socialLoginHelper.getOAuthProviders(user).then(function (providers) {
 
                     var data = {
                         profile: {
@@ -52,8 +52,8 @@ var routes = function (router) {
                             display_name: user.getDisplayName(user, req.query.policy),
                             verified: user.verified,
                             hasPassword: !!user.password,
-                            facebook: providers.indexOf(oAuthProviderHelper.FB) > -1,
-                            google: providers.indexOf(oAuthProviderHelper.GOOGLE) > -1,
+                            facebook: providers.indexOf(socialLoginHelper.FB) > -1,
+                            google: providers.indexOf(socialLoginHelper.GOOGLE) > -1,
                             hasSocialLogin: providers.length > 0
                         },
                         captcha: req.recaptcha

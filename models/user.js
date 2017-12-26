@@ -33,7 +33,8 @@ module.exports = function (sequelize, DataTypes) {
             User.hasMany(models.Client);
             User.hasMany(models.AccessToken);
             User.hasMany(models.ValidationCode);
-            User.hasMany(models.OAuthProvider);
+            User.hasMany(models.SocialLogin);
+            User.hasMany(models.LocalLogin);
             User.belongsTo(models.IdentityProvider);
             User.belongsTo(models.Permission);
         }

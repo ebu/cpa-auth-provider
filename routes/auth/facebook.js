@@ -5,7 +5,7 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var facebookHelper = require('../../lib/facebook-helper');
 var callbackHelper = require('../../lib/callback-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -36,7 +36,7 @@ passport.use(new FacebookStrategy({
 
         var providerUid = facebookHelper.buildFBId(profile.id);
 
-        return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
+        return socialLoginHelper.findOrCreateExternalUser(socialLoginHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
             function (u) {
                 if (u) {
                     u.logLogin();

@@ -1,7 +1,7 @@
 "use strict";
 
 var db = require('../../models');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var cors = require('../../lib/cors');
 var googleHelper = require('../../lib/google-helper');
 
@@ -15,7 +15,7 @@ module.exports = function (app, options) {
                     function (googleProfile) {
                         // If the googleProfile already exists and his account is not validated
                         // i.e.: there is a user in the database with the same id and this user email is not validated
-                        remoteProfile = oAuthProviderHelper.buildRemoteProfile(googleHelper.buildGoogleId(googleProfile.provider_uid), googleProfile.display_name, googleProfile.email, googleProfile.name.givenName, googleProfile.name.familyName, googleProfile.gender, null);
+                        remoteProfile = socialLoginHelper.buildRemoteProfile(googleHelper.buildGoogleId(googleProfile.provider_uid), googleProfile.display_name, googleProfile.email, googleProfile.name.givenName, googleProfile.name.familyName, googleProfile.gender, null);
                         return db.User.findOne({
                             where: {
                                 email: googleProfile.email
@@ -27,7 +27,7 @@ module.exports = function (app, options) {
                         if (userInDb && !userInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
                         } else {
-                            oAuthProviderHelper.performLogin(remoteProfile, oAuthProviderHelper.GOOGLE, function (error, response) {
+                            socialLoginHelper.performLogin(remoteProfile, socialLoginHelper.GOOGLE, function (error, response) {
                                 if (response) {
                                     res.status(200).json(response);
                                 } else {

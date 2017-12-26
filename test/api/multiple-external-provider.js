@@ -7,7 +7,7 @@ var recaptcha = require('express-recaptcha');
 
 var dbHelper = require('../db-helper');
 var requestHelper = require('../request-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var googleHelper = require('../../lib/google-helper');
 
 var GOOGLE_EMAIL = 'someone@gmail.com';
@@ -853,7 +853,7 @@ describe('Facebook and Google', function () {
 
             before(function (done) {
                 db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                    socialLoginHelper.getOAuthProviders(user).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });
@@ -907,7 +907,7 @@ describe('Facebook and Google', function () {
 
             before(function (done) {
                 db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                    socialLoginHelper.getOAuthProviders(user).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });

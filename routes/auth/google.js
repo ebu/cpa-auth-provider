@@ -3,7 +3,7 @@
 var db = require('../../models/index');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var googleHelper = require('../../lib/google-helper');
 
 var passport = require('passport');
@@ -28,7 +28,7 @@ passport.use(new GoogleStrategy({
 
         var providerUid = googleHelper.buildGoogleId(profile.id);
 
-        return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.GOOGLE, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, null).then(
+        return socialLoginHelper.findOrCreateExternalUser(socialLoginHelper.GOOGLE, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, null).then(
             function (u) {
                 if (u) {
                     u.logLogin();
