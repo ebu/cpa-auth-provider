@@ -73,7 +73,7 @@ var initDatabase = function (done) {
 
 
     });
-}
+};
 
 
 var resetDatabase = function (done) {
