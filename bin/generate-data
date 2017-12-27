@@ -12,7 +12,7 @@ var db = require('../models');
 var NB = '--nb=';
 var ADMIN_PASS = '--password=';
 
-var nbOfUserToGenerate = 100;
+var nbOfUserToGenerate = 10;
 var adminPass = '';
 
 for (var i in process.argv) {
@@ -34,11 +34,8 @@ for (var i = 0; i < nbOfUserToGenerate; i++) {
         gender: faker.random.number(1) ? 'male' : 'female',
         date_of_birth: faker.date.past(80).getTime(),
         language: 'fr',
-        email: faker.internet.email(),
-        verified: faker.random.number(1),
-        password_changed_at: faker.date.past(10).getTime(),
-        last_login_at: faker.date.past(10).getTime()
-    }).then(generatePassword));
+        email: faker.internet.email()
+    }).then(generatePasswordAndLocalLogin));
 }
 
 Promise.all(batch).then(function () {
@@ -46,7 +43,7 @@ Promise.all(batch).then(function () {
     if (adminPass !== '') {
         batch.push(db.User.findOrCreate({
             where: {
-                    email: 'peach-review@ebu.io'
+                email: 'peach-review@ebu.io'
             },
             default: {
                 verified: true,
@@ -62,6 +59,14 @@ Promise.all(batch).then(function () {
     }
 });
 
-function generatePassword(user) {
-    return user.setPassword(faker.internet.password());
+function generatePasswordAndLocalLogin(user) {
+    return db.LocalLogin.create({
+        user_id: user.id,
+        login: user.email,
+        verified: faker.random.number(1),
+        password_changed_at: faker.date.past(10).getTime(),
+        last_login_at: faker.date.past(10).getTime()
+    }).then(function (localLogin) {
+        return localLogin.setPassword(faker.internet.password());
+    });
 }

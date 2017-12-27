@@ -45,7 +45,12 @@ db.sequelize
                         .then(function () {
                             db.User.findOne({where: {id: 1}})
                                 .then(function (user) {
-                                    return user.setPassword("admin");
+                                    db.LocalLogin.create({
+                                        login: user.email,
+                                        user_id: user.id
+                                    }).then(function (localLogin) {
+                                        return localLogin.setPassword("admin");
+                                    });
                                 });
                             console.log('[USER] Database populated');
                         });

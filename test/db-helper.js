@@ -48,12 +48,14 @@ module.exports = {
 
     createFakeUser: function (userTemplate, done) {
         return db.User.create(userTemplate).then(function (user) {
-            return user.setPassword(userTemplate.password);
-        }).then(
-            function () {
-                done();
-            }
-        );
+            return db.LocalLogin.create({login: user.email, user_id: user.id}).then(function (localLogin) {
+                return localLogin.setPassword(userTemplate.password);
+            }).then(
+                function () {
+                    done();
+                }
+            );
+        });
     }
 };
 

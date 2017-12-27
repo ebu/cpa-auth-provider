@@ -332,6 +332,7 @@
 
     "BACK_INCORRECT_PREVIOUS_PASS": "The previous password is incorrect",
     "BACK_USER_NOT_FOUND": "User not found",
+    "BACK_USER_ALL_READY_HAS_PASSWORD": "User all ready has password",
     "BACK_SUCESS_PASS_CHANGED": "Successfully changing password",
     "BACK_SUCESS_PASS_CREATED": "Successfully created a new password",
 

@@ -60,7 +60,12 @@ function createUsers(userList) {
             function createFakeUser(def) {
                 db.User.create(def).then(
                     function (user) {
-                        return user.setPassword(def.password);
+                        db.LocalLogin.create({login: user.email, user_id: user.id}).then(
+                            function (localLogin) {
+                                return localLogin.setPassword(def.password);
+
+                            }
+                        );
                     }
                 ).then(
                     function () {

@@ -36,11 +36,11 @@ function createUsers() {
     if (!config.users) {
         return;
     }
-    db.User.bulkCreate(config.users).then(
+    db.User.bulkCreate(config.users).then( //FIXME
         function () {
-            db.User.findOne({where: {id: 1}}).then(
+            db.User.findOne({where: {id: 1}, include: {model: db.LocalLogin}}).then(
                 function (user) {
-                    return user.setPassword("admin");
+                    return user.LocalLogin.setPassword("admin");
                 }
             );
             console.log('[USER] Database populated');

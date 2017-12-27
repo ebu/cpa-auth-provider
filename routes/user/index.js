@@ -34,13 +34,15 @@ var routes = function (router) {
         db.User.findOne({
             where: {
                 id: req.user.id
+            },
+            include: {
+                model: db.LocalLogin
             }
         }).then(function (user) {
             if (!user) {
                 return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
             } else {
                 socialLoginHelper.getOAuthProviders(user).then(function (providers) {
-
                     var data = {
                         profile: {
                             firstname: user.firstname,
@@ -50,8 +52,8 @@ var routes = function (router) {
                             date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
                             email: user.email,
                             display_name: user.getDisplayName(user, req.query.policy),
-                            verified: user.verified,
-                            hasPassword: !!user.password,
+                            verified: !user.LocalLogin || user.LocalLogin.verified ,
+                            hasPassword: user.LocalLogin && !!user.LocalLogin.password,
                             facebook: providers.indexOf(socialLoginHelper.FB) > -1,
                             google: providers.indexOf(socialLoginHelper.GOOGLE) > -1,
                             hasSocialLogin: providers.length > 0
@@ -86,15 +88,18 @@ var routes = function (router) {
                     db.User.findOne({
                         where: {
                             id: req.user.id
+                        },
+                        include: {
+                            model: db.LocalLogin
                         }
                     }).then(function (user) {
                         if (!user) {
                             return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
                         } else {
-                            user.verifyPassword(req.body.previous_password).then(function (isMatch) {
+                            user.LocalLogin.verifyPassword(req.body.previous_password).then(function (isMatch) {
                                 // if user is found and password is right change password
                                 if (isMatch) {
-                                    user.setPassword(req.body.password).then(
+                                    user.LocalLogin.setPassword(req.body.password).then(
                                         function () {
                                             res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
                                         },
@@ -136,12 +141,14 @@ var routes = function (router) {
                         if (!user) {
                             return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
                         } else {
-                            user.setPassword(req.body.password).then(
-                                function () {
-                                    res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
-                                },
-                                function (err) {
-                                    res.status(500).json({errors: [err]});
+                            if (user.LocalLogin){
+                                return res.status(401).send({errors: [{msg: req.__('BACK_USER_ALL_READY_HAS_PASSWORD')}]});
+                            }
+                            db.LocalLogin.create({login: user.email, user_id: user.id, verified: true}).then(
+                                function (localLogin) {
+                                    return localLogin.setPassword(req.body.password).then(function(){
+                                        res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
+                                    });
                                 }
                             );
                         }

@@ -283,7 +283,7 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
-        db.User.findAll({include: [db.Permission], order: ['email']})
+        db.User.findAll({include: [db.Permission, db.LocalLogin], order: ['email']})
             .then(
                 function (resultset) {
                     var head = ['id', 'email', 'firstname', 'lastname', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
@@ -297,8 +297,8 @@ module.exports = function (router) {
                             label = resultset[i].Permission.label;
                         }
                         var createdAt = resultset[i].created_at;
-                        var passwordChangedAt = resultset[i].password_changed_at ? new Date(parseInt(resultset[i].password_changed_at)) : '';
-                        var lastLoginAt = resultset[i].last_login_at ? new Date(parseInt(resultset[i].last_login_at)) : '';
+                        var passwordChangedAt = resultset[i].LocalLogin && resultset[i].LocalLogin.password_changed_at ? new Date(parseInt(resultset[i].LocalLogin.password_changed_at)) : '';
+                        var lastLoginAt = resultset[i].LocalLogin && resultset[i].LocalLogin.last_login_at ? new Date(parseInt(resultset[i].LocalLogin.last_login_at)) : '';
                         lines.push([resultset[i].id, resultset[i].email, resultset[i] ? resultset[i].firstname : '', resultset[i] ? resultset[i].lastname : '', permissionId, label, createdAt, passwordChangedAt, lastLoginAt]);
                     }
 

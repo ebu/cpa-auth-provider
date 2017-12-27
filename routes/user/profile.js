@@ -101,28 +101,37 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        socialLoginHelper.hasSocialLogin(user).then(function (isExt) {
-            if (isExt) {
-                return user.destroy().then(function () {
-                    return res.status(204).send();
-                });
-            } else {
-                user.verifyPassword(req.body.password).then(function (isMatch) {
-                        if (isMatch) {
-                            return user.destroy();
-                        } else {
-                            if (req.body.password) {
-                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
+        socialLoginHelper.hasLocalLogin(user).then(function (hasLocal) {
+            if (hasLocal) {
+                return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
+                    localLogin.verifyPassword(req.body.password).then(function (isMatch) {
+                            if (isMatch) {
+                                return localLogin.destroy().then(function () {
+                                    return db.SocialLogin.destroy({where: {user_id: user.id}}).then(function () {
+                                        return user.destroy();
+                                    });
+                                });
                             } else {
-                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+                                if (req.body.password) {
+                                    throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
+                                } else {
+                                    throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
+                                }
                             }
                         }
-                    }
-                ).then(function () {
-                    return res.status(204).send();
-                }).catch(function (e) {
-                    res.status(401).send({success: false, msg: e.message});
+                    ).then(function () {
+                        return res.status(204).send();
+                    }).catch(function (e) {
+                        res.status(401).send({success: false, msg: e.message});
+                    });
                 });
+            } else {
+                return db.SocialLogin.destroy({where: {user_id: user.id}}).then(function () {
+                    return user.destroy().then(function () {
+                        return res.status(204).send();
+                    });
+                });
+
             }
         });
     });

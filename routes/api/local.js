@@ -171,16 +171,16 @@ module.exports = function (app, options) {
     });
 
     app.post('/api/local/authenticate', cors, function (req, res) {
-        db.User.findOne({where: {email: req.body.email}})
+        db.User.findOne({where: {email: req.body.email}, include: {model: db.LocalLogin}})
             .then(function (user) {
                     if (!user || !req.body.password) {
                         res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                         return;
                     }
 
-                    user.verifyPassword(req.body.password).then(function (isMatch) {
+                    user.LocalLogin.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
-                                user.logLogin().then(function () {
+                                user.LocalLogin.logLogin().then(function () {
                                 }, function () {
                                 });
                                 // if user is found and password is right create a token

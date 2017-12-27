@@ -37,11 +37,13 @@ passport.use(new FacebookStrategy({
         var providerUid = facebookHelper.buildFBId(profile.id);
 
         return socialLoginHelper.findOrCreateExternalUser(socialLoginHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
-            function (u) {
-                if (u) {
-                    u.logLogin();
+            function (user) {
+                if (user) {
+                    db.SocialLogin.findOne({where: {user_id: user.id, name: socialLoginHelper.FB}}).then(function (socialLogin) {
+                        socialLogin.logLogin();
+                    });
                 }
-                return done(null, u);
+                return done(null, user);
             }
         ).catch(
             function (err) {

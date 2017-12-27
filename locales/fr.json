@@ -332,6 +332,7 @@
 
 	"BACK_INCORRECT_PREVIOUS_PASS": "Le précédent mot de passe est incorrect",
 	"BACK_USER_NOT_FOUND": "Utilisateur inconnu",
+	"BACK_USER_ALL_READY_HAS_PASSWORD": "L'utilisateur a déjà un mots de passe",
 	"BACK_SUCESS_PASS_CHANGED": "Mot de passe mis à jour",
 	"BACK_SUCESS_PASS_CREATED": "Mot de passe créé avec succès",
 

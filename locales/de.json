@@ -333,6 +333,7 @@
 
 	"BACK_INCORRECT_PREVIOUS_PASS": "Das vorherige Passwort ist falsch",
 	"BACK_USER_NOT_FOUND": "Benutzer nicht gefunden",
+	"BACK_USER_ALL_READY_HAS_PASSWORD": "Der Benutzer hat bereits ein Passwort",
 	"BACK_SUCESS_PASS_CHANGED": "Passwort erfolgreich ändern",
 	"BACK_SUCESS_PASS_CREATED": "Erfolgreich ein neues Passwort erstellt",
 

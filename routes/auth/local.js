@@ -19,19 +19,16 @@ var i18n = require('i18n');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
-    db.User.findOne({where: {email: username}})
+    db.User.findOne({where: {email: username}, include: {model: db.LocalLogin}})
         .then(function (user) {
                 if (!user) {
                     doneWithError();
                 } else {
-                    socialLoginHelper.hasSocialLogin(user).then(function (res) {
+                    socialLoginHelper.hasLocalLogin(user).then(function (res) {
                         if (res) {
-                            doneWithError();
-                        }
-                        else {
-                            return user.verifyPassword(password).then(function (isMatch) {
+                            return user.LocalLogin.verifyPassword(password).then(function (isMatch) {
                                     if (isMatch) {
-                                        user.logLogin();
+                                        user.LocalLogin.logLogin();
                                         done(null, user);
                                     } else {
                                         doneWithError();
@@ -40,6 +37,9 @@ var localStrategyCallback = function (req, username, password, done) {
                                 function (err) {
                                     done(err);
                                 });
+                        }
+                        else {
+                            doneWithError();
                         }
                     });
                 }
@@ -195,12 +195,12 @@ module.exports = function (app, options) {
     });
 
     app.get('/email_verify', function (req, res, next) {
-        db.User.findOne({where: {email: req.query.email}})
+        db.User.findOne({where: {email: req.query.email}, include: {model: db.LocalLogin}})
             .then(function (user) {
                 if (user) {
-                    codeHelper.verifyEmail(user, req.query.code).then(function (success) {
+                    codeHelper.verifyEmail(user.LocalLogin, req.query.code).then(function (success) {
                             if (success) {
-                                res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                                res.render('./verify-mail.ejs', {verified: user.LocalLogin.verified, userId: user.id});
                             } else {
                                 res.render('./verify-mail.ejs', {verified: false});
                             }

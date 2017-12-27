@@ -22,7 +22,7 @@ exports.token = function (client, username, password, scope, done) {
 function confirmUser(client, username, password, scope, done) {
     var user;
     db.User.findOne(
-        {where: {email: username}}
+        {where: {email: username}, include: {model: db.LocalLogin}}
     ).then(
         function (user_) {
             user = user_;
@@ -30,7 +30,7 @@ function confirmUser(client, username, password, scope, done) {
                 throw new Error(INCORRECT_LOGIN_OR_PASS);
             }
 
-            return user.verifyPassword(password);
+            return user.LocalLoginverifyPassword(password);
         }
     ).then(
         function (isMatch) {
