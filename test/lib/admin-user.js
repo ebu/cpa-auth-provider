@@ -18,63 +18,49 @@ chai.use(chaiHttp);
 chai.Assertion.addProperty('visible', require('chai-visible'));
 
 var initDatabase = function (done) {
-    db.Permission
-        .create({
-                id: 1,
-                label: "admin"
-            }
-        ).then(function () {
-        db.Permission
-            .create({
-                id: 2,
-                label: "other"
-            })
-            .then(function () {
-                db.User.create({
-                    id: 6,
-                    email: 'User@User.ch',
-                    provider_uid: 'testuser',
-                    firstname: 'Scott',
-                    lastname: 'Tiger'
-                })
-
-                    .then(function () {
-                        db.User.create({
-                            id: 5,
-                            email: 'testuser',
-                            provider_uid: 'testuser',
-                            permission_id: 1,
-                            firstname: 'John',
-                            lastname: 'Doe'
-                        })
-                            .then(function (user) {
-                                db.LocalLogin.create({user_id:user.id, login:user.email}).then(function(localLogin){
-                                    return localLogin.setPassword('testpassword');
-                                });
-                            })
-                            .then(function (user) {
-                                return user.updateAttributes({permission_id: 1});
-                            })
-                            .then(function () {
-                                return db.Domain.create({
-                                    id: 5,
-                                    name: 'example-service.bbc.co.uk',
-                                    display_name: 'BBC',
-                                    access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-                                });
-                            })
-                            .then(
-                                function () {
-                                    done();
-                                },
-                                function (error) {
-                                    done(new Error(error));
-                                });
-                    });
-            });
-
-
-    });
+    db.Permission.create({
+        id: 1,
+        label: "admin"
+    }).then(function () {
+        db.Permission.create({
+            id: 2,
+            label: "other"
+        });
+    }).then(function () {
+        db.User.create({
+            id: 6,
+            email: 'User@User.ch',
+            provider_uid: 'testuser',
+            firstname: 'Scott',
+            lastname: 'Tiger'
+        });
+    }).then(function () {
+        return db.User.create({
+            id: 5,
+            email: 'testuser',
+            provider_uid: 'testuser',
+            permission_id: 1,
+            firstname: 'John',
+            lastname: 'Doe'
+        });
+    }).then(function (user) {
+        return db.LocalLogin.create({user_id: user.id, login: user.email});
+    }).then(function (localLogin) {
+        localLogin.setPassword('testpassword');
+    }).then(function () {
+        return db.Domain.create({
+            id: 5,
+            name: 'example-service.bbc.co.uk',
+            display_name: 'BBC',
+            access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+        });
+    }).then(
+        function () {
+            done();
+        },
+        function (error) {
+            done(new Error(error));
+        });
 };
 
 
