@@ -15,12 +15,12 @@ module.exports = function (app, options) {
                 if (remoteProfile) {
                     // If the user already exists and his account is not validated
                     // i.e.: there is a user in the database with the same id and this user email is not validated
-                    db.User.find({
+                    db.LocalLogin.find({
                         where: {
-                            email: remoteProfile.email
+                            login: remoteProfile.email
                         }
-                    }).then(function (userInDb) {
-                        if (userInDb && !userInDb.verified) {
+                    }).then(function (localLoginInDb) {
+                        if (localLoginInDb && !localLoginInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
                             socialLoginHelper.performLogin(remoteProfile, socialLoginHelper.FB, function (error, response) {

@@ -940,9 +940,9 @@ function localSignup(done) {
 
 
 function markEmailAsVerified(done) {
-    db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(
-        function (user) {
-            user.updateAttributes({verified: true}).then(
+    db.LocalLogin.findOne({where: {login: GOOGLE_EMAIL}}).then(
+        function (localLogin) {
+            localLogin.updateAttributes({verified: true}).then(
                 function () {
                     done();
                 },
