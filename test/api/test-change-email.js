@@ -86,7 +86,7 @@ describe('POST /email/change', function () {
                     expect(token.type).match(/^MOV\$/);
                     done();
                 }
-            ).catch(done)
+            ).catch(done);
         });
     });
 

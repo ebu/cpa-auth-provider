@@ -118,10 +118,10 @@ describe('user profile timestamps', function () {
 
         it('should be set to proper time', function (done) {
             var self = this;
-            db.User.findOne({where: {email: TEST_EMAIL_0}}).then(
-                function (user) {
+            db.LocalLogin.findOne({where: {login: TEST_EMAIL_0}}).then(
+                function (localLogin) {
                     try {
-                        expect(user.created_at.getTime()).equal(self.start_at);
+                        expect(localLogin.created_at.getTime()).equal(self.start_at);
                     } catch (e) {
                         return done(e);
                     }
@@ -133,10 +133,10 @@ describe('user profile timestamps', function () {
 
         it('should have proper password set time', function (done) {
             var self = this;
-            db.User.findOne({where: {email: TEST_EMAIL_0}}).then(
-                function (user) {
+            db.LocalLogin.findOne({where: {login: TEST_EMAIL_0}}).then(
+                function (localLogin) {
                     try {
-                        expect(user.password_changed_at).equal(self.change_at);
+                        expect(localLogin.password_changed_at).equal(self.change_at);
                     } catch (e) {
                         return done(e);
                     }
@@ -148,10 +148,10 @@ describe('user profile timestamps', function () {
 
         it('should have proper last login time', function (done) {
             var self = this;
-            db.User.findOne({where: {email: TEST_EMAIL_0}}).then(
-                function (user) {
+            db.LocalLogin.findOne({where: {login: TEST_EMAIL_0}}).then(
+                function (localLogin) {
                     try {
-                        expect(user.last_login_at).equal(self.login_at);
+                        expect(localLogin.last_login_at).equal(self.login_at);
                     } catch (e) {
                         return done(e);
                     }

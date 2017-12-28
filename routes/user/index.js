@@ -30,15 +30,8 @@ var routes = function (router) {
             });
     });
 
-    router.get('/user/profile', recaptcha.middleware.render, authHelper.authenticateFirst, function (req, res, next) {
-        db.User.findOne({
-            where: {
-                id: req.user.id
-            },
-            include: {
-                model: db.LocalLogin
-            }
-        }).then(function (user) {
+    router.get('/user/profile', recaptcha.middleware.render, authHelper.authenticateFirst, function (req, res) {
+        var user = req.user;
             if (!user) {
                 return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
             } else {
@@ -64,9 +57,6 @@ var routes = function (router) {
                     res.render('./user/profile.ejs', data);
                 });
             }
-        }, function (err) {
-            next(err);
-        });
     });
 
     router.post('/user/:user_id/password', authHelper.ensureAuthenticated, function (req, res) {

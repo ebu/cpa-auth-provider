@@ -19,29 +19,22 @@ var i18n = require('i18n');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
-    db.User.findOne({where: {email: username}, include: {model: db.LocalLogin}})
-        .then(function (user) {
-                if (!user) {
+    db.LocalLogin.findOne({where: {login: username}, include: {model: db.User}})
+        .then(function (localLogin) {
+                if (!localLogin) {
                     doneWithError();
                 } else {
-                    socialLoginHelper.hasLocalLogin(user).then(function (res) {
-                        if (res) {
-                            return user.LocalLogin.verifyPassword(password).then(function (isMatch) {
-                                    if (isMatch) {
-                                        user.LocalLogin.logLogin();
-                                        done(null, user);
-                                    } else {
-                                        doneWithError();
-                                    }
-                                },
-                                function (err) {
-                                    done(err);
-                                });
-                        }
-                        else {
-                            doneWithError();
-                        }
-                    });
+                    return localLogin.verifyPassword(password).then(function (isMatch) {
+                            if (isMatch) {
+                                localLogin.logLogin();
+                                done(null, localLogin.User);
+                            } else {
+                                doneWithError();
+                            }
+                        },
+                        function (err) {
+                            done(err);
+                        });
                 }
             },
             function (error) {

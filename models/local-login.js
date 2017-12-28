@@ -35,7 +35,7 @@ module.exports = function (sequelize, DataTypes) {
                     function (hash) {
                         return self.updateAttributes(
                             {password: BCRYPT_TAG + hash, password_changed_at: Date.now()}
-                        )
+                        );
                     }
                 ).then(
                     resolve
