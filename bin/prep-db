@@ -36,13 +36,14 @@ function createUsers() {
     if (!config.users) {
         return;
     }
-    db.User.bulkCreate(config.users).then( //FIXME
+    db.User.bulkCreate(config.users).then(
         function () {
-            db.User.findOne({where: {id: 1}, include: {model: db.LocalLogin}}).then(
+            db.User.findOne({where: {id: 1}}).then(
                 function (user) {
-                    return user.LocalLogin.setPassword("admin");
-                }
-            );
+                    db.LocalLogin.create({user_id: 1, login: user.email}).then(function (localLogin) {
+                        localLogin.setPassword("admin");
+                    });
+                });
             console.log('[USER] Database populated');
         },
         function (e) {
