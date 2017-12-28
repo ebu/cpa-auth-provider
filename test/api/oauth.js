@@ -52,7 +52,9 @@ function createOAuth2Client(done) {
 
 function createUser(userTemplate) {
     return db.User.create(userTemplate).then(function (user) {
-        return user.setPassword(userTemplate.password);
+        db.LocalLogin.create({user_id:user.id, login:user.email}).then(function(localLogin){
+            return localLogin.setPassword(userTemplate.password);
+        });
     });
 }
 

@@ -32,7 +32,9 @@ var initDatabase = function (done) {
                 provider_uid: 'testuser'
             })
                 .then(function (user) {
-                    return user.setPassword('testpassword');
+                    db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                        return localLogin.setPassword('testpassword');
+                    });
                 })
                 .then(function (user) {
                     return user.updateAttributes({permission_id: 1});
@@ -113,8 +115,10 @@ describe('GET /admin', function () {
                 username: 'admin',
                 permission_id: 1
             }).then(function (user) {
-                user.setPassword('admin').then(function () {
-                    done();
+                db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('admin').then(function () {
+                        done();
+                    });
                 });
             });
         });
@@ -152,8 +156,10 @@ describe('GET /admin', function () {
                 username: 'admin',
                 permission_id: 1
             }).then(function (user) {
-                user.setPassword('admin').then(function () {
-                    done();
+                db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    localLogin.setPassword('admin').then(function () {
+                        done();
+                    });
                 });
             });
         });
@@ -189,8 +195,10 @@ describe('GET /admin', function () {
                 username: 'admin',
                 permission_id: 1
             }).then(function (user) {
-                user.setPassword('admin').then(function () {
-                    done();
+                db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    localLogin.setPassword('admin').then(function () {
+                        done();
+                    });
                 });
             });
         });

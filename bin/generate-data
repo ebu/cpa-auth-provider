@@ -52,8 +52,10 @@ Promise.all(batch).then(function () {
                 // permission_id: 1
             }
         }).spread(function (user) {
-            return user.updateAttributes({permission_id: 1}).then(function () {
-                return user.setPassword(adminPass);
+            return user.updateAttributes({permission_id: 1}).then(function (user) {
+                db.LocalLogin.findOrCreate({user_id:user.id, login:user.email}).then(function (localLogin){
+                    return localLogin.setPassword(adminPass);
+                });
             });
         }));
     }

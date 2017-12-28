@@ -42,7 +42,9 @@ var initDatabase = function (done) {
             });
         })
         .then(function (user) {
-            return user.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
         })
         .then(function () {
             return db.Domain.create({
@@ -195,16 +197,16 @@ describe('POST /verify', function () {
                     this.clock.restore();
                 });
 
-                before(function(done) {
-                   db.PairingCode.findAll().then(
-                       function(l) {
-                           for(var i in l) {
-                               //console.log(l[i].updated_at);
-                           }
-                           done();
-                       },
-                       done
-                   );
+                before(function (done) {
+                    db.PairingCode.findAll().then(
+                        function (l) {
+                            for (var i in l) {
+                                //console.log(l[i].updated_at);
+                            }
+                            done();
+                        },
+                        done
+                    );
                 });
 
                 before(function (done) {

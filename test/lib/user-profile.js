@@ -12,7 +12,9 @@ var initDatabase = function (done) {
         provider_uid: 'testuser'
     })
         .then(function (user) {
-            return user.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
         })
         .then(function () {
                 done();

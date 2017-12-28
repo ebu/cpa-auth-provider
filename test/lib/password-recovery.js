@@ -35,14 +35,15 @@ describe('Test password recovery code', function () {
                 display_name: 'Test User 1'
             }).then(function (user) {
                 self.user = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode = recoverCode;
-                        self.currentPass = user.password;
-                        done();
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode = recoverCode;
+                            self.currentPass = user.password;
+                            done();
+                        });
                     });
                 });
-
             });
         });
         it('should do nothing when code is empty', function (done) {
@@ -81,11 +82,13 @@ describe('Test password recovery code', function () {
                 display_name: 'Test User 2'
             }).then(function (user) {
                 self.user = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode = recoverCode;
-                        self.currentPass = user.password;
-                        done();
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode = recoverCode;
+                            self.currentPass = user.password;
+                            done();
+                        });
                     });
                 });
             });
@@ -112,11 +115,11 @@ describe('Test password recovery code', function () {
                 display_name: 'Test User 3'
             }).then(function (user) {
                 self.user = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode = recoverCode;
-                        self.currentPass = user.password;
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function () {
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode = recoverCode;
+                            self.currentPass = user.password;
                             done();
                         });
                     });
@@ -151,11 +154,13 @@ describe('Test password recovery code', function () {
                 display_name: 'Test User 5'
             }).then(function (user) {
                 self.user = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode = recoverCode;
-                        self.currentPass = user.password;
-                        done();
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode = recoverCode;
+                            self.currentPass = user.password;
+                            done();
+                        });
                     });
                 });
             });
@@ -168,11 +173,13 @@ describe('Test password recovery code', function () {
                 display_name: 'Test User 6'
             }).then(function (user) {
                 self.user2 = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode2 = recoverCode;
-                        self.currentPass2 = user.password;
-                        done();
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode2 = recoverCode;
+                            self.currentPass2 = user.password;
+                            done();
+                        });
                     });
                 });
             });
@@ -212,11 +219,13 @@ describe('Test password update code', function () {
                 display_name: 'Test User'
             }).then(function (user) {
                 self.user = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode = recoverCode;
-                        self.currentPass = user.password;
-                        done();
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode = recoverCode;
+                            self.currentPass = user.password;
+                            done();
+                        });
                     });
                 });
             });
@@ -272,11 +281,13 @@ describe('Test password update code', function () {
                 display_name: 'Test User'
             }).then(function (user) {
                 self.user = user;
-                return user.setPassword('mdp').then(function () {
-                    return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
-                        self.recoverCode = recoverCode;
-                        self.currentPass = user.password;
-                        done();
+                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                    return localLogin.setPassword('mdp').then(function () {
+                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                            self.recoverCode = recoverCode;
+                            self.currentPass = user.password;
+                            done();
+                        });
                     });
                 });
             });

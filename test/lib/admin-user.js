@@ -48,7 +48,9 @@ var initDatabase = function (done) {
                             lastname: 'Doe'
                         })
                             .then(function (user) {
-                                return user.setPassword('testpassword');
+                                db.LocalLogin.create({user_id:user.id, login:user.email}).then(function(localLogin){
+                                    return localLogin.setPassword('testpassword');
+                                });
                             })
                             .then(function (user) {
                                 return user.updateAttributes({permission_id: 1});

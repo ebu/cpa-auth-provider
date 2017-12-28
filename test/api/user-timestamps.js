@@ -80,9 +80,9 @@ describe('user profile timestamps', function () {
             this.clock.restore();
             this.clock = sinon.useFakeTimers(new Date("Wed Feb 08 2017 15:37:00 GMT+0000").getTime());
             this.change_at = Date.now();
-            db.User.findOne({where: {email: TEST_EMAIL_0}}).then(
+            db.User.findOne({where: {email: TEST_EMAIL_0}, include: {model: db.LocalLogin}}).then(
                 function (user) {
-                    user.setPassword(NEW_PASSWORD).then(
+                    user.LocalLogin.setPassword(NEW_PASSWORD).then(
                         function () {
                             done();
                         },
