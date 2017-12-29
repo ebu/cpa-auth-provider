@@ -317,11 +317,11 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should have changed the email', function (done) {
-            db.User.findOne({where: {email: NEW_EMAIL}}).then(
+            db.User.findOne({where: {email: NEW_EMAIL}, include: {model: db.LocalLogin}}).then(
                 function (u) {
                     expect(u).a('object');
                     expect(u.id).equal(USER1.id);
-                    expect(u.verified).equal(true);
+                    expect(u.LocalLogin.verified).equal(true);
                     done();
                 }
             ).catch(done);

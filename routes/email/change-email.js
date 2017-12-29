@@ -159,10 +159,9 @@ function routes(router) {
                             throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                         }
                         return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
-                            return localLogin.updateAttributes({login: newUsername}).then(function () {
+                            return localLogin.updateAttributes({login: newUsername,  verified: true}).then(function () {
                                 return user.updateAttributes({
-                                    email: newUsername,
-                                    verified: true,
+                                    email: newUsername
                                 });
                             });
                         });
