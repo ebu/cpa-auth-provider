@@ -58,9 +58,9 @@ function createUsers(userList) {
             userList.forEach(createFakeUser);
 
             function createFakeUser(def) {
-                db.User.create(def).then(
+                return db.User.create(def).then(
                     function (user) {
-                        db.LocalLogin.create({login: user.email, user_id: user.id}).then(
+                       return db.LocalLogin.create({login: user.email, user_id: user.id}).then(
                             function (localLogin) {
                                 return localLogin.setPassword(def.password);
 
