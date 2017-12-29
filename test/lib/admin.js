@@ -266,7 +266,7 @@ describe('GET /admin/domains/add', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, this, done);
         });
 
         before(function (done) {
@@ -321,7 +321,7 @@ describe('POST /admin/domains', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, this, done);
         });
 
         before(function (done) {
