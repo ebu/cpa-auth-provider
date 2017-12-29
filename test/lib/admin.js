@@ -41,6 +41,7 @@ var USER_PERMISSION = {
 var adminId;
 var userId;
 
+
 var initDatabase = function (done) {
     return db.Permission.create(ADMIN_PERMISSION).then(function () {
         return db.Permission.create(USER_PERMISSION);
@@ -58,6 +59,13 @@ var initDatabase = function (done) {
         return db.LocalLogin.create({user_id: user.id, login: user.email});
     }).then(function (localLogin) {
         return localLogin.setPassword(PASSWORD);
+    }).then(function () {
+        return db.Domain.create({
+            id: 5,
+            name: 'example-service.bbc.co.uk',
+            display_name: 'BBC',
+            access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
+        });
     }).then(
         function () {
             done();
@@ -66,7 +74,6 @@ var initDatabase = function (done) {
             done(new Error(error));
         });
 };
-
 
 
 var resetDatabase = function (done) {
@@ -203,7 +210,7 @@ describe('GET /admin/domains', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, this, done);
         });
 
         before(function (done) {
