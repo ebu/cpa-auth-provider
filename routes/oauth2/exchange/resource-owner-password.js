@@ -30,7 +30,7 @@ function confirmUser(client, username, password, scope, done) {
                 throw new Error(INCORRECT_LOGIN_OR_PASS);
             }
 
-            return user.LocalLoginverifyPassword(password);
+            return user.LocalLogin.verifyPassword(password);
         }
     ).then(
         function (isMatch) {
