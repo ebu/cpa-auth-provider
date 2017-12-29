@@ -470,12 +470,14 @@ describe('GET /admin/users/csv', function () {
     });
 
     it('should return status 200', function () {
+        var endOfLine = require('os').EOL;
         expect(self.res.statusCode).to.equal(200);
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
-        expect(self.res.text).to.equal('id,email,firstname,lastname,permission_id,permission,created,password_changed,last_login\r\n' +
-            adminId + ',admin@admin.ch,John,Doe,1,admin,Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET)\r\n' +
-            userId + ',user@user.ch,Scott,Tiger,,,Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET),\r\n');
+        expect(self.res.text).to.equal('id,email,firstname,lastname,permission_id,permission,created,password_changed,last_login' + endOfLine +
+            adminId + ',admin@admin.ch,John,Doe,1,admin,Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET)' + endOfLine +
+            userId + ',user@user.ch,Scott,Tiger,,,Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET),' + endOfLine
+        );
     });
 
 
