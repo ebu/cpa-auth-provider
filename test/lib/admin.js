@@ -19,14 +19,14 @@ var USER = {
     provider_uid: 'testuser',
     firstname: 'Scott',
     lastname: 'Tiger'
-}
+};
 var ADMIN = {
     email: 'admin@admin.ch',
     provider_uid: 'testuser',
     permission_id: 1,
     firstname: 'John',
     lastname: 'Doe'
-}
+};
 
 var ADMIN_PERMISSION = {
     id: 1,
