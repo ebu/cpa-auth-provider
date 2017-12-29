@@ -476,8 +476,8 @@ describe('GET /admin/users/csv', function () {
         var lines = self.res.text.split(/\r?\n/);
         expect(lines.length).to.equal(4);
         expect(lines[0]).to.equal('id,email,firstname,lastname,permission_id,permission,created,password_changed,last_login');
-        expect(lines[1]).to.equal(adminId + ',admin@admin.ch,John,Doe,1,admin,Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET)');
-        expect(lines[2]).to.equal(userId + ',user@user.ch,Scott,Tiger,,,Sun Jan 29 2017 12:11:00 GMT+0100 (CET),Sun Jan 29 2017 12:11:00 GMT+0100 (CET),');
+        expect(lines[1].indexOf('admin@admin.ch,John,Doe,1,admin')).to.be.greaterThan(0);
+        expect(lines[2].indexOf('user@user.ch,Scott,Tiger,,')).to.be.greaterThan(0);
         expect(lines[3]).to.equal('');
     });
 
