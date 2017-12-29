@@ -1,7 +1,6 @@
 /*jshint expr:true */
 "use strict";
 
-var generate = require('../../lib/generate');
 var db = require('../../models');
 
 var requestHelper = require('../request-helper');
@@ -9,7 +8,6 @@ var dbHelper = require('../db-helper');
 var config = require('../../config');
 
 var chai = require('chai');
-var chaiJquery = require('chai-jquery');
 var chaiHttp = require('chai-http');
 
 var bcrypt = require('bcrypt');
@@ -17,43 +15,52 @@ var bcrypt = require('bcrypt');
 chai.use(chaiHttp);
 chai.Assertion.addProperty('visible', require('chai-visible'));
 
+var PASSWORD = 'UnbreakablePassword01!';
+
+var USER = {
+    email: 'user@user.ch',
+    provider_uid: 'testuser',
+    firstname: 'Scott',
+    lastname: 'Tiger'
+}
+var ADMIN = {
+    email: 'admin@admin.ch',
+    provider_uid: 'testuser',
+    permission_id: 1,
+    firstname: 'John',
+    lastname: 'Doe'
+}
+
+var ADMIN_PERMISSION = {
+    id: 1,
+    label: "admin"
+};
+
+var USER_PERMISSION = {
+    id: 2,
+    label: "other"
+};
+
+var adminId;
+var userId;
+
 var initDatabase = function (done) {
-    db.Permission.create({
-        id: 1,
-        label: "admin"
+    return db.Permission.create(ADMIN_PERMISSION).then(function () {
+        return db.Permission.create(USER_PERMISSION);
     }).then(function () {
-        db.Permission.create({
-            id: 2,
-            label: "other"
-        });
-    }).then(function () {
-        db.User.create({
-            id: 6,
-            email: 'User@User.ch',
-            provider_uid: 'testuser',
-            firstname: 'Scott',
-            lastname: 'Tiger'
-        });
-    }).then(function () {
-        return db.User.create({
-            id: 5,
-            email: 'testuser',
-            provider_uid: 'testuser',
-            permission_id: 1,
-            firstname: 'John',
-            lastname: 'Doe'
-        });
+        return db.User.create(USER);
     }).then(function (user) {
+        userId = user.id;
         return db.LocalLogin.create({user_id: user.id, login: user.email});
     }).then(function (localLogin) {
-        localLogin.setPassword('testpassword');
+        localLogin.setPassword(PASSWORD);
     }).then(function () {
-        return db.Domain.create({
-            id: 5,
-            name: 'example-service.bbc.co.uk',
-            display_name: 'BBC',
-            access_token: '70fc2cbe54a749c38da34b6a02e8dfbd'
-        });
+        return db.User.create(ADMIN);
+    }).then(function (user) {
+        adminId = user.id;
+        return db.LocalLogin.create({user_id: user.id, login: user.email});
+    }).then(function (localLogin) {
+        return localLogin.setPassword(PASSWORD);
     }).then(
         function () {
             done();
@@ -83,18 +90,9 @@ describe('GET /admin/users security', function () {
 
         before(resetDatabase);
 
-        // Remove admin rights
-        before(function (done) {
-            db.User.findOne({where: {id: 5}})
-                .then(function (user) {
-                    return user.updateAttributes({permission_id: 2});
-                })
-                .then(done());
-        });
-
         before(function (done) {
             // Login with a non admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
         });
 
         context('When the user request grant admin right', function () {
@@ -151,12 +149,12 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         context('When the user request grant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/permission', {
+                requestHelper.sendRequest(self, '/admin/users/' + adminId + '/permission', {
                     cookie: self.cookie,
                     method: 'post',
                     data: {permission: 1}
@@ -171,7 +169,7 @@ describe('GET /admin/users security', function () {
 
         context('When the user request ungrant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/permission', {
+                requestHelper.sendRequest(self, '/admin/users/' + adminId + '/permission', {
                     cookie: self.cookie,
                     method: 'post',
                     data: {permission: 2}
@@ -193,7 +191,7 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -217,7 +215,7 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
         before(function (done) {
             requestHelper.sendRequest(self, '/admin/users', {
@@ -243,11 +241,11 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/5/permission', {
+            requestHelper.sendRequest(self, '/admin/users/' + adminId + '/permission', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {permission: 2}
@@ -255,7 +253,7 @@ describe('POST /admin/users/<id>/permission ', function () {
         });
 
         before(function (done) {
-            db.User.findOne({where: {id: 5}})
+            db.User.findOne({where: {id: adminId}})
                 .then(function (user) {
                     self.user = user;
                     done();
@@ -274,11 +272,11 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/6/permission', {
+            requestHelper.sendRequest(self, '/admin/users/' + userId + '/permission', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {permission: 2}
@@ -286,15 +284,15 @@ describe('POST /admin/users/<id>/permission ', function () {
         });
 
         before(function (done) {
-            db.User.findOne({where: {id: 6}})
+            db.User.findOne({where: {id: userId}})
                 .then(function (user) {
                     self.user = user;
                     done();
                 });
         });
 
-        it('should return status 200', function () {
-            expect(self.res.statusCode).to.equal(200);
+        it('should return status 403', function () {
+            expect(self.res.statusCode).to.equal(403);
             expect(self.user.permission_id === 2);
         });
 
@@ -312,11 +310,11 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/6/permission', {
+            requestHelper.sendRequest(self, '/admin/users/' + userId + '/permission', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {permission: 1}
@@ -324,15 +322,15 @@ describe('POST /admin/users/<id>/permission ', function () {
         });
 
         before(function (done) {
-            db.User.findOne({where: {id: 6}})
+            db.User.findOne({where: {id: userId}})
                 .then(function (user) {
                     self.user = user;
                     done();
                 });
         });
 
-        it('should return status 200 and permission id shoud be 1', function () {
-            expect(self.res.statusCode).to.equal(200);
+        it('should return status 403 and permission id shoud be 1', function () {
+            expect(self.res.statusCode).to.equal(403);
             expect(self.user.permission_id === 1);
         });
     });
@@ -343,12 +341,12 @@ describe('POST /admin/users/<id>/permission ', function () {
         before(resetDatabase);
 
         before(function (done) {
-            // Login with a non admin login
-            requestHelper.login(self, done);
+            // Login with an admin login
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
-            requestHelper.sendRequest(self, '/admin/users/5/permission', {
+            requestHelper.sendRequest(self, '/admin/users/' + adminId + '/permission', {
                 cookie: self.cookie,
                 method: 'post',
                 data: {permission: 1}
@@ -356,7 +354,7 @@ describe('POST /admin/users/<id>/permission ', function () {
         });
 
         before(function (done) {
-            db.User.findOne({where: {id: 5}})
+            db.User.findOne({where: {id: adminId}})
                 .then(function (user) {
                     self.user = user;
                     done();
@@ -378,7 +376,7 @@ describe('GET /admin/users', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -401,7 +399,7 @@ describe('GET /admin/users', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -461,7 +459,7 @@ describe('GET /admin/users/csv', function () {
 
     before(function (done) {
         // Login with an admin login
-        requestHelper.login(self, done);
+        requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
     });
 
     before(function (done) {
@@ -475,7 +473,7 @@ describe('GET /admin/users/csv', function () {
         expect(self.res.statusCode).to.equal(200);
         expect(self.res).to.have.header('content-disposition', 'attachment; filename=users.csv');
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
-        expect(self.res).to.have.header('content-length', '311'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
+        expect(self.res).to.have.header('content-length', '358'); // That check might fail if you update the format, so you'll have to check the new length make sens before updating it
     });
 
 
@@ -490,7 +488,7 @@ describe('GET /admin/clients', function () {
 
     before(function (done) {
         // Login with an admin login
-        requestHelper.login(self, done);
+        requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
     });
 
     before(function (done) {
@@ -518,7 +516,7 @@ describe('GET /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -553,7 +551,7 @@ describe('GET /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -588,7 +586,7 @@ describe('GET /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -629,7 +627,7 @@ describe('GET /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -671,7 +669,7 @@ describe('GET /api/admin/clients/:clientId/secret', function () {
 
     before(function (done) {
         // Login with an admin login
-        requestHelper.login(self, done);
+        requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
     });
 
     before(function (done) {
@@ -709,7 +707,7 @@ describe('DELETE /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -750,7 +748,7 @@ describe('DELETE /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -794,7 +792,7 @@ describe('POST /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -843,7 +841,7 @@ describe('POST /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.login(self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -926,7 +924,7 @@ describe('GET /api/admin/users', function () {
         });
 
         before(function (done) {
-            requestHelper.loginCustom('testuser', 'testpassword', self, done);
+            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -986,8 +984,8 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(100);
                     expect(json.count).to.equal(152);
-                    expect(json.users[0].email).to.equal('User@User.ch');
-                    expect(json.users[1].email).to.equal('testuser');
+                    expect(json.users[0].email).to.equal(ADMIN.email);
+                    expect(json.users[1].email).to.equal(USER.email);
                     expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
                 });
             });
@@ -1046,7 +1044,7 @@ describe('GET /api/admin/users', function () {
         context('when search on ', function () {
             context(' mail with exact matching ', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?email=User@User.ch', {
+                    requestHelper.sendRequest(this, '/api/admin/users?email=' + USER.email, {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
@@ -1057,12 +1055,12 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('User@User.ch');
+                    expect(json.users[0].email).to.equal(USER.email);
                 });
             });
-            context(' mail with exact matching ', function () {
+            context(' mail with partial matching ', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?email=user', {
+                    requestHelper.sendRequest(this, '/api/admin/users?email=.ch', {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
@@ -1073,8 +1071,8 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(2);
                     expect(json.count).to.equal(2);
-                    expect(json.users[0].email).to.equal('User@User.ch');
-                    expect(json.users[1].email).to.equal('testuser');
+                    expect(json.users[0].email).to.equal(ADMIN.email);
+                    expect(json.users[1].email).to.equal(USER.email);
                 });
             });
             context('firstname with partial matching ', function () {
@@ -1090,7 +1088,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('User@User.ch');
+                    expect(json.users[0].email).to.equal(USER.email);
                 });
             });
             context('firstname, lastname and mail with partial matching', function () {
@@ -1106,7 +1104,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('User@User.ch');
+                    expect(json.users[0].email).to.equal(USER.email);
                 });
             });
             context('admin only', function () {
@@ -1122,12 +1120,12 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('testuser');
+                    expect(json.users[0].email).to.equal(ADMIN.email);
                 });
             });
             context('id only', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?id=5', {
+                    requestHelper.sendRequest(this, '/api/admin/users?id=' + adminId, {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
@@ -1138,12 +1136,12 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('testuser');
+                    expect(json.users[0].email).to.equal(ADMIN.email);
                 });
             });
             context('id and other parameter', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?id=5&firstname=this_is_not_existing_in_the_db&lastname=this_is_not_existing_in_the_db&email=this_is_not_existing_in_the_db', {
+                    requestHelper.sendRequest(this, '/api/admin/users?id=' + adminId + '&firstname=this_is_not_existing_in_the_db&lastname=this_is_not_existing_in_the_db&email=this_is_not_existing_in_the_db', {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
@@ -1154,7 +1152,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal('testuser');
+                    expect(json.users[0].email).to.equal(ADMIN.email);
                 });
             });
         });
