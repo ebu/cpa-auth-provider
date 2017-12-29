@@ -97,7 +97,7 @@ describe('GET /admin/users security', function () {
 
         context('When the user request grant admin right', function () {
             before(function (done) {
-                requestHelper.sendRequest(self, '/admin/users/5/permission', {
+                requestHelper.sendRequest(self, '/admin/users/' + userId + '/permission', {
                     cookie: self.cookie,
                     method: 'post',
                     data: {permission: 1}
