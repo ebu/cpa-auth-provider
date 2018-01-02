@@ -14,6 +14,25 @@ module.exports = function (sequelize, DataTypes) {
         last_login_at: DataTypes.BIGINT
     }, {
         underscored: true,
+        // Due to a bug on sequelize, unique constraint are not created on the database.
+        // https://github.com/sequelize/cli/issues/272#issuecomment-194754086
+        // So use an index
+        indexes: [
+            {
+                unique: true,
+                fields: ["user_id", "name"]
+            }
+        ],
+        uniqueKeys: {
+            // Due to a bug on sequelize, unique constraint are not created on the database.
+            // https://github.com/sequelize/cli/issues/272#issuecomment-194754086
+            // So use an index
+            // uniqueKeys: {
+            //     actions_unique: {
+            //         fields:["user_id", "name"]
+            //     }
+            // }
+        },
         associate: function (models) {
             SocialLogin.belongsTo(models.User);
         }
