@@ -22,22 +22,22 @@ for (var i in process.argv) {
 }
 
 if (username) {
-    db.User.find({where: {email: username}}).then(
-        function (u) {
-            if (!u) {
-                console.log('user not found:', username);
+    db.LocalLogin.find({where: {login: username}, include: [db.User]}).then(
+        function (localLogin) {
+            if (!localLogin) {
+                console.log('local login not found for:', username);
                 return;
             }
-            if (u.verified) {
-                return u.updateAttributes({permission_id: 1});
+            if (localLogin.verified) {
+                return localLogin.User.updateAttributes({permission_id: 1});
             } else {
-                console.log('user', u.email, 'has not verified email yet!');
+                console.log('local login', username, 'has not verified email yet!');
             }
         }
     ).then(
         function (u) {
             if (u) {
-                console.log('updated', u.email, 'to have admin permission.');
+                console.log('updated', username, 'to have admin permission.');
             } else {
                 console.log('no changes were made.');
             }

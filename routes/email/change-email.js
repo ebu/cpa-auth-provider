@@ -59,8 +59,19 @@ function routes(router) {
                     if (user) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
-                    return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
-                        return localLogin.verifyPassword(password);
+                    // Search for possible local login (i.e.: a user might have a different email that it's login. In other words: user.email != localProfile.login
+                    return db.LocalLogin.findOne({
+                        where: {
+                            login: newUsername
+                        }
+                    }).then(function (localLogin) {
+                        if (localLogin){
+                            throw new Error(STATES.EMAIL_ALREADY_TAKEN);
+                        }
+                        // At last check password
+                        return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
+                            return localLogin.verifyPassword(password);
+                        });
                     });
                 }
             ).then(
@@ -159,7 +170,7 @@ function routes(router) {
                             throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                         }
                         return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
-                            return localLogin.updateAttributes({login: newUsername,  verified: true}).then(function () {
+                            return localLogin.updateAttributes({login: newUsername, verified: true}).then(function () {
                                 return user.updateAttributes({
                                     email: newUsername
                                 });
@@ -281,14 +292,13 @@ function cycle() {
             }
         ).then(
             count => {
-            logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
-    }
-    ).
-        catch(
+                logger.debug('[EmailChange][DELETE/FAIL][count', count, ']');
+            }
+        ).catch(
             error => {
-            logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
-    }
-    )
+                logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
+            }
+        )
         ;
     } catch (e) {
         logger.error('[EmailChange][DELETE/FAIL][error', e, ']');

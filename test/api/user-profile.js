@@ -6,8 +6,8 @@ var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
 var resetDatabase = function (done) {
-    dbHelper.clearDatabase(function (err) {
-        dbHelper.createFakeUser({id: 1337, email: USER_EMAIL, password: STRONG_PASSWORD}, done);
+    return dbHelper.clearDatabase(function (err) {
+        return dbHelper.createFakeUser({id: 1337, email: USER_EMAIL, password: STRONG_PASSWORD}, done);
     });
 };
 

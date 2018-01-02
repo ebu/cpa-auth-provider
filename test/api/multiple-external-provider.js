@@ -57,10 +57,9 @@ describe('Local login after', function () {
         });
 
         it('should return 400 OK', function () {
-                expect(this.res.statusCode).equal(400);
-                expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
-            }
-        );
+            expect(this.res.statusCode).equal(400);
+            expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
+        });
     });
     describe('Google API login first', function () {
         before(resetDatabase);
@@ -439,9 +438,9 @@ describe('Facebook', function () {
 describe('Google', function () {
 
     describe('GET /auth/google', function () {
-        before(function (done) {
-            requestHelper.sendRequest(
-                this,
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
                     '/auth/google',
                     {
                         method: 'get',
