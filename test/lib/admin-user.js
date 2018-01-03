@@ -72,12 +72,12 @@ var initDatabase = function (done) {
 
 
 var resetDatabase = function (done) {
-    dbHelper.clearDatabase(function (err) {
+    return dbHelper.clearDatabase(function (err) {
         if (err) {
-            done(err);
+            return done(err);
         }
         else {
-            initDatabase(done);
+            return initDatabase(done);
         }
     });
 };
