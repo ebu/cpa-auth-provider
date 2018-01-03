@@ -27,14 +27,15 @@ module.exports = function (sequelize, DataTypes) {
         var self = this;
         return self.updateAttributes({last_login_at: Date.now()}, {transaction: transaction});
     };
-    LocalLogin.prototype.setPassword = function (password) {
+    LocalLogin.prototype.setPassword = function (password, transaction) {
         var self = this;
         return new Promise(
             function (resolve, reject) {
                 bcrypt.hash(password, 10).then(
                     function (hash) {
                         return self.updateAttributes(
-                            {password: BCRYPT_TAG + hash, password_changed_at: Date.now()}
+                            {password: BCRYPT_TAG + hash, password_changed_at: Date.now()},
+                            {transaction: transaction}
                         );
                     }
                 ).then(
