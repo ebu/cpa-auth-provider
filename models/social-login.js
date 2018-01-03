@@ -6,6 +6,7 @@ module.exports = function (sequelize, DataTypes) {
     var SocialLogin = sequelize.define('SocialLogin', {
         name: DataTypes.STRING,
         uid: DataTypes.STRING,
+        email:DataTypes.STRING,
         firstname: DataTypes.STRING,
         lastname: DataTypes.STRING,
         gender: DataTypes.STRING,

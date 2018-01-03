@@ -852,7 +852,7 @@ describe('Facebook and Google', function () {
 
             before(function (done) {
                 db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    socialLoginHelper.getOAuthProviders(user).then(function (providers) {
+                    socialLoginHelper.getSocialLogins(user).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });
@@ -906,7 +906,7 @@ describe('Facebook and Google', function () {
 
             before(function (done) {
                 db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    socialLoginHelper.getOAuthProviders(user).then(function (providers) {
+                    socialLoginHelper.getSocialLogins(user).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });

@@ -35,7 +35,7 @@ var routes = function (router) {
             if (!user) {
                 return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
             } else {
-                socialLoginHelper.getOAuthProviders(user).then(function (providers) {
+                socialLoginHelper.getSocialLogins(user).then(function (logins) {
                     var data = {
                         profile: {
                             firstname: user.firstname,
@@ -47,9 +47,9 @@ var routes = function (router) {
                             display_name: user.getDisplayName(user, req.query.policy),
                             verified: !user.LocalLogin || user.LocalLogin.verified ,
                             hasPassword: user.LocalLogin && !!user.LocalLogin.password,
-                            facebook: providers.indexOf(socialLoginHelper.FB) > -1,
-                            google: providers.indexOf(socialLoginHelper.GOOGLE) > -1,
-                            hasSocialLogin: providers.length > 0
+                            facebook: logins.indexOf(socialLoginHelper.FB) > -1,
+                            google: logins.indexOf(socialLoginHelper.GOOGLE) > -1,
+                            hasSocialLogin: logins.length > 0
                         },
                         captcha: req.recaptcha
                     };
