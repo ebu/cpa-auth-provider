@@ -65,7 +65,7 @@ function routes(router) {
                             login: newUsername
                         }
                     }).then(function (localLogin) {
-                        if (localLogin){
+                        if (localLogin) {
                             throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                         }
                         // At last check password
@@ -170,9 +170,14 @@ function routes(router) {
                             throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                         }
                         return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
-                            return localLogin.updateAttributes({login: newUsername, verified: true}).then(function () {
-                                return user.updateAttributes({
-                                    email: newUsername
+                            return db.sequelize.transaction(function (transaction) {
+                                return localLogin.updateAttributes({
+                                    login: newUsername,
+                                    verified: true
+                                }, {transaction: transaction}).then(function () {
+                                    return user.updateAttributes({
+                                        email: newUsername
+                                    }, {transaction: transaction});
                                 });
                             });
                         });
@@ -246,7 +251,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                         if (localLogin.verified) {
                             return emailHelper.send(
                                 config.mail.from,
-                                user.email,
+                                localLogin.login,
                                 'email-change-information',
                                 {},
                                 {

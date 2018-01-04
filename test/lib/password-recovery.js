@@ -37,7 +37,7 @@ describe('Test password recovery code', function () {
                 self.user = user;
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
                             self.currentPass = localLogin.password;
                             done();
@@ -91,7 +91,7 @@ describe('Test password recovery code', function () {
                 self.user = user;
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
                             self.currentPass = localLogin.password;
                             done();
@@ -127,7 +127,7 @@ describe('Test password recovery code', function () {
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     self.localLogin = localLogin;
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
                             self.currentPass = localLogin.password;
                             done();
@@ -169,7 +169,7 @@ describe('Test password recovery code', function () {
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     self.localLogin = localLogin;
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
                             self.currentPass = localLogin.password;
                             done();
@@ -188,7 +188,7 @@ describe('Test password recovery code', function () {
                 self.user2 = user;
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode2 = recoverCode;
                             self.currentPass2 = localLogin.password;
                             done();
@@ -240,7 +240,7 @@ describe('Test password update code', function () {
                 self.user = user;
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
                             self.currentPass = user.password;
                             done();
@@ -302,7 +302,7 @@ describe('Test password update code', function () {
                 self.user = user;
                 return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
-                        return codeHelper.generatePasswordRecoveryCode(user).then(function (recoverCode) {
+                        return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
                             self.currentPass = user.password;
                             done();

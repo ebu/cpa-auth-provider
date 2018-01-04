@@ -188,12 +188,12 @@ module.exports = function (app, options) {
     });
 
     app.get('/email_verify', function (req, res, next) {
-        db.User.findOne({where: {email: req.query.email}, include: {model: db.LocalLogin}})
-            .then(function (user) {
-                if (user) {
-                    codeHelper.verifyEmail(user.LocalLogin, req.query.code).then(function (success) {
+        db.LocalLogin.findOne({where: {login: req.query.email}})
+            .then(function (localLogin) {
+                if (localLogin) {
+                    codeHelper.verifyEmail(localLogin, req.query.code).then(function (success) {
                             if (success) {
-                                res.render('./verify-mail.ejs', {verified: user.LocalLogin.verified, userId: user.id});
+                                res.render('./verify-mail.ejs', {verified: localLogin.verified, userId: localLogin.user_id});
                             } else {
                                 res.render('./verify-mail.ejs', {verified: false});
                             }
@@ -257,22 +257,22 @@ module.exports = function (app, options) {
                 return;
             }
 
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+            db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+                .then(function (localLogin) {
+                    if (localLogin) {
+                        codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
                                 user.email,
                                 "password-recovery-email",
                                 {log: false},
                                 {
-                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(localLogin.login) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
-                                    mail: user.email,
+                                    mail: localLogin.login,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                                (localLogin.User.UserProfile && localLogin.User.UserProfile.language) ? localLogin.User.UserProfile.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },

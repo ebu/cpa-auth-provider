@@ -140,7 +140,7 @@ module.exports = function (app, options) {
             db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
                 .then(function (localLogin) {
                     if (localLogin) {
-                        codeHelper.generatePasswordRecoveryCode(localLogin.User).then(function (code) {
+                        codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
                                 localLogin.User.email,
