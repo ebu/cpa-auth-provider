@@ -222,9 +222,10 @@ module.exports = function (app, options) {
                 if (!user) {
                     return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
+                    // FIXME ?????
                     var data = {
-                        admin: user.admin; // FIXME ?????
-                    }
+                        admin: user.admin
+                    };
                     if (user.LocalLogin) {
                         data.email = user.LocalLogin.login;
                         data.display_name = user.getDisplayName(req.query.policy, user.LocalLogin.login);
