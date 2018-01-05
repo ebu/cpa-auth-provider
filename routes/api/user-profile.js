@@ -25,6 +25,8 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
         } else {
+            db.LocalLogin.findOne({where:{user_id: user.id}}).then(function(localLogin){
+                var email = localLogin.login;
                 res.json({
                     success: true,
                     user_profile: {
@@ -33,10 +35,11 @@ module.exports = function (app, options) {
                         gender: user.gender,
                         date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
                         language: user.language,
-                        email: user.email,
-                        display_name: user.getDisplayName(req.query.policy)
+                        email: email,
+                        display_name: user.getDisplayName(req.query.policy, email)
                     }
                 });
+            });
         }
     });
 
@@ -112,10 +115,10 @@ module.exports = function (app, options) {
                 }
             }
             if (asObject) {
-                return res.status(200).json({ fields: fields, providers: providers});
+                return res.status(200).json({fields: fields, providers: providers});
             } else {
                 var list = [];
-                for(var key in fields) {
+                for (var key in fields) {
                     if (fields.hasOwnProperty(key) && fields[key]) {
                         list.push(key);
                     }

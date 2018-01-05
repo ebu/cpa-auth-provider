@@ -18,18 +18,18 @@ chai.Assertion.addProperty('visible', require('chai-visible'));
 var PASSWORD = 'UnbreakablePassword01!';
 
 var USER = {
-    email: 'user@user.ch',
     provider_uid: 'testuser',
     firstname: 'Scott',
     lastname: 'Tiger'
 };
+var USER_EMAIL = 'user@user.ch';
 var ADMIN = {
-    email: 'admin@admin.ch',
     provider_uid: 'testuser',
     permission_id: 1,
     firstname: 'John',
     lastname: 'Doe'
 };
+var ADMIN_EMAIL = 'admin@admin.ch';
 
 var ADMIN_PERMISSION = {
     id: 1,
@@ -51,14 +51,14 @@ var initDatabase = function (done) {
         return db.User.create(USER);
     }).then(function (user) {
         userId = user.id;
-        return db.LocalLogin.create({user_id: user.id, login: user.email});
+        return db.LocalLogin.create({user_id: user.id, login: USER_EMAIL});
     }).then(function (localLogin) {
         localLogin.setPassword(PASSWORD);
     }).then(function () {
         return db.User.create(ADMIN);
     }).then(function (user) {
         adminId = user.id;
-        return db.LocalLogin.create({user_id: user.id, login: user.email});
+        return db.LocalLogin.create({user_id: user.id, login: ADMIN_EMAIL});
     }).then(function (localLogin) {
         return localLogin.setPassword(PASSWORD);
     }).then(
@@ -92,7 +92,7 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
+            requestHelper.loginCustom(USER_EMAIL, PASSWORD, self, done);
         });
 
         context('When the user request grant admin right', function () {
@@ -149,7 +149,7 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         context('When the user request grant admin right', function () {
@@ -191,7 +191,7 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -215,7 +215,7 @@ describe('GET /admin/users security', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
         before(function (done) {
             requestHelper.sendRequest(self, '/admin/users', {
@@ -241,7 +241,7 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -272,7 +272,7 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
+            requestHelper.loginCustom(USER_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -310,7 +310,7 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
+            requestHelper.loginCustom(USER_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -342,7 +342,7 @@ describe('POST /admin/users/<id>/permission ', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -376,7 +376,7 @@ describe('GET /admin/users', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -399,7 +399,7 @@ describe('GET /admin/users', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -459,7 +459,7 @@ describe('GET /admin/users/csv', function () {
 
     before(function (done) {
         // Login with an admin login
-        requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+        requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
     });
 
     before(function (done) {
@@ -493,7 +493,7 @@ describe('GET /admin/clients', function () {
 
     before(function (done) {
         // Login with an admin login
-        requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+        requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
     });
 
     before(function (done) {
@@ -521,7 +521,7 @@ describe('GET /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -556,7 +556,7 @@ describe('GET /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -591,7 +591,7 @@ describe('GET /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -632,7 +632,7 @@ describe('GET /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -674,7 +674,7 @@ describe('GET /api/admin/clients/:clientId/secret', function () {
 
     before(function (done) {
         // Login with an admin login
-        requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+        requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
     });
 
     before(function (done) {
@@ -712,7 +712,7 @@ describe('DELETE /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -753,7 +753,7 @@ describe('DELETE /api/admin/clients/id', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -797,7 +797,7 @@ describe('POST /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -846,7 +846,7 @@ describe('POST /api/admin/clients', function () {
 
         before(function (done) {
             // Login with an admin login
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -914,12 +914,18 @@ describe('GET /api/admin/users', function () {
         before(function (done) {
             var promiseChain = [];
             for (var i = 1000; i < 1150; i++) {
-                promiseChain.push(db.User.create({
-                    id: i,
-                    email: 'zzzzzzzzzz' + i,
-                    provider_uid: 'zzzzzzzzzzz'
-                }));
-
+                promiseChain.push(
+                    db.User.create({
+                        id: i,
+                        provider_uid: 'zzzzzzzzzzz'
+                    })
+                );
+                promiseChain.push(
+                    db.LocalLogin.create({
+                        user_id: i,
+                        login: 'zzzzzzzzzz' + i
+                    })
+                );
             }
 
             Promise.all(promiseChain)
@@ -929,7 +935,7 @@ describe('GET /api/admin/users', function () {
         });
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -956,7 +962,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(20);
                     expect(json.count).to.equal(152);
-                    expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
+                    expect(json.users[0].email).to.equal('zzzzzzzzzz1000');
 
                 });
             });
@@ -973,7 +979,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(10);
                     expect(json.count).to.equal(152);
-                    expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
+                    expect(json.users[0].email).to.equal('zzzzzzzzzz1000');
                 });
             });
             context('limited to 1000000', function () {
@@ -989,9 +995,9 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(100);
                     expect(json.count).to.equal(152);
-                    expect(json.users[0].email).to.equal(ADMIN.email);
-                    expect(json.users[1].email).to.equal(USER.email);
-                    expect(json.users[2].email).to.equal('zzzzzzzzzz1000');
+                    for (var i = 0; i < 100; i++) {
+                        expect(json.users[i].email).to.equal('zzzzzzzzzz' + (1000 + i));
+                    }
                 });
             });
         });
@@ -1009,8 +1015,9 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(20);
                     expect(json.count).to.equal(152);
-                    expect(json.users[0].email).to.equal('zzzzzzzzzz1000');
-
+                    for (var i = 0; i < 20; i++) {
+                        expect(json.users[i].email).to.equal('zzzzzzzzzz' + (1002 + i));
+                    }
                 });
             });
             context(' more that the number of elements', function () {
@@ -1041,7 +1048,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(2);
                     expect(json.count).to.equal(152);
-                    expect(json.users[0].email).to.equal('zzzzzzzzzz1148');
+                    expect(json.users[0].email).to.equal(ADMIN_EMAIL);
                 });
             });
 
@@ -1049,7 +1056,7 @@ describe('GET /api/admin/users', function () {
         context('when search on ', function () {
             context(' mail with exact matching ', function () {
                 before(function (done) {
-                    requestHelper.sendRequest(this, '/api/admin/users?email=' + USER.email, {
+                    requestHelper.sendRequest(this, '/api/admin/users?email=' + USER_EMAIL, {
                         cookie: self.cookie,
                         parseDOM: true
                     }, done);
@@ -1060,7 +1067,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal(USER.email);
+                    expect(json.users[0].email).to.equal(USER_EMAIL);
                 });
             });
             context(' mail with partial matching ', function () {
@@ -1076,8 +1083,8 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(2);
                     expect(json.count).to.equal(2);
-                    expect(json.users[0].email).to.equal(ADMIN.email);
-                    expect(json.users[1].email).to.equal(USER.email);
+                    expect(json.users[0].email).to.equal(ADMIN_EMAIL);
+                    expect(json.users[1].email).to.equal(USER_EMAIL);
                 });
             });
             context('firstname with partial matching ', function () {
@@ -1093,7 +1100,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal(USER.email);
+                    expect(json.users[0].email).to.equal(USER_EMAIL);
                 });
             });
             context('firstname, lastname and mail with partial matching', function () {
@@ -1109,7 +1116,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal(USER.email);
+                    expect(json.users[0].email).to.equal(USER_EMAIL);
                 });
             });
             context('admin only', function () {
@@ -1125,7 +1132,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal(ADMIN.email);
+                    expect(json.users[0].email).to.equal(ADMIN_EMAIL);
                 });
             });
             context('id only', function () {
@@ -1141,7 +1148,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal(ADMIN.email);
+                    expect(json.users[0].email).to.equal(ADMIN_EMAIL);
                 });
             });
             context('id and other parameter', function () {
@@ -1157,7 +1164,7 @@ describe('GET /api/admin/users', function () {
                     var json = JSON.parse(this.res.text);
                     expect(json.users.length).to.equal(1);
                     expect(json.count).to.equal(1);
-                    expect(json.users[0].email).to.equal(ADMIN.email);
+                    expect(json.users[0].email).to.equal(ADMIN_EMAIL);
                 });
             });
         });

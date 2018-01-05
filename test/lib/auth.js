@@ -9,11 +9,10 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (done) {
     db.User.create({
-        email: 'testuser',
         provider_uid: 'testuser'
     })
         .then(function (user) {
-            return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
                 return localLogin.setPassword('testpassword');
             });
         })

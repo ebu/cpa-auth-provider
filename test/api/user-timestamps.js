@@ -50,10 +50,6 @@ describe('user profile timestamps', function () {
                 done);
         });
 
-        it('should return a success false', function () {
-            expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
-        });
-
         before(function (done) {
             var self = this;
             this.clock.restore();
@@ -80,9 +76,9 @@ describe('user profile timestamps', function () {
             this.clock.restore();
             this.clock = sinon.useFakeTimers(new Date("Wed Feb 08 2017 15:37:00 GMT+0000").getTime());
             this.change_at = Date.now();
-            db.User.findOne({where: {email: TEST_EMAIL_0}, include: {model: db.LocalLogin}}).then(
-                function (user) {
-                    user.LocalLogin.setPassword(NEW_PASSWORD).then(
+            db.LocalLogin.findOne({where: {login: TEST_EMAIL_0}}).then(
+                function (localLogin) {
+                    localLogin.setPassword(NEW_PASSWORD).then(
                         function () {
                             done();
                         },

@@ -30,12 +30,11 @@ describe('Test password recovery code', function () {
         before(function (done) {
             db.User.create({
                 id: 1,
-                email: 'user1@earth.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User 1'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'user1@earth.com'}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
@@ -84,12 +83,11 @@ describe('Test password recovery code', function () {
         before(function (done) {
             db.User.create({
                 id: 2,
-                email: 'user2@earth.com',
                 provider_uid: 'testuser2',
                 display_name: 'Test User 2'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'user2@earth.com'}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
@@ -119,12 +117,11 @@ describe('Test password recovery code', function () {
         before(function (done) {
             db.User.create({
                 id: 3,
-                email: 'user3@earth.com',
                 provider_uid: 'testuser3',
                 display_name: 'Test User 3'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'user3@earth.com'}).then(function (localLogin) {
                     self.localLogin = localLogin;
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
@@ -161,12 +158,11 @@ describe('Test password recovery code', function () {
         before(function (done) {
             db.User.create({
                 id: 5,
-                email: 'user5@earth.com',
                 provider_uid: 'testuser5',
                 display_name: 'Test User 5'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'user5@earth.com'}).then(function (localLogin) {
                     self.localLogin = localLogin;
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
@@ -181,12 +177,11 @@ describe('Test password recovery code', function () {
         before(function (done) {
             db.User.create({
                 id: 6,
-                email: 'user6@earth.com',
                 provider_uid: 'testuser6',
                 display_name: 'Test User 6'
             }).then(function (user) {
                 self.user2 = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'user6@earth.com'}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode2 = recoverCode;
@@ -233,12 +228,11 @@ describe('Test password update code', function () {
         before(function (done) {
             db.User.create({
                 id: 1,
-                email: 'testuser@testuser.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'testuser@testuser.com'}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
@@ -295,12 +289,11 @@ describe('Test password update code', function () {
         before(function (done) {
             db.User.create({
                 id: 1,
-                email: 'testuser@testuser.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'testuser@testuser.com'}).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;

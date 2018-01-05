@@ -15,18 +15,18 @@ var dbHelper = require('../db-helper');
 var PASSWORD = 'UnbreakablePassword01!';
 
 var USER = {
-    email: 'user@user.ch',
     provider_uid: 'testuser',
     firstname: 'Scott',
     lastname: 'Tiger'
 };
+var USER_EMAIL ='user@user.ch';
 var ADMIN = {
-    email: 'admin@admin.ch',
     provider_uid: 'testuser',
     permission_id: 1,
     firstname: 'John',
     lastname: 'Doe'
 };
+var ADMIN_EMAIL = 'admin@admin.ch';
 
 var ADMIN_PERMISSION = {
     id: 1,
@@ -49,14 +49,14 @@ var initDatabase = function (done) {
         return db.User.create(USER);
     }).then(function (user) {
         userId = user.id;
-        return db.LocalLogin.create({user_id: user.id, login: user.email});
+        return db.LocalLogin.create({user_id: user.id, login: USER_EMAIL});
     }).then(function (localLogin) {
         localLogin.setPassword(PASSWORD);
     }).then(function () {
         return db.User.create(ADMIN);
     }).then(function (user) {
         adminId = user.id;
-        return db.LocalLogin.create({user_id: user.id, login: user.email});
+        return db.LocalLogin.create({user_id: user.id, login: ADMIN_EMAIL});
     }).then(function (localLogin) {
         return localLogin.setPassword(PASSWORD);
     }).then(function () {
@@ -97,7 +97,7 @@ describe('GET /admin', function () {
 
         before(function (done) {
             // Login with a non admin login
-            requestHelper.loginCustom(USER.email, PASSWORD, self, done);
+            requestHelper.loginCustom(USER_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -119,7 +119,7 @@ describe('GET /admin', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -145,7 +145,7 @@ describe('GET /admin', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -169,7 +169,7 @@ describe('GET /admin', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, self, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, self, done);
         });
 
         before(function (done) {
@@ -210,7 +210,7 @@ describe('GET /admin/domains', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, this, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, this, done);
         });
 
         before(function (done) {
@@ -266,7 +266,7 @@ describe('GET /admin/domains/add', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, this, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, this, done);
         });
 
         before(function (done) {
@@ -321,7 +321,7 @@ describe('POST /admin/domains', function () {
         before(resetDatabase);
 
         before(function (done) {
-            requestHelper.loginCustom(ADMIN.email, PASSWORD, this, done);
+            requestHelper.loginCustom(ADMIN_EMAIL, PASSWORD, this, done);
         });
 
         before(function (done) {

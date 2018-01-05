@@ -325,6 +325,7 @@
     "BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "Client Id Already exists",
 
     "BACK_PROFILE_AUTH_FAIL": "Authentication failed. user profile not found.",
+    "BACK_CHANGE_PWD_MAIL_EMPTY": "'Email' field  is empty",
     "BACK_CHANGE_PWD_PREV_PASS_EMPTY": "'Previous Password' field  is empty",
     "BACK_CHANGE_PWD_NEW_PASS_EMPTY": "'New Password' field is empty",
     "BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "'Confirm Password' field is empty",

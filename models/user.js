@@ -7,7 +7,6 @@ module.exports = function (sequelize, DataTypes) {
     var User = sequelize.define('User', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         tracking_uid: DataTypes.STRING,
-        email: {type: DataTypes.STRING, unique: true},
         enable_sso: DataTypes.BOOLEAN,
         display_name: DataTypes.STRING,
         photo_url: DataTypes.STRING,
@@ -32,9 +31,9 @@ module.exports = function (sequelize, DataTypes) {
 
 
 
-    User.prototype.getDisplayName = function (policy) {
+    User.prototype.getDisplayName = function (policy, defaultDisplayName) {
         if (!policy) {
-            return this.email;
+            return defaultDisplayName;
         }
         if (policy === "FIRSTNAME") {
             if (this.firstname) {
@@ -51,7 +50,7 @@ module.exports = function (sequelize, DataTypes) {
                 return this.firstname + ' ' + this.lastname;
             }
         }
-        return this.email;
+        return defaultDisplayName;
     };
 
     return User;

@@ -365,8 +365,8 @@ describe('Facebook', function () {
 
 
             before(function (done) {
-                db.User.findOne().then(function (user) {
-                    self.user = user;
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    self.user = localLogin.User;
                 }).then(function () {
                     done();
                 });
@@ -744,8 +744,8 @@ describe('Google', function () {
 
 
             before(function (done) {
-                db.User.findOne().then(function (user) {
-                    self.user = user;
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    self.user = localLogin.User;
                 }).then(function () {
                     done();
                 });
@@ -851,8 +851,8 @@ describe('Facebook and Google', function () {
             });
 
             before(function (done) {
-                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    socialLoginHelper.getSocialLogins(user).then(function (providers) {
+                db.LocalLogin.findOne({where: {login: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    socialLoginHelper.getSocialLogins(localLogin.User).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });
@@ -905,8 +905,8 @@ describe('Facebook and Google', function () {
             });
 
             before(function (done) {
-                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    socialLoginHelper.getSocialLogins(user).then(function (providers) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    socialLoginHelper.getSocialLogins(localLogin.User).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });

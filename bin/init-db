@@ -39,21 +39,17 @@ db.sequelize
                         console.log('[PERMISSION] Database populated');
                     });
 
-                if (config.users) {
-                    db.User
-                        .bulkCreate(config.users)
-                        .then(function () {
-                            db.User.findOne({where: {id: 1}})
-                                .then(function (user) {
-                                    db.LocalLogin.create({
-                                        login: user.email,
-                                        user_id: user.id
-                                    }).then(function (localLogin) {
-                                        return localLogin.setPassword("admin");
-                                    });
-                                });
-                            console.log('[USER] Database populated');
-                        });
+                if (config.admin) {
+                    db.User.create({
+                        display_name: config.admin.display_name,
+                        permission_id: config.admin.permission_id
+                    }).then(function (user) {
+                        return db.LocalLogin.create({login: config.admin.login, user_id: user.id})
+                    }).then(function (localLogin) {
+                        return localLogin.setPassword("admin");
+                    }).then(function () {
+                        console.log('[ADMIN] Database populated');
+                    });
                 }
                 db.Domain
                     .bulkCreate(config.domains)

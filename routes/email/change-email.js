@@ -32,10 +32,7 @@ module.exports = routes;
 
 function routes(router) {
     router.options('/email/change', cors());
-    router.post(
-        '/email/change',
-        cors(),
-        function (req, res, next) {
+    router.post('/email/change', cors(), function (req, res, next) {
             if (!!req.user) {
                 return next();
             } else {
@@ -44,6 +41,7 @@ function routes(router) {
         },
         function (req, res) {
             var oldUser = req.user;
+            var oldUserProfile;
             var newUsername = req.body.new_email;
             var password = req.body.password;
 
@@ -51,27 +49,21 @@ function routes(router) {
                 logger.debug('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ' where old user is ', oldUser, ']');
                 return res.status(401).json({success: false, reason: 'Unauthorized'});
             }
-            logger.debug('[POST /email/change][user_id', oldUser.id, '][from',
-                oldUser.email, '][to', newUsername, ']');
 
-            db.User.findOne({where: {email: newUsername}}).then(
-                function (user) {
-                    if (user) {
+            logger.debug('[POST /email/change][user_id', oldUser.id, '][from', oldUser.email, '][to', newUsername, ']');
+
+            return db.LocalLogin.findOne({
+                where: {
+                    login: newUsername
+                }
+            }).then(function (localLogin) {
+                    if (localLogin) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
-                    // Search for possible local login (i.e.: a user might have a different email that it's login. In other words: user.email != localProfile.login
-                    return db.LocalLogin.findOne({
-                        where: {
-                            login: newUsername
-                        }
-                    }).then(function (localLogin) {
-                        if (localLogin) {
-                            throw new Error(STATES.EMAIL_ALREADY_TAKEN);
-                        }
-                        // At last check password
-                        return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
-                            return localLogin.verifyPassword(password);
-                        });
+                    // At last check password
+                    return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
+                        oldUserProfile = localLogin;
+                        return localLogin.verifyPassword(password);
                     });
                 }
             ).then(
@@ -94,9 +86,8 @@ function routes(router) {
                     if (tokenCount >= REQUEST_LIMIT) {
                         throw new Error(STATES.TOO_MANY_REQUESTS);
                     }
-                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
-                        oldUser.email, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
+                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from', oldUserProfile.login, '][to', newUsername, ']');
+                    triggerAccountChangeEmails(oldUserProfile.login, oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
                         function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
@@ -150,19 +141,24 @@ function routes(router) {
                     }
                     redirect = token.redirect_uri;
                     user = token.User;
-                    localLogin = token.LocalLogin;
-                    oldEmail = user.email;
                     newUsername = token.type.substring('MOV$'.length);
                     if (!token.isAvailable()) {
                         var err = new Error(STATES.ALREADY_USED);
                         err.data = {success: newUsername === oldEmail};
                         throw err;
                     }
-                    return db.User.findOne({where: {email: newUsername}});
+                    return db.LocalLogin.findOne({where: {user_id: token.user_id}});
                 }
             ).then(
-                function (takenUser) {
-                    if (takenUser) {
+                function (ll) {
+                    localLogin = ll;
+                    oldEmail = localLogin.login;
+                    return db.LocalLogin.findOne({where: {login: newUsername}});
+
+                }
+            ).then(
+                function (takenLocalLogin) {
+                    if (takenLocalLogin) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
                     return db.LocalLogin.findOne({where: {login: newUsername}}).then(function (takenLogin) {
@@ -214,7 +210,7 @@ function routes(router) {
 
 }
 
-function triggerAccountChangeEmails(user, client, newUsername) {
+function triggerAccountChangeEmails(email, user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
             var redirectUri = client ? client.redirect_uri : undefined;
@@ -239,7 +235,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                         "email-change-validation",
                         {},
                         {
-                            oldEmail: user.email,
+                            oldEmail: email,
                             newEmail: newUsername,
                             confirmLink: confirmLink
                         }
@@ -255,7 +251,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                                 'email-change-information',
                                 {},
                                 {
-                                    oldEmail: user.email,
+                                    oldEmail: email,
                                     newEmail: newUsername
                                 }
                             );

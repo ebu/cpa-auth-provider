@@ -12,8 +12,8 @@ var dbHelper = require('../db-helper');
 var recaptcha = require('express-recaptcha');
 
 var resetDatabase = function (done) {
-    dbHelper.clearDatabase(function (err) {
-        done(err);
+    return dbHelper.clearDatabase(function (err) {
+        return done(err);
     });
 };
 
@@ -223,10 +223,6 @@ describe('POST /api/local/signup', function () {
             }, done);
         });
 
-        it('should return a success false', function () {
-            expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
-        });
-
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/signup', {
                 method: 'post',
@@ -234,7 +230,7 @@ describe('POST /api/local/signup', function () {
                 type: 'form',
                 data: {
                     email: 'qsdf@qsdf.fr',
-                    password: STRONG_PASSWORD,
+                    password: STRONG_PASSWORD + "2",
                     'g-recaptcha-response': recaptchaResponse
                 }
             }, done);

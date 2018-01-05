@@ -43,7 +43,7 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         done(null, false);
         return;
     }
-    db.User.findOne({where: {id: jwt_payload.id}})
+    db.User.findOne({where: {id: jwt_payload.id}, include: [db.LocalLogin]})
         .then(function (user) {
             if (user) {
                 done(null, user);
@@ -171,7 +171,7 @@ module.exports = function (app, options) {
     });
 
     app.post('/api/local/authenticate', cors, function (req, res) {
-        db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+        db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
             .then(function (localLogin) {
                     if (!localLogin || !req.body.password) {
                         res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
@@ -215,18 +215,25 @@ module.exports = function (app, options) {
             db.User.findOne({
                 where: {
                     id: decoded.id
-                }
+                }, include: [
+                    db.LocalLogin
+                ]
             }).then(function (user) {
                 if (!user) {
                     return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
+                    var data = {
+                        admin: user.admin // FIXME ?????
+                    }
+                    if (user.LocalLogin) {
+                        data.email = user.LocalLogin.login;
+                        data.display_name = user.getDisplayName(req.query.policy, user.LocalLogin.login);
+                    } else {
+                        data.display_name = user.getDisplayName(req.query.policy, '');
+                    }
                     res.json({
                         success: true,
-                        user: {
-                            email: user.email,
-                            display_name: user.getDisplayName(req.query.policy),
-                            admin: user.admin
-                        },
+                        user: data,
                         token: 'JWT ' + token
                     });
                 }
@@ -247,13 +254,13 @@ module.exports = function (app, options) {
 
                 emailHelper.send(
                     config.mail.from,
-                    user.email,
+                    user.LocalLogin ? user.LocalLogin.login : '',
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : '') + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
-                        mail: encodeURIComponent(user.email),
+                        mail: encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : ''),
                         code: encodeURIComponent(user.verificationCode)
                     },
                     (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()

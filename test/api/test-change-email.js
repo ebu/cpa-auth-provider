@@ -27,7 +27,7 @@ const USER2 = {
 };
 
 function resetDatabase(done) {
-    dbHelper.clearDatabase(
+    return dbHelper.clearDatabase(
         function (err) {
             if (err) {
                 return done(err);
@@ -53,7 +53,7 @@ describe('POST /email/change', function () {
 
     context('with correct information', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER1, CLIENT));
+        before(oauthHelper.getAccessToken(USER1.email, USER1, CLIENT));
         before(function (done) {
             this.accessToken = this.res.body.access_token;
             requestHelper.sendRequest(
@@ -92,7 +92,7 @@ describe('POST /email/change', function () {
 
     context('trying with a wrong password', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER1, CLIENT));
+        before(oauthHelper.getAccessToken(USER1.email, USER1, CLIENT));
         before(function (done) {
             this.accessToken = this.res.body.access_token;
             requestHelper.sendRequest(
@@ -131,7 +131,7 @@ describe('POST /email/change', function () {
 
     context('trying to set an already chosen email', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER1, CLIENT));
+        before(oauthHelper.getAccessToken(USER1.email, USER1, CLIENT));
         before(function (done) {
             this.accessToken = this.res.body.access_token;
             requestHelper.sendRequest(
@@ -170,7 +170,7 @@ describe('POST /email/change', function () {
 
     context('trying five times', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER1, CLIENT));
+        before(oauthHelper.getAccessToken(USER1.email, USER1, CLIENT));
 
         before(function () {
             this.accessToken = this.res.body.access_token;
@@ -199,7 +199,7 @@ describe('POST /email/change', function () {
 
     context('trying too often', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER1, CLIENT));
+        before(oauthHelper.getAccessToken(USER1.email, USER1, CLIENT));
 
         before(function () {
             this.accessToken = this.res.body.access_token;
@@ -273,10 +273,10 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should change the email', function (done) {
-            db.User.findOne({where: {email: NEW_EMAIL}}).then(
-                function (u) {
-                    expect(u).a('object');
-                    expect(u.id).equal(USER1.id);
+            db.LocalLogin.findOne({where: {login: NEW_EMAIL}}).then(
+                function (localLogin) {
+                    expect(localLogin).a('object');
+                    expect(localLogin.user_id).equal(USER1.id);
                     done();
                 }
             ).catch(done);
@@ -317,11 +317,11 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should have changed the email', function (done) {
-            db.User.findOne({where: {email: NEW_EMAIL}, include: {model: db.LocalLogin}}).then(
-                function (u) {
-                    expect(u).a('object');
-                    expect(u.id).equal(USER1.id);
-                    expect(u.LocalLogin.verified).equal(true);
+            db.LocalLogin.findOne({where: {login: NEW_EMAIL}}).then(
+                function (localLogin) {
+                    expect(localLogin).a('object');
+                    expect(localLogin.user_id).equal(USER1.id);
+                    expect(localLogin.verified).equal(true);
                     done();
                 }
             ).catch(done);
@@ -366,10 +366,10 @@ describe('GET /email/move/:token', function () {
         });
 
         it('should not have changed the email', function (done) {
-            db.User.findOne({where: {id: USER1.id}}).then(
-                function (u) {
-                    expect(u).a('object');
-                    expect(u.email).equal(USER1.email);
+            db.LocalLogin.findOne({where: {user_id: USER1.id}}).then(
+                function (localLogin) {
+                    expect(localLogin).a('object');
+                    expect(localLogin.login).equal(USER1.email);
                     done();
                 }
             ).catch(done);

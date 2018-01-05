@@ -203,15 +203,13 @@ module.exports = {
         }
     ],
 
-    // users: [
-    //   {
+    // admin: {
     //     id:           1,
-    //     email:        "admin@admin.com",
+    //     login:        "admin@admin.com",
     //     display_name: "Admin",
     //     verified:     true,
     //     permission_id:1
-    //   }
-    // ],
+    //   },
 
     oauth2_clients: [
         {

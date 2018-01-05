@@ -326,6 +326,7 @@
 	"BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "Client Id  existiert bereits",
 
 	"BACK_PROFILE_AUTH_FAIL": "Authentifizierung fehlgeschlagen. Benutzerprofil nicht gefunden",
+	"BACK_CHANGE_PWD_MAIL_EMPTY": "Feld'Email' ist leer",
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Feld 'Vorheriges Passwort' ist leer",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Das Feld 'Neues Passwort' ist leer",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Das Feld 'Passwort bestätigen' ist leer",

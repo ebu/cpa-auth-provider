@@ -10,12 +10,15 @@ var user_info = [
     passport.authenticate('bearer', {session: false}),
     function (req, res) {
         logger.debug('[OAuth2][Info][user_id', req.user.id, ']');
-        res.json({
-            user: {
-                id: req.user.id,
-                name: req.user.display_name || req.user.email
-            },
-            scope: req.authInfo.scope
+        db.LocalLogin.findOne({where:{user_id: req.user.id}}).then(function(localLogin){
+            var mail = localLogin.login;
+            res.json({
+                user: {
+                    id: req.user.id,
+                    name: req.user.display_name || mail
+                },
+                scope: req.authInfo.scope
+            });
         });
     }];
 

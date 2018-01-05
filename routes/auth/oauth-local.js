@@ -108,8 +108,12 @@ module.exports = function (app, options) {
             if (req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
                 language = req.query.lang;
             }
+            var email = "";
+            if (req.user && req.user.LocalLogin && req.user.LocalLogin.login) {
+                email = req.user.LocalLogin.login;
+            }
             var data = {
-                display_name: user.getDisplayName(user, "FIRSTNAME_LASTNAME"),
+                display_name: user.getDisplayName("FIRSTNAME_LASTNAME", email),
                 required_fields: userHelper.getRequiredFields(),
                 menu: getMenu(req, language)
             };

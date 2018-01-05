@@ -89,8 +89,6 @@ describe('GET /api/local/profile', function () {
         });
 
         it('should return a success ', function () {
-            //console.log('success:' + this.res.body.success);
-            //console.log('status:' + this.res.statusCode);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user_profile.firstname).null;

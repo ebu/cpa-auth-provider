@@ -263,7 +263,7 @@ module.exports = function (app, options) {
                         codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
-                                user.email,
+                                localLogin.login,
                                 "password-recovery-email",
                                 {log: false},
                                 {
@@ -309,8 +309,9 @@ module.exports = function (app, options) {
                 });
                 return;
             } else {
-                db.User.findOne({where: {email: req.body.email}})
-                    .then(function (user) {
+                db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+                    .then(function (localLogin) {
+                        var user = localLogin.User;
                         if (user) {
                             return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (success) {
                                 if (success) {

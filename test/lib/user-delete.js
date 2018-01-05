@@ -17,13 +17,12 @@ var initDatabase = function (opts, done) {
         db.User
             .create({
                 id: 3,
-                email: 'testuser',
                 provider_uid: 'fb:1234',
                 display_name: 'Test User',
                 permission_id: 1
             })
             .then(function (user) {
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
                     return localLogin.setPassword('testpassword');
                 });
             })

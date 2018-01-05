@@ -72,16 +72,17 @@ var routes = function (router) {
         if (!user) {
             return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
         } else {
+            var email = req.user.LocalLogin ? req.user.LocalLogin.login : "";
             codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
                 emailHelper.send(
                     config.mail.from,
-                    user.email,
+                    email,
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
-                        mail: encodeURIComponent(user.email),
+                        mail: encodeURIComponent(email),
                         code: encodeURIComponent(code)
                     },
                     (user.language) ? user.language : i18n.getLocale()

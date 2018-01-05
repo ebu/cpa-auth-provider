@@ -11,12 +11,11 @@ describe('Test verification code', function () {
         before(function (done) {
             db.User.create({
                 id: 1,
-                email: 'user1@earth.com',
                 provider_uid: 'testuser',
                 display_name: 'Test User 1'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: user.email});
+                return db.LocalLogin.create({user_id: user.id, login: 'user1@earth.com'});
             }).then(function (localLogin) {
                 self.localLogin = localLogin;
                 codeHelper.getOrGenereateEmailVerificationCode(self.user).then(

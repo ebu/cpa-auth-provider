@@ -17,27 +17,25 @@ var initDatabase = function (opts, done) {
         db.User
             .create({
                 id: 3,
-                email: 'testuser',
                 provider_uid: 'testuser',
                 display_name: 'Test User',
                 permission_id: 1
             })
             .then(function (user) {
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
                     return localLogin.setPassword('testpassword');
                 });
             })
             .then(function () {
                 return db.User.create({
                     id: 2,
-                    email: '2testuser2',
                     provider_uid: '2testuser2',
                     display_name: '2 Test User 2',
                     permission_id: 1
                 });
             })
             .then(function (user) {
-                return db.LocalLogin.create({user_id: user.id, login: user.email}).then(function (localLogin) {
+                return db.LocalLogin.create({user_id: user.id, login: '2testuser2'}).then(function (localLogin) {
                     return localLogin.setPassword('testpassword');
                 });
             })

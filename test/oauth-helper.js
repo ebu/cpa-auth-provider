@@ -60,7 +60,7 @@ function createUsers(userList) {
             function createFakeUser(def) {
                 return db.User.create(def).then(
                     function (user) {
-                       return db.LocalLogin.create({login: user.email, user_id: user.id}).then(
+                       return db.LocalLogin.create({login: def.email, user_id: user.id}).then(
                             function (localLogin) {
                                 return localLogin.setPassword(def.password);
 
@@ -91,7 +91,7 @@ function createUsers(userList) {
     );
 }
 
-function getAccessToken(user, client) {
+function getAccessToken(email, user, client) {
     return function (done) {
         requestHelper.sendRequest(
             this,
@@ -102,7 +102,7 @@ function getAccessToken(user, client) {
                 type: 'form',
                 data: {
                     grant_type: 'password',
-                    username: user.email,
+                    username: email,
                     password: user.password,
                     client_id: client.client_id,
                     client_secret: client.client_secret

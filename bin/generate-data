@@ -33,8 +33,7 @@ for (var i = 0; i < nbOfUserToGenerate; i++) {
         lastname: faker.name.lastName(),
         gender: faker.random.number(1) ? 'male' : 'female',
         date_of_birth: faker.date.past(80).getTime(),
-        language: 'fr',
-        email: faker.internet.email()
+        language: 'fr'
     }).then(generatePasswordAndLocalLogin));
 }
 
@@ -53,7 +52,7 @@ Promise.all(batch).then(function () {
             }
         }).spread(function (user) {
             return user.updateAttributes({permission_id: 1}).then(function (user) {
-                db.LocalLogin.findOrCreate({user_id:user.id, login:user.email}).then(function (localLogin){
+                db.LocalLogin.findOrCreate({user_id:user.id, login:faker.internet.email()}).then(function (localLogin){
                     return localLogin.setPassword(adminPass);
                 });
             });
