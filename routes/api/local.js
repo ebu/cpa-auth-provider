@@ -223,7 +223,7 @@ module.exports = function (app, options) {
                     return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
                     var data = {
-                        admin: user.admin // FIXME ?????
+                        admin: user.admin; // FIXME ?????
                     }
                     if (user.LocalLogin) {
                         data.email = user.LocalLogin.login;
