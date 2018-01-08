@@ -107,9 +107,15 @@ var routes = function (router) {
                 return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
                     localLogin.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
-                                return localLogin.destroy().then(function () {
-                                    return db.SocialLogin.destroy({where: {user_id: user.id}}).then(function () {
-                                        return user.destroy();
+                                // Transactional part
+                                return db.sequelize.transaction(function (transaction) {
+                                    return localLogin.destroy(transaction).then(function () {
+                                        return db.SocialLogin.destroy({
+                                            where: {user_id: user.id},
+                                            transaction: transaction
+                                        }).then(function () {
+                                            return user.destroy();
+                                        });
                                     });
                                 });
                             } else {
