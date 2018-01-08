@@ -11,7 +11,6 @@ describe('Test verification code', function () {
         before(function (done) {
             db.User.create({
                 id: 1,
-                provider_uid: 'testuser',
                 display_name: 'Test User 1'
             }).then(function (user) {
                 self.user = user;
