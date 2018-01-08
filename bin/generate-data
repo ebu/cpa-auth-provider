@@ -40,30 +40,35 @@ for (var i = 0; i < nbOfUserToGenerate; i++) {
 Promise.all(batch).then(function () {
     // Create an admin if a password had been provided:
     if (adminPass !== '') {
-        batch.push(db.User.findOrCreate({
-            where: {
-                email: 'peach-review@ebu.io'
-            },
-            default: {
-                verified: true,
-                password_changed_at: faker.date.past(10).getTime(),
-                last_login_at: faker.date.past(10).getTime(),
-                // permission_id: 1
-            }
-        }).spread(function (user) {
-            return user.updateAttributes({permission_id: 1}).then(function (user) {
-                db.LocalLogin.findOrCreate({user_id:user.id, login:faker.internet.email()}).then(function (localLogin){
+        db.LocalLogin.findOne({where: {login: 'peach-review@ebu.io'}}).then(function (ll) {
+            var userPromise;
+            if (ll) {
+                return ll.updateAttributes({verified: true, permission_id: 1}).then(function () {
+                    return ll.setPassword(adminPass);
+                });
+
+            } else {
+                db.User.create({
+                    display_name: 'peach-review@ebu.io',
+                    permission_id: 1
+                }).then(function (user) {
+                    return db.LocalLogin.create({
+                        verified: true,
+                        user_id: user.id,
+                        login: 'peach-review@ebu.io',
+                    });
+                }).then(function (localLogin) {
                     return localLogin.setPassword(adminPass);
                 });
-            });
-        }));
+            }
+        });
     }
 });
 
 function generatePasswordAndLocalLogin(user) {
     return db.LocalLogin.create({
+        login: faker.internet.email(),
         user_id: user.id,
-        login: user.email,
         verified: faker.random.number(1),
         password_changed_at: faker.date.past(10).getTime(),
         last_login_at: faker.date.past(10).getTime()
