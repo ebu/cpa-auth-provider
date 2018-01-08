@@ -44,7 +44,7 @@ db.sequelize
                         display_name: config.admin.display_name,
                         permission_id: config.admin.permission_id
                     }).then(function (user) {
-                        return db.LocalLogin.create({login: config.admin.login, user_id: user.id})
+                        return db.LocalLogin.create({login: config.admin.login, user_id: user.id});
                     }).then(function (localLogin) {
                         return localLogin.setPassword("admin");
                     }).then(function () {
