@@ -33,10 +33,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function createUsers() {
-    if (!config.users) {
+    if (!config.admin) {
         return;
     }
-    db.User.bulkCreate(config.users).then(
+    db.User.create(config.admin).then(
         function () {
             db.User.findOne({where: {id: 1}}).then(
                 function (user) {
