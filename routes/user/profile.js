@@ -104,34 +104,36 @@ var routes = function (router) {
         //If facebook user then we do not check for account password as it can be empty
         socialLoginHelper.hasLocalLogin(user).then(function (hasLocal) {
             if (hasLocal) {
-                return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
-                    localLogin.verifyPassword(req.body.password).then(function (isMatch) {
-                            if (isMatch) {
-                                // Transactional part
-                                return db.sequelize.transaction(function (transaction) {
-                                    return localLogin.destroy(transaction).then(function () {
+                var localLogin;
+                return db.LocalLogin.findOne({where: {user_id: user.id}})
+                    .then(function (ll) {
+                        localLogin = ll;
+                        return localLogin.verifyPassword(req.body.password);
+                    })
+                    .then(function (isMatch) {
+                        if (isMatch) {
+                            // Transactional part
+                            return db.sequelize.transaction(function (transaction) {
+                                return localLogin.destroy(transaction)
+                                    .then(function () {
                                         return db.SocialLogin.destroy({
                                             where: {user_id: user.id},
                                             transaction: transaction
-                                        }).then(function () {
-                                            return user.destroy();
                                         });
+                                    }).then(function () {
+                                        return user.destroy(transaction);
                                     });
-                                });
+                            });
+                        } else {
+                            if (req.body.password) {
+                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
                             } else {
-                                if (req.body.password) {
-                                    throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_WRONG_PASSWORD'));
-                                } else {
-                                    throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
-                                }
+                                throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
                             }
                         }
-                    ).then(function () {
+                    }).then(function () {
                         return res.status(204).send();
-                    }).catch(function (e) {
-                        res.status(401).send({success: false, msg: e.message});
                     });
-                });
             } else {
                 return db.SocialLogin.destroy({where: {user_id: user.id}}).then(function () {
                     return user.destroy().then(function () {
@@ -140,6 +142,8 @@ var routes = function (router) {
                 });
 
             }
+        }).catch(function (e) {
+            res.status(401).send({success: false, msg: e.message});
         });
     });
 };

@@ -8,35 +8,27 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (opts, done) {
 
-    db.Permission
-        .create({
-                id: 1,
-                label: "admin"
-            }
-        ).then(function () {
-        db.User
-            .create({
-                id: 3,
-                provider_uid: 'fb:1234',
-                display_name: 'Test User',
-                permission_id: 1
-            })
-            .then(function (user) {
-                return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
-                    return localLogin.setPassword('testpassword');
-                });
-            })
-            .catch(function () {
-            })
-            .then(function () {
-                    done();
-                },
-                function (error) {
-                    done(new Error(JSON.stringify(error)));
-                });
-    });
-
-
+    return db.Permission.create({
+            id: 1,
+            label: "admin"
+        }
+    ).then(function (permission) {
+        return db.User.create({
+            id: 3,
+            display_name: 'Test User',
+            permission_id: permission.id
+        });
+    }).then(function (user) {
+        return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+            return localLogin.setPassword('testpassword');
+        });
+    }).catch(function () {
+    }).then(function () {
+            done();
+        },
+        function (error) {
+            done(new Error(JSON.stringify(error)));
+        });
 };
 
 var resetDatabase = function (opts, done) {
