@@ -32,7 +32,7 @@ function resetDatabase(done) {
             if (err) {
                 return done(err);
             } else {
-                oauthHelper.createOAuth2Clients([CLIENT]).then(
+                return oauthHelper.createOAuth2Clients([CLIENT]).then(
                     () => {
                         return oauthHelper.createUsers([USER1, USER2])
                     }
@@ -164,7 +164,7 @@ describe('POST /email/change', function () {
                     expect(token).equal(null);
                     done();
                 }
-            ).catch(done)
+            ).catch(done);
         });
     });
 
