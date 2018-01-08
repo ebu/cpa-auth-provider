@@ -851,8 +851,43 @@ describe('Facebook and Google', function () {
             });
 
             before(function (done) {
-                db.LocalLogin.findOne({where: {login: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
-                    socialLoginHelper.getSocialLogins(localLogin.User).then(function (providers) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (socialLogin) {
+                    socialLoginHelper.getSocialLogins(socialLogin.User).then(function (providers) {
+                        providersInDb = providers;
+                        done();
+                    });
+                });
+            });
+
+            it('it should return 2 entries in oAuthProvider', function () {
+                    expect(providersInDb.length).equal(2);
+                }
+            );
+        });
+        describe('When user is not in the system and log via google then facebook', function () {
+
+            var providersInDb;
+
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+
+            });
+            before(function (done) {
+                facebookUISignup.call(this, done);
+
+            });
+
+            before(function (done) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (socialLogin) {
+                    socialLoginHelper.getSocialLogins(socialLogin.User).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });
@@ -886,6 +921,48 @@ describe('Facebook and Google', function () {
             before(function (done) {
                 markEmailAsVerified(done);
             });
+
+            before(function () {
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    mockVerifyGoogleIdToken()
+                );
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
+            });
+
+            before(function (done) {
+                googleAPISignup.call(this, done);
+            });
+            before(function (done) {
+                facebookAPISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    socialLoginHelper.getSocialLogins(localLogin.User).then(function (providers) {
+                        providersInDb = providers;
+                        done();
+                    });
+                });
+            });
+
+            it('it should return 2 entries in oAuthProvider', function () {
+                    expect(providersInDb.length).equal(2);
+                }
+            );
+        });
+        describe('When user is not in the system and log via google then facebook', function () {
+
+            var providersInDb;
+
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
 
             before(function () {
                 sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
