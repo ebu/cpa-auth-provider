@@ -114,15 +114,20 @@ var routes = function (router) {
                         if (isMatch) {
                             // Transactional part
                             return db.sequelize.transaction(function (transaction) {
-                                return localLogin.destroy(transaction)
-                                    .then(function () {
-                                        return db.SocialLogin.destroy({
-                                            where: {user_id: user.id},
-                                            transaction: transaction
-                                        });
-                                    }).then(function () {
-                                        return user.destroy(transaction);
+                                return localLogin.destroy({
+                                    where: {user_id: user.id},
+                                    transaction: transaction
+                                }).then(function () {
+                                    return db.SocialLogin.destroy({
+                                        where: {user_id: user.id},
+                                        transaction: transaction
                                     });
+                                }).then(function () {
+                                    return user.destroy({
+                                        where: {id: user.id},
+                                        transaction: transaction
+                                    });
+                                });
                             });
                         } else {
                             if (req.body.password) {
