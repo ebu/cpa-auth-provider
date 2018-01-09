@@ -35,27 +35,31 @@ var routes = function (router) {
         if (!user) {
             return res.status(401).send({msg: req.__('BACK_PROFILE_AUTH_FAIL')});
         } else {
-            socialLoginHelper.getSocialLogins(user).then(function (logins) {
-                let email = user.LocalLogin ? user.LocalLogin.login : "";
-                var data = {
-                    profile: {
-                        firstname: user.firstname,
-                        lastname: user.lastname,
-                        gender: user.gender,
-                        language: user.language,
-                        date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
-                        email: email,
-                        display_name: user.getDisplayName(email, req.query.policy),
-                        verified: !user.LocalLogin || user.LocalLogin.verified,
-                        hasPassword: user.LocalLogin && !!user.LocalLogin.password,
-                        facebook: logins.indexOf(socialLoginHelper.FB) > -1,
-                        google: logins.indexOf(socialLoginHelper.GOOGLE) > -1,
-                        hasSocialLogin: logins.length > 0
-                    },
-                    captcha: req.recaptcha
-                };
+            socialLoginHelper.getSocialEmails(user).then(function (emails) {
+                var socialEmail = (emails && emails.length > 0) ? emails[0] : "";
+                socialLoginHelper.getSocialLogins(user).then(function (logins) {
+                    var email = user.LocalLogin ? user.LocalLogin.login : undefined;
+                    var data = {
+                        profile: {
+                            firstname: user.firstname,
+                            lastname: user.lastname,
+                            gender: user.gender,
+                            language: user.language,
+                            date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
+                            email: email,
+                            socialEmail: socialEmail,
+                            display_name: user.getDisplayName(email, req.query.policy),
+                            verified: !user.LocalLogin || user.LocalLogin.verified,
+                            hasPassword: user.LocalLogin && !!user.LocalLogin.password,
+                            facebook: logins.indexOf(socialLoginHelper.FB) > -1,
+                            google: logins.indexOf(socialLoginHelper.GOOGLE) > -1,
+                            hasSocialLogin: logins.length > 0
+                        },
+                        captcha: req.recaptcha
+                    };
 
-                res.render('./user/profile.ejs', data);
+                    res.render('./user/profile.ejs', data);
+                });
             });
         }
     });
