@@ -53,7 +53,7 @@ var initDatabase = function (done) {
         userId = user.id;
         return db.LocalLogin.create({user_id: user.id, login: USER_EMAIL});
     }).then(function (localLogin) {
-        localLogin.setPassword(PASSWORD);
+        return localLogin.setPassword(PASSWORD);
     }).then(function () {
         return db.User.create(ADMIN);
     }).then(function (user) {
