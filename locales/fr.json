@@ -206,7 +206,6 @@
 	"CHANGE_EMAIL_API_ALREADY_USED": "Votre adresse email a déjé été changée.",
 	"CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "Cette adresse email est déjà associée à un autre compte.",
 	"CHANGE_EMAIL_API_WRONG_PASSWORD": "Le mot de passe est érroné.",
-	"CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN": "Changement d'email impossible car votre compte est lié à un réseau social",
 	"CHANGE_EMAIL_API_TOO_MANY_REQUESTS": "Trop d'essais. Merci de réessayer plus tard.",
 
 	"ACCESS_DENIED_TITLE": "Accès refusé",

@@ -32,9 +32,9 @@
                                 class='glyphicon glyphicon-user'></i>
                         <% if (user.display_name) { %>
                         <%= user.display_name %>
-                        <% } else { %>
-                        <%= user.email %>
-                        <% } %>
+                        <% } else { if (user.LocalLogin){%>
+                        <%= user.LocalLogin.email %>
+                        <% }} %>
                         <b class="caret"></b> </a>
                     <ul class="dropdown-menu">
                         <li><a href="<%= link('/user/devices') %>"><%= __('LAYOUT_HEAD_NAV_MY_DEVICES') %></a>

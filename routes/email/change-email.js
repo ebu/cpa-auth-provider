@@ -15,7 +15,6 @@ var STATES = {
     ALREADY_USED: 'ALREADY_USED',
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
     WRONG_PASSWORD: 'WRONG_PASSWORD',
-    HAS_SOCIAL_LOGIN: 'HAS_SOCIAL_LOGIN',
     TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
 };
 
@@ -70,13 +69,6 @@ function routes(router) {
                 function (correct) {
                     if (!correct) {
                         throw new Error(STATES.WRONG_PASSWORD);
-                    }
-                    return socialLoginHelper.hasSocialLogin(oldUser);
-                }
-            ).then(
-                function (hasSocialLogin) {
-                    if (hasSocialLogin) {
-                        throw new Error(STATES.HAS_SOCIAL_LOGIN);
                     }
                     const validityDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
                     return db.UserEmailToken.count({where: {user_id: oldUser.id, created_at: {$gte: validityDate}}});
@@ -172,7 +164,7 @@ function routes(router) {
                                     verified: true
                                 }, {transaction: transaction}).then(function () {
                                     return user.updateAttributes({
-                                        email: newUsername
+                                        display_name: newUsername
                                     }, {transaction: transaction});
                                 });
                             });
@@ -182,7 +174,7 @@ function routes(router) {
             ).then(
                 function () {
                     if (req.user.id === user.id) {
-                        req.user.email = newUsername;
+                        req.user.display_name = newUsername;
                     }
                     return token.consume();
                 }
@@ -192,6 +184,7 @@ function routes(router) {
                 }
             ).catch(
                 function (err) {
+                    console.log(err);
                     logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
                     return renderLandingPage(err.data && err.data.success, err.message);
                 }
