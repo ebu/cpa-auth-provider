@@ -159,14 +159,12 @@
                 </div>
                 <% if (profile.email !== null ) { %>
                 <span class="data-value"><%= profile.email %></span>
-                <%if (!profile.hasSocialLogin) {%>
                 <span class="data-value">
                         <button class="btn btn-link" type="button" data-toggle="modal" data-target="#changeEmailModal">
                             <i class='glyphicon glyphicon-pencil'></i>
                             <span class="button-label"><%= __('PROFILE_CHANGE_EMAIL_LINK') %></span>
                         </button>
                         </span>
-                <% } %>
                 <% } else { %>
                 <span></span>
                 <% } %>
