@@ -149,7 +149,7 @@
         </div>
         <div class="col-sm-9">
 
-            <div id="form-change-email-form">
+            <div class="hasPassword">
                 <h4><%= __('PROFILE_EMAIL_LABEL') %></h4>
                 <div id="form-change-email-success" class="alert alert-success alert-dismissible error-block"
                      role="alert">
@@ -197,8 +197,8 @@
                 </span>
             </button>
             <form id="form-modify-pass">
-                <div id="new-mail-form">
-                    <div id="newMailBlock" class="form-group">
+                <div  class="hasNoPassword">
+                    <div class="form-group">
                         <label for="new-mail"><%= __('PROFILE_NEW_EMAIL_LABEL') %></label>
                         <input type="email" class="form-control" id="new-email"
                                placeholder="<%= __('PROFILE_NEW_EMAIL_LABEL_PLACEHOLDER') %>"
@@ -220,8 +220,8 @@
                     </div>
                 </div>
 
-                <div id="update-password-form">
-                    <div id="previousPasswordBlock" class="form-group">
+                <div id="update-password-form" class="hasPassword">
+                    <div class="form-group">
                         <label for="old-password"><%= __('PROFILE_PREVIOUS_PASSWORD_LABEL') %></label>
                         <input type="password" class="form-control" id="previous-password"
                                placeholder="<%= __('PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER') %>">
@@ -295,7 +295,7 @@
 
     <div class="row">
 
-        <div class="col-sm-3" id="account-verified">
+        <div class="col-sm-3 accountVerified">
             <h4 class="account-title">
                 <%= __('PROFILE_ACCOUNT_TITLE') %>
                 <span class="glyphicon glyphicon-info-sign status-info" data-toggle="tooltip" data-placement="right"
@@ -308,7 +308,7 @@
             <hr class="visible-xs-block hidden-sm"/>
         </div>
 
-        <div class="col-sm-3" id="account-not-verified">
+        <div class="col-sm-3 accountNotVerified">
             <h4 class="account-title">
                 <%= __('PROFILE_ACCOUNT_TITLE') %>
 
@@ -321,7 +321,7 @@
             <hr class="visible-xs-block hidden-sm"/>
         </div>
 
-        <div class="col-sm-9" id="verification-link-container-div">
+        <div class="col-sm-9" class="accountNotVerified">
             <div class="verification-link-container">
                 <p><%= __('PROFILE_FILL_VERIFICATION_LABEL') %></p>
                 <form id="verification-link-form"
@@ -358,7 +358,7 @@
             </div>
         </div>
 
-        <div class="col-sm-9" id="delete-account-container">
+        <div class="col-sm-9 col-sm-offset-3">
             <div class="delete-container">
 
                 <span id="delete-error" class="text-danger">
@@ -399,15 +399,6 @@
         var $btnVerificationLink = $('#btn-send-verification-link');
         var $btnDeleteAccount = $('#delete-user');
         var $deleteUserModal = $('#deleteUserModal');
-        var $formPersonalData = $('#form-personnal-data');
-        var $formChangeEmailForm = $('#form-change-email-form');
-        var $accountVerified = $('#account-verified');
-        var $accountNotVerified = $('#account-not-verified');
-        var $newMailFrom = $('#new-mail-form');
-        var $updatePasswordForm = $('#update-password-form');
-        var $verificationLinkContainer = $('#verification-link-container-div');
-        var $deleteAccountContainer = $('#delete-account-container');
-
 
         var $firstname = $("#firstname");
         var $lastname = $("#lastname");
@@ -422,9 +413,12 @@
         var $birthday = $("#birthday");
         var $inputs = $('.personnal-data-input');
         var $datepicker = $(".input-group.date");
+
         var $elementsWithPassword = $(".hasPassword");
         var $elementsWithoutPassword = $(".hasNoPassword");
-        var $previousPasswordBlock = $("#previousPasswordBlock");
+        var $elementsAccountVerified = $(".accountVerified");
+        var $elementsAccountNotVerified = $(".accountNotVerified");
+
         var $passwordStrengthProgress = $("#password-progress");
         var hasPassword = '<%= profile.hasPassword %>';
         var date = "";
@@ -433,30 +427,17 @@
         if (hasPassword !== "true") {
             $elementsWithPassword.hide();
             $elementsWithoutPassword.show();
-            $previousPasswordBlock.hide();
-            $formChangeEmailForm.hide();
-            $newMailFrom.show();
-            $updatePasswordForm.hide();
         } else {
-            $newMailFrom.hide();
-            $updatePasswordForm.show();
+            $elementsWithPassword.show();
+            $elementsWithoutPassword.hide();
         }
 
         if (verified != 'true') {
-            $accountVerified.hide();
-            $accountNotVerified.show();
+            $elementsAccountNotVerified.show();
+            $elementsAccountVerified.hide();
         } else {
-            $accountVerified.show();
-            $accountNotVerified.hide();
-        }
-
-        if (verified != 'true' && hasPassword === "true") {
-            console.log("a");
-            $verificationLinkContainer.show();
-            $deleteAccountContainer.addClass('col-sm-offset-3');
-        } else {
-            console.log("b");
-            $verificationLinkContainer.hide();
+            $elementsAccountNotVerified.hide();
+            $elementsAccountVerified.show();
         }
 
         //Little css trick so that date input render correctly but does not appear quickly at loading
@@ -815,9 +796,7 @@
                 data: data,
                 type: 'POST',
                 success: function (result) {
-                    $elementsWithPassword.show();
-                    $elementsWithoutPassword.hide();
-                    $previousPasswordBlock.show();
+                    // Password stuff
                     if (hasPassword !== "true") {
                         $("#form-new-email-success").show('fast');
                     } else {
@@ -825,21 +804,22 @@
                     }
                     $('#display-email-span').append($newEmail.val());
                     hasPassword = "true";
-                    $deleteAccountContainer.addClass('col-sm-offset-3');
-                    $accountNotVerified.show();
-                    $accountVerified.hide();
-                    verified = false;
-                    $newMailFrom.hide();
-                    $updatePasswordForm.show();
-                    $verificationLinkContainer.show();
+                    $elementsWithPassword.show();
+                    $elementsWithoutPassword.hide();
+
+                    // Verified stuff
+                    $elementsAccountNotVerified.show();
+                    $elementsAccountVerified.hide();
+
                     $previousPassword.val("");
                     $passwordStrengthProgress.width(0);
                     $password.val("");
                     $confirmPassword.val("");
+
+                    // password change form close
                     $formModifyPass.hide();
                     $fakePasswordDisplay.show();
                     $modifyPassBtn.show();
-                    $formChangeEmailForm.show();
                     $('html, body').animate({
                         scrollTop: $("#security-success").offset().top
                     }, 500);
@@ -859,6 +839,7 @@
         $cancelPasswordBtn.on('click', function (e) {
             e.preventDefault();
             resetMessages("form-security-errors", "security-errors");
+            // password change form close
             $formModifyPass.hide();
             $fakePasswordDisplay.show();
             $modifyPassBtn.show();

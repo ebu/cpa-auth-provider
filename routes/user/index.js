@@ -134,7 +134,7 @@ var routes = function (router) {
                 } else {
                     userHelper.addLocalLogin(req.user, req.body.email, req.body.password).then(
                         function () {
-                            res.json({success: true, msg: req.__('BACK_SUCESS_PASS_CREATED')});
+                            res.json({success: true, msg: req.__('BACK_SUCCESS_PASS_CREATED')});
                         },
                         function (err) {
                             if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
@@ -146,8 +146,8 @@ var routes = function (router) {
                                 return res.status(400).json({
                                     success: false,
                                     msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
-                                    password_strength_errors: passwordHelper.getWeaknesses(username, req.body.password, req),
-                                    errors: [{msg: passwordHelper.getWeaknessesMsg(username, req.body.password, req)}]
+                                    password_strength_errors: passwordHelper.getWeaknesses(req.body.email, req.body.password, req),
+                                    errors: [{msg: passwordHelper.getWeaknessesMsg(req.body.email, req.body.password, req)}]
                                 });
                             } else {
                                 logger.error('[POST /user/:user_id/password/create][email', req.body.email, '][ERR', err, ']');
