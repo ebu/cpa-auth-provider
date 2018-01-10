@@ -117,6 +117,15 @@
     display: none;
 }
 
+#profile #verification-link-form .recaptcha-wrapper {
+    margin: 10px 0;
+}
+#profile #delete-div {
+    margin-top: 20px;
+}
+
+
+
 @media (max-width: 767px) {
     #profile .h4, #profile h4 {
         font-size: 25px;
