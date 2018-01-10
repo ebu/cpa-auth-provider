@@ -337,8 +337,8 @@
 	"BACK_INCORRECT_PREVIOUS_PASS": "Das vorherige Passwort ist falsch",
 	"BACK_USER_NOT_FOUND": "Benutzer nicht gefunden",
 	"BACK_USER_ALL_READY_HAS_PASSWORD": "Der Benutzer hat bereits ein Passwort",
-	"BACK_SUCESS_PASS_CHANGED": "Passwort erfolgreich ändern",
-	"BACK_SUCESS_PASS_CREATED": "Erfolgreich ein neues Passwort erstellt",
+	"BACK_SUCCESS_PASS_CHANGED": "Passwort erfolgreich ändern",
+	"BACK_SUCCESS_PASS_CREATED": "Erfolgreich ein neues Passwort erstellt",
 
 	"BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "'Vorname' ist leer oder ungültig",
 	"BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "'Nachname' ist leer oder ungültig",

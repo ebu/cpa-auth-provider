@@ -321,8 +321,7 @@
             <hr class="visible-xs-block hidden-sm"/>
         </div>
 
-        <% if (!profile.verified) { %>
-        <div class="col-sm-9">
+        <div class="col-sm-9" id="verification-link-container-div">
             <div class="verification-link-container">
                 <p><%= __('PROFILE_FILL_VERIFICATION_LABEL') %></p>
                 <form id="verification-link-form"
@@ -358,9 +357,8 @@
                 </form>
             </div>
         </div>
-        <% } %>
 
-        <div class="col-sm-9 <% if (!profile.verified) { %> col-sm-offset-3 <% } %>">
+        <div class="col-sm-9" id="delete-account-container">
             <div class="delete-container">
 
                 <span id="delete-error" class="text-danger">
@@ -407,6 +405,8 @@
         var $accountNotVerified = $('#account-not-verified');
         var $newMailFrom = $('#new-mail-form');
         var $updatePasswordForm = $('#update-password-form');
+        var $verificationLinkContainer = $('#verification-link-container-div');
+        var $deleteAccountContainer = $('#delete-account-container');
 
 
         var $firstname = $("#firstname");
@@ -448,6 +448,15 @@
         } else {
             $accountVerified.show();
             $accountNotVerified.hide();
+        }
+
+        if (verified != 'true' && hasPassword === "true") {
+            console.log("a");
+            $verificationLinkContainer.show();
+            $deleteAccountContainer.addClass('col-sm-offset-3');
+        } else {
+            console.log("b");
+            $verificationLinkContainer.hide();
         }
 
         //Little css trick so that date input render correctly but does not appear quickly at loading
@@ -796,6 +805,7 @@
                 data["confirm_password"] = $newConfirmPassword.val();
             } else {
                 password: $password.val();
+                data["password"] = $password.val();
                 data["previous_password"] = $previousPassword.val();
                 data["confirm_password"] = $newConfirmPassword.val();
             }
@@ -813,13 +823,15 @@
                     } else {
                         $("#form-security-success").show('fast');
                     }
-                    $('#display-email-span').innerHTML = $newEmail.val();
+                    $('#display-email-span').append($newEmail.val());
                     hasPassword = "true";
+                    $deleteAccountContainer.addClass('col-sm-offset-3');
                     $accountNotVerified.show();
                     $accountVerified.hide();
                     verified = false;
                     $newMailFrom.hide();
                     $updatePasswordForm.show();
+                    $verificationLinkContainer.show();
                     $previousPassword.val("");
                     $passwordStrengthProgress.width(0);
                     $password.val("");

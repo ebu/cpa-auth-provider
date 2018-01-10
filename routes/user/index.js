@@ -6,6 +6,8 @@ var authHelper = require('../../lib/auth-helper');
 var passwordHelper = require('../../lib/password-helper');
 var socialLoginHelper = require('../../lib/social-login-helper');
 var i18n = require('i18n');
+var userHelper = require('../../lib/user-helper');
+var logger = require('../../lib/logger');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
@@ -97,7 +99,7 @@ var routes = function (router) {
                                 if (isMatch) {
                                     user.LocalLogin.setPassword(req.body.password).then(
                                         function () {
-                                            res.json({msg: req.__('BACK_SUCESS_PASS_CHANGED')});
+                                            res.json({msg: req.__('BACK_SUCCESS_PASS_CHANGED')});
                                         },
                                         function (err) {
                                             res.status(500).json({errors: [err]});
@@ -130,26 +132,29 @@ var routes = function (router) {
                         password_strength_errors: passwordHelper.getWeaknesses(req.body.email, req.body.password, req)
                     });
                 } else {
-                    db.User.findOne({
-                        where: {
-                            id: req.user.id
-                        }
-                    }).then(function (user) {
-                        if (!user) {
-                            return res.status(401).send({errors: [{msg: req.__('BACK_USER_NOT_FOUND')}]});
-                        } else {
-                            if (user.LocalLogin) {
-                                return res.status(401).send({errors: [{msg: req.__('BACK_USER_ALL_READY_HAS_PASSWORD')}]});
+                    userHelper.addLocalLogin(req.user, req.body.email, req.body.password).then(
+                        function () {
+                            res.json({success: true, msg: req.__('BACK_SUCESS_PASS_CREATED')});
+                        },
+                        function (err) {
+                            if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
+                                return res.status(400).json({
+                                    success: false,
+                                    msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')
+                                });
+                            } else if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
+                                return res.status(400).json({
+                                    success: false,
+                                    msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
+                                    password_strength_errors: passwordHelper.getWeaknesses(username, req.body.password, req),
+                                    errors: [{msg: passwordHelper.getWeaknessesMsg(username, req.body.password, req)}]
+                                });
+                            } else {
+                                logger.error('[POST /user/:user_id/password/create][email', req.body.email, '][ERR', err, ']');
+                                res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
                             }
-                            db.LocalLogin.create({login: req.body.email, user_id: user.id, verified: true}).then(
-                                function (localLogin) {
-                                    return localLogin.setPassword(req.body.password).then(function () {
-                                        res.json({msg: req.__('BACK_SUCESS_PASS_CREATED')});
-                                    });
-                                }
-                            );
                         }
-                    });
+                    );
                 }
 
             }

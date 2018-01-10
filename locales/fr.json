@@ -336,8 +336,8 @@
 	"BACK_INCORRECT_PREVIOUS_PASS": "Le précédent mot de passe est incorrect",
 	"BACK_USER_NOT_FOUND": "Utilisateur inconnu",
 	"BACK_USER_ALL_READY_HAS_PASSWORD": "L'utilisateur a déjà un mots de passe",
-	"BACK_SUCESS_PASS_CHANGED": "Mot de passe mis à jour",
-	"BACK_SUCESS_PASS_CREATED": "Mot de passe créé avec succès",
+	"BACK_SUCCESS_PASS_CHANGED": "Mot de passe mis à jour",
+	"BACK_SUCCESS_PASS_CREATED": "Mot de passe créé avec succès",
 
 	"BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "Le champs 'prénom' est vide ou invalide",
 	"BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "Le champs 'nom' est vide ou invalide",
