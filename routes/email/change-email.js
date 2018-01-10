@@ -182,7 +182,6 @@ function routes(router) {
                 }
             ).catch(
                 function (err) {
-                    console.log(err);
                     logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][err', err, ']');
                     return renderLandingPage(err.data && err.data.success, err.message);
                 }
