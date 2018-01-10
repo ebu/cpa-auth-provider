@@ -119,12 +119,12 @@ function routes(router) {
     router.get(
         '/email/move/:token',
         function (req, res) {
-            var localLogin, user, token;
-            var clientId, oldEmail, newUsername;
+            var localLogin, token;
+            var oldEmail, newUsername;
             var redirect;
             db.UserEmailToken.findOne({
                 where: {key: req.params.token},
-                include: [db.User, db.OAuth2Client]
+                include: [db.User]
             }).then(
                 function (token_) {
                     token = token_;
@@ -132,7 +132,6 @@ function routes(router) {
                         throw new Error(STATES.INVALID_TOKEN);
                     }
                     redirect = token.redirect_uri;
-                    user = token.User;
                     newUsername = token.type.substring('MOV$'.length);
                     if (!token.isAvailable()) {
                         var err = new Error(STATES.ALREADY_USED);
@@ -146,7 +145,6 @@ function routes(router) {
                     localLogin = ll;
                     oldEmail = localLogin.login;
                     return db.LocalLogin.findOne({where: {login: newUsername}});
-
                 }
             ).then(
                 function (takenLocalLogin) {
@@ -157,13 +155,13 @@ function routes(router) {
                         if (takenLogin) {
                             throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                         }
-                        return db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
+                        return db.LocalLogin.findOne({where: {user_id: token.user_id}, include:[db.User]}).then(function (localLogin) {
                             return db.sequelize.transaction(function (transaction) {
                                 return localLogin.updateAttributes({
                                     login: newUsername,
                                     verified: true
                                 }, {transaction: transaction}).then(function () {
-                                    return user.updateAttributes({
+                                    return localLogin.User.updateAttributes({
                                         display_name: newUsername
                                     }, {transaction: transaction});
                                 });
@@ -173,7 +171,7 @@ function routes(router) {
                 }
             ).then(
                 function () {
-                    if (req.user.id === user.id) {
+                    if (req.user && req.user.id === token.user_id) {
                         req.user.display_name = newUsername;
                     }
                     return token.consume();
@@ -185,7 +183,7 @@ function routes(router) {
             ).catch(
                 function (err) {
                     console.log(err);
-                    logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
+                    logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][err', err, ']');
                     return renderLandingPage(err.data && err.data.success, err.message);
                 }
             );
