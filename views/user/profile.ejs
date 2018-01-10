@@ -197,7 +197,7 @@
                 </span>
             </button>
             <form id="form-modify-pass">
-                <div  class="hasNoPassword">
+                <div class="hasNoPassword">
                     <div class="form-group">
                         <label for="new-mail"><%= __('PROFILE_NEW_EMAIL_LABEL') %></label>
                         <input type="email" class="form-control" id="new-email"
@@ -321,46 +321,42 @@
             <hr class="visible-xs-block hidden-sm"/>
         </div>
 
-        <div class="col-sm-9" class="accountNotVerified">
-            <div class="verification-link-container">
-                <p><%= __('PROFILE_FILL_VERIFICATION_LABEL') %></p>
-                <form id="verification-link-form"
-                      action='<%= link('/user/profile/request_verification_email') %>'
-                      method="post">
-                    <div class="form-group">
-                        <div class="recaptcha-wrapper">
-                            <%- captcha %>
-                            <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
-                            <div class="recaptcha-info"></div>
-                            <div class="rc-anchor-logo-text">reCAPTCHA</div>
-                            <div class="rc-anchor-pt">
-                                <a href="https://www.google.com/intl/en/policies/privacy/"
-                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
-                                <span aria-hidden="true" role="presentation"> - </span>
-                                <a href="https://www.google.com/intl/en/policies/terms/"
-                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
-                            </div>
+        <div class="col-sm-9 accountNotVerified">
+            <p><%= __('PROFILE_FILL_VERIFICATION_LABEL') %></p>
+            <form id="verification-link-form"
+                  action='<%= link('/user/profile/request_verification_email') %>'
+                  method="post">
+                <div class="form-group">
+                    <div class="recaptcha-wrapper">
+                        <%- captcha %>
+                        <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
+                        <div class="recaptcha-info"></div>
+                        <div class="rc-anchor-logo-text">reCAPTCHA</div>
+                        <div class="rc-anchor-pt">
+                            <a href="https://www.google.com/intl/en/policies/privacy/"
+                               target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
+                            <span aria-hidden="true" role="presentation"> - </span>
+                            <a href="https://www.google.com/intl/en/policies/terms/"
+                               target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
                         </div>
                     </div>
-                    <button id="btn-send-verification-link" type="submit" class="btn btn-primary btn-large-submit"><span
-                                class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
-                        <div class="spinner">
-                            <div class="bounce1"></div>
-                            <div class="bounce2"></div>
-                            <div class="bounce3"></div>
-                        </div>
-                    </button>
-                    <span id="verification-success" class="text-success"><span
-                                class="glyphicon glyphicon-ok"></span> <span class="text"></span> </span>
-                    <span id="verification-error" class="text-danger"><span
-                                class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
-                </form>
-            </div>
+                </div>
+                <button id="btn-send-verification-link" type="submit" class="btn btn-primary btn-large-submit"><span
+                            class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </button>
+                <span id="verification-success" class="text-success"><span
+                            class="glyphicon glyphicon-ok"></span> <span class="text"></span> </span>
+                <span id="verification-error" class="text-danger"><span
+                            class="glyphicon glyphicon-remove"></span> <span class="text"></span></span>
+            </form>
         </div>
 
-        <div class="col-sm-9 col-sm-offset-3">
-            <div class="delete-container">
-
+        <div class="col-sm-9 col" id="delete-div">
                 <span id="delete-error" class="text-danger">
                     <span class="glyphicon glyphicon-remove"></span>
                     <span class="text"></span>
@@ -370,11 +366,7 @@
                 <button class="btn btn-primary btn-large-submit" data-toggle="modal" data-target="#deleteUserModal">
                     <span class="button-label"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></span>
                 </button>
-
-            </div>
         </div>
-
-    </div>
 
 </div>
 
@@ -413,6 +405,7 @@
         var $birthday = $("#birthday");
         var $inputs = $('.personnal-data-input');
         var $datepicker = $(".input-group.date");
+        var $deleteDiv = $("#delete-div")
 
         var $elementsWithPassword = $(".hasPassword");
         var $elementsWithoutPassword = $(".hasNoPassword");
@@ -435,6 +428,7 @@
         if (verified != 'true') {
             $elementsAccountNotVerified.show();
             $elementsAccountVerified.hide();
+            $deleteDiv.addClass('col-sm-offset-3');
         } else {
             $elementsAccountNotVerified.hide();
             $elementsAccountVerified.show();
@@ -810,6 +804,7 @@
                     // Verified stuff
                     $elementsAccountNotVerified.show();
                     $elementsAccountVerified.hide();
+                    $deleteDiv.addClass('col-sm-offset-3');
 
                     $previousPassword.val("");
                     $passwordStrengthProgress.width(0);
