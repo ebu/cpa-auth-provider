@@ -29,11 +29,6 @@ passport.use(new FacebookStrategy({
             email = profile.emails[0].value;
         }
 
-        if (email === '') {
-            // how to react to such an error!?
-            return done(new Error('NO_EMAIL', null));
-        }
-
         var providerUid = facebookHelper.buildFBId(profile.id);
 
         return socialLoginHelper.findOrCreateSocialLoginUser(socialLoginHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(

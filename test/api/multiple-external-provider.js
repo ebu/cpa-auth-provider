@@ -1001,6 +1001,20 @@ describe('Facebook and Google', function () {
 });
 
 
+describe('Social login without email', function () {
+    before(resetDatabase);
+
+    before(function (done) {
+        facebookUISignupNoMail.call(this, done);
+    });
+
+    it('should redirect to /ap/ 200 OK', function () {
+        expect(this.res.statusCode).equal(302);
+        expect(this.res.text).equal("Found. Redirecting to /ap/");
+    });
+});
+
+
 function localSignup(done) {
     requestHelper.sendRequest(this, '/api/local/signup', {
         method: 'post',
@@ -1059,6 +1073,34 @@ function mockFB() {
         });
 }
 
+
+function mockFBNoMail() {
+    nock('https://graph.facebook.com:443')
+        .post('/oauth/access_token', "grant_type=authorization_code&redirect_uri=http%3A%2F%2Flocalhost%2Fap%2Fauth%2Ffacebook%2Fcallback&client_id=abc&client_secret=123&code=mycodeabc")
+        .reply(200, {access_token: 'AccessTokenA', token_type: 'Bearer', expires_in: 3600});
+    nock('https://graph.facebook.com')
+        .get('/v2.5/me?fields=id%2Cemail%2Cname%2Cfirst_name%2Clast_name%2Cgender%2Cbirthday&access_token=AccessTokenA')
+        .reply(200, {
+            id: 'fffaaa-123',
+            name: 'Cool Name',
+            first_name: USER_PROFILE.first_name,
+            last_name: USER_PROFILE.last_name,
+            gender: USER_PROFILE.gender,
+            birthday: USER_PROFILE.birthday
+        });
+    nock('https://graph.facebook.com')
+        .get('/me?fields=id,email,name,first_name,last_name,gender,birthday&access_token=AccessTokenA')
+        .reply(200, {
+            id: 'fffaaa-123',
+            name: 'Cool Name',
+            first_name: USER_PROFILE.first_name,
+            last_name: USER_PROFILE.last_name,
+            gender: USER_PROFILE.gender,
+            birthday: USER_PROFILE.birthday
+        });
+}
+
+
 function facebookAPISignup(done) {
     mockFB();
     requestHelper.sendRequest(this, '/api/facebook/signup', {
@@ -1072,6 +1114,19 @@ function facebookAPISignup(done) {
 
 function facebookUISignup(done) {
     mockFB();
+    requestHelper.sendRequest(
+        this,
+        '/auth/facebook/callback?code=mycodeabc',
+        {
+            method: 'get',
+            cookie: this.cookie
+        },
+        done
+    );
+}
+
+function facebookUISignupNoMail(done) {
+    mockFBNoMail();
     requestHelper.sendRequest(
         this,
         '/auth/facebook/callback?code=mycodeabc',
