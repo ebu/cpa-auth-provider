@@ -96,6 +96,7 @@ docker_push:
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - develop
+    - PEACH-1152-change-email-ui
   tags:
     - dind
 
