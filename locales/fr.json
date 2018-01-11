@@ -297,7 +297,7 @@
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASS": "Email ou mot de passe invalide",
 	"BACK_SIGNUP_EMAIL_TAKEN": "Cet email est déjà utilisé",
 	"BACK_SIGNUP_PB_RECAPTCHA": "Il y a eu un problème avec reCAPTCHA",
-	"BACK_SIGNUP_PASS_STRENGTH": "Le mot de passe saisie ne répond pas aux règles de sécurité suivantes:",
+	"BACK_SIGNUP_PASS_STRENGTH": "Le mot de passe saisi ne répond pas aux règles de sécurité suivantes:",
 	"BACK_SIGNUP_PASS_STRENGTH_0": "Le mot de passe doit contenir au moins 10 caractères",
 	"BACK_SIGNUP_PASS_STRENGTH_1": "Le mot de passe doit faire moins de 128 caractères",
 	"BACK_SIGNUP_PASS_STRENGTH_2": "Le mot de passe ne peut pas contenir des séquences de plus de 3 caractères identiques.",
