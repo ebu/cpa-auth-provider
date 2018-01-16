@@ -34,7 +34,12 @@ passport.use(new FacebookStrategy({
         return socialLoginHelper.findOrCreateSocialLoginUser(socialLoginHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
             function (user) {
                 if (user) {
-                    db.SocialLogin.findOne({where: {user_id: user.id, name: socialLoginHelper.FB}}).then(function (socialLogin) {
+                    db.SocialLogin.findOne({
+                        where: {
+                            user_id: user.id,
+                            name: socialLoginHelper.FB
+                        }
+                    }).then(function (socialLogin) {
                         socialLogin.logLogin();
                     });
                 }
