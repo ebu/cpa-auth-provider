@@ -95,13 +95,13 @@ module.exports = {
                     //     autoIncrement: true,
                     //     primaryKey: true
                     // },
-                    login: {type: DataTypes.STRING, unique: true},
-                    password: DataTypes.STRING,
-                    verified: DataTypes.BOOLEAN,
-                    password_changed_at: DataTypes.BIGINT,
-                    last_login_at: DataTypes.BIGINT,
-                    created_at: DataTypes.DATE,
-                    updated_at: DataTypes.DATE,
+                    login: {type: Sequelize.STRING, unique: true},
+                    password: Sequelize.STRING,
+                    verified: Sequelize.BOOLEAN,
+                    password_changed_at: Sequelize.BIGINT,
+                    last_login_at: Sequelize.BIGINT,
+                    created_at: Sequelize.DATE,
+                    updated_at: Sequelize.DATE,
                     user_id: {
                         type: Sequelize.BIGINT,
                         references: {
