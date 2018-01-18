@@ -40,7 +40,7 @@ module.exports = {
                 );
                 // Rename table oAuthProviders to SocialLogins
             }).then(function () {
-                return queryInterface.renameTable('oAuthProviders', 'SocialLogins');
+                return queryInterface.renameTable('OAuthProviders', 'SocialLogins');
                 // Add new columns
             }).then(function () {
                 return queryInterface.addColumn(
