@@ -13,7 +13,7 @@ module.exports = {
                 }
             ).then(function () {
                 return queryInterface.addColumn(
-                    "users",
+                    "Users",
                     "lastname",
                     {
                         type: Sequelize.STRING,
@@ -22,7 +22,7 @@ module.exports = {
                 );
             }).then(function () {
                 return queryInterface.addColumn(
-                    "users",
+                    "Users",
                     "gender",
                     {
                         type: Sequelize.STRING,
@@ -31,7 +31,7 @@ module.exports = {
                 );
             }).then(function () {
                 return queryInterface.addColumn(
-                    "users",
+                    "Users",
                     "date_of_birth",
                     {
                         type: Sequelize.BIGINT,
