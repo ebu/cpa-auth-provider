@@ -90,11 +90,11 @@ module.exports = {
                 // Create table local login
             }).then(function () {
                 return queryInterface.createTable('LocalLogins', {
-                    id: {
-                        type: Seq.INTEGER,
-                        autoIncrement: true,
-                        primaryKey: true
-                    },
+                    // id: {
+                    //     type: Seq.INTEGER,
+                    //     autoIncrement: true,
+                    //     primaryKey: true
+                    // },
                     login: {type: DataTypes.STRING, unique: true},
                     password: DataTypes.STRING,
                     verified: DataTypes.BOOLEAN,
