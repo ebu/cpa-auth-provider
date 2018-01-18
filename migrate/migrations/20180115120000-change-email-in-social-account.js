@@ -106,7 +106,7 @@ module.exports = {
                         type: Sequelize.BIGINT,
                         references: {
                             model: "Users",
-                            key: "user_id"
+                            key: "id"
                         }
                     }
                 });
