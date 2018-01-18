@@ -41,6 +41,7 @@ module.exports = {
                 // Rename table oAuthProviders to SocialLogins
             }).then(function () {
                 return queryInterface.renameTable('OAuthProviders', 'SocialLogins');
+                // TODO rename sequence
                 // Add new columns
             }).then(function () {
                 return queryInterface.addColumn(
@@ -90,11 +91,11 @@ module.exports = {
                 // Create table local login
             }).then(function () {
                 return queryInterface.createTable('LocalLogins', {
-                    // id: {
-                    //     type: Seq.INTEGER,
-                    //     autoIncrement: true,
-                    //     primaryKey: true
-                    // },
+                    id: {
+                        type: Sequelize.INTEGER,
+                        autoIncrement: true,
+                        primaryKey: true
+                    },
                     login: {type: Sequelize.STRING, unique: true},
                     password: Sequelize.STRING,
                     verified: Sequelize.BOOLEAN,
@@ -132,11 +133,7 @@ module.exports = {
 
     down: function (queryInterface, Sequelize) {
         return new Promise(function (resolve, reject) {
-            queryInterface.removeColumn('UserProfiles', 'provider_uid').then(
-                function () {
-                    return queryInterface.dropTable('OAuthProviders');
-                }
-            ).then(resolve).catch(reject);
+            resolve();
         });
     }
 }
