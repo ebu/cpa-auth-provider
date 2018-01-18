@@ -4,6 +4,7 @@ services:
   idp:
     image: ${CONTAINER_SHA_IMAGE}
     environment:
+      - BROADCASTER_LAYOUT=rts
       - MAIL_FROM=no-reply@nobody.nowhere
       - IDP_HOST=http://{$DEPLOY_URL}
       - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
