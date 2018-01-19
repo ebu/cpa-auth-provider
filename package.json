@@ -55,6 +55,7 @@
     "moment": "^2.19.2",
     "morgan": "~1.8.2",
     "mysql": "~2.14.1",
+    "mysql2": "^1.5.1",
     "nock": "^9.0.17",
     "nodemailer": "^4.0.1",
     "nodemailer-ses-transport": "^1.5.1",
