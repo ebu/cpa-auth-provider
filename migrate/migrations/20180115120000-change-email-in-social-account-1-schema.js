@@ -112,15 +112,24 @@ module.exports = {
                     last_login_at: Sequelize.BIGINT,
                     created_at: Sequelize.DATE,
                     updated_at: Sequelize.DATE,
-                    user_id: {
-                        type: Sequelize.BIGINT,
-                        references: {
-                            model: "Users",
-                            key: "id"
-                        }
+                    user_id: Sequelize.INTEGER
+                    // user_id: {
+                    //     type: Sequelize.BIGINT,
+                    //     references: {
+                    //         model: "Users",
+                    //         key: "id"
+                    //     }
+                    // }
+                });
+            }).then(function () {
+                return queryInterface.addConstraint("LocalLogins", ["user_id"], {
+                    type: "FOREIGN KEY",
+//                    name: "FK_locallogin_user_id",
+                    references: {
+                        table: "Users",
+                        field: "id"
                     }
                 });
-
             }).then(resolve).catch(reject);
         });
     },
