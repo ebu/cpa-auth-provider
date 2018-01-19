@@ -37,8 +37,8 @@ function getUsersSelectQueryNbOfResult(users) {
         return users[0].length; //TODO test if no user
     } else {
         console.log("zy va le user: ", users);
-        //TODO support mysql
-        throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
+        return users[0].length; //TODO test if no user
+
     }
 }
 
@@ -47,8 +47,8 @@ function getUserProfilesSelectQueryNbOfResult(userProfiles) {
         return userProfiles[0].length; //TODO test if no user
     } else {
         console.log("zy va le user: ", userProfiles);
-        //TODO support mysql
-        throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
+        return userProfiles[0].length; //TODO test if no user
+
     }
 }
 
@@ -145,10 +145,6 @@ module.exports = {
                     }
                 }
                 return Promise.all(batch);
-                //TODO
-                // Drop column
-
-                // Drop table user profile
 
             }).then(resolve).catch(reject);
         });
