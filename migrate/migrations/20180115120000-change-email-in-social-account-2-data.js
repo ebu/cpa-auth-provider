@@ -4,6 +4,16 @@
 // ﻿DELETE FROM public."SequelizeMeta" WHERE name='20180115120000-change-email-in-social-account-2-data.js';
 // ﻿DELETE FROM public."LocalLogins";
 
+
+function getSQLDateFormated(date) {
+    return date.getUTCFullYear() + "-" +
+        ("00" + (date.getUTCMonth() + 1)).slice(-2) + "-" +
+        ("00" + date.getUTCDate()).slice(-2) + " " +
+        ("00" + date.getUTCHours()).slice(-2) + ":" +
+        ("00" + date.getUTCMinutes()).slice(-2) + ":" +
+        ("00" + date.getUTCSeconds()).slice(-2);
+}
+
 function getUserSelectQuery() {
     if (process.env.DB_TYPE === "postgres") {
         return "select * from \"public\".\"Users\"";
@@ -51,6 +61,8 @@ function buildInsertQuery(users, i) {
         var password_changed_at = users[0][i].password_changed_at;
         var last_login_at = users[0][i].last_login_at;
         var user_id = users[0][i].id;
+        var created_at = getSQLDateFormated(users[0][i].created_at);
+        var updated_at = getSQLDateFormated(users[0][i].updated_at);
 
         console.log("user [" + i + "] login: " + login);
         console.log("user [" + i + "] password: " + password);
@@ -58,9 +70,11 @@ function buildInsertQuery(users, i) {
         console.log("user [" + i + "] password_changed_at: " + password_changed_at);
         console.log("user [" + i + "] last_login_at: " + last_login_at);
         console.log("user [" + i + "] user_id: " + user_id);
+        console.log("user [" + i + "] created_at: " + created_at);
+        console.log("user [" + i + "] updated_at: " + updated_at);
 
-        return "insert into \"public\".\"LocalLogins\" (login, password, verified, password_changed_at, last_login_at, user_id) " +
-            " VALUES ('" + login + "', '" + password + "', '" + verified + "', '" + password_changed_at + "', '" + last_login_at + "', '" + user_id + "')";
+        return "insert into \"public\".\"LocalLogins\" (login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at) " +
+            " VALUES ('" + login + "', '" + password + "', '" + verified + "', '" + password_changed_at + "', '" + last_login_at + "', '" + user_id + "', '" + created_at + "', '" + updated_at + "')";
     } else {
         //TODO support mysql
         throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
