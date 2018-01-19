@@ -20,8 +20,7 @@ function getUserSelectQuery() {
     if (process.env.DB_TYPE === "postgres") {
         return "select * from \"public\".\"Users\"";
     } else {
-        //TODO support mysql
-        throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
+        return "select * from Users";
     }
 }
 
@@ -29,8 +28,7 @@ function getUserProfileSelectQuery() {
     if (process.env.DB_TYPE === "postgres") {
         return "select * from \"public\".\"UserProfiles\"";
     } else {
-        //TODO support mysql
-        throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
+        return "select * from UserProfiles";
     }
 }
 
@@ -38,6 +36,7 @@ function getUsersSelectQueryNbOfResult(users) {
     if (process.env.DB_TYPE === "postgres") {
         return users[0].length; //TODO test if no user
     } else {
+        console.log("zy va le user: ", users);
         //TODO support mysql
         throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
     }
@@ -47,6 +46,7 @@ function getUserProfilesSelectQueryNbOfResult(userProfiles) {
     if (process.env.DB_TYPE === "postgres") {
         return userProfiles[0].length; //TODO test if no user
     } else {
+        console.log("zy va le user: ", userProfiles);
         //TODO support mysql
         throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
     }
@@ -80,8 +80,8 @@ function buildInsertQuery(user) {
         return "insert into \"public\".\"LocalLogins\" (login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at) " +
             " VALUES ('" + login + "', '" + password + "', '" + verified + "', '" + password_changed_at + "', '" + last_login_at + "', '" + user_id + "', '" + created_at + "', '" + updated_at + "')";
     } else {
-        //TODO support mysql
-        throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
+        return "insert into LocalLogins (login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at) " +
+            " VALUES ('" + login + "', '" + password + "', '" + verified + "', '" + password_changed_at + "', '" + last_login_at + "', '" + user_id + "', '" + created_at + "', '" + updated_at + "')";
     }
 }
 
@@ -92,10 +92,8 @@ function buildUpdateQueries(userProfile) {
 
     if (process.env.DB_TYPE === "postgres") {
         updateQuery = "update \"public\".\"Users\" set %s =  '%s' where id = " + userId;
-
     } else {
-        //TODO support mysql
-        throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
+        updateQuery = "update Users set %s =  '%s' where id = " + userId;
     }
     if (userProfile.firstname) {
         fieldsToUpdates.push(util.format(updateQuery, "firstname", userProfile.firstname));
