@@ -1,5 +1,7 @@
 'use strict';
 
+var util = require('util');
+
 //SQL Magic (POSTGRES) query to be able to run that migration file as much as you want :)
 // ﻿DELETE FROM public."SequelizeMeta" WHERE name='20180115120000-change-email-in-social-account-2-data.js';
 // ﻿DELETE FROM public."LocalLogins";
@@ -51,18 +53,20 @@ function getUserProfilesSelectQueryNbOfResult(userProfiles) {
 }
 
 function buildInsertQuery(user) {
+
+    var login = user.email;
+    var password = user.password;
+    var verified = user.verified ? true : false;
+    var password_changed_at = user.password_changed_at;
+    var last_login_at = user.last_login_at;
+    var user_id = user.id;
+    var created_at = getSQLDateFormated(user.created_at);
+    var updated_at = getSQLDateFormated(user.updated_at);
+
     // We assume that there are no social login to migrate.
     // That's the case at RTS : we have social login but they are migrated from openAM to the idp as local account
     // BR is not supposed to have social login
     if (process.env.DB_TYPE === "postgres") {
-        var login = user.email;
-        var password = user.password;
-        var verified = user.verified ? true : false;
-        var password_changed_at = user.password_changed_at;
-        var last_login_at = user.last_login_at;
-        var user_id = user.id;
-        var created_at = getSQLDateFormated(user.created_at);
-        var updated_at = getSQLDateFormated(user.updated_at);
 
         console.log("user login: " + login);
         console.log("user password: " + password);
@@ -82,31 +86,34 @@ function buildInsertQuery(user) {
 }
 
 function buildUpdateQueries(userProfile) {
-    if (process.env.DB_TYPE === "postgres") {
+    var fieldsToUpdates = [];
+    var updateQuery;
+    var userId = userProfile.user_id;
 
-        var userId = userProfile.user_id;
-        var fieldsToUpdates = [];
-        //TODO extract common part of the query and use ".format"
-        if (userProfile.firstname) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set firstname =  '" + userProfile.firstname + "' where id = " + userId);
-        }
-        if (userProfile.lastname) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set lastname =  '" + userProfile.lastname + "' where id = " + userId);
-        }
-        if (userProfile.gender) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set gender =  '" + userProfile.gender + "' where id = " + userId);
-        }
-        if (userProfile.date_of_birth) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set date_of_birth =  '" + userProfile.date_of_birth + "' where id = " + userId);
-        }
-        if (userProfile.language) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set language =  '" + userProfile.language + "' where id = " + userId);
-        }
-        return fieldsToUpdates;
+    if (process.env.DB_TYPE === "postgres") {
+        updateQuery = "update \"public\".\"Users\" set %s =  '%s' where id = " + userId;
+
     } else {
         //TODO support mysql
         throw new Error(process.env.DB_TYPE + " database is not supported now :'(");
     }
+    if (userProfile.firstname) {
+        fieldsToUpdates.push(util.format(updateQuery, "firstname", userProfile.firstname));
+    }
+    if (userProfile.lastname) {
+        fieldsToUpdates.push(util.format(updateQuery, "lastname", userProfile.lastname));
+    }
+    if (userProfile.gender) {
+        fieldsToUpdates.push(util.format(updateQuery, "gender", userProfile.gender));
+    }
+    if (userProfile.date_of_birth) {
+        fieldsToUpdates.push(util.format(updateQuery, "date_of_birth", userProfile.date_of_birth));
+    }
+    if (userProfile.language) {
+        fieldsToUpdates.push(util.format(updateQuery, "language", userProfile.language));
+    }
+    return fieldsToUpdates;
+
 }
 
 
