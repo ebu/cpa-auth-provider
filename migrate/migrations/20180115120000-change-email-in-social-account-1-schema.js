@@ -106,6 +106,15 @@ module.exports = {
                         allowNull: true
                     }
                 );
+            }).then(function () {
+                return queryInterface.addColumn(
+                    "SocialLogins",
+                    "last_login_at",
+                    {
+                        type: Sequelize.STRING,
+                        allowNull: true
+                    }
+                );
                 // Create table local login
             }).then(function () {
                 return queryInterface.createTable('LocalLogins', {
