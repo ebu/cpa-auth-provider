@@ -96,7 +96,6 @@ docker_push:
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - develop
-    - PEACHSUP-78-IE-login-issue
   tags:
     - dind
 
