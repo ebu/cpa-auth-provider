@@ -113,18 +113,11 @@ module.exports = {
                     created_at: Sequelize.DATE,
                     updated_at: Sequelize.DATE,
                     user_id: Sequelize.INTEGER
-                    // user_id: {
-                    //     type: Sequelize.BIGINT,
-                    //     references: {
-                    //         model: "Users",
-                    //         key: "id"
-                    //     }
-                    // }
                 });
             }).then(function () {
+                // Constraint is added after otherwise it fail on mysql
                 return queryInterface.addConstraint("LocalLogins", ["user_id"], {
                     type: "FOREIGN KEY",
-//                    name: "FK_locallogin_user_id",
                     references: {
                         table: "Users",
                         field: "id"
