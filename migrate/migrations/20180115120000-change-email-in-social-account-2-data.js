@@ -50,28 +50,28 @@ function getUserProfilesSelectQueryNbOfResult(userProfiles) {
     }
 }
 
-function buildInsertQuery(users, i) {
+function buildInsertQuery(user) {
     // We assume that there are no social login to migrate.
     // That's the case at RTS : we have social login but they are migrated from openAM to the idp as local account
     // BR is not supposed to have social login
     if (process.env.DB_TYPE === "postgres") {
-        var login = users[0][i].email;
-        var password = users[0][i].password;
-        var verified = users[0][i].verified ? true : false;
-        var password_changed_at = users[0][i].password_changed_at;
-        var last_login_at = users[0][i].last_login_at;
-        var user_id = users[0][i].id;
-        var created_at = getSQLDateFormated(users[0][i].created_at);
-        var updated_at = getSQLDateFormated(users[0][i].updated_at);
+        var login = user.email;
+        var password = user.password;
+        var verified = user.verified ? true : false;
+        var password_changed_at = user.password_changed_at;
+        var last_login_at = user.last_login_at;
+        var user_id = user.id;
+        var created_at = getSQLDateFormated(user.created_at);
+        var updated_at = getSQLDateFormated(user.updated_at);
 
-        console.log("user [" + i + "] login: " + login);
-        console.log("user [" + i + "] password: " + password);
-        console.log("user [" + i + "] verified: " + verified);
-        console.log("user [" + i + "] password_changed_at: " + password_changed_at);
-        console.log("user [" + i + "] last_login_at: " + last_login_at);
-        console.log("user [" + i + "] user_id: " + user_id);
-        console.log("user [" + i + "] created_at: " + created_at);
-        console.log("user [" + i + "] updated_at: " + updated_at);
+        console.log("user login: " + login);
+        console.log("user password: " + password);
+        console.log("user verified: " + verified);
+        console.log("user password_changed_at: " + password_changed_at);
+        console.log("user last_login_at: " + last_login_at);
+        console.log("user user_id: " + user_id);
+        console.log("user created_at: " + created_at);
+        console.log("user updated_at: " + updated_at);
 
         return "insert into \"public\".\"LocalLogins\" (login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at) " +
             " VALUES ('" + login + "', '" + password + "', '" + verified + "', '" + password_changed_at + "', '" + last_login_at + "', '" + user_id + "', '" + created_at + "', '" + updated_at + "')";
@@ -81,26 +81,26 @@ function buildInsertQuery(users, i) {
     }
 }
 
-function buildUpdateQueries(userProfiles, i) {
+function buildUpdateQueries(userProfile) {
     if (process.env.DB_TYPE === "postgres") {
-        console.log('userProfile[0][i]', userProfiles[0][i]);
-        var userId = userProfiles[0][i].user_id;
+
+        var userId = userProfile.user_id;
         var fieldsToUpdates = [];
         //TODO extract common part of the query and use ".format"
-        if (userProfiles[0][i].firstname) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set 'first_name' =  '" + userProfiles[0][i].firstname + "' where id = " + userId);
+        if (userProfile.firstname) {
+            fieldsToUpdates.push("update \"public\".\"Users\" set firstname =  '" + userProfile.firstname + "' where id = " + userId);
         }
-        if (userProfiles[0][i].lastname) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set 'first_name' =  '" + userProfiles[0][i].lastname + "' where id = " + userId);
+        if (userProfile.lastname) {
+            fieldsToUpdates.push("update \"public\".\"Users\" set lastname =  '" + userProfile.lastname + "' where id = " + userId);
         }
-        if (userProfiles[0][i].gender) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set 'first_name' =  '" + userProfiles[0][i].gender + "' where id = " + userId);
+        if (userProfile.gender) {
+            fieldsToUpdates.push("update \"public\".\"Users\" set gender =  '" + userProfile.gender + "' where id = " + userId);
         }
-        if (userProfiles[0][i].date_of_birth) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set 'first_name' =  '" + userProfiles[0][i].date_of_birth + "' where id = " + userId);
+        if (userProfile.date_of_birth) {
+            fieldsToUpdates.push("update \"public\".\"Users\" set date_of_birth =  '" + userProfile.date_of_birth + "' where id = " + userId);
         }
-        if (userProfiles[0][i].language) {
-            fieldsToUpdates.push("update \"public\".\"Users\" set 'first_name' =  '" + userProfiles[0][i].language + "' where id = " + userId);
+        if (userProfile.language) {
+            fieldsToUpdates.push("update \"public\".\"Users\" set language =  '" + userProfile.language + "' where id = " + userId);
         }
         return fieldsToUpdates;
     } else {
@@ -119,8 +119,8 @@ module.exports = {
                 // insert data in appropriate table
                 let nb = getUsersSelectQueryNbOfResult(users);
                 for (var i = 0; i < nb; i++) {
-                    console.log("Migratinf local login " + (i + 1) + " of " + nb);
-                    batch.push(queryInterface.sequelize.query(buildInsertQuery(users, i)));
+                    console.log("Migrating local login " + (i + 1) + " of " + nb);
+                    batch.push(queryInterface.sequelize.query(buildInsertQuery(users[0][i])));
                 }
 
                 return Promise.all(batch);
@@ -128,16 +128,13 @@ module.exports = {
                 console.log("now migrating user profile...");
                 return queryInterface.sequelize.query(getUserProfileSelectQuery());
             }).then(function (userProfiles) {
-                console.log("userProfiles: ", userProfiles);
-                console.log("userProfiles[0][i]: ", userProfiles[0][0]);
                 var batch = [];
                 // insert data in appropriate table
                 let nb = getUserProfilesSelectQueryNbOfResult(userProfiles);
                 for (var i = 0; i < nb; i++) {
                     console.log("Migrating user profile " + (i + 1) + " of " + nb + "...");
-                    var updateQueries = buildUpdateQueries(userProfiles[0][i], i);
+                    var updateQueries = buildUpdateQueries(userProfiles[0][i]);
                     for (var j = 0; j < updateQueries.length; j++) {
-                        console.log("New udpate query", j);
                         console.log("updateQueries[" + j + "]:", updateQueries[j]);
                         batch.push(queryInterface.sequelize.query(updateQueries[j]));
                     }
