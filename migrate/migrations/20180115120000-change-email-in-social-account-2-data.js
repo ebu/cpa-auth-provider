@@ -124,7 +124,7 @@ function getLocalProfileInsertQuery() {
 
 function getUserUpdateQuery(){
     if (process.env.DB_TYPE === "postgres") {
-        return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.languageFROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
+        return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.language FROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
     } else {
         throw new Error("mysql WIP");
     }
