@@ -114,38 +114,53 @@ function buildUpdateQueries(userProfile) {
 
 }
 
+function getLocalProfileInsertQuery() {
+    if (process.env.DB_TYPE === "postgres") {
+        return "INSERT INTO public.\"LocalLogins\" (login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT 'email', 'password', verified, password_changed_at, last_login_at, id, created_at, updated_at FROM public.\"Users\"\n";
+    } else {
+        throw new Error("mysql WIP");
+    }
+}
+
+function getUserUpdateQuery(){
+    if (process.env.DB_TYPE === "postgres") {
+        return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.languageFROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
+    } else {
+        throw new Error("mysql WIP");
+    }
+ }
+
 
 module.exports = {
     up: function (queryInterface, Sequelize) {
         return new Promise(function (resolve, reject) {
-            //FIXME POSTGRES specific use process.env.DB_TYPE to see if current run use postgres (RTS) or mysql(BR). For other Database don't do anything and CRASH
-            return queryInterface.sequelize.query(getUserSelectQuery()).then(function (users) {
-                var batch = [];
-                // insert data in appropriate table
-                let nb = getUsersSelectQueryNbOfResult(users);
-                for (var i = 0; i < nb; i++) {
-                    console.log("Migrating local login " + (i + 1) + " of " + nb);
-                    batch.push(queryInterface.sequelize.query(buildInsertQuery(users[0][i])));
-                }
-
-                return Promise.all(batch);
-            }).then(function () {
-                console.log("now migrating user profile...");
-                return queryInterface.sequelize.query(getUserProfileSelectQuery());
-            }).then(function (userProfiles) {
-                var batch = [];
-                // insert data in appropriate table
-                let nb = getUserProfilesSelectQueryNbOfResult(userProfiles);
-                for (var i = 0; i < nb; i++) {
-                    console.log("Migrating user profile " + (i + 1) + " of " + nb + "...");
-                    var updateQueries = buildUpdateQueries(userProfiles[0][i]);
-                    for (var j = 0; j < updateQueries.length; j++) {
-                        console.log("updateQueries[" + j + "]:", updateQueries[j]);
-                        batch.push(queryInterface.sequelize.query(updateQueries[j]));
-                    }
-                }
-                return Promise.all(batch);
-
+            // return queryInterface.sequelize.query(getUserSelectQuery()).then(function (users) {
+            //     var batch = [];
+            //     // insert data in appropriate table
+            //     let nb = getUsersSelectQueryNbOfResult(users);
+            //     for (var i = 0; i < nb; i++) {
+            //         console.log("Migrating local login " + (i + 1) + " of " + nb);
+            //         batch.push(queryInterface.sequelize.query(buildInsertQuery(users[0][i])));
+            //     }
+            //
+            //     return Promise.all(batch);
+            return queryInterface.sequelize.query(getLocalProfileInsertQuery()).then(function () {
+            //     console.log("now migrating user profile...");
+            //     return queryInterface.sequelize.query(getUserProfileSelectQuery());
+            // }).then(function (userProfiles) {
+            //     var batch = [];
+            //     // insert data in appropriate table
+            //     let nb = getUserProfilesSelectQueryNbOfResult(userProfiles);
+            //     for (var i = 0; i < nb; i++) {
+            //         console.log("Migrating user profile " + (i + 1) + " of " + nb + "...");
+            //         var updateQueries = buildUpdateQueries(userProfiles[0][i]);
+            //         for (var j = 0; j < updateQueries.length; j++) {
+            //             console.log("updateQueries[" + j + "]:", updateQueries[j]);
+            //             batch.push(queryInterface.sequelize.query(updateQueries[j]));
+            //         }
+            //     }
+            //     return Promise.all(batch);
+                return queryInterface.sequelize.query(getUserUpdateQuery());
             }).then(resolve).catch(reject);
         });
     },
