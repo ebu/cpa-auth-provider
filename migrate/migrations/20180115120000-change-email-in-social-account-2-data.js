@@ -118,7 +118,7 @@ function getLocalProfileInsertQuery() {
     if (process.env.DB_TYPE === "postgres") {
         return "INSERT INTO public.\"LocalLogins\" (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM public.\"Users\"";
     } else {
-        throw "INSERT INTO LocalLogins (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM Users";
+        return "INSERT INTO LocalLogins (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM Users";
     }
 }
 
@@ -164,14 +164,17 @@ module.exports = {
                 //     }
                 //     return Promise.all(batch);
 
-                if (process.env.DB_TYPE === "mysql") {
-                    return queryInterface.sequelize.query("SET SQL_SAFE_UPDATES = 0").then(function () {
-                        return queryInterface.sequelize.query(getUserUpdateQuery());
-                    });
-                } else {
-                    return queryInterface.sequelize.query(getUserUpdateQuery());
-                }
-            }).then(resolve).catch(reject);
+                // if (process.env.DB_TYPE === "mysql") {
+                //     return queryInterface.sequelize.query("SET SQL_SAFE_UPDATES = 0").then(function () {
+                //         return queryInterface.sequelize.query(getUserUpdateQuery());
+                //     });
+                // } else {
+                return queryInterface.sequelize.query(getUserUpdateQuery());
+                // }
+            }).then(resolve).catch(function (error) {
+                console.log(error);
+                reject();
+            });
         });
     },
 
