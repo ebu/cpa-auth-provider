@@ -164,13 +164,13 @@ module.exports = {
                 //     }
                 //     return Promise.all(batch);
 
-                // if (process.env.DB_TYPE === "mysql") {
-                //     return queryInterface.sequelize.query("SET SQL_SAFE_UPDATES = 0").then(function () {
-                //         return queryInterface.sequelize.query(getUserUpdateQuery());
-                //     });
-                // } else {
-                return queryInterface.sequelize.query(getUserUpdateQuery());
-                // }
+                if (process.env.DB_TYPE === "mysql") {
+                    return queryInterface.sequelize.query("SET SQL_SAFE_UPDATES = 0").then(function () {
+                        return queryInterface.sequelize.query(getUserUpdateQuery());
+                    });
+                } else {
+                    return queryInterface.sequelize.query(getUserUpdateQuery());
+                }
             }).then(resolve).catch(reject);
         });
     },
