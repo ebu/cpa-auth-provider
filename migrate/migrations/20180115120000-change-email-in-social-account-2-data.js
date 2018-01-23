@@ -122,18 +122,19 @@ function getLocalProfileInsertQuery() {
     }
 }
 
-function getUserUpdateQuery(){
+function getUserUpdateQuery() {
     if (process.env.DB_TYPE === "postgres") {
         return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.language FROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
     } else {
         return "UPDATE Users u, UserProfiles up SET u.firstname=up.firstname, u.lastname=up.lastname, u.gender=up.gender, u.date_of_birth=up.date_of_birth, u.language=up.language WHERE u.id=up.user_id";
     }
- }
+}
 
 
 module.exports = {
     up: function (queryInterface, Sequelize) {
         return new Promise(function (resolve, reject) {
+
             // return queryInterface.sequelize.query(getUserSelectQuery()).then(function (users) {
             //     var batch = [];
             //     // insert data in appropriate table
@@ -144,23 +145,32 @@ module.exports = {
             //     }
             //
             //     return Promise.all(batch);
-            return queryInterface.sequelize.query(getLocalProfileInsertQuery()).then(function () {
-            //     console.log("now migrating user profile...");
-            //     return queryInterface.sequelize.query(getUserProfileSelectQuery());
-            // }).then(function (userProfiles) {
-            //     var batch = [];
-            //     // insert data in appropriate table
-            //     let nb = getUserProfilesSelectQueryNbOfResult(userProfiles);
-            //     for (var i = 0; i < nb; i++) {
-            //         console.log("Migrating user profile " + (i + 1) + " of " + nb + "...");
-            //         var updateQueries = buildUpdateQueries(userProfiles[0][i]);
-            //         for (var j = 0; j < updateQueries.length; j++) {
-            //             console.log("updateQueries[" + j + "]:", updateQueries[j]);
-            //             batch.push(queryInterface.sequelize.query(updateQueries[j]));
-            //         }
-            //     }
-            //     return Promise.all(batch);
+            var localProfileInsertQuery = getLocalProfileInsertQuery();
+            console.log("Run the insert query: " + localProfileInsertQuery);
+            return queryInterface.sequelize.query(localProfileInsertQuery).then(function () {
+                //     console.log("now migrating user profile...");
+                //     return queryInterface.sequelize.query(getUserProfileSelectQuery());
+                // }).then(function (userProfiles) {
+                //     var batch = [];
+                //     // insert data in appropriate table
+                //     let nb = getUserProfilesSelectQueryNbOfResult(userProfiles);
+                //     for (var i = 0; i < nb; i++) {
+                //         console.log("Migrating user profile " + (i + 1) + " of " + nb + "...");
+                //         var updateQueries = buildUpdateQueries(userProfiles[0][i]);
+                //         for (var j = 0; j < updateQueries.length; j++) {
+                //             console.log("updateQueries[" + j + "]:", updateQueries[j]);
+                //             batch.push(queryInterface.sequelize.query(updateQueries[j]));
+                //         }
+                //     }
+                //     return Promise.all(batch);
+
+                // if (process.env.DB_TYPE === "mysql") {
+                //     return queryInterface.sequelize.query("SET SQL_SAFE_UPDATES = 0").then(function () {
+                //         return queryInterface.sequelize.query(getUserUpdateQuery());
+                //     });
+                // } else {
                 return queryInterface.sequelize.query(getUserUpdateQuery());
+                // }
             }).then(resolve).catch(reject);
         });
     },
