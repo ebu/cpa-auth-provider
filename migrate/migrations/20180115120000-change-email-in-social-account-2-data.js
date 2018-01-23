@@ -116,9 +116,9 @@ function buildUpdateQueries(userProfile) {
 
 function getLocalProfileInsertQuery() {
     if (process.env.DB_TYPE === "postgres") {
-        return "INSERT INTO public.\"LocalLogins\" (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM public.\"Users\"\n";
+        return "INSERT INTO public.\"LocalLogins\" (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM public.\"Users\"";
     } else {
-        throw new Error("mysql WIP");
+        throw "INSERT INTO LocalLogins (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM Users";
     }
 }
 
@@ -126,7 +126,7 @@ function getUserUpdateQuery(){
     if (process.env.DB_TYPE === "postgres") {
         return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.language FROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
     } else {
-        throw new Error("mysql WIP");
+        return "UPDATE Users u, UserProfiles up SET u.firstname=up.firstname, u.lastname=up.lastname, u.gender=up.gender, u.date_of_birth=up.date_of_birth, u.language=up.language WHERE u.id=up.user_id";
     }
  }
 
