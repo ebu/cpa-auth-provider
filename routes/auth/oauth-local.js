@@ -117,7 +117,19 @@ module.exports = function (app, options) {
                 required_fields: userHelper.getRequiredFields(),
                 menu: getMenu(req, language)
             };
-            res.json(data);
+            if (!data.display_name){
+                // User just have a social login
+                db.SocialLogin.findOne({
+                    where: {
+                        user_id: user.id
+                    }
+                }).then(function (socialLogin) {
+                    data.display_name = socialLogin.email;
+                    res.json(data);
+                });
+            } else {
+                res.json(data);
+            }
         }
     }
 
@@ -125,7 +137,7 @@ module.exports = function (app, options) {
         db.User.findOne({
             where: {
                 id: req.user.id
-            }
+            }, include:[db.LocalLogin]
         }).then(function (user) {
             returnMenuInfos(user, req, res);
         }, function (err) {
