@@ -15,7 +15,7 @@ module.exports = function (app, options) {
                     function (googleProfile) {
                         // If the googleProfile already exists and his account is not validated
                         // i.e.: there is a user in the database with the same id and this user email is not validated
-                        remoteProfile = socialLoginHelper.buildRemoteProfile(googleHelper.buildGoogleId(googleProfile.provider_uid), googleProfile.display_name, googleProfile.email, googleProfile.name.givenName, googleProfile.name.familyName, googleProfile.gender, null);
+                        remoteProfile = socialLoginHelper.buildRemoteProfile(googleHelper.buildGoogleId(googleProfile.provider_uid), googleProfile.display_name, googleProfile.email, googleProfile.givenName, googleProfile.familyName, googleProfile.gender, null);
                         return db.LocalLogin.findOne({
                             where: {
                                 login: googleProfile.email

@@ -1001,7 +1001,6 @@ describe('Facebook and Google', function () {
 });
 
 
-
 function localSignup(done) {
     requestHelper.sendRequest(this, '/api/local/signup', {
         method: 'post',
@@ -1059,7 +1058,6 @@ function mockFB() {
             birthday: USER_PROFILE.birthday
         });
 }
-
 
 
 function facebookAPISignup(done) {
@@ -1125,10 +1123,8 @@ function mockVerifyGoogleIdToken() {
             provider_uid: GOOGLE_PROVIDER_UID,
             display_name: GOOGLE_DISPLAY_NAME,
             email: GOOGLE_EMAIL,
-            name: {
-                givenName: USER_PROFILE.first_name,
-                familyName: USER_PROFILE.last_name
-            },
+            givenName: USER_PROFILE.first_name,
+            familyName: USER_PROFILE.last_name,
             gender: USER_PROFILE.gender,
             birthday: null
         });
