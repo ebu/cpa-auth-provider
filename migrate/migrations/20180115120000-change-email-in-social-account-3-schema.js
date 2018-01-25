@@ -15,8 +15,6 @@ module.exports = {
                 }).then(function () {
                     return queryInterface.removeColumn("Users", "password_changed_at");
                 }).then(function () {
-                    return queryInterface.removeColumn("Users", "last_login_at");
-                }).then(function () {
                     console.log("drop table UserProfiles");
                     return queryInterface.dropTable('UserProfiles');
                 }).then(resolve).catch(reject);

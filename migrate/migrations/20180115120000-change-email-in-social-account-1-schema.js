@@ -48,18 +48,14 @@ module.exports = {
                     }
                 );
             }).then(function () {
-                return queryInterface.addColumn(
+                return queryInterface.renameColumn(
                     "Users",
-                    "last_seen",
-                    {
-                        type: Sequelize.BIGINT,
-                        allowNull: true
-                    }
+                    "last_login",
+                    "last_seen"
                 );
                 // Rename table oAuthProviders to SocialLogins
             }).then(function () {
-                return queryInterface.renameTable('OAuthProviders', 'SocialLogins');
-                // TODO rename sequence
+                return queryInterface.renameTable("OAuthProviders", "SocialLogins");
                 // Add new columns
             }).then(function () {
                 return queryInterface.addColumn(
