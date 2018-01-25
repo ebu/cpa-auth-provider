@@ -2,9 +2,9 @@
 
 function getLocalProfileInsertQuery() {
     if (process.env.DB_TYPE === "postgres") {
-        return "INSERT INTO public.\"LocalLogins\" (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM public.\"Users\"";
+        return "INSERT INTO public.\"LocalLogins\" (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_seen, id, created_at, updated_at FROM public.\"Users\"";
     } else {
-        return "INSERT INTO LocalLogins (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_login_at, id, created_at, updated_at FROM Users";
+        return "INSERT INTO LocalLogins (id, login, password, verified, password_changed_at, last_login_at, user_id, created_at, updated_at)  SELECT id, email, password, verified, password_changed_at, last_seen, id, created_at, updated_at FROM Users";
     }
 }
 
