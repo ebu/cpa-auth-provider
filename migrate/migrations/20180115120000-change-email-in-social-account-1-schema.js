@@ -50,7 +50,7 @@ module.exports = {
             }).then(function () {
                 return queryInterface.renameColumn(
                     "Users",
-                    "last_login",
+                    "last_login_at",
                     "last_seen"
                 );
                 // Rename table oAuthProviders to SocialLogins
