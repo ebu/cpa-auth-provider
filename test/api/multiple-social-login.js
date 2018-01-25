@@ -7,7 +7,7 @@ var recaptcha = require('express-recaptcha');
 
 var dbHelper = require('../db-helper');
 var requestHelper = require('../request-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var googleHelper = require('../../lib/google-helper');
 
 var GOOGLE_EMAIL = 'someone@gmail.com';
@@ -39,7 +39,7 @@ var USER_PROFILE2 = {
 }
 
 var resetDatabase = function (done) {
-    dbHelper.clearDatabase(function (err) {
+    return dbHelper.clearDatabase(function (err) {
         done(err);
     });
 };
@@ -57,10 +57,9 @@ describe('Local login after', function () {
         });
 
         it('should return 400 OK', function () {
-                expect(this.res.statusCode).equal(400);
-                expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
-            }
-        );
+            expect(this.res.statusCode).equal(400);
+            expect(this.res.error.text).equal('{"success":false,"msg":"email already exists"}');
+        });
     });
     describe('Google API login first', function () {
         before(resetDatabase);
@@ -204,18 +203,18 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    db.UserProfile.findOne().then(function (profile) {
-                        self.userProfile = profile;
+                    db.User.findOne().then(function (user) {
+                        self.user = user;
                     }).then(function () {
                         done();
                     });
                 });
 
                 it('Profile should be completed', function () {
-                        expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                        expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                        expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
-                        expect(USER_PROFILE.birthday_ts).equal(self.userProfile.date_of_birth);
+                        expect(USER_PROFILE.gender).equal(self.user.gender);
+                        expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                        expect(USER_PROFILE.last_name).equal(self.user.lastname);
+                        expect(USER_PROFILE.birthday_ts).equal(self.user.date_of_birth);
                     }
                 );
             });
@@ -237,12 +236,12 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    db.UserProfile.findOne().then(function (profile) {
-                        profile.gender = USER_PROFILE2.gender;
-                        profile.firstname = USER_PROFILE2.first_name;
-                        profile.lastname = USER_PROFILE2.last_name;
-                        profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                        profile.save().then(function () {
+                    db.User.findOne().then(function (user) {
+                        user.gender = USER_PROFILE2.gender;
+                        user.firstname = USER_PROFILE2.first_name;
+                        user.lastname = USER_PROFILE2.last_name;
+                        user.date_of_birth = USER_PROFILE2.birthday_ts;
+                        user.save().then(function () {
                             done();
                         });
                     });
@@ -253,18 +252,18 @@ describe('Facebook', function () {
                 });
 
                 before(function (done) {
-                    db.UserProfile.findOne().then(function (profile) {
-                        self.userProfile = profile;
+                    db.User.findOne().then(function (user) {
+                        self.user = user;
                     }).then(function () {
                         done();
                     });
                 });
 
                 it('Profile should no be updated completed', function () {
-                        expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                        expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                        expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
-                        expect(USER_PROFILE2.birthday_ts).equal(self.userProfile.date_of_birth);
+                        expect(USER_PROFILE2.gender).equal(self.user.gender);
+                        expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                        expect(USER_PROFILE2.last_name).equal(self.user.lastname);
+                        expect(USER_PROFILE2.birthday_ts).equal(self.user.date_of_birth);
                     }
                 );
             });
@@ -366,18 +365,18 @@ describe('Facebook', function () {
 
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    self.user = localLogin.User;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should be completed', function () {
-                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
-                    expect(USER_PROFILE.birthday_ts).equal(self.userProfile.date_of_birth);
+                    expect(USER_PROFILE.gender).equal(self.user.gender);
+                    expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.user.lastname);
+                    expect(USER_PROFILE.birthday_ts).equal(self.user.date_of_birth);
                 }
             );
         });
@@ -399,12 +398,12 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    profile.gender = USER_PROFILE2.gender;
-                    profile.firstname = USER_PROFILE2.first_name;
-                    profile.lastname = USER_PROFILE2.last_name;
-                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                    profile.save().then(function () {
+                db.User.findOne().then(function (user) {
+                    user.gender = USER_PROFILE2.gender;
+                    user.firstname = USER_PROFILE2.first_name;
+                    user.lastname = USER_PROFILE2.last_name;
+                    user.date_of_birth = USER_PROFILE2.birthday_ts;
+                    user.save().then(function () {
                         done();
                     });
                 });
@@ -415,18 +414,18 @@ describe('Facebook', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should no be updated completed', function () {
-                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
-                    expect(USER_PROFILE2.birthday_ts).equal(self.userProfile.date_of_birth);
+                    expect(USER_PROFILE2.gender).equal(self.user.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.user.lastname);
+                    expect(USER_PROFILE2.birthday_ts).equal(self.user.date_of_birth);
                 }
             );
         });
@@ -439,9 +438,9 @@ describe('Facebook', function () {
 describe('Google', function () {
 
     describe('GET /auth/google', function () {
-        before(function (done) {
-            requestHelper.sendRequest(
-                this,
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
                     '/auth/google',
                     {
                         method: 'get',
@@ -547,17 +546,17 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should be completed', function () {
-                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE.gender).equal(self.user.gender);
+                    expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -579,12 +578,12 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    profile.gender = USER_PROFILE2.gender;
-                    profile.firstname = USER_PROFILE2.first_name;
-                    profile.lastname = USER_PROFILE2.last_name;
-                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                    profile.save().then(function () {
+                db.User.findOne().then(function (user) {
+                    user.gender = USER_PROFILE2.gender;
+                    user.firstname = USER_PROFILE2.first_name;
+                    user.lastname = USER_PROFILE2.last_name;
+                    user.date_of_birth = USER_PROFILE2.birthday_ts;
+                    user.save().then(function () {
                         done();
                     });
                 });
@@ -595,17 +594,17 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should no be updated completed', function () {
-                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE2.gender).equal(self.user.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -745,17 +744,17 @@ describe('Google', function () {
 
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    self.user = localLogin.User;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should be completed', function () {
-                    expect(USER_PROFILE.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE.gender).equal(self.user.gender);
+                    expect(USER_PROFILE.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -787,12 +786,12 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    profile.gender = USER_PROFILE2.gender;
-                    profile.firstname = USER_PROFILE2.first_name;
-                    profile.lastname = USER_PROFILE2.last_name;
-                    profile.date_of_birth = USER_PROFILE2.birthday_ts;
-                    profile.save().then(function () {
+                db.User.findOne().then(function (user) {
+                    user.gender = USER_PROFILE2.gender;
+                    user.firstname = USER_PROFILE2.first_name;
+                    user.lastname = USER_PROFILE2.last_name;
+                    user.date_of_birth = USER_PROFILE2.birthday_ts;
+                    user.save().then(function () {
                         done();
                     });
                 });
@@ -803,17 +802,17 @@ describe('Google', function () {
             });
 
             before(function (done) {
-                db.UserProfile.findOne().then(function (profile) {
-                    self.userProfile = profile;
+                db.User.findOne().then(function (user) {
+                    self.user = user;
                 }).then(function () {
                     done();
                 });
             });
 
             it('Profile should no be updated completed', function () {
-                    expect(USER_PROFILE2.gender).equal(self.userProfile.gender);
-                    expect(USER_PROFILE2.first_name).equal(self.userProfile.firstname);
-                    expect(USER_PROFILE2.last_name).equal(self.userProfile.lastname);
+                    expect(USER_PROFILE2.gender).equal(self.user.gender);
+                    expect(USER_PROFILE2.first_name).equal(self.user.firstname);
+                    expect(USER_PROFILE2.last_name).equal(self.user.lastname);
                 }
             );
         });
@@ -852,8 +851,43 @@ describe('Facebook and Google', function () {
             });
 
             before(function (done) {
-                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (socialLogin) {
+                    socialLoginHelper.getSocialLogins(socialLogin.User).then(function (providers) {
+                        providersInDb = providers;
+                        done();
+                    });
+                });
+            });
+
+            it('it should return 2 entries in oAuthProvider', function () {
+                    expect(providersInDb.length).equal(2);
+                }
+            );
+        });
+        describe('When user is not in the system and log via google then facebook', function () {
+
+            var providersInDb;
+
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+
+            before(function (done) {
+                googleUISignup.call(this, done);
+
+            });
+            before(function (done) {
+                facebookUISignup.call(this, done);
+
+            });
+
+            before(function (done) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (socialLogin) {
+                    socialLoginHelper.getSocialLogins(socialLogin.User).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });
@@ -906,8 +940,50 @@ describe('Facebook and Google', function () {
             });
 
             before(function (done) {
-                db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(function (user) {
-                    oAuthProviderHelper.getOAuthProviders(user).then(function (providers) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    socialLoginHelper.getSocialLogins(localLogin.User).then(function (providers) {
+                        providersInDb = providers;
+                        done();
+                    });
+                });
+            });
+
+            it('it should return 2 entries in oAuthProvider', function () {
+                    expect(providersInDb.length).equal(2);
+                }
+            );
+        });
+        describe('When user is not in the system and log via google then facebook', function () {
+
+            var providersInDb;
+
+            before(function (done) {
+                recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
+                done();
+            });
+
+            before(resetDatabase);
+
+            before(function () {
+                sinon.stub(googleHelper, "verifyGoogleIdToken").returns(
+                    mockVerifyGoogleIdToken()
+                );
+            });
+
+            after(function () {
+                googleHelper.verifyGoogleIdToken.restore();
+            });
+
+            before(function (done) {
+                googleAPISignup.call(this, done);
+            });
+            before(function (done) {
+                facebookAPISignup.call(this, done);
+            });
+
+            before(function (done) {
+                db.SocialLogin.findOne({where: {email: GOOGLE_EMAIL}, include: [db.User]}).then(function (localLogin) {
+                    socialLoginHelper.getSocialLogins(localLogin.User).then(function (providers) {
                         providersInDb = providers;
                         done();
                     });
@@ -940,9 +1016,9 @@ function localSignup(done) {
 
 
 function markEmailAsVerified(done) {
-    db.User.findOne({where: {email: GOOGLE_EMAIL}}).then(
-        function (user) {
-            user.updateAttributes({verified: true}).then(
+    db.LocalLogin.findOne({where: {login: GOOGLE_EMAIL}}).then(
+        function (localLogin) {
+            localLogin.updateAttributes({verified: true}).then(
                 function () {
                     done();
                 },
@@ -982,6 +1058,7 @@ function mockFB() {
             birthday: USER_PROFILE.birthday
         });
 }
+
 
 function facebookAPISignup(done) {
     mockFB();
@@ -1046,10 +1123,8 @@ function mockVerifyGoogleIdToken() {
             provider_uid: GOOGLE_PROVIDER_UID,
             display_name: GOOGLE_DISPLAY_NAME,
             email: GOOGLE_EMAIL,
-            name: {
-                givenName: USER_PROFILE.first_name,
-                familyName: USER_PROFILE.last_name
-            },
+            givenName: USER_PROFILE.first_name,
+            familyName: USER_PROFILE.last_name,
             gender: USER_PROFILE.gender,
             birthday: null
         });

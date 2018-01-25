@@ -9,7 +9,7 @@ var dbHelper = require('../db-helper');
 var i18n4test = require("i18n");
 
 i18n4test.configure({
-    locales:['en'],
+    locales: ['en'],
     directory: __dirname + '/../../locales'
 });
 
@@ -30,15 +30,21 @@ var initDatabase = function (opts, done) {
                 enable_sso: true
             });
         })
+        .then(function (user) {
+            return db.LocalLogin.create({user_id: user.id, login: 'testuser3'}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
+        })
         .then(function () {
             return db.User.create({
                 id: 5,
-                email: 'testuser',
                 provider_uid: 'testuser'
             });
         })
         .then(function (user) {
-            return user.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
         })
         .then(function () {
             return db.Domain.create({

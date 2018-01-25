@@ -161,9 +161,11 @@
 	"PROFILE_SECURITY_TITLE_MOBILE": "Accès",
 	"PROFILE_PASSWORD_TITLE": "Mot de passe",
 	"PROFILE_EDIT_YOUR_PASSWORD_LINK": "Changer",
-	"PROFILE_CREATE_YOUR_PASSWORD_LINK": "Créer un mot de passe",
+	"PROFILE_CREATE_LOCAL_LOGIN_LINK": "Ajouter une connection par email/mots de passe",
 	"PROFILE_PREVIOUS_PASSWORD_LABEL": "Ancien mot de passe",
 	"PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER": "Ancien",
+	"PROFILE_NEW_EMAIL_LABEL": "Email",
+	"PROFILE_NEW_EMAIL_LABEL_PLACEHOLDER": "Email",
 	"PROFILE_NEW_PASSWORD_LABEL": "Nouveau mot de passe",
 	"PROFILE_NEW_PASSWORD_PLACEHOLDER": "Nouveau",
 	"PROFILE_CONFIRM_PASSWORD_LABEL": "Confirmer mot de passe",
@@ -171,6 +173,7 @@
 	"PROFILE_SAVE_PASSWORD_BUTTON": "Enregistrer",
 	"PROFILE_CANCEL_PASSWORD_BUTTON": "Annuler",
 	"PROFILE_PASSWORD_CHANGE_SUCCESS": "Votre mot de passe a été changé avec succès",
+	"PROFILE_NEW_EMAIL_CHANGE_SUCCESS": "Votre accès par email/mots de passe a été ajouté",
 	"PROFILE_ACCOUNT_TITLE": "Compte",
 	"PROFILE_ACCOUNT_LINKED_TITLE": "Comptes liés",
 	"PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK": "Votre compte est lié à Facebook",
@@ -206,7 +209,6 @@
 	"CHANGE_EMAIL_API_ALREADY_USED": "Votre adresse email a déjé été changée.",
 	"CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "Cette adresse email est déjà associée à un autre compte.",
 	"CHANGE_EMAIL_API_WRONG_PASSWORD": "Le mot de passe est érroné.",
-	"CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN": "Changement d'email impossible car votre compte est lié à un réseau social",
 	"CHANGE_EMAIL_API_TOO_MANY_REQUESTS": "Trop d'essais. Merci de réessayer plus tard.",
 
 	"ACCESS_DENIED_TITLE": "Accès refusé",
@@ -325,6 +327,7 @@
 	"BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "L'identifiant de client existe déjà",
 
 	"BACK_PROFILE_AUTH_FAIL": "Echec de l'authentification. Profil inconnu",
+	"BACK_CHANGE_PWD_MAIL_EMPTY": "Le champs 'Email' est vide",
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Le champs 'Ancien mot de passe' est vide",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Le champs 'Nouveau mot de passe' est vide",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Le champs 'Confirmer mot de passe' est vide",
@@ -332,8 +335,9 @@
 
 	"BACK_INCORRECT_PREVIOUS_PASS": "Le précédent mot de passe est incorrect",
 	"BACK_USER_NOT_FOUND": "Utilisateur inconnu",
-	"BACK_SUCESS_PASS_CHANGED": "Mot de passe mis à jour",
-	"BACK_SUCESS_PASS_CREATED": "Mot de passe créé avec succès",
+	"BACK_USER_ALL_READY_HAS_PASSWORD": "L'utilisateur a déjà un mots de passe",
+	"BACK_SUCCESS_PASS_CHANGED": "Mot de passe mis à jour",
+	"BACK_SUCCESS_PASS_CREATED": "Mot de passe créé avec succès",
 
 	"BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "Le champs 'prénom' est vide ou invalide",
 	"BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "Le champs 'nom' est vide ou invalide",

@@ -10,7 +10,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var emailHelper = require('../../lib/email-helper');
 var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
 
 // Google reCAPTCHA
@@ -19,29 +19,22 @@ var i18n = require('i18n');
 
 var localStrategyCallback = function (req, username, password, done) {
     var loginError = req.__('BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD');
-    db.User.findOne({where: {email: username}})
-        .then(function (user) {
-                if (!user) {
+    db.LocalLogin.findOne({where: {login: username}, include: {model: db.User}})
+        .then(function (localLogin) {
+                if (!localLogin) {
                     doneWithError();
                 } else {
-                    oAuthProviderHelper.hasSocialLogin(user).then(function (res) {
-                        if (res) {
-                            doneWithError();
-                        }
-                        else {
-                            return user.verifyPassword(password).then(function (isMatch) {
-                                    if (isMatch) {
-                                        user.logLogin();
-                                        done(null, user);
-                                    } else {
-                                        doneWithError();
-                                    }
-                                },
-                                function (err) {
-                                    done(err);
-                                });
-                        }
-                    });
+                    return localLogin.verifyPassword(password).then(function (isMatch) {
+                            if (isMatch) {
+                                localLogin.logLogin(localLogin.User);
+                                done(null, localLogin.User);
+                            } else {
+                                doneWithError();
+                            }
+                        },
+                        function (err) {
+                            done(err);
+                        });
                 }
             },
             function (error) {
@@ -107,7 +100,7 @@ var localSignupStrategyCallback = function (req, username, password, done) {
                 }
 
                 requiredAttributes.language = i18n.getLocale();
-                userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
+                userHelper.createLocalLogin(username, password, requiredAttributes, optionnalAttributes).then(
                     function (user) {
                         done(null, user);
                     },
@@ -195,12 +188,12 @@ module.exports = function (app, options) {
     });
 
     app.get('/email_verify', function (req, res, next) {
-        db.User.findOne({where: {email: req.query.email}})
-            .then(function (user) {
-                if (user) {
-                    codeHelper.verifyEmail(user, req.query.code).then(function (success) {
+        db.LocalLogin.findOne({where: {login: req.query.email}})
+            .then(function (localLogin) {
+                if (localLogin) {
+                    codeHelper.verifyEmail(localLogin, req.query.code).then(function (success) {
                             if (success) {
-                                res.render('./verify-mail.ejs', {verified: user.verified, userId: user.id});
+                                res.render('./verify-mail.ejs', {verified: localLogin.verified, userId: localLogin.user_id});
                             } else {
                                 res.render('./verify-mail.ejs', {verified: false});
                             }
@@ -264,22 +257,22 @@ module.exports = function (app, options) {
                 return;
             }
 
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+            db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+                .then(function (localLogin) {
+                    if (localLogin) {
+                        codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
-                                user.email,
+                                localLogin.login,
                                 "password-recovery-email",
                                 {log: false},
                                 {
-                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(localLogin.login) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
-                                    mail: user.email,
+                                    mail: localLogin.login,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                                (localLogin.User.UserProfile && localLogin.User.UserProfile.language) ? localLogin.User.UserProfile.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },
@@ -316,8 +309,9 @@ module.exports = function (app, options) {
                 });
                 return;
             } else {
-                db.User.findOne({where: {email: req.body.email}})
-                    .then(function (user) {
+                db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+                    .then(function (localLogin) {
+                        var user = localLogin.User;
                         if (user) {
                             return codeHelper.recoverPassword(user, req.body.code, req.body.password).then(function (success) {
                                 if (success) {

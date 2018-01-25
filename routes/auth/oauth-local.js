@@ -104,22 +104,34 @@ module.exports = function (app, options) {
             // Return 204 Success No Content
             res.status(204).json({connected: false});
         } else {
-            db.UserProfile.findOrCreate({
-                where: {
-                    user_id: user.id
-                }
-            }).spread(function (profile) {
-                var language = "en";
-                if(req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
-                    language = req.query.lang;
-                }
-                var data = {
-                    display_name: profile.getDisplayName(user, "FIRSTNAME_LASTNAME"),
-                    required_fields: userHelper.getRequiredFields(),
-                    menu : getMenu(req, language)
-                };
+            var language = "en";
+            if (req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
+                language = req.query.lang;
+            }
+            var email = "";
+            if (req.user && req.user.LocalLogin && req.user.LocalLogin.login) {
+                email = req.user.LocalLogin.login;
+            }
+            var data = {
+                display_name: user.getDisplayName("FIRSTNAME_LASTNAME", email),
+                required_fields: userHelper.getRequiredFields(),
+                menu: getMenu(req, language)
+            };
+            if (!data.display_name){
+                // User just have a social login
+                db.SocialLogin.findOne({
+                    where: {
+                        user_id: user.id
+                    }
+                }).then(function (socialLogin) {
+                    if (socialLogin){
+                        data.display_name = socialLogin.email;
+                    }
+                    res.json(data);
+                });
+            } else {
                 res.json(data);
-            });
+            }
         }
     }
 
@@ -127,7 +139,7 @@ module.exports = function (app, options) {
         db.User.findOne({
             where: {
                 id: req.user.id
-            }
+            }, include:[db.LocalLogin]
         }).then(function (user) {
             returnMenuInfos(user, req, res);
         }, function (err) {

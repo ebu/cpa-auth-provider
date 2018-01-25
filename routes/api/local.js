@@ -43,7 +43,7 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         done(null, false);
         return;
     }
-    db.User.findOne({where: {id: jwt_payload.id}})
+    db.User.findOne({where: {id: jwt_payload.id}, include: [db.LocalLogin]})
         .then(function (user) {
             if (user) {
                 done(null, user);
@@ -82,7 +82,7 @@ module.exports = function (app, options) {
                 }
             }
 
-            userHelper.createUser(username, password, requiredAttributes, optionnalAttributes).then(
+            userHelper.createLocalLogin(username, password, requiredAttributes, optionnalAttributes).then(
                 function (user) {
                     res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
                 },
@@ -137,22 +137,22 @@ module.exports = function (app, options) {
                 return;
             }
 
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+            db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
+                .then(function (localLogin) {
+                    if (localLogin) {
+                        codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
-                                user.email,
+                                localLogin.User.email,
                                 "password-recovery-email",
                                 {log: false},
                                 {
-                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(localLogin.User.email) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
-                                    mail: user.email,
+                                    mail: localLogin.User.email,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                                (localLogin.User.UserProfile && localLogin.User.UserProfile.language) ? localLogin.User.UserProfile.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },
@@ -171,20 +171,20 @@ module.exports = function (app, options) {
     });
 
     app.post('/api/local/authenticate', cors, function (req, res) {
-        db.User.findOne({where: {email: req.body.email}})
-            .then(function (user) {
-                    if (!user || !req.body.password) {
+        db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
+            .then(function (localLogin) {
+                    if (!localLogin || !req.body.password) {
                         res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                         return;
                     }
 
-                    user.verifyPassword(req.body.password).then(function (isMatch) {
+                    localLogin.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
-                                user.logLogin().then(function () {
+                                localLogin.logLogin(localLogin.User).then(function () {
                                 }, function () {
                                 });
                                 // if user is found and password is right create a token
-                                var token = jwt.encode(user, config.jwtSecret);
+                                var token = jwt.encode(localLogin.User, config.jwtSecret);
                                 // return the information including token as JSON
                                 res.json({success: true, token: 'JWT ' + token});
                             } else {
@@ -215,26 +215,26 @@ module.exports = function (app, options) {
             db.User.findOne({
                 where: {
                     id: decoded.id
-                }
+                }, include: [
+                    db.LocalLogin
+                ]
             }).then(function (user) {
                 if (!user) {
                     return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                 } else {
-
-                    db.UserProfile.findOrCreate({
-                        where: {user_id: decoded.id}
-                    }).spread(function (user_profile) {
-                        res.json({
-                            success: true,
-                            user: {
-                                email: user.email,
-                                display_name: user_profile.getDisplayName(user, req.query.policy),
-                                admin: user.admin
-                            },
-                            token: 'JWT ' + token
-                        });
+                    var data = {
+                    };
+                    if (user.LocalLogin) {
+                        data.email = user.LocalLogin.login;
+                        data.display_name = user.getDisplayName(req.query.policy, user.LocalLogin.login);
+                    } else {
+                        data.display_name = user.getDisplayName(req.query.policy, '');
+                    }
+                    res.json({
+                        success: true,
+                        user: data,
+                        token: 'JWT ' + token
                     });
-
                 }
             });
         } else {
@@ -253,13 +253,13 @@ module.exports = function (app, options) {
 
                 emailHelper.send(
                     config.mail.from,
-                    user.email,
+                    user.LocalLogin ? user.LocalLogin.login : '',
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : '') + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
-                        mail: encodeURIComponent(user.email),
+                        mail: encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : ''),
                         code: encodeURIComponent(user.verificationCode)
                     },
                     (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()

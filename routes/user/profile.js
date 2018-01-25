@@ -5,7 +5,7 @@ var authHelper = require('../../lib/auth-helper');
 var emailHelper = require('../../lib/email-helper');
 var recaptcha = require('express-recaptcha');
 var codeHelper = require('../../lib/code-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var i18n = require('i18n');
@@ -72,19 +72,20 @@ var routes = function (router) {
         if (!user) {
             return res.status(403).send({success: false, msg: req.__('BACK_PROFILE_REQ_VERIF_MAIL')});
         } else {
+            var email = req.user.LocalLogin ? req.user.LocalLogin.login : "";
             codeHelper.getOrGenereateEmailVerificationCode(user).then(function (code) {
                 emailHelper.send(
                     config.mail.from,
-                    user.email,
+                    email,
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
-                        mail: encodeURIComponent(user.email),
+                        mail: encodeURIComponent(email),
                         code: encodeURIComponent(code)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                    (user.language) ? user.language : i18n.getLocale()
                 ).then(
                     function () {
                     },
@@ -101,26 +102,32 @@ var routes = function (router) {
         var user = authHelper.getAuthenticatedUser(req);
 
         //If facebook user then we do not check for account password as it can be empty
-        oAuthProviderHelper.hasSocialLogin(user).then(function (isExt) {
-            if (isExt) {
-                return db.UserProfile.destroy({
-                    where: {
-                        user_id: user.id
-                    }
-                }).then(function () {
-                    return user.destroy().then(function (){
-                        return res.status(204).send();
-                    });
-                });
-            } else {
-                user.verifyPassword(req.body.password).then(function (isMatch) {
+        socialLoginHelper.hasLocalLogin(user).then(function (hasLocal) {
+            if (hasLocal) {
+                var localLogin;
+                return db.LocalLogin.findOne({where: {user_id: user.id}})
+                    .then(function (ll) {
+                        localLogin = ll;
+                        return localLogin.verifyPassword(req.body.password);
+                    })
+                    .then(function (isMatch) {
                         if (isMatch) {
-                            return db.UserProfile.destroy({
-                                where: {
-                                    user_id: user.id
-                                }
-                            }).then(function (affectedRows) {
-                                return user.destroy();
+                            // Transactional part
+                            return db.sequelize.transaction(function (transaction) {
+                                return localLogin.destroy({
+                                    where: {user_id: user.id},
+                                    transaction: transaction
+                                }).then(function () {
+                                    return db.SocialLogin.destroy({
+                                        where: {user_id: user.id},
+                                        transaction: transaction
+                                    });
+                                }).then(function () {
+                                    return user.destroy({
+                                        where: {id: user.id},
+                                        transaction: transaction
+                                    });
+                                });
                             });
                         } else {
                             if (req.body.password) {
@@ -129,13 +136,19 @@ var routes = function (router) {
                                 throw new Error(req.__('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD'));
                             }
                         }
-                    }
-                ).then(function () {
-                    return res.status(204).send();
-                }).catch(function (e) {
-                    res.status(401).send({success: false, msg: e.message});
+                    }).then(function () {
+                        return res.status(204).send();
+                    });
+            } else {
+                return db.SocialLogin.destroy({where: {user_id: user.id}}).then(function () {
+                    return user.destroy().then(function () {
+                        return res.status(204).send();
+                    });
                 });
+
             }
+        }).catch(function (e) {
+            res.status(401).send({success: false, msg: e.message});
         });
     });
 };

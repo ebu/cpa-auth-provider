@@ -11,12 +11,13 @@ describe('Test verification code', function () {
         before(function (done) {
             db.User.create({
                 id: 1,
-                email: 'user1@earth.com',
-                provider_uid: 'testuser',
                 display_name: 'Test User 1'
             }).then(function (user) {
                 self.user = user;
-                codeHelper.getOrGenereateEmailVerificationCode(user).then(
+                return db.LocalLogin.create({user_id: user.id, login: 'user1@earth.com'});
+            }).then(function (localLogin) {
+                self.localLogin = localLogin;
+                codeHelper.getOrGenereateEmailVerificationCode(self.user).then(
                     function (verificationCode) {
                         self.verificationCode = verificationCode;
                         done();
@@ -25,24 +26,30 @@ describe('Test verification code', function () {
             });
         });
         it('should return false when validation code is empty', function (done) {
-            codeHelper.verifyEmail(self.user, 'this is a wrong code').then(function (res) {
-                expect(self.user.verified).to.be.undefined;
-                expect(res).to.be.false;
-                done();
+            codeHelper.verifyEmail(self.localLogin, 'this is a wrong code').then(function (res) {
+                db.LocalLogin.findOne({where: {user_id: self.user.id}}).then(function (localLogin) {
+                    expect(localLogin.verified).to.be.null;
+                    expect(res).to.be.false;
+                    done();
+                });
             });
         });
         it('should return false when validation code is wrong', function (done) {
-            codeHelper.verifyEmail(self.user, 'this is a wrong code').then(function (res) {
-                expect(self.user.verified).to.be.undefined;
-                expect(res).to.be.false;
-                done();
+            codeHelper.verifyEmail(self.localLogin, 'this is a wrong code').then(function (res) {
+                db.LocalLogin.findOne({where: {user_id: self.user.id}}).then(function (localLogin) {
+                    expect(localLogin.verified).to.be.null;
+                    expect(res).to.be.false;
+                    done();
+                });
             });
         });
         it('should return true when validation code is correct', function (done) {
-            codeHelper.verifyEmail(self.user, self.verificationCode).then(function (res) {
-                expect(self.user.verified).to.be.true;
-                expect(res).to.be.true;
-                done();
+            codeHelper.verifyEmail(self.localLogin, self.verificationCode).then(function (res) {
+                db.LocalLogin.findOne({where: {user_id: self.user.id}}).then(function (localLogin) {
+                    expect(localLogin.verified).to.be.true;
+                    expect(res).to.be.true;
+                    done();
+                });
             });
         });
     });

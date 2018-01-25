@@ -16,11 +16,12 @@ var initDatabase = function (done) {
         ).then(function () {
         db.User.create({
             id: 5,
-            email: 'testuser',
             provider_uid: 'testuser'
         })
             .then(function (user) {
-                return user.setPassword('testpassword');
+                return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+                    return localLogin.setPassword('testpassword');
+                });
             })
             .then(function (user) {
                 return user.updateAttributes({permission_id: 2});
@@ -90,8 +91,8 @@ describe('POST /i18n/profile', function () {
         });
 
         before(function (done) {
-            db.UserProfile.find({where: {user_id: 5}}).then(function (profile) {
-                self.profile = profile;
+            db.User.find({where: {id: 5}}).then(function (user) {
+                self.user = user;
             }).then(function () {
                 done();
             });
@@ -103,7 +104,7 @@ describe('POST /i18n/profile', function () {
 
 
         it('should contain the profile with language \'fr\'', function () {
-            expect(self.profile.language).to.equal('fr');
+            expect(self.user.language).to.equal('fr');
         });
 
 

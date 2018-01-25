@@ -160,9 +160,11 @@
 	"PROFILE_SECURITY_TITLE_MOBILE": "Sicherheit",
 	"PROFILE_PASSWORD_TITLE": "Passwort",
 	"PROFILE_EDIT_YOUR_PASSWORD_LINK": "Ändern",
-	"PROFILE_CREATE_YOUR_PASSWORD_LINK": "Erstelle ein Passwort",
+	"PROFILE_CREATE_LOCAL_LOGIN_LINK": "Fügen Sie eine E-Mail / Passwort-Anmeldung hinzu",
 	"PROFILE_PREVIOUS_PASSWORD_LABEL": "Vorheriges Passwort",
 	"PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER": "Bisherige",
+	"PROFILE_NEW_EMAIL_LABEL": "Email",
+	"PROFILE_NEW_EMAIL_LABEL_PLACEHOLDER": "Email",
 	"PROFILE_NEW_PASSWORD_LABEL": "Neu",
 	"PROFILE_NEW_PASSWORD_PLACEHOLDER": "Neues Kennwort",
 	"PROFILE_CONFIRM_PASSWORD_LABEL": "Bestätigen",
@@ -170,6 +172,7 @@
 	"PROFILE_SAVE_PASSWORD_BUTTON": "sparen",
 	"PROFILE_CANCEL_PASSWORD_BUTTON": "Stornieren",
 	"PROFILE_PASSWORD_CHANGE_SUCCESS": "Ihr Passwort wurde erfolgreich geändert",
+	"PROFILE_NEW_EMAIL_CHANGE_SUCCESS": "Email anmeldung erfolgreich erstellt",
 	"PROFILE_ACCOUNT_TITLE": "Konto",
 	"PROFILE_ACCOUNT_LINKED_TITLE": "Verknüpfte Konten",
 	"PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK" : "Ihr Konto ist mit Facebook verbunden",
@@ -205,7 +208,6 @@
 	"CHANGE_EMAIL_API_ALREADY_USED": "Email-Adresse wurde bereits geändert.",
 	"CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "Die Email-Adresse ist nicht verfügbar.",
 	"CHANGE_EMAIL_API_WRONG_PASSWORD": "Das Passwort stimmt nicht.",
-	"CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN": "Da Ihr Account mit einem Sozialen Netzwerk verknüpft ist, kann die Email-Adresse nicht geändert werden.",
 	"CHANGE_EMAIL_API_TOO_MANY_REQUESTS": "Zu viele Versuche. Bitte versuchen Sie es später nochmals.",
 
 	"ACCESS_DENIED_TITLE": "Zugriff abgelehnt",
@@ -326,6 +328,7 @@
 	"BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "Client Id  existiert bereits",
 
 	"BACK_PROFILE_AUTH_FAIL": "Authentifizierung fehlgeschlagen. Benutzerprofil nicht gefunden",
+	"BACK_CHANGE_PWD_MAIL_EMPTY": "Feld'Email' ist leer",
 	"BACK_CHANGE_PWD_PREV_PASS_EMPTY": "Feld 'Vorheriges Passwort' ist leer",
 	"BACK_CHANGE_PWD_NEW_PASS_EMPTY": "Das Feld 'Neues Passwort' ist leer",
 	"BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "Das Feld 'Passwort bestätigen' ist leer",
@@ -333,8 +336,9 @@
 
 	"BACK_INCORRECT_PREVIOUS_PASS": "Das vorherige Passwort ist falsch",
 	"BACK_USER_NOT_FOUND": "Benutzer nicht gefunden",
-	"BACK_SUCESS_PASS_CHANGED": "Passwort erfolgreich ändern",
-	"BACK_SUCESS_PASS_CREATED": "Erfolgreich ein neues Passwort erstellt",
+	"BACK_USER_ALL_READY_HAS_PASSWORD": "Der Benutzer hat bereits ein Passwort",
+	"BACK_SUCCESS_PASS_CHANGED": "Passwort erfolgreich ändern",
+	"BACK_SUCCESS_PASS_CREATED": "Erfolgreich ein neues Passwort erstellt",
 
 	"BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "'Vorname' ist leer oder ungültig",
 	"BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "'Nachname' ist leer oder ungültig",

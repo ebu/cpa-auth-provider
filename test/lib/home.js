@@ -18,14 +18,19 @@ i18n4test.configure({
 config.title = "";
 
 var resetDatabase = function (done) {
-    db.sequelize.query('DELETE FROM Users').then(function () {
-        return db.User.create({
-            email: 'testuser',
-            provider_uid: 'testuser'
-        });
-    })
+    db.sequelize.query('DELETE FROM Users')
+        .then(function () {
+            db.sequelize.query('DELETE FROM LocalLogins');
+        })
+        .then(function () {
+            return db.User.create({
+                provider_uid: 'testuser'
+            });
+        })
         .then(function (user) {
-            return user.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
         })
         .then(function () {
                 done();

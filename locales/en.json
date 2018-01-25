@@ -159,9 +159,11 @@
     "PROFILE_SECURITY_TITLE_MOBILE": "Access",
     "PROFILE_PASSWORD_TITLE": "Password",
     "PROFILE_EDIT_YOUR_PASSWORD_LINK": "Edit",
-    "PROFILE_CREATE_YOUR_PASSWORD_LINK": "Create a password",
+    "PROFILE_CREATE_LOCAL_LOGIN_LINK": "Add an email/password login",
     "PROFILE_PREVIOUS_PASSWORD_LABEL": "Previous password",
     "PROFILE_PREVIOUS_PASSWORD_PLACEHOLDER": "Previous",
+    "PROFILE_NEW_EMAIL_LABEL": "Email",
+    "PROFILE_NEW_EMAIL_LABEL_PLACEHOLDER": "Email",
     "PROFILE_NEW_PASSWORD_LABEL": "New",
     "PROFILE_NEW_PASSWORD_PLACEHOLDER": "New password",
     "PROFILE_CONFIRM_PASSWORD_LABEL": "Confirm",
@@ -169,6 +171,7 @@
     "PROFILE_SAVE_PASSWORD_BUTTON": "Save",
     "PROFILE_CANCEL_PASSWORD_BUTTON": "Cancel",
     "PROFILE_PASSWORD_CHANGE_SUCCESS": "Successfully changed your password",
+    "PROFILE_NEW_EMAIL_CHANGE_SUCCESS": "Email login successfully created",
     "PROFILE_ACCOUNT_TITLE": "Account",
     "PROFILE_ACCOUNT_LINKED_TITLE": "Linked accounts",
     "PROFILE_ACCOUNT_LINKED_PROVIDER_FACEBOOK" : "Your account is linked to Facebook",
@@ -204,7 +207,6 @@
     "CHANGE_EMAIL_API_ALREADY_USED": "Email has already been changed.",
     "CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN": "This email is not available.",
     "CHANGE_EMAIL_API_WRONG_PASSWORD": "Wrong password.",
-    "CHANGE_EMAIL_API_HAS_SOCIAL_LOGIN": "Cannot change your email since your account is linked to a social network",
     "CHANGE_EMAIL_API_TOO_MANY_REQUESTS": "Too many attempts. Please try again later.",
 
     "ACCESS_DENIED_TITLE": "Access Denied",
@@ -325,6 +327,7 @@
     "BACK_ADMIN_CLIENT_ID_ALREADY_EXISTS": "Client Id Already exists",
 
     "BACK_PROFILE_AUTH_FAIL": "Authentication failed. user profile not found.",
+    "BACK_CHANGE_PWD_MAIL_EMPTY": "'Email' field  is empty",
     "BACK_CHANGE_PWD_PREV_PASS_EMPTY": "'Previous Password' field  is empty",
     "BACK_CHANGE_PWD_NEW_PASS_EMPTY": "'New Password' field is empty",
     "BACK_CHANGE_PWD_CONFIRM_PASS_EMPTY": "'Confirm Password' field is empty",
@@ -332,8 +335,9 @@
 
     "BACK_INCORRECT_PREVIOUS_PASS": "The previous password is incorrect",
     "BACK_USER_NOT_FOUND": "User not found",
-    "BACK_SUCESS_PASS_CHANGED": "Successfully changing password",
-    "BACK_SUCESS_PASS_CREATED": "Successfully created a new password",
+    "BACK_USER_ALL_READY_HAS_PASSWORD": "User all ready has password",
+    "BACK_SUCCESS_PASS_CHANGED": "Successfully changing password",
+    "BACK_SUCCESS_PASS_CREATED": "Successfully created a new password",
 
     "BACK_PROFILE_UPDATE_FIRSTNAME_EMPTY_OR_INVALID": "'Firstname' is empty or invalid",
     "BACK_PROFILE_UPDATE_LASTNAME_EMPTY_OR_INVALID": "'Lastname' is empty or invalid",

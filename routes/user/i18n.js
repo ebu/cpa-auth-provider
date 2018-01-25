@@ -36,14 +36,8 @@ var routes = function (router) {
         if (!user) {
             res.status(401).send();
         } else {
-            return db.UserProfile.findOrCreate({
-                where: {
-                    user_id: user.id
-                }
-            }).spread(function (userProfile) {
-                return userProfile.updateAttributes({language: req.body.language}).then(function () {
-                    return res.status(200).send();
-                });
+            return user.updateAttributes({language: req.body.language}).then(function () {
+                return res.status(200).send();
             });
         }
     });

@@ -8,6 +8,7 @@ module.exports = {
         "database": process.env.DB_DATABASE,
         "port": process.env.DB_PORT,
         "storage": process.env.DB_FILENAME,
+        "logging": console.log
     },
     "production": {
         "host": process.env.DB_HOST,
@@ -18,5 +19,7 @@ module.exports = {
         "database": process.env.DB_DATABASE,
         "port": process.env.DB_PORT,
         "storage": process.env.DB_FILENAME,
+        "logging": console.log
+
     }
 };

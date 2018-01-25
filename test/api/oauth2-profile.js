@@ -29,8 +29,7 @@ var PROFILE = {
     lastname: 'Doe',
     gender: 'M',
     date_of_birth: 273369600000,
-    language: 'FR',
-    user_id: 123
+    language: 'FR'
 };
 
 function createOAuth2Client(done) {
@@ -51,8 +50,10 @@ function createOAuth2Client(done) {
 
 function createUser(userTemplate) {
     return db.User.create(userTemplate).then(function (user) {
-        return user.setPassword(userTemplate.password).then(function(){
-            return db.UserProfile.create(PROFILE);
+        return db.LocalLogin.create({user_id:user.id, login:userTemplate.email}).then(function(localLogin){
+            return localLogin.setPassword(userTemplate.password).then(function(){
+                return user.updateAttributes(PROFILE);
+            });
         });
     });
 }

@@ -21,16 +21,15 @@ exports.token = function (client, username, password, scope, done) {
 
 function confirmUser(client, username, password, scope, done) {
     var user;
-    db.User.findOne(
-        {where: {email: username}}
+    db.LocalLogin.findOne(
+        {where: {login: username}, include: {model: db.User}}
     ).then(
-        function (user_) {
-            user = user_;
-            if (!user) {
+        function (localLogin) {
+            if (!localLogin) {
                 throw new Error(INCORRECT_LOGIN_OR_PASS);
             }
-
-            return user.verifyPassword(password);
+            user = localLogin.User;
+            return localLogin.verifyPassword(password);
         }
     ).then(
         function (isMatch) {

@@ -10,12 +10,15 @@ var user_info = [
     passport.authenticate('bearer', {session: false}),
     function (req, res) {
         logger.debug('[OAuth2][Info][user_id', req.user.id, ']');
-        res.json({
-            user: {
-                id: req.user.id,
-                name: req.user.display_name || req.user.email
-            },
-            scope: req.authInfo.scope
+        db.LocalLogin.findOne({where:{user_id: req.user.id}}).then(function(localLogin){
+            var mail = localLogin.login;
+            res.json({
+                user: {
+                    id: req.user.id,
+                    name: req.user.display_name || mail
+                },
+                scope: req.authInfo.scope
+            });
         });
     }];
 
@@ -25,16 +28,16 @@ var user_profile = [
     function (req, res) {
         logger.debug('[OAuth2][Profile][user_id', req.user.id, ']');
 
-        db.UserProfile.findOrCreate({
-            where: {user_id: req.user.id}
-        }).spread(function (user_profile) {
+        db.User.find({
+            where: {id: req.user.id}
+        }).then(function (user) {
             res.json({
                 user: {
                     id: req.user.id,
-                    firstname: user_profile.firstname,
-                    lastname: user_profile.lastname,
-                    gender: user_profile.gender,
-                    date_of_birth: user_profile.date_of_birth
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    gender: user.gender,
+                    date_of_birth: user.date_of_birth
                 },
                 scope: req.authInfo.scope
             });

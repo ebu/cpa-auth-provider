@@ -7,7 +7,7 @@ var passport = require('passport');
 var emailHelper = require('../../lib/email-helper');
 var config = require('../../config');
 var uuid = require('uuid');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 
 var STATES = {
     INVALID_TOKEN: 'INVALID_TOKEN',
@@ -15,7 +15,6 @@ var STATES = {
     ALREADY_USED: 'ALREADY_USED',
     EMAIL_ALREADY_TAKEN: 'EMAIL_ALREADY_TAKEN',
     WRONG_PASSWORD: 'WRONG_PASSWORD',
-    HAS_SOCIAL_LOGIN: 'HAS_SOCIAL_LOGIN',
     TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
 };
 
@@ -32,10 +31,7 @@ module.exports = routes;
 
 function routes(router) {
     router.options('/email/change', cors());
-    router.post(
-        '/email/change',
-        cors(),
-        function (req, res, next) {
+    router.post('/email/change', cors(), function (req, res, next) {
             if (!!req.user) {
                 return next();
             } else {
@@ -44,6 +40,7 @@ function routes(router) {
         },
         function (req, res) {
             var oldUser = req.user;
+            var oldUserProfile;
             var newUsername = req.body.new_email;
             var password = req.body.password;
 
@@ -51,27 +48,27 @@ function routes(router) {
                 logger.debug('[POST /email/change][FAIL][user_id ][from ][to', newUsername, ' where old user is ', oldUser, ']');
                 return res.status(401).json({success: false, reason: 'Unauthorized'});
             }
-            logger.debug('[POST /email/change][user_id', oldUser.id, '][from',
-                oldUser.email, '][to', newUsername, ']');
 
-            db.User.findOne({where: {email: newUsername}}).then(
-                function (user) {
-                    if (user) {
+            logger.debug('[POST /email/change][user_id', oldUser.id, '][from', oldUser.email, '][to', newUsername, ']');
+
+            return db.LocalLogin.findOne({
+                where: {
+                    login: newUsername
+                }
+            }).then(function (localLogin) {
+                    if (localLogin) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
-                    return oldUser.verifyPassword(password);
+                    // At last check password
+                    return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
+                        oldUserProfile = localLogin;
+                        return localLogin.verifyPassword(password);
+                    });
                 }
             ).then(
                 function (correct) {
                     if (!correct) {
                         throw new Error(STATES.WRONG_PASSWORD);
-                    }
-                    return oAuthProviderHelper.hasSocialLogin(oldUser);
-                }
-            ).then(
-                function (hasSocialLogin) {
-                    if (hasSocialLogin) {
-                        throw new Error(STATES.HAS_SOCIAL_LOGIN);
                     }
                     const validityDate = new Date(new Date().getTime() - VALIDITY_DURATION * 1000);
                     return db.UserEmailToken.count({where: {user_id: oldUser.id, created_at: {$gte: validityDate}}});
@@ -81,9 +78,8 @@ function routes(router) {
                     if (tokenCount >= REQUEST_LIMIT) {
                         throw new Error(STATES.TOO_MANY_REQUESTS);
                     }
-                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from',
-                        oldUser.email, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
+                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from', oldUserProfile.login, '][to', newUsername, ']');
+                    triggerAccountChangeEmails(oldUserProfile.login, oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
                         function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
@@ -123,41 +119,60 @@ function routes(router) {
     router.get(
         '/email/move/:token',
         function (req, res) {
-            var user, token;
-            var clientId, oldEmail, newUsername;
+            var localLogin, token;
+            var oldEmail, newUsername;
             var redirect;
-            db.UserEmailToken.findOne({where: {key: req.params.token}, include: [db.User, db.OAuth2Client]}).then(
+            db.UserEmailToken.findOne({
+                where: {key: req.params.token},
+                include: [db.User]
+            }).then(
                 function (token_) {
                     token = token_;
                     if (!token || !token.type.startsWith('MOV')) {
                         throw new Error(STATES.INVALID_TOKEN);
                     }
                     redirect = token.redirect_uri;
-                    user = token.User;
-                    oldEmail = user.email;
                     newUsername = token.type.substring('MOV$'.length);
                     if (!token.isAvailable()) {
                         var err = new Error(STATES.ALREADY_USED);
                         err.data = {success: newUsername === oldEmail};
                         throw err;
                     }
-
-                    return db.User.findOne({where: {email: newUsername}});
+                    return db.LocalLogin.findOne({where: {user_id: token.user_id}});
                 }
             ).then(
-                function (takenUser) {
-                    if (takenUser) {
+                function (ll) {
+                    localLogin = ll;
+                    oldEmail = localLogin.login;
+                    return db.LocalLogin.findOne({where: {login: newUsername}});
+                }
+            ).then(
+                function (takenLocalLogin) {
+                    if (takenLocalLogin) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
-                    return user.updateAttributes({
-                        email: newUsername,
-                        verified: true,
+                    return db.LocalLogin.findOne({where: {login: newUsername}}).then(function (takenLogin) {
+                        if (takenLogin) {
+                            throw new Error(STATES.EMAIL_ALREADY_TAKEN);
+                        }
+                        return db.LocalLogin.findOne({where: {user_id: token.user_id}, include:[db.User]}).then(function (localLogin) {
+                            return db.sequelize.transaction(function (transaction) {
+                                return localLogin.updateAttributes({
+                                    login: newUsername,
+                                    verified: true
+                                }, {transaction: transaction}).then(function () {
+                                    return localLogin.User.updateAttributes({
+                                        display_name: newUsername
+                                    }, {transaction: transaction});
+                                });
+                            });
+                        });
                     });
                 }
             ).then(
                 function () {
-                    if (req.user.id === user.id) {
-                        req.user.email = newUsername;
+                    if (req.user && req.user.id === token.user_id) {
+                        req.user.display_name = newUsername;
                     }
                     return token.consume();
                 }
@@ -167,20 +182,25 @@ function routes(router) {
                 }
             ).catch(
                 function (err) {
-                    logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
+                    logger.error('[GET /email/move/:token][FAIL][old', oldEmail, '][new', newUsername, '][err', err, ']');
                     return renderLandingPage(err.data && err.data.success, err.message);
                 }
             );
 
             function renderLandingPage(success, message) {
-                res.render('./verify-mail-changed.ejs', {success: success, message: message, redirect: redirect, newMail: newUsername});
+                res.render('./verify-mail-changed.ejs', {
+                    success: success,
+                    message: message,
+                    redirect: redirect,
+                    newMail: newUsername
+                });
             }
         }
     );
 
 }
 
-function triggerAccountChangeEmails(user, client, newUsername) {
+function triggerAccountChangeEmails(email, user, client, newUsername) {
     return new Promise(
         function (resolve, reject) {
             var redirectUri = client ? client.redirect_uri : undefined;
@@ -205,7 +225,7 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                         "email-change-validation",
                         {},
                         {
-                            oldEmail: user.email,
+                            oldEmail: email,
                             newEmail: newUsername,
                             confirmLink: confirmLink
                         }
@@ -213,24 +233,26 @@ function triggerAccountChangeEmails(user, client, newUsername) {
                 }
             ).then(
                 function () {
-                    if (user.verified) {
-                        return emailHelper.send(
-                            config.mail.from,
-                            user.email,
-                            'email-change-information',
-                            {},
-                            {
-                                oldEmail: user.email,
-                                newEmail: newUsername
-                            }
-                        );
-                    } else {
-                        return new Promise(
-                            function (resolve, reject) {
-                                return resolve();
-                            }
-                        );
-                    }
+                    db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
+                        if (localLogin.verified) {
+                            return emailHelper.send(
+                                config.mail.from,
+                                localLogin.login,
+                                'email-change-information',
+                                {},
+                                {
+                                    oldEmail: email,
+                                    newEmail: newUsername
+                                }
+                            );
+                        } else {
+                            return new Promise(
+                                function (resolve, reject) {
+                                    return resolve();
+                                }
+                            );
+                        }
+                    });
                 }
             ).then(
                 function () {
@@ -267,8 +289,9 @@ function cycle() {
             error => {
                 logger.error('[EmailChange][DELETE/FAIL][error', error, ']');
             }
-        );
-    } catch(e) {
+        )
+        ;
+    } catch (e) {
         logger.error('[EmailChange][DELETE/FAIL][error', e, ']');
     }
 

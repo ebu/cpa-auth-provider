@@ -5,7 +5,7 @@ var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var facebookHelper = require('../../lib/facebook-helper');
 var callbackHelper = require('../../lib/callback-helper');
-var oAuthProviderHelper = require('../../lib/oAuth-provider-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -29,19 +29,21 @@ passport.use(new FacebookStrategy({
             email = profile.emails[0].value;
         }
 
-        if (email === '') {
-            // how to react to such an error!?
-            return done(new Error('NO_EMAIL', null));
-        }
-
         var providerUid = facebookHelper.buildFBId(profile.id);
 
-        return oAuthProviderHelper.findOrCreateExternalUser(oAuthProviderHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
-            function (u) {
-                if (u) {
-                    u.logLogin();
+        return socialLoginHelper.findOrCreateSocialLoginUser(socialLoginHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
+            function (user) {
+                if (user) {
+                    db.SocialLogin.findOne({
+                        where: {
+                            user_id: user.id,
+                            name: socialLoginHelper.FB
+                        }
+                    }).then(function (socialLogin) {
+                        socialLogin.logLogin(user);
+                    });
                 }
-                return done(null, u);
+                return done(null, user);
             }
         ).catch(
             function (err) {

@@ -8,34 +8,27 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (opts, done) {
 
-    db.Permission
-        .create({
-                id: 1,
-                label: "admin"
-            }
-        ).then(function () {
-        db.User
-            .create({
-                id: 3,
-                email: 'testuser',
-                provider_uid: 'fb:1234',
-                display_name: 'Test User',
-                permission_id: 1
-            })
-            .then(function (user) {
-                return user.setPassword('testpassword');
-            })
-            .catch(function () {
-            })
-            .then(function () {
-                    done();
-                },
-                function (error) {
-                    done(new Error(JSON.stringify(error)));
-                });
-    });
-
-
+    return db.Permission.create({
+            id: 1,
+            label: "admin"
+        }
+    ).then(function (permission) {
+        return db.User.create({
+            id: 3,
+            display_name: 'Test User',
+            permission_id: permission.id
+        });
+    }).then(function (user) {
+        return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+            return localLogin.setPassword('testpassword');
+        });
+    }).catch(function () {
+    }).then(function () {
+            done();
+        },
+        function (error) {
+            done(new Error(JSON.stringify(error)));
+        });
 };
 
 var resetDatabase = function (opts, done) {
@@ -253,58 +246,5 @@ describe('DELETE /user/', function () {
 
             });
         });
-    });
-});
-
-describe('DELETE user', function () {
-
-    var self = this;
-    before(resetDatabase);
-    before(function (done) {
-        requestHelper.login(this, done);
-    });
-
-    before(function (done) {
-        requestHelper.sendRequest(
-            this,
-            '/user/profile',
-            {
-                method: 'put',
-                cookie: this.cookie,
-                type: 'form',
-                data: {
-                    firstname: 'firstname',
-                    lastname: 'lastname',
-                    date_of_birth: 123456789,
-                    gender: 'male',
-                    language: 'fr'
-                }
-            },
-            done
-        );
-    });
-
-    before(function (done) {
-        requestHelper.sendRequest(this, '/user', {
-            method: 'post',
-            type: 'form',
-            cookie: this.cookie,
-            data: {password: 'testpassword'}
-        }, done);
-    });
-
-    before(function (done) {
-        db.User.count().then(function (userNb) {
-            self.userNb = userNb;
-            db.UserProfile.count().then(function (profileNb) {
-                self.profileNb = profileNb;
-                done();
-            });
-        });
-    });
-
-    it('should also delete profile', function () {
-        expect(self.userNb).to.equal(0);
-        expect(self.profileNb).to.equal(0);
     });
 });
