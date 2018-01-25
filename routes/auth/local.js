@@ -26,7 +26,7 @@ var localStrategyCallback = function (req, username, password, done) {
                 } else {
                     return localLogin.verifyPassword(password).then(function (isMatch) {
                             if (isMatch) {
-                                localLogin.logLogin();
+                                localLogin.logLogin(localLogin.User);
                                 done(null, localLogin.User);
                             } else {
                                 doneWithError();

@@ -180,7 +180,7 @@ module.exports = function (app, options) {
 
                     localLogin.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
-                                localLogin.logLogin().then(function () {
+                                localLogin.logLogin(localLogin.User).then(function () {
                                 }, function () {
                                 });
                                 // if user is found and password is right create a token

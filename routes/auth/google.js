@@ -32,7 +32,7 @@ passport.use(new GoogleStrategy({
             function (user) {
                 if (user) {
                     db.SocialLogin.findOne({where: {user_id: user.id, name: socialLoginHelper.GOOGLE}}).then(function (socialLogin) {
-                        socialLogin.logLogin();
+                        socialLogin.logLogin(user);
                     });
                 }
                 return done(null, user);

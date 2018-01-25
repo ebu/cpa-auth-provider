@@ -40,7 +40,7 @@ passport.use(new FacebookStrategy({
                             name: socialLoginHelper.FB
                         }
                     }).then(function (socialLogin) {
-                        socialLogin.logLogin();
+                        socialLogin.logLogin(user);
                     });
                 }
                 return done(null, user);

@@ -1,7 +1,6 @@
 "use strict";
 
 
-
 module.exports = function (sequelize, DataTypes) {
 
     var User = sequelize.define('User', {
@@ -14,7 +13,8 @@ module.exports = function (sequelize, DataTypes) {
         lastname: DataTypes.STRING,
         gender: DataTypes.STRING,
         date_of_birth: DataTypes.BIGINT,
-        language: DataTypes.STRING
+        language: DataTypes.STRING,
+        last_seen: DataTypes.BIGINT
     }, {
         underscored: true,
 
@@ -28,7 +28,6 @@ module.exports = function (sequelize, DataTypes) {
             User.belongsTo(models.Permission);
         }
     });
-
 
 
     User.prototype.getDisplayName = function (policy, defaultDisplayName) {
@@ -51,6 +50,10 @@ module.exports = function (sequelize, DataTypes) {
             }
         }
         return defaultDisplayName;
+    };
+
+    User.prototype.logLastSeen = function (transaction) {
+        return this.updateAttributes({last_seen: Date.now()}, {transaction: transaction});
     };
 
     return User;

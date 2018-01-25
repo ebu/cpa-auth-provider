@@ -124,7 +124,9 @@ module.exports = function (app, options) {
                         user_id: user.id
                     }
                 }).then(function (socialLogin) {
-                    data.display_name = socialLogin.email;
+                    if (socialLogin){
+                        data.display_name = socialLogin.email;
+                    }
                     res.json(data);
                 });
             } else {

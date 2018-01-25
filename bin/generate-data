@@ -33,7 +33,8 @@ for (var i = 0; i < nbOfUserToGenerate; i++) {
         lastname: faker.name.lastName(),
         gender: faker.random.number(1) ? 'male' : 'female',
         date_of_birth: faker.date.past(80).getTime(),
-        language: 'fr'
+        language: 'fr',
+        last_seen: faker.date.past(10).getTime()
     }).then(generatePasswordAndLocalLogin));
 }
 
