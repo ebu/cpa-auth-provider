@@ -475,7 +475,7 @@ describe('GET /admin/users/csv', function () {
         expect(self.res).to.have.header('content-type', 'text/csv; charset=utf-8');
         var lines = self.res.text.split(/\r?\n/);
         expect(lines.length).to.equal(4);
-        expect(lines[0]).to.equal('id,email,firstname,lastname,permission_id,permission,created,password_changed,last_login');
+        expect(lines[0]).to.equal('id,email,firstname,lastname,permission_id,permission,created,password_changed,last_seen');
         expect(lines[1].indexOf('admin@admin.ch,John,Doe,1,admin')).to.be.greaterThan(0);
         expect(lines[2].indexOf('user@user.ch,Scott,Tiger,,')).to.be.greaterThan(0);
         expect(lines[3]).to.equal('');
