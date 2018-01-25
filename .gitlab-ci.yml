@@ -96,7 +96,6 @@ docker_push:
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - develop
-    - user-last-seen
   tags:
     - dind
 
