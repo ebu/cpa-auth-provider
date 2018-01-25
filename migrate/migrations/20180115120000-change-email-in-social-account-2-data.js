@@ -10,9 +10,9 @@ function getLocalProfileInsertQuery() {
 
 function getUserUpdateQuery() {
     if (process.env.DB_TYPE === "postgres") {
-        return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.language FROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
+        return "UPDATE public.\"Users\" SET firstname=up.firstname, lastname=up.lastname, gender=up.gender, date_of_birth=up.date_of_birth, language=up.language, last_seen=up.last_login_at FROM public.\"Users\" as u, public.\"UserProfiles\" as up WHERE u.id=up.user_id";
     } else {
-        return "UPDATE Users u, UserProfiles up SET u.firstname=up.firstname, u.lastname=up.lastname, u.gender=up.gender, u.date_of_birth=up.date_of_birth, u.language=up.language WHERE u.id=up.user_id";
+        return "UPDATE Users u, UserProfiles up SET u.firstname=up.firstname, u.lastname=up.lastname, u.gender=up.gender, u.date_of_birth=up.date_of_birth, u.language=up.language, u.last_seen=up.last_login_at WHERE u.id=up.user_id";
     }
 }
 
