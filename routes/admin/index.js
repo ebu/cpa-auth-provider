@@ -299,7 +299,7 @@ module.exports = function (router) {
                         var createdAt = resultset[i].created_at;
                         var passwordChangedAt = resultset[i].LocalLogin && resultset[i].LocalLogin.password_changed_at ? new Date(parseInt(resultset[i].LocalLogin.password_changed_at)) : '';
                         var lastSeen = resultset[i].last_seen ? new Date(parseInt(resultset[i].last_seen)) : '';
-                        lines.push([resultset[i].id, resultset[i].LocalLogin ? resultset[i].LocalLogin.login : '', resultset[i] ? resultset[i].firstname : '', resultset[i] ? resultset[i].lastname : '', permissionId, label, createdAt, passwordChangedAt, last_seen]);
+                        lines.push([resultset[i].id, resultset[i].LocalLogin ? resultset[i].LocalLogin.login : '', resultset[i] ? resultset[i].firstname : '', resultset[i] ? resultset[i].lastname : '', permissionId, label, createdAt, passwordChangedAt, lastSeen]);
                     }
 
                     var toDownload = csv.stringify(lines);
