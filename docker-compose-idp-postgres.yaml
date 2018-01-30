@@ -18,6 +18,7 @@ services:
       - DB_PASSWORD=SchiefesHausBautFalsch
       - MAIL_TRANSPORT_TYPE=test
       - TRACKING_COOKIE=true
+      - CUSTOM_OAUTH_MSG={client} souhaite accéder à votre compte maRTS.
     depends_on:
       - postgres
     links:

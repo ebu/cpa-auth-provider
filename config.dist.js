@@ -11,7 +11,7 @@ module.exports = {
         title: '',
         oauth:{
             // override the oauth validation message
-            customMessage:' souhaite accéder à votre compte maRTS.'
+            customMessage: '{client} souhaite accéder à votre compte maRTS.'
         }
     },
 
