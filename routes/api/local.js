@@ -143,16 +143,16 @@ module.exports = function (app, options) {
                         codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
-                                localLogin.User.email,
+                                localLogin.login,
                                 "password-recovery-email",
                                 {log: false},
                                 {
-                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(localLogin.User.email) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(localLogin.login) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
-                                    mail: localLogin.User.email,
+                                    mail: localLogin.login,
                                     code: code
                                 },
-                                (localLogin.User.UserProfile && localLogin.User.UserProfile.language) ? localLogin.User.UserProfile.language : i18n.getLocale()
+                                localLogin.User.language ? localLogin.User.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },
