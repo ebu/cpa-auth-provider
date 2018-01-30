@@ -2,11 +2,18 @@
 
 module.exports = {
 
-    title: process.env.IDP_TITLE || '',
-
-    broadcasterLayout: process.env.BROADCASTER_LAYOUT || '',
-
-    broadcaster: '',
+    broadcaster: {
+        // Name of the Broadcaster
+        name: '',
+        // Name of the Broadcaster specific layout. Use '' for default one.
+        layout: process.env.BROADCASTER_LAYOUT || '',
+        // override the HTML default title value
+        title: process.env.IDP_TITLE || '',
+        oauth: {
+            // override the oauth validation message
+            customMessage: process.env.CUSTOM_OAUTH_MSG || ''
+        }
+    },
 
     i18n: {
         cookie_name: 'language',
@@ -63,7 +70,7 @@ module.exports = {
 
     mail: {
         sending: {
-            transport:  process.env.MAIL_TRANSPORT_TYPE,
+            transport: process.env.MAIL_TRANSPORT_TYPE,
             // transport: 'sendmail'
             // transport: 'stream'
             // transport: 'test',

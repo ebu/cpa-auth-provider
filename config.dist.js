@@ -2,7 +2,18 @@
 
 module.exports = {
 
-    title: '',
+    broadcaster: {
+        // Name of the Broadcaster
+        name: 'rts',
+        // Name of the Broadcaster specific layout. Use '' for default one.
+        layout: 'rts',
+        // override the HTML default title value
+        title: '',
+        oauth:{
+            // override the oauth validation message
+            customMessage: '{client} souhaite accéder à votre compte maRTS.'
+        }
+    },
 
     // Define the available identity providers
     identity_providers: {
@@ -130,9 +141,6 @@ module.exports = {
 
     // URL path prefix, e.g., '/myapp'
     urlPrefix: '',
-
-    // Name of the Broadcaster specific layout. Use '' for default one.
-    broadcasterLayout: '',
 
     // CPA
 
