@@ -2,11 +2,13 @@
 
 var db = require('../../../models');
 var oauthTokenHelper = require('../../../lib/oauth2-token');
+var TokenError = require('oauth2orize').TokenError;
 var logger = require('../../../lib/logger');
 
 var jwtHelper = require('../../../lib/jwt-helper');
 
 var INCORRECT_LOGIN_OR_PASS = 'INCORRECT_LOGIN_OR_PASS';
+var INVALID_REQUEST = 'invalid_request';
 
 
 // Grant authorization by resource owner (user) and password credentials.
@@ -26,7 +28,7 @@ function confirmUser(client, username, password, scope, done) {
     ).then(
         function (localLogin) {
             if (!localLogin) {
-                throw new Error(INCORRECT_LOGIN_OR_PASS);
+                throw new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST);
             }
             user = localLogin.User;
             return localLogin.verifyPassword(password);
@@ -36,7 +38,7 @@ function confirmUser(client, username, password, scope, done) {
             if (isMatch) {
                 provideAccessToken(client, user, scope, done);
             } else {
-                throw new Error(INCORRECT_LOGIN_OR_PASS);
+                throw new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST);
             }
         }
     ).catch(

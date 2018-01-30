@@ -14,6 +14,7 @@ services:
     - identity-provider:identity-provider
   identity-provider:
     build: .
+    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
     ports:
     - 3000:3000
     environment:

@@ -20,6 +20,9 @@ function getUserUpdateQuery() {
 module.exports = {
     up: function (queryInterface, Sequelize) {
         return new Promise(function (resolve, reject) {
+            if (process.env.DB_TYPE === 'sqlite') {
+                return resolve();
+            }
             return queryInterface.sequelize.query(getLocalProfileInsertQuery()).then(function () {
                 return queryInterface.sequelize.query(getUserUpdateQuery());
             }).then(resolve).catch(reject);
