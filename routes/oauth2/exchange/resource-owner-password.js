@@ -28,7 +28,7 @@ function confirmUser(client, username, password, scope, done) {
     ).then(
         function (localLogin) {
             if (!localLogin) {
-                return done(new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST));
+                throw new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST);
             }
             user = localLogin.User;
             return localLogin.verifyPassword(password);
@@ -38,7 +38,7 @@ function confirmUser(client, username, password, scope, done) {
             if (isMatch) {
                 provideAccessToken(client, user, scope, done);
             } else {
-                return done(new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST));
+                throw new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST);
             }
         }
     ).catch(
