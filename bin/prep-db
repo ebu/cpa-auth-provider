@@ -25,8 +25,10 @@ switch (process.env.NODE_ENV) {
 
 var db = require('../models');
 var config = require('../config');
+var completedCount;
 
 if (process.env.NODE_ENV === 'development') {
+    completedCount = 3;
     createUsers();
     createDomains();
     createOAuth2Clients();
@@ -34,7 +36,7 @@ if (process.env.NODE_ENV === 'development') {
 
 function createUsers() {
     if (!config.admin) {
-        return;
+        return completed();
     }
     db.User.create(config.admin).then(
         function () {
@@ -45,9 +47,11 @@ function createUsers() {
                     });
                 });
             console.log('[USER] Database populated');
+            completed();
         },
         function (e) {
             console.log('[USER] Error:', e);
+            completed();
         }
     );
 }
@@ -56,9 +60,11 @@ function createDomains() {
     db.Domain.bulkCreate(config.domains).then(
         function () {
             console.log('[DOMAIN] Database populated');
+            completed();
         },
         function (e) {
             console.log('[DOMAIN] Error:', e);
+            completed();
         }
     );
 }
@@ -73,12 +79,22 @@ function createOAuth2Clients() {
         db.OAuth2Client.bulkCreate(config.oauth2_clients).then(
             function () {
                 console.log('[OAUTH2_CLIENT] Database populated');
+                completed();
             },
             function (e) {
                 console.log('[OAUTH2_CLIENT] Error:', e);
+                completed();
             }
         );
     } else {
         console.log("No server clients configured");
+        completed();
+    }
+}
+
+function completed() {
+    --completedCount;
+    if (completedCount <= 0) {
+        process.exit(0);
     }
 }
