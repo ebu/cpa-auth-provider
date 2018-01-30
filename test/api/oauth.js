@@ -236,7 +236,7 @@ describe('POST /oauth2/token', function () {
             });
 
             it('should reject with bad request', function () {
-                expect(this.res.statusCode).equal(500);
+                expect(this.res.statusCode).equal(400);
             });
         }
     );
