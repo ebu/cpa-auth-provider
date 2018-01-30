@@ -127,7 +127,8 @@ module.exports = function (router) {
                 transactionID: req.oauth2.transactionID,
                 user: req.user,
                 email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
-                client: req.oauth2.client
+                client: req.oauth2.client,
+                customMessage: config.broadcaster && config.broadcaster.oauth ? config.broadcaster.oauth.customMessage : undefined
             });
         }
     ];

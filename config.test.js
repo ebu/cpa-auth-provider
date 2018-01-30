@@ -2,7 +2,10 @@
 
 module.exports = {
     baseUrl: 'http://localhost',
-    title: '',
+
+    broadcaster: {
+        title: ''
+    },
 
     recaptcha: {
         enabled: true,

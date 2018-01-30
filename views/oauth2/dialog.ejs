@@ -2,9 +2,18 @@
 
 <div></div>
 
-<p><%= __('OAUTH_DIALOG_TITLE_HI') %> <%= user.display_name || email %>!</p>
-<p><b><%= client.name %></b> <%= __('OAUTH_DIALOG_TITLE') %></p>
-<p><%= __('OAUTH_DIALOG_APPROVAL') %></p>
+<p><%= __('OAUTH_DIALOG_TITLE_HI') %> <%= user.display_name || email %></p>
+<p>
+    <b><%= client.name %></b>
+    <% if(customMessage){ %>
+    <%= customMessage %>
+    <% } else { %>
+    <%= __('OAUTH_DIALOG_TITLE') %>
+    <% } %>
+</p>
+<p>
+    <%= __('OAUTH_DIALOG_APPROVAL') %>
+</p>
 
 <form action="<%= link('/oauth2/dialog/authorize/decision') %>" method="post">
     <input name="transaction_id" type="hidden" value="<%= transactionID %>">
