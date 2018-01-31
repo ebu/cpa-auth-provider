@@ -266,7 +266,7 @@
     "VERIFY_VERIFY_BUTTON": "Verify",
 
     "MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Change email",
-    "MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Your email had been changed successfully to: ",
+    "MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Your email has been changed successfully to: ",
     "MOVE_MAIL_EMAIL_VALIDATION_ERROR":"Your email cannot be changed.",
     "MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE":"Your email cannot be changed for the following reason: ",
     "MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX": "Go to",
