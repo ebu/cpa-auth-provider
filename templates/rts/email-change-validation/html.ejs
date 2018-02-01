@@ -310,7 +310,7 @@
         @tip Set the background color and borders for your email's footer area.
         */
         #templateFooter{
-            /*@editable*/background-color:#ffffff;
+            /*@editable*/background-color:#333;
             /*@editable*/background-image:none;
             /*@editable*/background-repeat:no-repeat;
             /*@editable*/background-position:center;
@@ -326,7 +326,7 @@
         @tip Set the styling for your email's footer text. Choose a size and color that is easy to read.
         */
         #templateFooter .mcnTextContent,#templateFooter .mcnTextContent p{
-            /*@editable*/color:#656565;
+            /*@editable*/color:#fff;
             /*@editable*/font-family:Helvetica;
             /*@editable*/font-size:12px;
             /*@editable*/line-height:150%;
@@ -344,7 +344,8 @@
         }
         @media only screen and (min-width:768px){
             .templateContainer{
-                width:600px !important;
+                max-width:700px !important;
+                width:700px !important;
             }
 
         }	@media only screen and (max-width: 480px){
@@ -547,9 +548,9 @@
             <td align="center" valign="top" id="bodyCell">
                 <!-- BEGIN TEMPLATE // -->
                 <!--[if (gte mso 9)|(IE)]>
-                <table align="center" border="0" cellspacing="0" cellpadding="0" width="600" style="width:600px;">
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="700" style="width:700px;">
                     <tr>
-                        <td align="center" valign="top" width="600" style="width:600px;">
+                        <td align="center" valign="top" width="700" style="width:700px;">
                 <![endif]-->
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer">
                     <tr>
@@ -563,12 +564,12 @@
                                         <![endif]-->
 
                                         <!--[if mso]>
-                                        <td valign="top" width="600" style="width:600px;">
+                                        <td valign="top" width="700" style="width:700px;">
                                         <![endif]-->
                                         <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width:100%; min-width:100%;" width="100%" class="mcnTextContentContainer">
                                             <tbody><tr>
 
-                                                <td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px; text-align: left;">
+                                                <td valign="top" class="mcnTextContent" style="text-align: left;">
 
                                                     <img data-file-id="542679" height="41" src="http://hummingbird-sandbox-marts.rts.ch/hummingbird-static/res/images/login/logomaRTS.png" style="border: 0px  ; width: 113px; height: 41px; margin: 0px;" width="113">
                                                 </td>
@@ -601,18 +602,18 @@
                                         <![endif]-->
 
                                         <!--[if mso]>
-                                        <td valign="top" width="600" style="width:600px;">
+                                        <td valign="top" width="700" style="width:700px;">
                                         <![endif]-->
                                         <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width:100%; min-width:100%;" width="100%" class="mcnTextContentContainer">
                                             <tbody><tr>
 
-                                                <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
+                                                <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:40px; padding-bottom:9px; padding-left:40px;">
 
                                                     <h1>&nbsp;</h1>
 
                                                     <p><span style="font-family:helvetica neue,helvetica,arial,verdana,sans-serif">Bonjour,<br>
                                                     <br>
-                                                    Une demande de modification de votre email a été effectuée<br>
+                                                    Une demande de modification de votre email a été effectuée.<br>
                                                     Si vous n'êtes pas à l'origine de cette demande merci de ne pas tenir compte de ce message.<br>
                                                     <br>
                                                     Si vous êtes bien à l'origine de cette demande, veuillez cliquer sur le bouton suivant afin de modifier votre email de <%= oldEmail %> vers <%= newEmail %></span></p>
@@ -633,7 +634,7 @@
                             </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock" style="min-width:100%;">
                                 <tbody class="mcnButtonBlockOuter">
                                 <tr>
-                                    <td style="padding-top:18px; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
+                                    <td style="padding-top:18px; padding-right:40px; padding-bottom:18px; padding-left:40px;" valign="top" align="center" class="mcnButtonBlockInner">
                                         <table border="0" cellpadding="0" cellspacing="0" class="mcnButtonContentContainer" style="border-collapse: separate !important;border-radius: 3px;background-color: #AF001E;">
                                             <tbody>
                                             <tr>
@@ -652,10 +653,10 @@
                         <td valign="top" id="templateFooter"><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock" style="min-width:100%;">
                                 <tbody class="mcnImageBlockOuter">
                                 <tr>
-                                    <td valign="top" style="padding:9px" class="mcnImageBlockInner">
+                                    <td valign="top" style="padding:9px;padding-right: 0;" class="mcnImageBlockInner">
                                         <table align="left" width="100%" border="0" cellpadding="0" cellspacing="0" class="mcnImageContentContainer" style="min-width:100%;">
                                             <tbody><tr>
-                                                <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
+                                                <td class="mcnImageContent" valign="top" style="padding-right: 0; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
                                                     <img align="right" alt="" src="http://hummingbird-sandbox-marts.rts.ch/hummingbird-static/res/images/login/RTS-Legal-line-RGB.png" width="501" style="max-width:501px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage">
                                                 </td>
                                             </tr>
