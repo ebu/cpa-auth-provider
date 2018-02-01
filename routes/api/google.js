@@ -41,7 +41,7 @@ function googleSignup(req, res) {
                 if (localLoginInDb && !localLoginInDb.verified) {
                     res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_GOOGLE")});
                 } else {
-                    socialLoginHelper.performLogin(remoteProfile, socialLoginHelper.GOOGLE, req.body.clientId, function (error, response) {
+                    socialLoginHelper.performLogin(remoteProfile, socialLoginHelper.GOOGLE, req.body.client_id, function (error, response) {
                         if (response) {
                             res.status(200).json(response);
                         } else {
