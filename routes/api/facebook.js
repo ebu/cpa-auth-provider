@@ -23,7 +23,7 @@ module.exports = function (app, options) {
                         if (localLoginInDb && !localLoginInDb.verified) {
                             res.status(400).json({error: req.__("LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB")});
                         } else {
-                            socialLoginHelper.performLogin(remoteProfile, socialLoginHelper.FB, function (error, response) {
+                            socialLoginHelper.performLogin(remoteProfile, socialLoginHelper.FB, req.body.clientId, function (error, response) {
 
                                 if (response) {
                                     res.status(200).json(response);
