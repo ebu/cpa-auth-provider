@@ -10,14 +10,25 @@ var user_info = [
     passport.authenticate('bearer', {session: false}),
     function (req, res) {
         logger.debug('[OAuth2][Info][user_id', req.user.id, ']');
-        db.LocalLogin.findOne({where:{user_id: req.user.id}}).then(function(localLogin){
-            var mail = localLogin.login;
-            res.json({
-                user: {
-                    id: req.user.id,
-                    name: req.user.display_name || mail
-                },
-                scope: req.authInfo.scope
+        var localLogin;
+        db.LocalLogin.findOne({where: {user_id: req.user.id}}).then(function (ll) {
+            localLogin = ll;
+            db.SocialLogin.findOne({where: {$and: [{user_id: req.user.id}, {email: {$ne: null}}, {email: {$ne: ''}}]}}).then(function (socialLogin) {
+
+                var mail = "";
+                if (localLogin && localLogin.verified) {
+                    mail = localLogin.login;
+                } else if (socialLogin && socialLogin.email) {
+                    mail = socialLogin.email;
+
+                }
+                res.json({
+                    user: {
+                        id: req.user.id,
+                        name: req.user.getDisplayName("FIRSTNAME_LASTNAME", mail)
+                    },
+                    scope: req.authInfo.scope
+                });
             });
         });
     }];

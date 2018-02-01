@@ -50,8 +50,8 @@ function createOAuth2Client(done) {
 
 function createUser(userTemplate) {
     return db.User.create(userTemplate).then(function (user) {
-        return db.LocalLogin.create({user_id:user.id, login:userTemplate.email}).then(function(localLogin){
-            return localLogin.setPassword(userTemplate.password).then(function(){
+        return db.LocalLogin.create({user_id: user.id, login: userTemplate.email}).then(function (localLogin) {
+            return localLogin.setPassword(userTemplate.password).then(function () {
                 return user.updateAttributes(PROFILE);
             });
         });
@@ -115,7 +115,7 @@ describe('GET profile', function () {
 
         it('should return a success', function () {
             expect(this.res.statusCode).equal(200);
-            expect(this.res.body.user.name).equal(USER.email);
+            expect(this.res.body.user.name).equal(PROFILE.firstname + " " + PROFILE.lastname);
         });
     });
 
