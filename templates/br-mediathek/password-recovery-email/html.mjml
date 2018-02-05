@@ -11,7 +11,7 @@
             Du kannst Dir mit einem Klick oder Tap auf folgenden Link ein neues Passwort für Dein Nutzerkonto
             in der BR Mediathek anlegen:
           </mj-text>
-          <mj-button href='<%-forceLink%>' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
+          <mj-button href="<%-forceLink%" background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
             Passwort ändern
           </mj-button>
           <mj-text color='#a8a8a8'>

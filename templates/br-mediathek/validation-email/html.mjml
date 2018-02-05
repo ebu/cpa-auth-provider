@@ -13,7 +13,7 @@
           <mj-text>
             Bevor Du loslegen kannst, bestätige bitte Deine Registrierung mit einem Klick oder Tap auf diesen Link:
           </mj-text>
-          <mj-button href='<%-confirmLink %>' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
+          <mj-button href='<%-confirmLink %' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
             Registrierung bestätigen
           </mj-button>
           <mj-text color='#a8a8a8'>
