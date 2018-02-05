@@ -6,3 +6,5 @@ for f in $files
 do
     mjml --output ${f//\.mjml/.ejs} $f
 done
+
+echo 'WARNING: Some ejs files need manual editing to get closing on template pieces <%- xxx %>!'
