@@ -24,7 +24,7 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
                 }
             }
             if (userId) {
-                db.User.find({where: {id: userId}}).then(
+                db.User.find({where: {id: userId}, include: db.LocalLogin}).then(
                     function (user) {
                         if (!user) {
                             return done(null, false);

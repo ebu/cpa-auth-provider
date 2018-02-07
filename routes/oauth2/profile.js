@@ -41,14 +41,14 @@ var user_profile = [
         res.json({
             user: {
                 id: req.user.id,
-                email: req.user.email,
-                email_verified: req.user.verified,
+                email: req.user.LocalLogin ? req.user.LocalLogin.login : null,
+                email_verified: req.user.LocalLogin ? req.user.LocalLogin.verified : null,
                 display_name: req.user.display_name,
-                name: req.user.display_name || req.user.email,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                gender: user.gender,
-                date_of_birth: user.date_of_birth,
+                name: req.user.display_name || (req.user.LocalLogin ? req.user.LocalLogin.login : ''),
+                firstname: req.user.firstname,
+                lastname: req.user.lastname,
+                gender: req.user.gender,
+                date_of_birth: req.user.date_of_birth,
             },
             scope: req.authInfo.scope
         });
