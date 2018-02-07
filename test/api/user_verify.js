@@ -63,9 +63,23 @@ function createUser(userTemplate) {
         function (resolve, reject) {
             db.User.create(userTemplate).then(
                 function (user) {
-                    user.setPassword(userTemplate.password).then(resolve, reject);
-                },
-                reject);
+                    return db.LocalLogin.create(
+                        {
+                            user_id: user.id,
+                            login: userTemplate.email,
+                            verified: userTemplate.verified,
+                        }
+                    );
+                }
+            ).then(
+                function (login) {
+                    return login.setPassword(userTemplate.password);
+                }
+            ).then(
+                () => {
+                    resolve();
+                }
+            ).catch(reject);
         }
     );
 }
