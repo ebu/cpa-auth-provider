@@ -48,7 +48,7 @@ function confirmUser(client, username, password, scope, extraArgs, done) {
     );
 }
 
-function provideAccessToken(client, user, extraArgs, done) {
+function provideAccessToken(client, user, scope, extraArgs, done) {
     var access_duration = undefined;
     var refresh_duration = undefined;
     if (typeof extraArgs === 'object') {
@@ -60,7 +60,7 @@ function provideAccessToken(client, user, extraArgs, done) {
     oauthTokenHelper.generateAccessToken(client, user, access_duration).then(
         function (_token) {
             accessToken = _token;
-            return oauthTokenHelper.generateRefreshToken(client, user, undefined, refresh_duration);
+            return oauthTokenHelper.generateRefreshToken(client, user, scope, refresh_duration);
         }
     ).then(
         function (_token) {
