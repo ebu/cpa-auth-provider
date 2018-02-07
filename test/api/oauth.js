@@ -19,11 +19,11 @@ var CLIENT = {
     redirect_uri: 'http://localhost'
 };
 var USER = {
-	id: 123,
-	email: 'test@test.com',
-	verified: true,
-	account_uid: 'RandomUid',
-	password: 'a'
+    id: 123,
+    email: 'test@test.com',
+    verified: true,
+    account_uid: 'RandomUid',
+    password: 'a'
 };
 
 var USER2 = {
@@ -41,7 +41,7 @@ function createOAuth2Client(done) {
             return client.updateAttributes({client_secret: bcrypt.hashSync(CLIENT.client_secret, 5)});
         }
     ).then(
-        function() {
+        function () {
             done();
         }
     ).catch(
@@ -52,10 +52,17 @@ function createOAuth2Client(done) {
 }
 
 function createUser(userTemplate) {
-    return db.User.create(userTemplate).then(function (user) {
-        return db.LocalLogin.create({user_id:user.id, login:userTemplate.email}).then(function(localLogin){
-            return localLogin.setPassword(userTemplate.password);
-        });
+    return db.User.create(userTemplate).then(
+        function (user) {
+            return db.LocalLogin.create(
+                {
+                    user_id: user.id,
+                    login: userTemplate.email,
+                    verified: userTemplate.verified,
+                });
+        }
+    ).then(function (localLogin) {
+        return localLogin.setPassword(userTemplate.password);
     });
 }
 
@@ -160,12 +167,12 @@ describe('POST /oauth2/token', function () {
             expect(decoded.exp).match(/[0-9]+/);
             expect(decoded.cli).equal(CLIENT.id);
             expect(decoded.sub).equal(USER.id);
-			expect(decoded.vfy).equal('1');
+            expect(decoded.vfy).equal('1');
         });
 
-		it('should have expires_in set correctly', function() {
-			expect(this.res.body.expires_in).equal(36000);
-		});
+        it('should have expires_in set correctly', function () {
+            expect(this.res.body.expires_in).equal(36000);
+        });
 
         it('should have token type Bearer', function () {
             expect(this.res.body.token_type).equal('Bearer');
@@ -195,27 +202,27 @@ describe('POST /oauth2/token', function () {
             }, done);
         });
 
-		it('should return a success', function () {
-			expect(this.res.statusCode).equal(200);
-		});
+        it('should return a success', function () {
+            expect(this.res.statusCode).equal(200);
+        });
 
-		it('should have proper access token', function () {
-			var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
-			expect(decoded.iss).equal('cpa');
-			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).match(/[0-9]+/);
-			expect(decoded.cli).equal(CLIENT.id);
-			expect(decoded.sub).equal(USER2.id);
-			expect(decoded.vfy).equal('0');
-		});
+        it('should have proper access token', function () {
+            var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
+            expect(decoded.iss).equal('cpa');
+            expect(decoded.aud).equal('cpa');
+            expect(decoded.exp).match(/[0-9]+/);
+            expect(decoded.cli).equal(CLIENT.id);
+            expect(decoded.sub).equal(USER2.id);
+            expect(decoded.vfy).equal('0');
+        });
 
-		it('should have proper expires_in set', function() {
-			expect(this.res.body.expires_in).equal(36000);
-		});
+        it('should have proper expires_in set', function () {
+            expect(this.res.body.expires_in).equal(36000);
+        });
 
-		it('should have token type Bearer', function () {
-			expect(this.res.body.token_type).equal('Bearer');
-		});
+        it('should have token type Bearer', function () {
+            expect(this.res.body.token_type).equal('Bearer');
+        });
 
         it('should send a refresh token', function () {
             expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);
@@ -391,9 +398,9 @@ describe('OAuth2 Implicit Flow', function () {
         before(resetDatabase);
         before(createFakeUser);
 
-		before(function (done) {
-			requestHelper.loginUser(this, USER.email, USER.password, done);
-		});
+        before(function (done) {
+            requestHelper.loginUser(this, USER.email, USER.password, done);
+        });
 
         before(function (done) {
             requestHelper.sendRequest(
@@ -428,20 +435,20 @@ describe('OAuth2 Implicit Flow', function () {
             expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '.*'));
         });
 
-		it('should have access_token in location', function() {
-			expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '/#access_token=[a-zA-Z0-9\\._-]+&expires_in=36000&token_type=Bearer&state=a'));
-		});
+        it('should have access_token in location', function () {
+            expect(this.res.headers.location).match(new RegExp(CLIENT.redirect_uri + '/#access_token=[a-zA-Z0-9\\._-]+&expires_in=36000&token_type=Bearer&state=a'));
+        });
 
-		it('should have proper access_token content', function() {
-			var match = new RegExp(CLIENT.redirect_uri + '/#access_token=([a-zA-Z0-9\\._-]+)&expires_in=36000&token_type=Bearer&state=a').exec(this.res.headers.location);
-			var access_token = decodeURIComponent(match[1]);
-			var decoded = jwtHelper.decode(access_token, CLIENT.jwt_code);
-			expect(decoded.iss).equal('cpa');
-			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).match(/[0-9]+/);
-			expect(decoded.cli).equal(CLIENT.id);
-			expect(decoded.sub).equal(USER.id);
-		});
+        it('should have proper access_token content', function () {
+            var match = new RegExp(CLIENT.redirect_uri + '/#access_token=([a-zA-Z0-9\\._-]+)&expires_in=36000&token_type=Bearer&state=a').exec(this.res.headers.location);
+            var access_token = decodeURIComponent(match[1]);
+            var decoded = jwtHelper.decode(access_token, CLIENT.jwt_code);
+            expect(decoded.iss).equal('cpa');
+            expect(decoded.aud).equal('cpa');
+            expect(decoded.exp).match(/[0-9]+/);
+            expect(decoded.cli).equal(CLIENT.id);
+            expect(decoded.sub).equal(USER.id);
+        });
     });
 });
 
@@ -454,12 +461,12 @@ describe('OAuth2 Authorization Code Flow', function () {
         before(resetDatabase);
         before(createFakeUser);
 
-		before(function (done) {
-			requestHelper.sendRequest(this, url, {}, done);
-		});
-		before(function (done) {
-			requestHelper.loginUser(this, USER.email, USER.password, done);
-		});
+        before(function (done) {
+            requestHelper.sendRequest(this, url, {}, done);
+        });
+        before(function (done) {
+            requestHelper.loginUser(this, USER.email, USER.password, done);
+        });
 
         before(function (done) {
             requestHelper.sendRequest(
@@ -510,22 +517,22 @@ describe('OAuth2 Authorization Code Flow', function () {
             expect(this.res.statusCode).equal(200);
         });
 
-		it('should have proper access token', function () {
-			var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
-			expect(decoded.iss).equal('cpa');
-			expect(decoded.aud).equal('cpa');
-			expect(decoded.exp).match(/[0-9]+/);
-			expect(decoded.cli).equal(CLIENT.id);
-			expect(decoded.sub).equal(USER.id);
-		});
+        it('should have proper access token', function () {
+            var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
+            expect(decoded.iss).equal('cpa');
+            expect(decoded.aud).equal('cpa');
+            expect(decoded.exp).match(/[0-9]+/);
+            expect(decoded.cli).equal(CLIENT.id);
+            expect(decoded.sub).equal(USER.id);
+        });
 
-		it('should have expires_in set properly', function() {
-			expect(this.res.body.expires_in).equal(36000);
-		});
+        it('should have expires_in set properly', function () {
+            expect(this.res.body.expires_in).equal(36000);
+        });
 
-		it('should have token type Bearer', function () {
-			expect(this.res.body.token_type).equal('Bearer');
-		});
+        it('should have token type Bearer', function () {
+            expect(this.res.body.token_type).equal('Bearer');
+        });
 
         it('should send a refresh token', function () {
             expect(this.res.body.refresh_token).match(/[a-zA-Z0-9-\.]+/);

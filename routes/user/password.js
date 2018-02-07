@@ -56,7 +56,7 @@ function requestPasswordEmail(req, res, next) {
 
 	var user;
 
-	if (requestType != 'request-password-email') {
+	if (requestType !== 'request-password-email') {
 		res.status(400).json({success: false, reason: oauthHelper.ERRORS.BAD_REQUEST.message});
 		logger.debug('[User][Password][FAIL][type password-email][username', username, '][clientId', clientId, '][err wrong request type]');
 		return;
@@ -66,7 +66,9 @@ function requestPasswordEmail(req, res, next) {
 		return res.status(400).json({success: false, reason: 'MISSING_REQUEST_FIELDS'});
 	}
 
-	db.User.find({ where: { email: username }}).then(
+	db.User.find({
+        include: [{model: db.LocalLogin, where: { login: username }}]
+	}).then(
 		function(user_res) {
 			if (!user_res) {
 				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
@@ -116,7 +118,7 @@ function setPasswordIntern(req, res, next) {
 	var currentPassword = req.body.current_password;
 	var newPassword = req.body.new_password;
 
-	if (requestType != 'set-password') {
+	if (requestType !== 'set-password') {
 		res.status(400).json({success: false, reason: oauthHelper.ERRORS.BAD_REQUEST.message});
 		logger.debug('[User][Password][FAIL][type set-password][username', username, '][clientId', clientId, '][err bad request type]');
 		return;
@@ -138,7 +140,8 @@ function setPasswordIntern(req, res, next) {
 			if (!client) {
 				throw new Error(oauthHelper.ERRORS.CLIENT_ID_MISMATCH.message);
 			}
-			return db.User.find({where: {email: username}});
+			return db.LocalLogin.find({where: {login: username}});
+			// return db.User.find({where: {email: username}});
 		}
 	).then(
 		function(user_res) {
