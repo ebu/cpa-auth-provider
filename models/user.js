@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
         gender: DataTypes.STRING,
         date_of_birth: DataTypes.BIGINT,
         language: DataTypes.STRING,
-        last_seen: DataTypes.BIGINT
+        last_seen: DataTypes.BIGINT,
         scheduled_for_deletion_at: DataTypes.DATE,
     }, {
         underscored: true,

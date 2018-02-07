@@ -6,9 +6,6 @@ var TokenError = require('oauth2orize').TokenError;
 var logger = require('../../../lib/logger');
 var userDeletion = require('../../../lib/user-deletion');
 
-var USER_NOT_FOUND = oauthToken.ERRORS.USER_NOT_FOUND;
-var WRONG_PASSWORD = oauthToken.ERRORS.WRONG_PASSWORD;
-
 var INCORRECT_LOGIN_OR_PASS = 'INCORRECT_LOGIN_OR_PASS';
 var INVALID_REQUEST = 'invalid_request';
 

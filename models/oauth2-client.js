@@ -19,10 +19,10 @@ module.exports = function (sequelize, DataTypes) {
                 notEmpty: true
             }
         },
-		jwt_code: {
-        	type: DataTypes.STRING,
-			allowNull: true
-		},
+        jwt_code: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         name: {
             type: DataTypes.STRING,
             validate: {
@@ -40,32 +40,31 @@ module.exports = function (sequelize, DataTypes) {
     }, {
         underscored: true,
 
-		instanceMethods: {
-			mayRedirect: function(uri) {
-				if (this.redirect_uri === null) {
-					return true;
-				}
-				if (!uri) {
-					return true;
-				}
-				return uri.startsWith(this.redirect_uri);
-			},
-			mayEmailRedirect: function(uri) {
-				if (this.email_redirect_uri === null) {
-					return true;
-				}
-				if (!uri) {
-					return true;
-				}
-				return uri.startsWith(this.email_redirect_uri);
-			}
-		},
-
         associate: function (models) {
             OAuth2Client.hasMany(models.OAuth2AuthorizationCode);
             OAuth2Client.belongsTo(models.User);
         }
     });
+
+    OAuth2Client.prototype.mayRedirect = function (uri) {
+        if (this.redirect_uri === null) {
+            return true;
+        }
+        if (!uri) {
+            return true;
+        }
+        return uri.startsWith(this.redirect_uri);
+    };
+
+    OAuth2Client.prototype.mayEmailRedirect = function (uri) {
+        if (this.email_redirect_uri === null) {
+            return true;
+        }
+        if (!uri) {
+            return true;
+        }
+        return uri.startsWith(this.email_redirect_uri);
+    };
 
     return OAuth2Client;
 };
