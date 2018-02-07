@@ -10,15 +10,20 @@ var dbHelper = require('../db-helper');
 var TAKEN_USERNAME = 'test@te.st';
 
 var initDatabase = function(opts, done) {
-	db.User
-		.create({
+	db.User.create({
 			id:           3,
 			provider_uid: 'testuser',
 			email: TAKEN_USERNAME,
 			display_name: 'Test User'
 		})
 		.then(function(user) {
-			return user.setPassword('testpassword');
+		    return db.LocalLogin.create({
+                user_id: user.id,
+                login: TAKEN_USERNAME
+            });
+        })
+        .then(function(login) {
+			return login.setPassword('testpassword');
 		})
 		.then(function() {
 				done();

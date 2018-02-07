@@ -44,7 +44,8 @@ function corsDelegate(req, callback) {
 }
 
 function checkUsername(req, res, next) {
-	db.User.find({ where: { email: req.body.username }})
+	// TODO: this probably needs to be more extensive check and include social login table!
+	db.User.find({include: {model: db.LocalLogin, where: { login: req.body.username }}})
 		.then(
 			function(user) {
 				if (user) {
