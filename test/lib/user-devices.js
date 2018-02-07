@@ -17,25 +17,27 @@ var initDatabase = function (opts, done) {
         db.User
             .create({
                 id: 3,
-                email: 'testuser',
                 provider_uid: 'testuser',
                 display_name: 'Test User',
                 permission_id: 1
             })
             .then(function (user) {
-                return user.setPassword('testpassword');
+                return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+                    return localLogin.setPassword('testpassword');
+                });
             })
             .then(function () {
                 return db.User.create({
                     id: 2,
-                    email: '2testuser2',
                     provider_uid: '2testuser2',
                     display_name: '2 Test User 2',
                     permission_id: 1
                 });
             })
             .then(function (user) {
-                return user.setPassword('otherpassword');
+                return db.LocalLogin.create({user_id: user.id, login: '2testuser2'}).then(function (localLogin) {
+                    return localLogin.setPassword('testpassword');
+                });
             })
             .then(function () {
                 return db.Client.create({
@@ -215,8 +217,8 @@ describe('GET /user/devices', function () {
                 requestHelper.sendRequest(this, '/user/devices', null, done);
             });
 
-            it('should deny access', function () {
-                expect(this.res.statusCode).to.equal(401);
+            it('should deny access (redirect to login)', function () {
+                expect(this.res.statusCode).to.equal(302);
             });
         });
     });

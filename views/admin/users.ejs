@@ -5,9 +5,48 @@
     <h1><%= __('ADMIN_USERS_TITLE') %></h1>
 
     <div class="toolbar">
-        <a class="btn btn-primary" id="export-csv" href="/admin/users/csv">
-            <span class="glyphicon glyphicon-download"></span><%= __('ADMIN_USERS_CSV_DOWNLOAD_LINK') %>
-        </a>
+        <div class="row">
+            <div class="col-sm-1">
+                <input id="search-id-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_ID') %>"/>
+            </div>
+            <div class="col-sm-3">
+                <input id="search-email-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_EMAIL') %>"/>
+            </div>
+            <div class="col-sm-2">
+                <input id="search-firstname-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_FIRSTNAME') %>"/>
+            </div>
+            <div class="col-sm-2">
+                <input id="search-lastname-users" type="text" class="form-control input-lg"
+                       placeholder="<%= __('ADMIN_USERS_SEARCH_INPUT_LASTNAME') %>"/>
+            </div>
+            <div class="col-sm-2">
+                <div class="checkbox">
+                    <label><input id="search-admin-users" type="checkbox"
+                                  value=""><%= __('ADMIN_USERS_SEARCH_ADMIN_ONLY') %></label>
+                </div>
+
+            </div>
+            <div class="col-sm-2 text-right">
+                <button id="search-users" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"
+                          aria-hidden="true"></span> <%= __('ADMIN_USERS_SEARCH_BUTTON') %>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="subtoolbar">
+        <div class="search">
+            <div class="row">
+                <div class="col-xs-12">
+                    <a class="btn btn-default" id="export-csv" href="<%= link('/admin/users/csv') %>">
+                        <span class="glyphicon glyphicon-download"></span>&nbsp;<%= __('ADMIN_USERS_CSV_DOWNLOAD_LINK') %>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="alert-success" class="alert alert-success alert-dismissible" role="alert">
@@ -19,10 +58,13 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-striped">
+        <table id="table-users" class="table table-striped">
             <thead>
             <tr>
+                <th><%= __('ADMIN_USERS_ID_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_EMAIL_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_FIRSTNAME_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_USERS_LASTNAME_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_PERMISSIONS_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_CREATED_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_USERS_PASSWORD_CHANGED_TABLE_COL_TITLE') %></th>
@@ -32,28 +74,32 @@
             <tbody>
             <% for (var i = 0; i < users.length; i++) { %>
             <tr id="user-<%= users[i].id %>">
+                <td><%= users[i].id %></td>
                 <td><%= users[i].email %></td>
+                <td><%= users[i].firstname %></td>
+                <td><%= users[i].lastname %></td>
                 <td>
-                    <select class=" permission form-control">
-                        <option value="default" disabled selected>
-                            none
-                        </option>
-                        <% for (var j = 0; j < permissions.length; j++) { %>
-                        <option value="<%= users[i].id %>_<%= permissions[j].id %>"
-                                <% if(typeof users[i].permission_id !== "undefined" && permissions[j].id === users[i].permission_id){ %>
-                                selected
-                                <% } %>
-                        >
-                            <%= permissions[j].label %>
-                        </option>
+                    <select class="permission form-control">
+                        <% if(users[i].permission_id !== permAdminId) { %>
+                        <option value="<%= users[i].id %>_<%= permUserId %>"
+                                selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
+                        <option value="<%= users[i].id %>_<%= permAdminId %>"><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
+                        <% } else { %>
+                        <option value="<%= users[i].id %>_<%= permAdminId %>"
+                                selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>
+                        <option value="<%= users[i].id %>_<%= permUserId %>"><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>
                         <% } %>
                     </select>
                 </td>
-                <td><%= users[i].created_at %></td>
-                <td><%= new Date(users[i].password_changed_at) %></td>
+                <td><%= moment(users[i].created_at).format('DD/MM/YYYY - HH:mm'); %></td>
                 <td>
-                    <% if(users[i].last_login_at) { %>
-                    <%= new Date(users[i].last_login_at) %>
+                    <% if(users[i].password_changed_at) { %>
+                    <%= moment(new Date(parseInt(users[i].password_changed_at))).format('DD/MM/YYYY - HH:mm'); %>
+                    <% } %>
+                </td>
+                <td>
+                    <% if(users[i].last_seen) { %>
+                    <%= moment(new Date(parseInt(users[i].last_seen))).format('DD/MM/YYYY - HH:mm'); %>
                     <% } %>
                 </td>
             </tr>
@@ -61,6 +107,7 @@
             </tbody>
         </table>
     </div>
+    <div class="loader"></div>
 
 </div>
 
@@ -69,35 +116,196 @@
 
     (function () {
 
+        var search = $('#search-users');
+        var table = $('#table-users');
+        var loader = $('.loader');
+
         var errorSuccess = $("#alert-success");
         var errorAlert = $("#alert-error");
+        var loaded = false;
+        var offset = 0;
+        var LIMIT = 20;
+        var savedData = {};
+
         errorSuccess.hide();
         errorAlert.hide();
 
-        $('.permission').on('change', function () {
+        $(document).on('change', '.permission', function () {
 
             if ($(this).val() == "default") {
                 return;
             }
-
             var params = $(this).val().split("_");
             var userId = params[0];
             var permissionId = params[1];
 
             $.ajax({
-                url: '/admin/users/' + userId + '/permission',
+                url: '<%= link('/admin/users/') %>' + userId + '/permission',
                 type: 'POST',
                 data: {
-                    permissionId: permissionId
+                    permission: permissionId
                 }
             }).done(function (data) {
-                errorSuccess.html("Successfully changed " + data.user.email + " permission");
+                errorSuccess.html("<%= __('ADMIN_USERS_MSG_OK_1') %>" + data.user.email + "<%= __('ADMIN_USERS_MSG_OK_2') %>");
                 errorSuccess.show();
+                $('html, body').animate({
+                    scrollTop: $("#users").offset().top
+                }, 2000);
             }).fail(function (error) {
-                errorAlert.html("Error changin " + data.user.email + " permission, please try again");
+                errorAlert.html("<%= __('ADMIN_USERS_MSG_ERROR') %>" + error);
                 errorAlert.show();
             });
         });
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >=
+                $('main').offset().top + $('main').height() && !loaded) {
+
+                //do not try to load more if an ID is fullfilled
+                if (savedData.id) {
+                    return;
+                }
+
+                loader.show();
+                loaded = true;
+                offset += 20;
+
+                var data = {
+                    offset: offset,
+                    limit: LIMIT
+                };
+
+                if (savedData.email) {
+                    data.email = savedData.email;
+                }
+                if (savedData.firstname) {
+                    data.firstname = savedData.firstname;
+                }
+                if (savedData.lastname) {
+                    data.lastname = savedData.lastname;
+                }
+                if (savedData.admin) {
+                    data.admin = savedData.admin;
+                }
+
+                $.ajax({
+                    url: '<%= link('/api/admin/users/') %>',
+                    type: 'GET',
+                    data: data
+                }).done(function (data) {
+                    if (data.users.length > 0) {
+                        fillUserTable(data.users, "append");
+                    }
+                    loader.hide();
+                }).fail(function (error) {
+                    loader.hide();
+                    console.log("error", error);
+                });
+            }
+        });
+
+        search.on('click', function () {
+            //reinit messages
+            errorSuccess.hide();
+            errorAlert.hide();
+
+            var data = {
+                limit: LIMIT
+            };
+            if ($('#search-id-users').val()) {
+                data.id = $('#search-id-users').val();
+                savedData.id = data.id;
+            } else {
+                savedData.id = '';
+            }
+            if ($('#search-email-users').val()) {
+                data.email = $('#search-email-users').val();
+                savedData.email = data.email;
+            } else {
+                savedData.email = '';
+            }
+            if ($('#search-lastname-users').val()) {
+                data.lastname = $('#search-lastname-users').val();
+                savedData.lastname = data.lastname;
+            } else {
+                savedData.lastname = '';
+            }
+            if ($('#search-firstname-users').val()) {
+                data.firstname = $('#search-firstname-users').val();
+                savedData.firstname = data.firstname;
+            } else {
+                savedData.firstname = '';
+            }
+            if ($('#search-admin-users').is(':checked')) {
+                data.admin = $('#search-admin-users').is(':checked');
+                savedData.admin = data.admin;
+            } else {
+                savedData.admin = '';
+            }
+
+            $.ajax({
+                url: '<%= link('/api/admin/users/') %>',
+                type: 'GET',
+                data: data
+            }).done(function (data) {
+                fillUserTable(data.users, "reset");
+            }).fail(function (error) {
+                console.log("error", error);
+            });
+        });
+
+        function fillUserTable(users, type) {
+            var body = table.find('tbody').first();
+            if (type === "reset") {
+                body.html('');
+            }
+            if (!users || users.length === 0) {
+                return;
+            }
+
+            var rows = '';
+
+            $.each(users, function (index, user) {
+                var row = "<tr id='user-" + user.id + "'>";
+                var select = "";
+                row += "<td>" + user.id + "</td>";
+                row += "<td>" + user.email + "</td>";
+                row += "<td>" + user.firstname + "</td>";
+                row += "<td>" + user.lastname + "</td>";
+
+                select += '<select class="permission form-control">';
+
+                if (user.permission_id !== <%= permAdminId %>) {
+                    select += '<option value="' + user.id + '_<%= permUserId %>"  selected><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
+                    select += '<option value="' + user.id + '_<%= permAdminId %>" ><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>';
+                } else {
+                    select += '<option value="' + user.id + '_<%= permAdminId %>" selected><%= __('ADMIN_USERS_COMBO_ADMIN_VALUE') %></option>';
+                    select += '<option value="' + user.id + '_<%= permUserId %>"  ><%= __('ADMIN_USERS_COMBO_USER_VALUE') %></option>';
+                }
+
+                select += '</select>';
+
+                row += "<td>" + select + "</td>";
+                row += "<td>" + moment(user.created_at).format('DD/MM/YYYY - HH:mm');
+                +"</td>";
+                if (user.password_changed_at) {
+                    row += "<td>" + moment(new Date(parseInt(user.password_changed_at))).format('DD/MM/YYYY - HH:mm');
+                    +"</td>";
+                } else {
+                    row += "<td></td>";
+                }
+                if (user.last_login_at) {
+                    row += "<td>" + moment(new Date(parseInt(user.last_login_at))).format('DD/MM/YYYY - HH:mm');
+                    +"</td>";
+                } else {
+                    row += "<td></td>";
+                }
+                row += "</tr>";
+                rows += row;
+            });
+            body.append(rows);
+            loaded = false;
+        }
 
     })();
 

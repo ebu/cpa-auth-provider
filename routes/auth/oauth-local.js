@@ -11,6 +11,7 @@ var cors = require('../../lib/cors');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var userHelper = require('../../lib/user-helper');
 var recaptcha = require('express-recaptcha');
 
 var localoAuthStrategyCallback = function (req, username, password, done) {
@@ -94,11 +95,8 @@ module.exports = function (app, options) {
     app.options('/api/logout', cors);
 
     app.get('/api/logout', cors, function (req, res, next) {
-
         req.logout();
-
         res.json({connected: false});
-
     });
 
     function returnMenuInfos(user, req, res) {
@@ -106,21 +104,34 @@ module.exports = function (app, options) {
             // Return 204 Success No Content
             res.status(204).json({connected: false});
         } else {
-            db.UserProfile.findOrCreate({
-                where: {
-                    user_id: user.id
-                }
-            }).spread(function (profile) {
-                var language = "en";
-                if(req.query && req.query.lang && (req.query.lang == "fr" || req.query.lang == "en" || req.query.lang == "de")) {
-                    language = req.query.lang;
-                }
-                var data = {
-                    display_name: profile.getDisplayName(user, "FIRSTNAME_LASTNAME"),
-                    menu : getMenu(req, language)
-                };
+            var language = "en";
+            if (req.query && req.query.lang && (req.query.lang === "fr" || req.query.lang === "en" || req.query.lang === "de")) {
+                language = req.query.lang;
+            }
+            var email = "";
+            if (user && user.LocalLogin && user.LocalLogin.login) {
+                email =     user.LocalLogin.login;
+            }
+            var data = {
+                display_name: user.getDisplayName("FIRSTNAME_LASTNAME", email),
+                required_fields: userHelper.getRequiredFields(),
+                menu: getMenu(req, language)
+            };
+            if (!data.display_name){
+                // User just have a social login
+                db.SocialLogin.findOne({
+                    where: {
+                        user_id: user.id
+                    }
+                }).then(function (socialLogin) {
+                    if (socialLogin){
+                        data.display_name = socialLogin.email;
+                    }
+                    res.json(data);
+                });
+            } else {
                 res.json(data);
-            });
+            }
         }
     }
 
@@ -128,7 +139,7 @@ module.exports = function (app, options) {
         db.User.findOne({
             where: {
                 id: req.user.id
-            }
+            }, include:[db.LocalLogin]
         }).then(function (user) {
             returnMenuInfos(user, req, res);
         }, function (err) {

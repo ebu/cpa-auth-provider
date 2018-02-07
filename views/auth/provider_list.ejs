@@ -6,6 +6,10 @@
     <li><a href="<%= link('/auth/facebook') %>"
            class="identity_provider facebook"><%= __('AUTH_MAIN_LOGIN_FB_LINK') %></a></li>
     <% } %>
+    <% if (identity_providers.google) { %>
+    <li><a href="<%= link('/auth/google') %>"
+           class="identity_provider google"><%= __('AUTH_MAIN_LOGIN_GOOGLE_LINK') %></a></li>
+    <% } %>
 
     <% if (identity_providers.github) { %>
     <li><a href="<%= link('/auth/github') %>"

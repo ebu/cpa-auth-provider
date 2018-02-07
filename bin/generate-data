@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+
+"use strict";
+
+/**
+ * Usage: $ bin/generate-data --nb=<number of account to generate if not present default value is 100>
+ */
+
+var faker = require('faker');
+var db = require('../models');
+
+var NB = '--nb=';
+var ADMIN_PASS = '--password=';
+
+var nbOfUserToGenerate = 10;
+var adminPass = '';
+
+for (var i in process.argv) {
+    if (process.argv[i].startsWith(NB)) {
+        nbOfUserToGenerate = process.argv[i].slice(NB.length);
+    }
+    if (process.argv[i].startsWith(ADMIN_PASS)) {
+        adminPass = process.argv[i].slice(ADMIN_PASS.length);
+    }
+}
+
+var batch = [];
+
+
+for (var i = 0; i < nbOfUserToGenerate; i++) {
+    batch.push(db.User.create({
+        firstname: faker.name.firstName(),
+        lastname: faker.name.lastName(),
+        gender: faker.random.number(1) ? 'male' : 'female',
+        date_of_birth: faker.date.past(80).getTime(),
+        language: 'fr',
+        last_seen: faker.date.past(10).getTime()
+    }).then(generatePasswordAndLocalLogin));
+}
+
+Promise.all(batch).then(function () {
+    // Create an admin if a password had been provided:
+    if (adminPass !== '') {
+        db.LocalLogin.findOne({where: {login: 'peach-review@ebu.io'}}).then(function (ll) {
+            var userPromise;
+            if (ll) {
+                return ll.updateAttributes({verified: true, permission_id: 1}).then(function () {
+                    return ll.setPassword(adminPass);
+                });
+
+            } else {
+                db.User.create({
+                    display_name: 'peach-review@ebu.io',
+                    permission_id: 1
+                }).then(function (user) {
+                    return db.LocalLogin.create({
+                        verified: true,
+                        user_id: user.id,
+                        login: 'peach-review@ebu.io',
+                    });
+                }).then(function (localLogin) {
+                    return localLogin.setPassword(adminPass);
+                });
+            }
+        });
+    }
+});
+
+function generatePasswordAndLocalLogin(user) {
+    return db.LocalLogin.create({
+        login: faker.internet.email(),
+        user_id: user.id,
+        verified: faker.random.number(1),
+        password_changed_at: faker.date.past(10).getTime(),
+        last_login_at: faker.date.past(10).getTime()
+    }).then(function (localLogin) {
+        return localLogin.setPassword(faker.internet.password());
+    });
+}

@@ -1,8 +1,11 @@
 "use strict";
 
 module.exports = {
+    baseUrl: 'http://localhost',
 
-    title: '',
+    broadcaster: {
+        title: ''
+    },
 
     recaptcha: {
         enabled: true,
@@ -23,20 +26,30 @@ module.exports = {
 		default_locale: 'en'
 	},
 
-	identity_providers: {
-		facebook: {
-			enabled: false
-		},
-		github: {
-			enabled: false
-		},
-		ebu: {
-			enabled: false
-		},
-		local: {
-			enabled: true
-		}
-	},
+    identity_providers: {
+        facebook: {
+            enabled: true,
+            client_id: 'abc',
+            client_secret: '123'
+        },
+        github: {
+            enabled: false
+        },
+        ebu: {
+            enabled: false
+        },
+        google: {
+            enabled: true,
+            client_id: 'abc',
+            client_secret: '123'
+        },
+        twitter: {
+            enabled: false
+        },
+        local: {
+            enabled: true
+        }
+    },
 
 	trackingCookie: {
 		enabled: true

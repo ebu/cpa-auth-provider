@@ -9,8 +9,7 @@ var dbHelper = require('../db-helper');
 
 var config = require('../../config');
 
-var promise = require('bluebird');
-var bcrypt = promise.promisifyAll(require('bcrypt'));
+var bcrypt = require('bcrypt');
 
 var CLIENT = {
     id: 1,
@@ -54,7 +53,9 @@ function createOAuth2Client(done) {
 
 function createUser(userTemplate) {
     return db.User.create(userTemplate).then(function (user) {
-        return user.setPassword(userTemplate.password);
+        return db.LocalLogin.create({user_id:user.id, login:userTemplate.email}).then(function(localLogin){
+            return localLogin.setPassword(userTemplate.password);
+        });
     });
 }
 
@@ -551,6 +552,7 @@ describe('OAuth2 requests from cross domain with access token', function () {
 
     before(function (done) {
         var self = this;
+        self.cookie = null;
         requestHelper.sendRequest(this, '/oauth2/session/cookie/request', {
             method: 'post',
             data: {
@@ -603,7 +605,7 @@ describe('OAuth2 requests from cross domain without access token', function () {
     });
 
     it('should return an error', function () {
-        expect(this.res.statusCode).equal(401);
+        expect(this.res.statusCode).to.be.within(400, 401);
     });
 
 });

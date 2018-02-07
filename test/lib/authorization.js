@@ -131,7 +131,7 @@ describe("POST /authorized", function () {
         describe("the returned data", function () {
             it("should include the user id", function () {
                 expect(this.res.body).to.have.property('user_id');
-                expect(this.res.body.user_id).to.equal("3");
+                expect(this.res.body.user_id).to.equal(3);
             });
 
             it("should include the client id", function () {
@@ -249,12 +249,13 @@ describe("POST /authorized", function () {
 
             // Set creation time of the pairing code
             var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-            this.clock = sinon.useFakeTimers(time, "Date");
+            this.clock = sinon.useFakeTimers(time);
 
             resetDatabase(function () {
                 // The access token should expire 30 days after it was created
                 var time = new Date("Fri May 09 2014 11:00:00 GMT+0100").getTime();
-                self.clock = sinon.useFakeTimers(time, "Date");
+                self.clock.restore();
+                self.clock = sinon.useFakeTimers(time);
 
                 done();
             });

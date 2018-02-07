@@ -2,7 +2,18 @@
 
 module.exports = {
 
-    title: '',
+    broadcaster: {
+        // Name of the Broadcaster
+        name: 'rts',
+        // Name of the Broadcaster specific layout. Use '' for default one.
+        layout: 'rts',
+        // override the HTML default title value
+        title: '',
+        oauth:{
+            // override the oauth validation message
+            customMessage: '{client} souhaite accéder à votre compte maRTS.'
+        }
+    },
 
     // Define the available identity providers
     identity_providers: {
@@ -13,7 +24,7 @@ module.exports = {
             client_secret: '',
             callback_url: ''
         },
-        googleplus: {
+        google: {
             enabled: false,
             client_id: '',
             client_secret: ''
@@ -88,6 +99,7 @@ module.exports = {
     // When accessing the home page, if defined, users are automatically
     // redirected to the specified identity_providers (ie: 'github')
     auto_idp_redirect: '',
+    use_landing_page: false,
 
     // if false the list of user is not accessible in the admin
     displayUsersInfos: true,
@@ -129,9 +141,6 @@ module.exports = {
 
     // URL path prefix, e.g., '/myapp'
     urlPrefix: '',
-
-    // Name of the Broadcaster specific layout. Use '' for default one.
-    broadcasterLayout: '',
 
     // CPA
 
@@ -202,15 +211,13 @@ module.exports = {
         }
     ],
 
-    // users: [
-    //   {
+    // admin: {
     //     id:           1,
-    //     email:        "admin@admin.com",
+    //     login:        "admin@admin.com",
     //     display_name: "Admin",
     //     verified:     true,
     //     permission_id:1
-    //   }
-    // ],
+    //   },
 
     oauth2_clients: [
         {

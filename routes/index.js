@@ -1,6 +1,7 @@
 "use strict";
 
 var db = require('../models');
+var config = require('../config');
 var requestHelper = require('../lib/request-helper');
 var authHelper = require('../lib/auth-helper');
 var querystring = require('querystring');
@@ -18,10 +19,10 @@ module.exports = function (router) {
             query = '?' + querystring.stringify(req.query);
         }
 
-        requestHelper.redirect(res, '/home' + query);
+        requestHelper.redirect(res, config.use_landing_page ? '/home' : '/user/profile' + query);
     });
 
-    router.get('/home', authHelper.ensureAuthenticated, function (req, res) {
+    router.get('/home', authHelper.authenticateFirst, function (req, res) {
         return res.render('./user/home.ejs');
     });
 };

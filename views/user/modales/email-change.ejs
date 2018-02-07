@@ -1,0 +1,49 @@
+<div class="modal fade" id="changeEmailModal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="changeEmailModalTitle"><%= __('PROFILE_CHANGE_EMAIL_MODAL_TITLE') %></h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert alert-danger alert-dismissible error-message" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <span class="message"></span>
+                </div>
+
+                <p><%= __('PROFILE_CHANGE_EMAIL_MODAL_TEXT') %></p>
+
+                <form id="changeEmailForm">
+                    <div class="form-group">
+                        <p id="change-email-error" class="text-danger"></p>
+                        <label for="change-email-new"><%= __('PROFILE_CHANGE_EMAIL_MODAL_FORM_NEW_EMAIL_LABEL') %></label>
+                        <input type="text"  class="form-control" id="change-email-new"
+                               placeholder="<%= __('PROFILE_CHANGE_EMAIL_MODAL_FORM_NEW_EMAIL_LABEL') %>">
+                        <label for="change-email-password"><%= __('ADMIN_USER_DELETE_MODALE_FORM_PASSWORD_LABEL') %></label>
+                        <input type="password"  class="form-control" id="change-email-password"
+                               placeholder="<%= __('ADMIN_USER_DELETE_MODALE_FORM_PASSWORD_LABEL') %>">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal"><%= __('PROFILE_CHANGE_EMAIL_MODAL_CLOSE') %></button>
+                <button id="change-email" type="button"
+                        class="btn btn-primary btn-normal-submit">
+                    <span class="button-label">
+                        <%= __('PROFILE_CHANGE_EMAIL_MODAL_SUBMIT') %>
+                    </span>
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

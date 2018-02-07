@@ -7,6 +7,7 @@ var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
 var initDatabase = function (done) {
+    var clock;
     db.Client
         .create({
             id: 3,
@@ -36,12 +37,13 @@ var initDatabase = function (done) {
         .then(function () {
             return db.User.create({
                 id: 4,
-                email: 'testuser',
                 provider_uid: 'testuser'
             });
         })
         .then(function (user) {
-            return user.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
         })
         .then(function () {
             return db.Domain.create({
@@ -61,6 +63,7 @@ var initDatabase = function (done) {
         })
         .then(function () {
             var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
+            clock = sinon.useFakeTimers({now: date, shouldAdvanceTime: true});
 
             return db.PairingCode.create({
                 id: 12,
@@ -77,6 +80,8 @@ var initDatabase = function (done) {
         })
         .then(function () {
             var date = new Date("Wed Apr 09 2014 11:00:05 GMT+0100");
+            clock.restore();
+            clock = sinon.useFakeTimers({now: date, shouldAdvanceTime: true});
 
             return db.PairingCode.create({
                 id: 15,
@@ -93,6 +98,8 @@ var initDatabase = function (done) {
         })
         .then(function () {
             var date = new Date("Wed Apr 09 2014 11:00:00 GMT+0100");
+            clock.restore();
+            clock = sinon.useFakeTimers({now: date, shouldAdvanceTime: true});
 
             return db.PairingCode.create({
                 id: 16,
@@ -108,6 +115,7 @@ var initDatabase = function (done) {
             });
         })
         .then(function () {
+                clock.restore();
                 done();
             },
             function (error) {
@@ -181,11 +189,23 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers({now: time, shouldAdvanceTime: true});
                 });
 
                 after(function () {
                     this.clock.restore();
+                });
+
+                before(function (done) {
+                    db.PairingCode.findAll().then(
+                        function (l) {
+                            for (var i in l) {
+                                //console.log(l[i].updated_at);
+                            }
+                            done();
+                        },
+                        done
+                    );
                 });
 
                 before(function (done) {
@@ -278,7 +298,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers({now: time, shouldAdvanceTime: true});
                 });
 
                 after(function () {
@@ -375,7 +395,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has expired
                     var time = new Date("Sat May 31 2014 11:00:00 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers({now: time, shouldAdvanceTime: true});
                 });
 
                 after(function () {
@@ -448,7 +468,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers({now: time, shouldAdvanceTime: true});
                 });
 
                 after(function () {
@@ -508,7 +528,7 @@ describe('POST /verify', function () {
                 before(function () {
                     // Ensure pairing code has not expired
                     var time = new Date("Wed Apr 09 2014 11:30:10 GMT+0100").getTime();
-                    this.clock = sinon.useFakeTimers(time, "Date");
+                    this.clock = sinon.useFakeTimers({now: time, shouldAdvanceTime: true});
                 });
 
                 after(function () {

@@ -1,6 +1,5 @@
 <% include layout/header %>
 
-
 <div class="container">
 
     <div class="col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">
@@ -13,14 +12,15 @@
             <div class="row">
                 <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
 
-                    <!-- show any messages that come back with singup process -->
+                    <!-- show any messages that come back with signup process -->
                     <% if (message.length > 0) { %>
-                    <div class="alert alert-danger"><%= message %></div>
+                    <div class="signup-error alert alert-danger" id="errorBox"><%- message %></div>
                     <% } %>
 
                     <form class="connect-forms" action="<%= link('/signup') %>" method="post">
 
                         <div class="signup-fields">
+
                             <div class="form-group">
                                 <input type="email" class="form-control" name="email"
                                        placeholder="<%= __('SIGNUP_EMAIL_LABEL') %>"
@@ -29,14 +29,75 @@
                                         <% } %>
                                        required>
                             </div>
+                            <% if(requiredFields.firstname) { %>
                             <div class="form-group">
-                                <input id="password" type="password" class="form-control" name="password"
-                                       placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
+                                <input id="firstname" name="firstname" class="form-control"
+                                       type="text" placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER') %>"
+                                        <% if(firstname) { %>
+                                       value="<%= firstname %>"
+                                        <% } %>
+                                >
                             </div>
+                            <% } %>
+                            <% if(requiredFields.lastname) { %>
                             <div class="form-group">
-                                <input id="password2" type="password" class="form-control" name="password2"
+                                <input id="lastname" name="lastname" class="form-control"
+                                       type="text" placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"
+                                        <% if(lastname) { %>
+                                       value="<%= lastname %>"
+                                        <% } %>
+                                >
+                            </div>
+                            <% } %>
+
+                            <% if(requiredFields.date_of_birth) {%>
+                            <div class="form-group">
+                                <div class="input-group date" data-provide="datepicker"
+                                     data-language="en">
+                                    <input id="date_of_birth" name="date_of_birth" class="form-control"
+                                           type="text" placeholder="<%= __('SIGNUP_DATE_OF_BIRTH_LABEL') %>"
+                                           <% if(date_of_birth) {%> value="<%= date_of_birth %>" <% } %>
+                                    >
+                                    <div class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                            <% if(requiredFields.gender) {%>
+                            <div class="form-group">
+                                <select id="gender" name="gender" class="form-control personnal-data-input">
+                                    <option class="input-gender"
+                                            <% if(!gender) {%>selected<% } %>
+                                            disabled>
+                                        <%= __('PROFILE_SEX_LABEL') %>
+                                    </option>
+                                    <option value="male" <% if(gender=='male') {%>selected<%}%> >
+                                        <%= __('PROFILE_MAN_SEX_FORM_OPTION') %>
+                                    </option>
+                                    <option value="female" <% if(gender=='female') {%>selected<%}%> >
+                                        <%= __('PROFILE_WOMAN_SEX_FORM_OPTION') %>
+                                    </option>
+                                    <option value="other" <% if(gender=='other') {%>selected<%}%> >
+                                        <%= __('PROFILE_OTHER_SEX_FORM_OPTION') %>
+                                    </option>
+                                </select>
+                            </div>
+                            <% } %>
+
+                            <div class="form-group">
+                                <input id="password" type="password" class="form-control password-test" name="password"
+                                       placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
+                                <p id="password-error-label" class="password-error error-message text-danger"></p>
+                                <div id="password-bar"><div id="password-progress"></div></div>
+                            </div>
+
+                            <div class="form-group">
+                                <input id="confirm_password" type="password" class="form-control" name="confirm_password"
                                        placeholder="<%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %>" required>
                             </div>
+
                         </div>
 
                         <% if(config.recaptcha.enabled) { %>
@@ -71,22 +132,28 @@
 
     </div>
 
-    <script>
-        var password = document.getElementById("password")
-            , confirm_password = document.getElementById("password2");
+</div>
+<script>
+    (function(){
+        var locale = '<%= language %>';
+        var $birthdayField = $('.date');
+        var $genderField = $('#gender');
 
-        function validatePassword() {
-            if (password.value != confirm_password.value) {
-                confirm_password.setCustomValidity('<%= __('SIGNUP_JS_PASSWORD_MISSMATCH_MSG') %>');
-            } else {
-                confirm_password.setCustomValidity('');
-            }
+        if($birthdayField.length) {
+            $birthdayField.datepicker({
+                format: 'dd/mm/yyyy',
+                language: locale,
+                endDate: "0d"
+            });
         }
 
-        password.onchange = validatePassword;
-        confirm_password.onkeyup = validatePassword;
-    </script>
-
-</div>
+        if($genderField) {
+            $genderField.on("change", function() {
+                $genderField.css("color", "#555");
+            });
+        }
+    })();
+</script>
+<% include util/password-support %>
 
 <% include layout/foot %>

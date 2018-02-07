@@ -23,7 +23,9 @@ h1 {
 
 main {
     opacity: 0;
-    flex: 1;
+    flex: auto;
+    -webkit-flex: auto; /* Safari 6.1+ */
+    -ms-flex: auto; /* IE 10 */
     margin-top: 30px;
 }
 
@@ -58,21 +60,21 @@ nav.navbar {
 }
 
 .btn-link {
-    color: #f56b6c;
+    color: #ff7043;
 }
 
 .btn-link:hover {
-    color: #f59b70;
+    color: #ffab00;
 }
 
 .btn-primary {
-    background-color: #f56b6c;
+    background-color: #ff7043;
     border-color: #ff7374;
     color: #fff;
 }
 
-.btn-primary:hover, .btn-primary.active, .btn-primary:focus {
-    background-color: #f59b70;
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus, .btn-primary:active:focus {
+    background-color: #ffab00;
     border-color: #f69d6e;
     color: #fff;
 }
@@ -84,6 +86,10 @@ nav.navbar {
 .btn.btn-large-submit {
     font-size: 1.4rem;
     padding: 10px;
+}
+
+.btn.btn-large-submit:focus {
+    outline: none;
 }
 
 form.connect-forms {
@@ -166,8 +172,14 @@ nav.navbar {
 nav .navbar-brand {
     padding: 4px 15px;
 }
+nav .navbar-brand > span {
+    position: relative;
+}
 nav .navbar-brand img{
-    width: 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 89px;
 }
 
 nav .lang abbr[title], .lang abbr[data-original-title] {
@@ -188,7 +200,7 @@ nav .lang ul.dropdown-menu {
 }
 
 nav .peach-title {
-    color: #f56b6c;
+    color: #ff7043;
     text-transform: capitalize;
     vertical-align: -4px;
 }
@@ -253,6 +265,10 @@ nav .peach-title {
 
 #signup .signup-fields {
     margin: 0 0 35px 0;
+}
+
+#signup #gender {
+    color: #999;
 }
 
 /*
@@ -320,12 +336,21 @@ nav .peach-title {
 #users .toolbar {
     background-color: #eee;
     padding: 10px;
-    text-align: right;
-    margin: 20px auto;
+    margin: 20px auto 0 auto;
+}
+
+#users .subtoolbar {
+    background-color: #d8d8d8;
+    padding: 10px;
+    margin: 0 auto 20px auto;
 }
 
 #users #alert-success, #users #alert-error {
     display: none;
+}
+
+#users .search {
+    text-align: right;
 }
 
 /*
@@ -492,8 +517,61 @@ g-recaptcha {
 ************ CLIENT
 ************
 */
+
 #client .btn-group{
     display: flex;
+}
+
+/*
+************
+************ PASSWORD TESTING
+************
+*/
+
+#password-bar {
+    padding: 0 5px;
+    width: 100%;
+    height:2px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 10px 0 0 0;
+    position: relative;
+}
+
+#password-bar #password-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background-color: #ccc;
+    transition: width 0.5s;
+}
+
+.password-error {
+    margin-top: 5px;
+}
+
+/*
+************
+************ LOADER
+************
+*/
+
+.loader {
+    display: none;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /*

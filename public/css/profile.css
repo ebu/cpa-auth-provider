@@ -1,7 +1,11 @@
 #profile .panel {
-    height: 75px;
+    padding-bottom: 0.5em;
     border-bottom: 1px solid #eee;
     box-shadow: none;
+}
+
+#profile .panel:not(.hidden) {
+    margin-top: 0;
 }
 
 #profile .panel.hidden {
@@ -9,6 +13,10 @@
 }
 
 #profile #btn-container, #profile #form-modify-pass {
+    display: none;
+}
+
+#profile .required-asterisk {
     display: none;
 }
 
@@ -85,7 +93,15 @@
     color: #4267b2;
 }
 
-#profile .providers-container .facebook-text + span {
+#profile .providers-container .google-text {
+    display: inline-block;
+    font-size: 18px;
+    color: #e42c11;
+}
+
+#profile .providers-container .facebook-text + span,
+#profile .providers-container .google-text + span,
+#profile .providers-container .twitter-text + span{
     padding-left: 10px;
 }
 
@@ -100,6 +116,15 @@
 #profile #password-error {
     display: none;
 }
+
+#profile #verification-link-form .recaptcha-wrapper {
+    margin: 10px 0;
+}
+#profile #delete-div {
+    margin-top: 20px;
+}
+
+
 
 @media (max-width: 767px) {
     #profile .h4, #profile h4 {

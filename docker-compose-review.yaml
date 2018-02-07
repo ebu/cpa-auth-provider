@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  idp:
+    image: ${CONTAINER_SHA_IMAGE}
+    environment:
+      - MAIL_FROM=no-reply@nobody.nowhere
+      - IDP_HOST=http://{$DEPLOY_URL}
+      - IDP_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+      - IDP_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+      - DEFAULT_LOCALE=fr
+      - DB_DATABASE=postgres
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=jlkjs88j3niusuufffff
+      - MAIL_TRANSPORT_TYPE=test
+      - TRACKING_COOKIE=true
+      - IDP_REVIEW_ADMIN_PASSWORD=${IDP_REVIEW_ADMIN_PASSWORD}
+      - MAIL_TRANSPORT_TYPE=gmail
+      - MAIL_USER_NAME=ebuidp@gmail.com
+      - MAIL_PASSWORD=${IDP_TEST_GMAIL_ACCOUNT_PASSWORD}
+    networks:
+      - default
+      - traefik-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.docker.network=traefik-net"
+        - "traefik.port=3000"
+        - "traefik.frontend.rule=Host:${DEPLOY_URL}"
+      placement:
+        constraints:
+          - node.labels.worker-dev==true
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=jlkjs88j3niusuufffff
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.worker-dev==true
+
+networks:
+  traefik-net:
+    external: true

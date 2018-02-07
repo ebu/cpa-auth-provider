@@ -18,10 +18,12 @@ services:
       - DB_PASSWORD=SchiefesHausBautFalsch
       - MAIL_TRANSPORT_TYPE=test
       - TRACKING_COOKIE=true
+      - CUSTOM_OAUTH_MSG={client} souhaite accéder à votre compte maRTS.
     depends_on:
       - postgres
     links:
       - postgres:postgres
+    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
   postgres:
     build: postgres
     ports:
@@ -31,3 +33,15 @@ services:
       - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
       - DOCKER_USER=dockeridp
       - DOCKER_PASSWORD=SchiefesHausBautFalsch
+  oauth2-client:
+    build: oauth2-client
+    ports:
+    - 3001:3001
+    environment:
+    - OAUTH2_CLIENT_ID=db05acb0c6ed902e5a5b7f5ab79e7144
+    - OAUTH2_CLIENT_SECRET=49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98
+    - OAUTH2_SERVER=http://localhost:3000
+    - OAUTH2_CALLBACK=http://localhost:3001
+    - OAUTH2_INTERNAL_SERVER=http://identity-provider:3000
+    links:
+    - identity-provider:identity-provider

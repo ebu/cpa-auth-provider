@@ -2,11 +2,18 @@
 
 module.exports = {
 
-    title: process.env.IDP_TITLE || '',
-
-    broadcasterLayout: process.env.BROADCASTER_LAYOUT || '',
-
-    broadcaster: '',
+    broadcaster: {
+        // Name of the Broadcaster
+        name: '',
+        // Name of the Broadcaster specific layout. Use '' for default one.
+        layout: process.env.BROADCASTER_LAYOUT || '',
+        // override the HTML default title value
+        title: process.env.IDP_TITLE || '',
+        oauth: {
+            // override the oauth validation message
+            customMessage: process.env.CUSTOM_OAUTH_MSG || ''
+        }
+    },
 
     i18n: {
         cookie_name: 'language',
@@ -23,19 +30,17 @@ module.exports = {
         },
         openam: {
             enabled: ('true' == process.env.OPEN_AM_ENABLED),
-            callback_url: process.env.OPEN_AM_CALL_BACK_URL,
             service_url: process.env.OPEN_AM_SERVICE_URL
         },
         facebook: {
             enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
             client_id: process.env.FACEBOOK_LOGIN_ID,
-            client_secret: process.env.FACEBOOK_LOGIN_SECRET,
-            callback_url: process.env.FACEBOOK_LOGIN_CALL_BACK_URL
+            client_secret: process.env.FACEBOOK_LOGIN_SECRET
         },
-        googleplus: {
-            enabled: false,
-            client_id: '',
-            client_secret: ''
+        google: {
+            enabled: ('true' == process.env.GOOGLE_LOGIN_ENABLED),
+            client_id: process.env.GOOGLE_LOGIN_ID,
+            client_secret: process.env.GOOGLE_LOGIN_SECRET
         },
         twitter: {
             enabled: false,
@@ -51,6 +56,14 @@ module.exports = {
         }
     },
 
+    userProfiles: {
+        requiredFields: process.env.PROFILE_FIELDS_REQUIRED
+            ? process.env.PROFILE_FIELDS_REQUIRED.toLowerCase().split(',')
+            : [],
+    },
+
+    baseUrl: process.env.BASE_URL,
+
     displayUsersInfos: ('true' === process.env.DISPLAY_USER_INFOS),
 
     displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
@@ -64,13 +77,17 @@ module.exports = {
             // transport: 'smtp',
             username: process.env.MAIL_USER_NAME,
             password: process.env.MAIL_PASSWORD,
-            // host: '',
-            // port: 465,
-            // secure: true
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
+            secure: process.env.MAIL_SECURE,
         },
         from: process.env.MAIL_FROM,
         host: process.env.IDP_HOST,
         defaultTemplateClass: process.env.MAIL_DEFAULT_TEMPLATE_CLASS
+    },
+
+    sentry: {
+        dsn: process.env.SENTRY_DSN
     },
 
     password: {
@@ -103,6 +120,7 @@ module.exports = {
     // When accessing the home page, if defined, users are automatically
     // redirected to the specified identity_providers (ie: 'github')
     auto_idp_redirect: process.env.AUTO_IDP_REDIRECT || '',
+    use_landing_page: process.env.USE_LANDING_PAGE || '',
 
     db: {
         host: process.env.DB_HOST,
@@ -134,9 +152,10 @@ module.exports = {
     // Cross-origin resource sharing
     cors: {
         enabled: true,
-        allowed_domains: [
+        allowed_domains:
             process.env.IDP_CLIENT_URL
-        ]
+                ? process.env.IDP_CLIENT_URL.toLowerCase().split(',')
+                : [],
     },
 
     // URL path prefix, e.g., '/myapp'
@@ -171,15 +190,13 @@ module.exports = {
             label: "other"
         }
     ],
-    // users: [
-    // 	{
+    // admin: {
     // 		id:           1,
-    // 		email:        "admin@admin.com",
+    // 		login:        "admin@admin.com",
     // 		display_name: "Admin",
     // 		verified:     true,
     // 		permission_id:      1
-    // 	}
-    // ],
+    // 	},
     oauth2_clients: [
         {
             id: 1,

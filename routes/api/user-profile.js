@@ -6,9 +6,8 @@ var passport = require('passport');
 var cors = require('../../lib/cors');
 var authHelper = require('../../lib/auth-helper');
 var util = require('util');
-var xssFilters = require('xss-filters');
+var userHelper = require('../../lib/user-helper');
 
-var jwtHelpers = require('../../lib/jwt-helper');
 var i18n = require('i18n');
 
 module.exports = function (app, options) {
@@ -26,19 +25,18 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
         } else {
-            db.UserProfile.findOrCreate({
-                where: {user_id: user.id}
-            }).spread(function (user_profile) {
+            db.LocalLogin.findOne({where:{user_id: user.id}}).then(function(localLogin){
+                var email = localLogin.login;
                 res.json({
                     success: true,
                     user_profile: {
-                        firstname: user_profile.firstname,
-                        lastname: user_profile.lastname,
-                        gender: user_profile.gender,
-                        birthdate: user_profile.birthdate ? parseInt(user_profile.birthdate) : user_profile.birthdate,
-                        language: user_profile.language,
-                        email: user.email,
-                        display_name: user_profile.getDisplayName(user, req.query.policy)
+                        firstname: user.firstname,
+                        lastname: user.lastname,
+                        gender: user.gender,
+                        date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
+                        language: user.language,
+                        email: email,
+                        display_name: user.getDisplayName(req.query.policy, email)
                     }
                 });
             });
@@ -48,65 +46,85 @@ module.exports = function (app, options) {
     app.put('/api/local/profile', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
         // Data validation
         if (req.body.firstname) {
-            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).isAlpha();
+            req.checkBody('firstname', req.__('API_PROFILE_FIRSTNAME_INVALIDE')).matches(userHelper.NAME_REGEX);
         }
         if (req.body.lastname) {
-            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).isAlpha();
+            req.checkBody('lastname', req.__('API_PROFILE_LASTNAME_INVALIDE')).matches(userHelper.NAME_REGEX);
         }
-        if (req.body.birthdate) {
-            req.checkBody('birthdate', req.__('API_PROFILE_BIRTHDATE_INVALIDE')).isInt();
+        if (req.body.date_of_birth) {
+            req.checkBody('date_of_birth', req.__('API_PROFILE_DATE_OF_BIRTH_INVALIDE')).isInt();
         }
         if (req.body.gender) {
-            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male'], ['female']);
+            req.checkBody('gender', req.__('API_PROFILE_GENDER_INVALIDE')).isIn(['male', 'female', 'other']);
         }
         if (req.body.language) {
             req.checkBody('language', req.__('API_PROFILE_LANGUAGE_INVALIDE')).isAlpha();
         }
 
-        req.getValidationResult().then(function (result) {
+        req.getValidationResult().then(
+            function (result) {
                 if (!result.isEmpty()) {
+                    result.useFirstErrorOnly();
                     // console.log('There have been validation errors: ' + util.inspect(result.array()));
                     res.status(400).json({
                         success: false,
-                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array
+                        msg: req.__('API_PROFILE_VALIDATION_ERRORS') + result.array({onlyFirstError: true})
                     });
-                }
-
-                else {
-
-                    var user = req.user;
-
-                    if (user) {
-                        db.UserProfile.findOrCreate({
-                            where: { user_id: user.id }
-                        }).spread(function (user_profile) {
-                                //use XSS filters to prevent users storing malicious data/code that could be interpreted then
-                                user_profile.updateAttributes(
-                                    {
-                                        firstname: req.body.firstname ? xssFilters.inHTMLData(req.body.firstname) : user_profile.firstname,
-                                        lastname: req.body.lastname ? xssFilters.inHTMLData(req.body.lastname) : user_profile.lastname,
-                                        gender: req.body.gender ? xssFilters.inHTMLData(req.body.gender) : user_profile.gender,
-                                        birthdate: req.body.birthdate ? xssFilters.inHTMLData(req.body.birthdate) + '' : user_profile.birthdate,
-                                        language: req.body.language ? xssFilters.inHTMLData(req.body.language) + '' : user_profile.language
-                                    })
-                                    .then(function () {
-                                            res.cookie(config.i18n.cookie_name, user_profile.language, {
-                                                maxAge: config.i18n.cookie_duration,
-                                                httpOnly: true
-                                            });
-                                            res.json({success: true, msg: req.__('API_PROFILE_SUCCESS')});
-                                        },
-                                        function (err) {
-                                            res.status(500).json({
-                                                success: false,
-                                                msg: req.__('API_PROFILE_FAIL') + err
-                                            });
-                                        });
+                } else {
+                    userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(
+                        function (userProfile) {
+                            res.cookie(config.i18n.cookie_name, userProfile.language, {
+                                maxAge: config.i18n.cookie_duration,
+                                httpOnly: true
+                            });
+                            res.json({success: true, msg: req.__('API_PROFILE_SUCCESS')});
+                        },
+                        function (err) {
+                            if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
+                                return res.status(400).json({
+                                    success: false,
+                                    msg: req.__('API_SIGNUP_MISSING_FIELDS'),
+                                    missingFields: err.data.missingFields
+                                });
+                            } else {
+                                res.status(500).json({
+                                    success: false,
+                                    msg: req.__('API_PROFILE_FAIL') + err
+                                });
                             }
-                        );
-                    }
+                        }
+                    );
                 }
             }
         );
     });
+
+
+    var requiredConfigQueryPath = '/api/local/profile/required-config';
+    app.options(requiredConfigQueryPath, cors);
+    app.get(
+        requiredConfigQueryPath,
+        cors,
+        function (req, res) {
+            var fields = userHelper.getRequiredFields();
+            var asObject = !req.query.hasOwnProperty('array');
+            var providers = [];
+            for (var idp in config.identity_providers) {
+                if (config.identity_providers[idp].enabled) {
+                    providers.push(idp);
+                }
+            }
+            if (asObject) {
+                return res.status(200).json({fields: fields, providers: providers});
+            } else {
+                var list = [];
+                for (var key in fields) {
+                    if (fields.hasOwnProperty(key) && fields[key]) {
+                        list.push(key);
+                    }
+                }
+                return res.status(200).json(list);
+            }
+        }
+    );
 };

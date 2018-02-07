@@ -4,13 +4,15 @@ var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
 var jwtHelpers = require('../../lib/jwt-helper');
+var logger = require('../../lib/logger');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var recaptcha = require('express-recaptcha');
 
 var jwt = require('jwt-simple');
-var JwtStrategy = require('passport-jwt').Strategy;
+var JwtStrategy = require('passport-jwt').Strategy,
+    ExtractJwt = require('passport-jwt').ExtractJwt;
 var cors = require('../../lib/cors');
 var generate = require('../../lib/generate');
 var emailUtil = require('../../lib/email-util');
@@ -18,6 +20,8 @@ var emailUtil = require('../../lib/email-util');
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
 var permissionName = require('../../lib/permission-name');
+var passwordHelper = require('../../lib/password-helper');
+var userHelper = require('../../lib/user-helper');
 if (config.recaptcha.enabled) {
     // Google reCAPTCHA
     recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
@@ -28,13 +32,21 @@ var codeHelper = require('../../lib/code-helper');
 var i18n = require('i18n');
 
 var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromExtractors(
+    [
+        ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+        ExtractJwt.fromAuthHeaderAsBearerToken()
+    ]
+);
 opts.secretOrKey = config.jwtSecret;
+// opts.issuer = "accounts.examplesoft.com";
+// opts.audience = "yoursite.net";
 passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
     if (!jwt_payload) {
         done(null, false);
         return;
     }
-    db.User.findOne({where: {id: jwt_payload.id}})
+    db.User.findOne({where: {id: jwt_payload.id}, include: [db.LocalLogin]})
         .then(function (user) {
             if (user) {
                 done(null, user);
@@ -58,38 +70,67 @@ module.exports = function (app, options) {
     app.post('/api/local/signup', cors, captchaVerify, function (req, res) {
 
         if (req.recaptcha.error) {
-            res.json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
+            res.status(400).json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
             return;
         }
 
         if (!req.body.email || !req.body.password) {
-            res.json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
+            res.status(400).json({success: false, msg: req.__('API_SIGNUP_PLEASE_PASS_EMAIL_AND_PWD')});
         } else {
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
-                    } else {
-                        db.Permission.findOne({where: {label: permissionName.USER_PERMISSION}}).then(function (permission) {
-                            var userParams = {
-                                email: req.body.email
-                            };
-                            if (permission) {
-                                userParams.permission_id = permission.id;
-                            }
-                            var user = db.User.create(userParams).then(function (user) {
-                                return user.setPassword(req.body.password);
-                            }).then(function () {
-                                res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
-                            }).catch(function (err) {
-                                console.log("ERROR", err);
-                                res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
-                            });
-                        });
+            var username = req.body.email;
+            var password = req.body.password;
+            var requiredAttributes = {};
+            config.userProfiles.requiredFields.forEach(
+                function (element) {
+                    if (req.body[element]) {
+                        requiredAttributes[element] = req.body[element];
                     }
-                }, function (error) {
-                    res.status(500).json({success: false, msg: req.__('API_ERROR') + error});
-                });
+                }
+            );
+            var optionnalAttributes = {};
+            for (var element in userHelper.getRequiredFields()) {
+                if (req.body[element] && !config.userProfiles.requiredFields.includes(element)) {
+                    optionnalAttributes[element] = req.body[element];
+                }
+            }
+
+            userHelper.createLocalLogin(username, password, requiredAttributes, optionnalAttributes).then(
+                function (user) {
+                    res.json({success: true, msg: req.__('API_SIGNUP_SUCCESS')});
+                },
+                function (err) {
+                    if (err.message === userHelper.EXCEPTIONS.EMAIL_TAKEN) {
+                        return res.status(400).json({success: false, msg: req.__('API_SIGNUP_EMAIL_ALREADY_EXISTS')});
+                    } else if (err.message === userHelper.EXCEPTIONS.PASSWORD_WEAK) {
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_PASS_IS_NOT_STRONG_ENOUGH'),
+                            password_strength_errors: passwordHelper.getWeaknesses(username, req.body.password, req),
+                            errors: [{msg: passwordHelper.getWeaknessesMsg(username, req.body.password, req)}]
+                        });
+                    } else if (err.message === userHelper.EXCEPTIONS.MISSING_FIELDS) {
+                        logger.debug('[POST /api/local/signup][email', username, '][ERR', err, ']');
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS'),
+                            missingFields: err.data ? err.data.missingFields : undefined
+                        });
+                    } else if (err.message === userHelper.EXCEPTIONS.UNKNOWN_GENDER) {
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                        });
+                    } else if (err.message === userHelper.EXCEPTIONS.MALFORMED_DATE_OF_BIRTH) {
+                        return res.status(400).json({
+                            success: false,
+                            msg: req.__('API_SIGNUP_MISSING_FIELDS')
+                        });
+                    } else {
+                        logger.error('[POST /api/local/signup][email', username, '][ERR', err, ']');
+                        res.status(500).json({success: false, msg: req.__('API_ERROR') + err});
+                    }
+                }
+            );
         }
     });
 
@@ -108,22 +149,22 @@ module.exports = function (app, options) {
                 return;
             }
 
-            db.User.findOne({where: {email: req.body.email}})
-                .then(function (user) {
-                    if (user) {
-                        codeHelper.generatePasswordRecoveryCode(user).then(function (code) {
+            db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
+                .then(function (localLogin) {
+                    if (localLogin) {
+                        codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
                             emailHelper.send(
                                 config.mail.from,
-                                user.email,
+                                localLogin.login,
                                 "password-recovery-email",
                                 {log: false},
                                 {
-                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                                    forceLink: config.mail.host + config.urlPrefix + '/password/edit?email=' + encodeURIComponent(localLogin.login) + '&code=' + encodeURIComponent(code),
                                     host: config.mail.host,
-                                    mail: user.email,
+                                    mail: localLogin.login,
                                     code: code
                                 },
-                                (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                                localLogin.User.language ? localLogin.User.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },
@@ -142,20 +183,20 @@ module.exports = function (app, options) {
     });
 
     app.post('/api/local/authenticate', cors, function (req, res) {
-        db.User.findOne({where: {email: req.body.email}})
-            .then(function (user) {
-                    if (!user || !req.body.password) {
+        db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
+            .then(function (localLogin) {
+                    if (!localLogin || !req.body.password) {
                         res.status(401).json({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
                         return;
                     }
 
-                    user.verifyPassword(req.body.password).then(function (isMatch) {
+                    localLogin.verifyPassword(req.body.password).then(function (isMatch) {
                             if (isMatch) {
-                                user.logLogin().then(function () {
+                                localLogin.logLogin(localLogin.User).then(function () {
                                 }, function () {
                                 });
                                 // if user is found and password is right create a token
-                                var token = jwt.encode(user, config.jwtSecret);
+                                var token = jwt.encode(localLogin.User, config.jwtSecret);
                                 // return the information including token as JSON
                                 res.json({success: true, token: 'JWT ' + token});
                             } else {
@@ -182,22 +223,20 @@ module.exports = function (app, options) {
     app.get('/api/local/info', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
         var user = req.user;
         if (!user) {
-            return res.status(403).send({success: false, msg: INCORRECT_LOGIN_OR_PASS});
+            return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
         } else {
-
-            db.UserProfile.findOrCreate({
-                where: {user_id: user.id}
-            }).spread(function (user_profile) {
-                res.json({
-                    success: true,
-                    user: {
-                        email: user.email,
-                        display_name: user_profile.getDisplayName(user, req.query.policy),
-                        admin: user.admin
-                    }
-                });
+            var data = {};
+            if (user.LocalLogin) {
+                data.email = user.LocalLogin.login;
+                data.display_name = user.getDisplayName(req.query.policy, user.LocalLogin.login);
+            } else {
+                data.display_name = user.getDisplayName(req.query.policy, '');
+            }
+            res.json({
+                success: true,
+                user: data,
+                token: 'JWT ' + token
             });
-
         }
     });
 
@@ -212,16 +251,16 @@ module.exports = function (app, options) {
 
                 emailHelper.send(
                     config.mail.from,
-                    user.email,
+                    user.LocalLogin ? user.LocalLogin.login : '',
                     "validation-email",
                     {log: false},
                     {
-                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.email) + '&code=' + encodeURIComponent(code),
+                        confirmLink: config.mail.host + '/email_verify?email=' + encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : '') + '&code=' + encodeURIComponent(code),
                         host: config.mail.host,
-                        mail: encodeURIComponent(user.email),
+                        mail: encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : ''),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : req.getLocale()
+                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
                 ).then(
                     function () {
                     },

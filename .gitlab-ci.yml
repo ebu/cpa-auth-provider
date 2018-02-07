@@ -1,11 +1,19 @@
-image: node:7
+image: node:8.4
 
 variables:
   GIT_SUBMODULE_STRATEGY: normal
+  DOCKER_DRIVER: overlay
+  CONTAINER_RELEASE_IMAGE: registry.ebu.io/pipe/identity-provider:$CI_COMMIT_REF_NAME
+  CONTAINER_SHA_IMAGE: registry.ebu.io/pipe/identity-provider:$CI_COMMIT_SHA
+  CONTAINER_REGISTRY: registry.ebu.io
+  PROJECT_NAME: identity-provider
+  REVIEW_SERVICE_NAME: identity-provider-$CI_ENVIRONMENT_SLUG
 
 stages:
   - test
+  - build
   - docker-publish
+  - deploy-test-env
 
 npm_test:
   stage: test
@@ -16,20 +24,85 @@ npm_test:
     - make coverage
 #  coverage: /Lines\s+: \d+(\.\d*)?%.*/
 
-docker_push:
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t identity-provider .
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD $CONTAINER_REGISTRY
+    - docker tag identity-provider $CONTAINER_SHA_IMAGE
+    - docker push $CONTAINER_SHA_IMAGE
+  tags:
+    - dind
+
+
+deploy_review_environment:
   stage: docker-publish
   image: docker:latest
   services:
     - docker:dind
   variables:
-    DOCKER_DRIVER: overlay
-    CONTAINER_RELEASE_IMAGE: registry.ebu.io/pipe/identity-provider:develop
+    DEPLOY_URL: ${PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.pipe-swarm.ebu.io
+    DOCKER_HOST: tcp://$SWARM_IP:2376
+    DOCKER_TLS_VERIFY: 1
   script:
-    - docker build -t identity-provider .
-    - docker login -u dind-runner -p $REGISTRY_PASSWORD registry.ebu.io
-    - docker tag identity-provider $CONTAINER_RELEASE_IMAGE
+    - mkdir -pv ~/.docker; echo "$DOCKER_CA" > ~/.docker/ca.pem; echo "$DOCKER_CERT" > ~/.docker/cert.pem; echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD $CONTAINER_REGISTRY
+    - docker stack deploy --with-registry-auth --compose-file=docker-compose-review.yaml ${REVIEW_SERVICE_NAME}
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://${PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}.pipe-swarm.ebu.io
+    on_stop: stop_review_environment
+  except:
+    - master
+  tags:
+    - dind
+
+
+stop_review_environment:
+  stage: docker-publish
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_HOST: tcp://$SWARM_IP:2376
+    DOCKER_TLS_VERIFY: 1
+  script:
+    - mkdir -pv ~/.docker; echo "$DOCKER_CA" > ~/.docker/ca.pem; echo "$DOCKER_CERT" > ~/.docker/cert.pem; echo "$DOCKER_KEY" > ~/.docker/key.pem
+    - docker stack rm ${REVIEW_SERVICE_NAME}
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  except:
+    - master
+  tags:
+    - dind
+
+
+docker_push:
+  stage: docker-publish
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u dind-runner -p $REGISTRY_PASSWORD $CONTAINER_REGISTRY
+    - docker pull $CONTAINER_SHA_IMAGE
+    - docker tag $CONTAINER_SHA_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - develop
   tags:
     - dind
+
+deploy_idp_test:
+  stage: deploy-test-env
+  image: appropriate/curl
+  script:
+    - curl -X POST -F token=ed97645e904fbb43edd1b0ac7c4ef6 -F ref=master https://git.ebu.io/api/v4/projects/273/trigger/pipeline
+  only:
+    - develop

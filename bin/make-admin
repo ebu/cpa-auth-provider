@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+"use strict";
+
+/**
+ * Script to uplift an user to admin privileges
+ *
+ * Usage: $ bin/make-admin --email=<email>
+ */
+
+
+var db = require('../models');
+
+var EMAIL = '--email=';
+
+var username;
+for (var i in process.argv) {
+    if (process.argv[i].startsWith(EMAIL)) {
+        username = process.argv[i].slice(EMAIL.length);
+        break;
+    }
+}
+
+if (username) {
+    db.LocalLogin.find({where: {login: username}, include: [db.User]}).then(
+        function (localLogin) {
+            if (!localLogin) {
+                console.log('local login not found for:', username);
+                return;
+            }
+            if (localLogin.verified) {
+                return localLogin.User.updateAttributes({permission_id: 1});
+            } else {
+                console.log('local login', username, 'has not verified email yet!');
+            }
+        }
+    ).then(
+        function (u) {
+            if (u) {
+                console.log('updated', username, 'to have admin permission.');
+            } else {
+                console.log('no changes were made.');
+            }
+        }
+    ).catch(
+        function (e) {
+            console.log('Something went wrong:', e);
+        }
+    );
+} else {
+    console.log('Usage: bin/make-admin --email=<email>');
+}

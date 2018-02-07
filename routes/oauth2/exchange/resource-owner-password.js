@@ -1,13 +1,17 @@
 "use strict";
 
 var db = require('../../../models');
-var oauthToken = require('../../../lib/oauth2-token');
+var oauthTokenHelper = require('../../../lib/oauth2-token');
 var TokenError = require('oauth2orize').TokenError;
 var logger = require('../../../lib/logger');
 var userDeletion = require('../../../lib/user-deletion');
 
 var USER_NOT_FOUND = oauthToken.ERRORS.USER_NOT_FOUND;
 var WRONG_PASSWORD = oauthToken.ERRORS.WRONG_PASSWORD;
+
+var INCORRECT_LOGIN_OR_PASS = 'INCORRECT_LOGIN_OR_PASS';
+var INVALID_REQUEST = 'invalid_request';
+
 
 // Grant authorization by resource owner (user) and password credentials.
 // The user is authenticated and checked for validity - this strategy should
@@ -20,28 +24,29 @@ exports.token = function (client, username, password, scope, reqBody, done) {
 };
 
 function confirmUser(client, username, password, scope, extraArgs, done) {
-    db.User.findOne(
-        {where: {email: username}}
+    var user;
+    db.LocalLogin.findOne(
+        {where: {login: username}, include: {model: db.User}}
     ).then(
-        function (user) {
-            if (!user) {
-                done(new TokenError(USER_NOT_FOUND.message, USER_NOT_FOUND.code));
-                return;
+        function (localLogin) {
+            if (!localLogin) {
+                throw new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST);
             }
-
-            user.verifyPassword(password).then(function (isMatch) {
-                    if (isMatch) {
-                        return provideAccessToken(client, user, extraArgs, done);
-                    } else {
-                        return done(new TokenError(WRONG_PASSWORD.message, WRONG_PASSWORD.code));
-                    }
-                },
-                function (err) {
-                    done(err);
-                });
-        },
-        function (error) {
-            done(error);
+            user = localLogin.User;
+            return localLogin.verifyPassword(password);
+        }
+    ).then(
+        function (isMatch) {
+            if (isMatch) {
+                provideAccessToken(client, user, scope, extraArgs, done);
+            } else {
+                throw new TokenError(INCORRECT_LOGIN_OR_PASS, INVALID_REQUEST);
+            }
+        }
+    ).catch(
+        function (err) {
+            logger.error('[OAuth2][ResourceOwner][FAIL][username', username, '][err', err, ']');
+            return done(err);
         }
     );
 }
@@ -55,15 +60,15 @@ function provideAccessToken(client, user, extraArgs, done) {
     }
 
     var accessToken, refreshToken, extras;
-    oauthToken.generateAccessToken(client, user, access_duration).then(
+    oauthTokenHelper.generateAccessToken(client, user, access_duration).then(
         function (_token) {
             accessToken = _token;
-            return oauthToken.generateRefreshToken(client, user, undefined, refresh_duration);
+            return oauthTokenHelper.generateRefreshToken(client, user, undefined, refresh_duration);
         }
     ).then(
         function (_token) {
             refreshToken = _token;
-            return oauthToken.generateTokenExtras(client, user, access_duration);
+            return oauthTokenHelper.generateTokenExtras(client, user, access_duration);
         }
     ).then(
         function (_extras) {

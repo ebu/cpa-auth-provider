@@ -2,6 +2,7 @@
 
 var db = require('../../models');
 var authHelper = require('../../lib/auth-helper');
+var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var requestHelper = require('../../lib/request-helper');
 var generate = require('../../lib/generate');
@@ -10,8 +11,8 @@ var csv = require('csv-string');
 var permissionHelper = require('../../lib/permission-helper');
 var permissionName = require('../../lib/permission-name');
 var config = require('../../config');
-var promise = require('bluebird');
 var bcrypt = require('bcrypt');
+var moment = require('moment');
 
 
 module.exports = function (router) {
@@ -48,7 +49,7 @@ module.exports = function (router) {
 
     router.get('/api/admin/clients/:id', [authHelper.authenticateFirst, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
         return db.OAuth2Client.findOne({
-            id: req.params.id
+            where: {id: req.params.id}
         }).then(
             function (client) {
                 if (client) {
@@ -237,17 +238,50 @@ module.exports = function (router) {
         if (!config.displayUsersInfos) {
             return res.sendStatus(404);
         }
+        return db.Permission.findAll().then(function (permissions) {
+            var permAdminId = -1;
+            var permUserId = '';
+            for (var i = 0; i < permissions.length; i++) {
+                if (permissions[i].label === permissionName.ADMIN_PERMISSION) {
+                    permAdminId = permissions[i].id;
+                }
+                if (permissions[i].label === permissionName.USER_PERMISSION) {
+                    permUserId = permissions[i].id;
+                }
+            }
+            userHelper.getUsers(req, permAdminId).then(function (users) {
 
-        db.Permission.findAll().then(function (permissions) {
-            db.User.findAll().then(
-                function (users) {
-                    return res.render('./admin/users.ejs', {users: users, permissions: permissions});
-                },
-                function (err) {
-                    res.send(500);
-                    logger.debug('[Admins][get /admin/users][error', err, ']');
+                return res.render('./admin/users.ejs', {
+                    users: userHelper.getDisplayableUser(users),
+                    permAdminId: permAdminId,
+                    permUserId: permUserId,
+                    moment: moment
                 });
+            }, function (err) {
+                logger.debug('[Admins][get /admin/users][error', err, ']');
+                return res.send(500);
+            });
         });
+    });
+
+    router.get('/api/admin/users', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
+
+        //Depending on countries user protection laws, set this config variable to deny access to user infos
+        if (!config.displayUsersInfos) {
+            return res.sendStatus(404);
+        }
+        db.Permission.find({where: {label: permissionName.ADMIN_PERMISSION}}).then(function (permission) {
+            userHelper.countUsers(req, permission.id).then(function (count) {
+                userHelper.getUsers(req, permission.id).then(
+                    function (users) {
+                        return res.status(200).json({users: userHelper.getDisplayableUser(users), count: count});
+                    }, function () {
+                        return res.send(500);
+                    });
+            });
+        });
+
+
     });
 
 
@@ -258,23 +292,23 @@ module.exports = function (router) {
             return res.sendStatus(404);
         }
 
-        db.User.findAll({include: [{model: db.Permission}]})
+        db.User.findAll({include: [db.Permission, db.LocalLogin], order: ['firstname']})
             .then(
                 function (resultset) {
-                    var head = ['email', 'permission_id', 'permission', 'created', 'password_changed', 'last_login'];
+                    var head = ['id', 'email', 'firstname', 'lastname', 'permission_id', 'permission', 'created', 'password_changed', 'last_seen'];
                     var lines = [];
                     lines.push(head);
                     for (var i = 0; i < resultset.length; i++) {
-                        var id = '';
+                        var permissionId = '';
                         var label = '';
                         if (resultset[i].Permission) {
-                            id = resultset[i].Permission.id;
+                            permissionId = resultset[i].Permission.id;
                             label = resultset[i].Permission.label;
                         }
                         var createdAt = resultset[i].created_at;
-                        var passwordChangedAt = new Date(resultset[i].password_changed_at);
-                        var lastLoginAt = resultset[i].last_login_at ? new Date(resultset[i].last_login_at) : '';
-                        lines.push([resultset[i].email, id, label, createdAt, passwordChangedAt, lastLoginAt]);
+                        var passwordChangedAt = resultset[i].LocalLogin && resultset[i].LocalLogin.password_changed_at ? new Date(parseInt(resultset[i].LocalLogin.password_changed_at)) : '';
+                        var lastSeen = resultset[i].last_seen ? new Date(parseInt(resultset[i].last_seen)) : '';
+                        lines.push([resultset[i].id, resultset[i].LocalLogin ? resultset[i].LocalLogin.login : '', resultset[i] ? resultset[i].firstname : '', resultset[i] ? resultset[i].lastname : '', permissionId, label, createdAt, passwordChangedAt, lastSeen]);
                     }
 
                     var toDownload = csv.stringify(lines);
@@ -291,21 +325,31 @@ module.exports = function (router) {
     });
 
     router.post('/admin/users/:user_id/permission', [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)], function (req, res) {
-        db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
-            if (!permission) {
-                return res.status(400).send({
-                    success: false,
-                    msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')
-                });
-            }
+        if (!req.body.permission) {
             db.User.findOne({where: {id: req.params.user_id}})
                 .then(
                     function (user) {
-                        user.updateAttributes({permission_id: permission.id}).then(function () {
+                        user.updateAttributes({permission_id: null}).then(function () {
                             return res.status(200).send({success: true, user: user});
                         });
                     });
-        });
+        } else {
+            db.Permission.findOne({where: {id: req.body.permission}}).then(function (permission) {
+                if (!permission) {
+                    return res.status(400).send({
+                        success: false,
+                        msg: req.__('BACK_ADMIN_SET_USER_PERMISSION_WRONG_PERMISSION_ID')
+                    });
+                }
+                db.User.findOne({where: {id: req.params.user_id}})
+                    .then(
+                        function (user) {
+                            user.updateAttributes({permission_id: permission.id}).then(function () {
+                                return res.status(200).send({success: true, user: user});
+                            });
+                        });
+            });
+        }
 
 
     });
@@ -322,7 +366,7 @@ module.exports = function (router) {
             redirect_uri: client.redirect_uri,
             email_redirect_uri: client.email_redirect_uri,
             created_at: client.created_at,
-            udpated_at: client.udpated_at
+            updated_at: client.updated_at
 
         };
     }

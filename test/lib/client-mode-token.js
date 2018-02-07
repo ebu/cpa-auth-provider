@@ -54,7 +54,7 @@ describe('POST /token', function () {
                 // Fix creation time of access token, so we can verify the expires_in
                 // field.
                 var time = new Date("Wed Apr 09 2014 11:00:00 GMT+0100").getTime();
-                this.clock = sinon.useFakeTimers(time, "Date");
+                this.clock = sinon.useFakeTimers(time);
             });
 
             after(function () {

@@ -3,54 +3,25 @@
 var db = require('../../models');
 var config = require('../../config');
 var requestHelper = require('../../lib/request-helper');
+var facebookHelper = require('../../lib/facebook-helper');
+var callbackHelper = require('../../lib/callback-helper');
+var socialLoginHelper = require('../../lib/social-login-helper');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-function findOrCreateExternalUser(email, defaults) {
-    return new Promise(function (resolve, reject) {
-        db.User.find(
-            {
-                where: {
-                    email: email
-                }
-            }
-        ).then(
-            function (user) {
-                if (!user) {
-                    return db.User.findOrCreate(
-                        {
-                            where: {
-                                email: email
-                            },
-                            defaults: defaults
-                        }
-                    ).spread(
-                        function (user, created) {
-                            return resolve(user);
-                        }
-                    ).catch(reject);
-                }
-                if (!user.verified) {
-                    return resolve(false);
-                }
-                if(user.display_name) {
-                    defaults.display_name = user.display_name;
-                }
-                return user.updateAttributes(
-                    defaults
-                ).then(resolve, reject);
-            },
-            reject
-        );
-    });
-}
+// Fields to import: Email, First and Last Name, Gender, Birthdate
+// birthday => This is a fixed format string, like MM/DD/YYYY. However, people can control who can see the year they were born separately from the month and day so this string can be only the year (YYYY) or the month + day (MM/DD)
+// gender =>  male or female
+var REQUESTED_FIELDS = ['id', 'email', 'displayName', 'first_name', 'last_name', 'gender', 'birthday'];
+var REQUESTED_PERMISSIONS = ['email', 'user_birthday'];
 
 passport.use(new FacebookStrategy({
         clientID: config.identity_providers.facebook.client_id,
         clientSecret: config.identity_providers.facebook.client_secret,
-        callbackURL: config.identity_providers.facebook.callback_url,
-        profileFields: ['id', 'emails', 'displayName']
+        callbackURL: callbackHelper.getURL('/auth/facebook/callback'),
+        profileFields: REQUESTED_FIELDS
+
     },
     function (accessToken, refreshToken, profile, done) {
         var email = '';
@@ -58,26 +29,21 @@ passport.use(new FacebookStrategy({
             email = profile.emails[0].value;
         }
 
-        if (email === '') {
-            // how to react to such an error!?
-            return done(new Error('NO_EMAIL', null));
-        }
+        var providerUid = facebookHelper.buildFBId(profile.id);
 
-        var providerUid = 'fb:' + profile.id;
-
-        return findOrCreateExternalUser(
-            email,
-            {
-                provider_uid: providerUid,
-                display_name: profile.displayName,
-                verified: true
-            }
-        ).then(
-            function (u) {
-                if (u) {
-                    u.logLogin();
+        return socialLoginHelper.findOrCreateSocialLoginUser(socialLoginHelper.FB, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, facebookHelper.fbDateOfBirthToTimestamp(profile._json.birthday)).then(
+            function (user) {
+                if (user) {
+                    db.SocialLogin.findOne({
+                        where: {
+                            user_id: user.id,
+                            name: socialLoginHelper.FB
+                        }
+                    }).then(function (socialLogin) {
+                        socialLogin.logLogin(user);
+                    });
                 }
-                return done(null, u);
+                return done(null, user);
             }
         ).catch(
             function (err) {
@@ -88,20 +54,25 @@ passport.use(new FacebookStrategy({
 ));
 
 module.exports = function (app, options) {
-    app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
+    app.get('/auth/facebook', passport.authenticate('facebook', {scope: REQUESTED_PERMISSIONS}));
 
     app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', {failureRedirect: '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED'}),
+        passport.authenticate('facebook', {failureRedirect: config.urlPrefix + '/auth?error=LOGIN_INVALID_EMAIL_BECAUSE_NOT_VALIDATED_FB'}),
         function (req, res) {
 
             var redirectUri = req.session.auth_origin;
             delete req.session.auth_origin;
 
-            if (redirectUri) {
-                return res.redirect(redirectUri);
-            }
-            // Successful authentication, redirect home.
-            requestHelper.redirect(res, '/');
+            req.session.save(
+                function () {
+                    if (redirectUri) {
+                        return res.redirect(redirectUri);
+                    }
+                    // Successful authentication, redirect home.
+                    requestHelper.redirect(res, '/');
+                }
+            );
 
         });
 };
+

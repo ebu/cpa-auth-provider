@@ -9,11 +9,12 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (done) {
     db.User.create({
-        email: 'testuser',
         provider_uid: 'testuser'
     })
         .then(function (user) {
-            return user.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+                return localLogin.setPassword('testpassword');
+            });
         })
         .then(function () {
                 done();
@@ -96,8 +97,8 @@ describe('GET /protected', function () {
             requestHelper.sendRequest(this, '/protected', null, done);
         });
 
-        it('should return a status 401', function () {
-            expect(this.res.statusCode).to.equal(401);
+        it('should return a status 302', function () {
+            expect(this.res.statusCode).to.equal(302);
         });
     });
 

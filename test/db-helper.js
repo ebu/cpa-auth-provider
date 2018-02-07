@@ -17,7 +17,9 @@ module.exports = {
             'Users',
             'Permissions',
             'UserEmailTokens',
-            'UserProfiles'
+            'SocialLogins',
+            'LocalLogins',
+            'OAuth2RefreshTokens'
         ];
 
         var deleteData = function (table, done) {
@@ -41,6 +43,18 @@ module.exports = {
                     done(error);
                 });
             }
+        });
+    },
+
+    createFakeUser: function (userTemplate, done) {
+        return db.User.create(userTemplate).then(function (user) {
+            return db.LocalLogin.create({login: userTemplate.email, user_id: user.id}).then(function (localLogin) {
+                return localLogin.setPassword(userTemplate.password);
+            }).then(
+                function () {
+                    done();
+                }
+            );
         });
     }
 };

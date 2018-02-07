@@ -1,5 +1,4 @@
 [![build status](https://git.ebu.io/pipe/identity-provider/badges/develop/build.svg)](https://git.ebu.io/pipe/identity-provider/commits/develop)
-[![coverage report](https://git.ebu.io/pipe/identity-provider/badges/develop/coverage.svg)](https://git.ebu.io/pipe/identity-provider/commits/develop)
 
 # Cross-Platform Authentication - Authorization Provider
 
@@ -12,7 +11,8 @@ More information on the [EBU Cross-Platform Authentication project](http://tech.
 
 ## Prerequisites
 
-Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
+- Ensure your system has [Node.js](http://nodejs.org/) (v0.10 or later) and NPM installed.
+- Ensure your system has [Yarn](https://yarnpkg.com/en/) installed. (on mac, you can do so with [Homebrew](https://brew.sh/) with `brew install yarn --without-node`)
 
 ## Getting started
 
@@ -43,7 +43,13 @@ Edit `config.local.js` to set the necessary configuration options:
 
 ## Initialise the database
 
-    $ NODE_ENV=development bin/init-db
+Configure the database parameters also in `migrate/migrations_config.js`.
+If you use a docker, this will all happen automatically.
+
+    $ npm install -g sequelize-cli
+    $ sequelize db:migrate
+    
+If you want some default values, also run `bin/prep-db`.
 
 ## Start the server
 
@@ -78,6 +84,21 @@ To run the unit tests:
 To generate a test coverage report (in the `coverage` directory);
 
     $ make coverage
+    
+Empty migrations can be created (once sequelize-cli is installed):
+
+    $ sequelize migration:create
+
+New models can be added (once sequelize-cli is installed):
+
+    $ sequelize model:create --name User --attributes 'name:string, email:string'
+    
+It's possible to test with scaling of instances:
+
+    $ docker-compose -f docker-compose-nginx.yaml build
+    $ docker-compose -f docker-compose-nginx.yaml up -d postgres
+    $ docker-compose -f docker-compose-nginx.yaml up -d --scale identity-provider=4
+    $ docker-compose -f docker-compose-nginx.yaml up -d proxy
 
 ## Related projects
 

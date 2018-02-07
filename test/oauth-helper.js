@@ -58,9 +58,14 @@ function createUsers(userList) {
             userList.forEach(createFakeUser);
 
             function createFakeUser(def) {
-                db.User.create(def).then(
+                return db.User.create(def).then(
                     function (user) {
-                        return user.setPassword(def.password);
+                       return db.LocalLogin.create({login: def.email, user_id: user.id}).then(
+                            function (localLogin) {
+                                return localLogin.setPassword(def.password);
+
+                            }
+                        );
                     }
                 ).then(
                     function () {
@@ -86,7 +91,7 @@ function createUsers(userList) {
     );
 }
 
-function getAccessToken(user, client) {
+function getAccessToken(email, user, client) {
     return function (done) {
         requestHelper.sendRequest(
             this,
@@ -97,7 +102,7 @@ function getAccessToken(user, client) {
                 type: 'form',
                 data: {
                     grant_type: 'password',
-                    username: user.email,
+                    username: email,
                     password: user.password,
                     client_id: client.client_id,
                     client_secret: client.client_secret
@@ -105,5 +110,5 @@ function getAccessToken(user, client) {
             },
             done
         );
-    }
+    };
 }

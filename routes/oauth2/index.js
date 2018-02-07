@@ -126,7 +126,9 @@ module.exports = function (router) {
             res.render('oauth2/dialog', {
                 transactionID: req.oauth2.transactionID,
                 user: req.user,
-                client: req.oauth2.client
+                email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
+                client: req.oauth2.client,
+                customMessage: config.broadcaster && config.broadcaster.oauth ? config.broadcaster.oauth.customMessage : undefined
             });
         }
     ];

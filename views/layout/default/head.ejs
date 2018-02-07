@@ -9,17 +9,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Bootstrap -->
-<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
-<link href="/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<link rel="stylesheet" href="<%= config.urlPrefix %>/bootstrap/dist/css/bootstrap.min.css">
+<link href="<%= config.urlPrefix %>/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
-<link href="/assets/css/main.css" rel="stylesheet">
+<link href="<%= config.urlPrefix %>/assets/css/main.css" rel="stylesheet">
 
 <% if ( broadcaster && broadcaster.name === "rts" ) { %>
 <%- include ../rts/head %>
 <% } %>
 
-<link href="/assets/css/profile.css" rel="stylesheet">
-<link href="/assets/css/font-awesome.min.css" rel="stylesheet">
+<link href="<%= config.urlPrefix %>/assets/css/profile.css" rel="stylesheet">
+<link href="<%= config.urlPrefix %>/assets/css/font-awesome.min.css" rel="stylesheet">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -29,16 +29,18 @@
 <![endif]-->
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="/js/jquery.min.js"></script>
-<script src="/jquery-form/jquery.form.js"></script>
+<script src="<%= config.urlPrefix %>/js/jquery.min.js"></script>
+<script src="<%= config.urlPrefix %>/jquery-form/jquery.form.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/cookie/src/js.cookie.js"></script>
+<script src="<%= config.urlPrefix %>/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="<%= config.urlPrefix %>/cookie/src/js.cookie.js"></script>
+<script src='<%= config.urlPrefix %>/owasp/owasp-password-strength-test.js'></script>
+<script src='<%= config.urlPrefix %>/moment/moment.js'></script>
 
-<script type="text/javascript" src="/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr.js"
+<script type="text/javascript" src="<%= config.urlPrefix %>/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="<%= config.urlPrefix %>/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr.js"
         charset="UTF-8"></script>
-<script type="text/javascript" src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js"
+<script type="text/javascript" src="<%= config.urlPrefix %>/bootstrap-datepicker/js/locales/bootstrap-datepicker.de.js"
         charset="UTF-8"></script>
 
 <script>
@@ -47,5 +49,5 @@
         siteKey = '<%= config.recaptcha.site_key %>';
 </script>
 
-<script type="text/javascript" src="/assets/js/lang.js"></script>
-<script type="text/javascript" src="/assets/js/load.js"></script>
+<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/lang.js"></script>
+<script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/load.js"></script>

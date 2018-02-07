@@ -8,34 +8,27 @@ var dbHelper = require('../db-helper');
 
 var initDatabase = function (opts, done) {
 
-    db.Permission
-        .create({
-                id: 1,
-                label: "admin"
-            }
-        ).then(function () {
-        db.User
-            .create({
-                id: 3,
-                email: 'testuser',
-                provider_uid: 'testuser',
-                display_name: 'Test User',
-                permission_id: 1
-            })
-            .then(function (user) {
-                return user.setPassword('testpassword');
-            })
-            .catch(function () {
-            })
-            .then(function () {
-                    done();
-                },
-                function (error) {
-                    done(new Error(JSON.stringify(error)));
-                });
-    });
-
-
+    return db.Permission.create({
+            id: 1,
+            label: "admin"
+        }
+    ).then(function (permission) {
+        return db.User.create({
+            id: 3,
+            display_name: 'Test User',
+            permission_id: permission.id
+        });
+    }).then(function (user) {
+        return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
+            return localLogin.setPassword('testpassword');
+        });
+    }).catch(function () {
+    }).then(function () {
+            done();
+        },
+        function (error) {
+            done(new Error(JSON.stringify(error)));
+        });
 };
 
 var resetDatabase = function (opts, done) {
@@ -115,8 +108,8 @@ describe('DELETE /user/', function () {
                 }, done);
             });
 
-            it('should return a status 401', function () {
-                expect(this.res.statusCode).to.equal(401);
+            it('should return a status 302', function () {
+                expect(this.res.statusCode).to.equal(302);
             });
 
 
@@ -187,6 +180,71 @@ describe('DELETE /user/', function () {
                 expect(this.res.statusCode).equal(401);
             });
         });
+        context('and the user has google account and has set password', function () {
+            context('when using the right password when deleting', function () {
 
+                var self = this;
+                before(resetDatabase);
+
+                before(function (done) {
+                    requestHelper.login(this, done);
+                });
+
+
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/user', {
+                        method: 'post',
+                        type: 'form',
+                        cookie: this.cookie,
+                        data: {password: 'testpassword'}
+                    }, done);
+                });
+
+                before(function (done) {
+                    db.User.count().then(function (count) {
+                        self.count = count;
+                        done();
+                    });
+                });
+
+                it('should return a status 204 success no content', function () {
+                    expect(this.res.statusCode).to.equal(204);
+                    expect(self.count).to.equal(0);
+                });
+
+            });
+            context('when using the wrong password when deleting', function () {
+
+                var self = this;
+                before(resetDatabase);
+
+                before(function (done) {
+                    requestHelper.login(this, done);
+                });
+
+
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/user', {
+                        method: 'post',
+                        type: 'form',
+                        cookie: this.cookie,
+                        data: {password: 'wrongpassword'}
+                    }, done);
+                });
+
+                before(function (done) {
+                    db.User.count().then(function (count) {
+                        self.count = count;
+                        done();
+                    });
+                });
+
+                it('should return a status 204 success no content', function () {
+                    expect(this.res.statusCode).to.equal(401);
+                    expect(self.count).to.equal(1);
+                });
+
+            });
+        });
     });
 });
