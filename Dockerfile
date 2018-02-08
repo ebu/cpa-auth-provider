@@ -10,9 +10,9 @@ ADD package.json package-lock.json /src/
 
 # Install Node.js dependencies
 WORKDIR /src
-RUN apk add --no-cache --virtual build python build-base && npm install && apk del build
-
-ADD passport-openam /src/passport-openam
+#ADD passport-openam /src/passport-openam
+RUN apk add --no-cache --virtual build python build-base && npm install && npm rebuild bcrypt --build-from-source && apk del build
+# rebuild bcrypt to fix segmentation fault - https://github.com/kelektiv/node.bcrypt.js/issues/528
 
 ADD .sequelizerc /src/.sequelizerc
 ADD migrate /src/migrate
@@ -58,4 +58,5 @@ RUN mkdir data
 # By default, the application listens for HTTP on port 3000
 EXPOSE 3000
 
+ADD startup.sh /src
 CMD sequelize db:migrate && bin/server
