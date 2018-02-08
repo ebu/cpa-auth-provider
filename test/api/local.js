@@ -582,7 +582,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('/api/local/info should return a success ', function () {
-            //TODO check access token
+            expect(this.accessToken.length).to.be.greaterThan(0);
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user.email).to.equal('qsdf@qsdf.fr');

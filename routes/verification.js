@@ -148,19 +148,21 @@ var routes = function (router) {
                     return;
                 }
 
-                // TODO: check transaction
-                return pairingCode
-                    .updateAttributes({user_id: userId, state: 'denied'})
-                    .then(function () {
-                        pairingCode.Client.user_id = userId;
-                        pairingCode.Client.save();
-                    })
-                    .then(function () {
-                            done(null, null, 'cancelled');
-                        },
-                        function (err) {
-                            done(err);
-                        });
+                return db.sequelize.transaction(function (transaction) {
+                    return pairingCode
+                        .updateAttributes({user_id: userId, state: 'denied'}, transaction)
+                        .then(function () {
+                            pairingCode.Client.user_id = userId;
+                            pairingCode.Client.save(transaction);
+                        })
+                        .then(function () {
+                                done(null, null, 'cancelled');
+                            },
+                            function (err) {
+                                done(err);
+                            });
+                });
+
             }, function (err) {
                 done(err);
             });
@@ -195,19 +197,20 @@ var routes = function (router) {
                     return;
                 }
 
-                // TODO: check transaction
-                return pairingCode
-                    .updateAttributes({user_id: userId, state: 'verified'})
-                    .then(function () {
-                        pairingCode.Client.user_id = userId;
-                        pairingCode.Client.save();
-                    })
-                    .then(function () {
-                            done(null, null, 'success');
-                        },
-                        function (err) {
-                            done(err);
-                        });
+                return db.sequelize.transaction(function (transaction) {
+                    return pairingCode
+                        .updateAttributes({user_id: userId, state: 'verified'}, transaction)
+                        .then(function () {
+                            pairingCode.Client.user_id = userId;
+                            pairingCode.Client.save();
+                        })
+                        .then(function () {
+                                done(null, null, 'success');
+                            },
+                            function (err) {
+                                done(err);
+                            });
+                });
             }, function (err) {
                 done(err);
             });
