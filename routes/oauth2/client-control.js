@@ -23,7 +23,7 @@ function showClientList(req, res, next) {
 		function (err) {
 			res.send(500);
 		}
-	)
+	);
 
 }
 
@@ -39,7 +39,7 @@ function showEditClient(req, res, next) {
 		function (err) {
 			res.send(500);
 		}
-	)
+	);
 }
 
 function createClientRoute(req, res, next) {

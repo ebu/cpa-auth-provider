@@ -87,7 +87,7 @@ function provideAccessToken(client, user, scope, done) {
         ).then(
             function (deletionCancelled) {
                 if (deletionCancelled) {
-                    extras['deletion_cancelled'] = true;
+                    extras.deletion_cancelled = true;
                 }
                 return done(null, accessToken, refreshToken, extras);
             }

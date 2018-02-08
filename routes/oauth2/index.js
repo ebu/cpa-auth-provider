@@ -248,7 +248,7 @@ module.exports = function (router) {
                     // could also check data.hostname for validity
                     if (error) {
                         logger.warn('[Recaptcha][Optional Check][FAIL][error', error, ']');
-                        return res.status(400).json({error: 'bad_request', error_description: 'BAD_CAPTCHA'})
+                        return res.status(400).json({error: 'bad_request', error_description: 'BAD_CAPTCHA'});
                     } else {
                         if (rateLimiter) {
                             rateLimiter.resetKey(req.ip);

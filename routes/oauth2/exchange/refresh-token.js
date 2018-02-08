@@ -7,11 +7,11 @@ var logger = require('../../../lib/logger');
 exports.issueToken = issueToken;
 
 function issueToken(client, token, scope, reqBody, done) {
-    var access_duration = undefined;
-    var refresh_duration = undefined;
+    var access_duration;
+    var refresh_duration;
     if (typeof reqBody === 'object') {
-        access_duration = (reqBody['access_duration'] || 0) * 1000;
-        refresh_duration = (reqBody['refresh_duration'] || 0) * 1000;
+        access_duration = (reqBody.access_duration || 0) * 1000;
+        refresh_duration = (reqBody.refresh_duration || 0) * 1000;
     }
 
     oauthTokenHelper.validateRefreshToken(token, client, scope)

@@ -25,7 +25,7 @@ exports.token = function (client, user, ares, done) {
         ).then(
             function (deletionCancelled) {
                 if (deletionCancelled) {
-                    extras['deletion_cancelled'] = true;
+                    extras.deletion_cancelled = true;
                 }
                 return done(null, accessToken, extras);
 			}

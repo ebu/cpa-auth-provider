@@ -60,7 +60,7 @@ function routes(router) {
 					logger.error('[/email/confirm/][FAIL][key', req.params.key, '][err', err, ']');
 					res.status(400).json({success: false, reason: 'BAD_REQUEST'});
 				}
-			)
+			);
 		}
 	);
 
@@ -103,7 +103,7 @@ function routes(router) {
 				function (err) {
 					return next(err);
 				}
-			)
+			);
 		}
 	);
 
@@ -160,7 +160,7 @@ function getTokenAndClient(key) {
 					resolve(verifyToken);
 				},
 				reject
-			)
+			);
 		}
 	);
 }
@@ -177,7 +177,7 @@ function getUser(user_id) {
 					}
 				},
 				reject
-			)
+			);
 		}
 	);
 }
@@ -207,7 +207,7 @@ function deleteUser(user) {
 					logger.error('[user delete][FAIL][id', user.id, '][error', e, ']');
 					return reject();
 				}
-			)
+			);
 		}
 	);
 }

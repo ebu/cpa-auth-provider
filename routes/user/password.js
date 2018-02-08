@@ -91,7 +91,7 @@ function requestPasswordEmail(req, res, next) {
 		}
 	).then(
 		function() {
-			res.status(200).json({success: true})
+			res.status(200).json({success: true});
 		}
 	).catch(
 		function(err) {
@@ -201,7 +201,7 @@ function forcePassword(req, res) {
 				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
 			}
             if (!token.isAvailable()) {
-                throw new Error('TOKEN_ALREADY_USED')
+                throw new Error('TOKEN_ALREADY_USED');
             }
 
 			return token.User.setPassword(newPassword);
@@ -253,7 +253,7 @@ function checkForceToken(req, res) {
                 throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
             }
             if (!token.isAvailable()) {
-            	throw new Error('TOKEN_ALREADY_USED')
+            	throw new Error('TOKEN_ALREADY_USED');
 			}
 
             res.status(200).json({success: true});

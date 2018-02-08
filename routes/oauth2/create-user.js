@@ -47,13 +47,12 @@ function createUser(req, res) {
                     }
                 );
             } else {
-                var user = db.User.create(
+                db.User.create(
                     {
                         email: req.body.username,
                         account_uid: generate.accountId()
-                    }
-                ).then(function (user) {
-                        user.setPassword(req.body.password).done(function (result) {
+                    }).then(function (newUser) {
+                        newUser.setPassword(req.body.password).done(function (result) {
                             return sendSuccess(user, req, res);
                         });
                     },
@@ -68,18 +67,18 @@ function createUser(req, res) {
 
 function sendSuccess(user, req, res) {
     var access_token, refresh_token, token_extras;
-    var access_duration = undefined;
-    var refresh_duration = undefined;
+    var access_duration;
+    var refresh_duration;
     var extras = req.body;
-    var client = undefined;
+    var client;
     if (typeof extras === 'object') {
-        access_duration = extras['access_duration'] * 1000;
-        refresh_duration = extras['refresh_duration'] * 1000;
+        access_duration = extras.access_duration * 1000;
+        refresh_duration = extras.refresh_duration * 1000;
     }
 
     db.OAuth2Client.find({where: {client_id: req.body.client_id}}).then(
         function (_client) {
-        	client = _client;
+            client = _client;
             var redirectUri = req.body.redirect_uri || client.email_redirect_uri;
             if (!client.mayEmailRedirect(redirectUri)) {
                 redirectUri = undefined;

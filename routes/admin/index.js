@@ -395,7 +395,7 @@ module.exports = function (router) {
                 error => {
                     return res.status(500).json({summary: 'error', message: error.message});
                 }
-            )
+            );
         }
     );
 

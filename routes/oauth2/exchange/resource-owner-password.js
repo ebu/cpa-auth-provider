@@ -49,11 +49,11 @@ function confirmUser(client, username, password, scope, extraArgs, done) {
 }
 
 function provideAccessToken(client, user, scope, extraArgs, done) {
-    var access_duration = undefined;
-    var refresh_duration = undefined;
+    var access_duration;
+    var refresh_duration;
     if (typeof extraArgs === 'object') {
-        access_duration = extraArgs['access_duration'] * 1000;
-        refresh_duration = extraArgs['refresh_duration'] * 1000;
+        access_duration = extraArgs.access_duration * 1000;
+        refresh_duration = extraArgs.refresh_duration * 1000;
     }
 
     var accessToken, refreshToken, extras;
@@ -75,11 +75,11 @@ function provideAccessToken(client, user, scope, extraArgs, done) {
     ).then(
         function (deletionCancelled) {
             if (deletionCancelled) {
-                extras['deletion_cancelled'] = true;
+                extras.deletion_cancelled = true;
             }
             return done(null, accessToken, refreshToken, extras);
         }
     ).catch(
         done
-    )
+    );
 }

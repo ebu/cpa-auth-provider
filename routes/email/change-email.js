@@ -258,7 +258,7 @@ function routes(router) {
                 }
             ).then(
                 function () {
-                    return res.status(200).json({success: true})
+                    return res.status(200).json({success: true});
                 }
             ).catch(
                 function (err) {
