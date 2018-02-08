@@ -25,11 +25,11 @@ module.exports = function(app, options) {
 						var data = jwtHelper.decode(token, client.jwt_code);
 						// slightly slower solution: could check database here
 						res.status(200).json({ success: true, user_id: data.sub });
-					} catch(e) {
+					} catch(err) {
 						res.status(500).json({ success: false, msg: err });
 					}
 				},
-				function(e) {
+				function(err) {
 					res.status(500).json({ success: false, msg: err });
 				}
 			);
