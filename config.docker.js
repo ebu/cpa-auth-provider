@@ -28,10 +28,6 @@ module.exports = {
             client_secret: process.env.IDP_GITHUB_CLIENT_SECRET,
             callback_url: '/auth/github/callback'
         },
-        openam: {
-            enabled: ('true' == process.env.OPEN_AM_ENABLED),
-            service_url: process.env.OPEN_AM_SERVICE_URL
-        },
         facebook: {
             enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
             client_id: process.env.FACEBOOK_LOGIN_ID,
