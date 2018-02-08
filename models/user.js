@@ -4,7 +4,6 @@
 module.exports = function (sequelize, DataTypes) {
     var User = sequelize.define('User', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-        account_uid: {type: DataTypes.STRING/*, unique: true */},
         tracking_uid: DataTypes.STRING,
         enable_sso: DataTypes.BOOLEAN,
         display_name: DataTypes.STRING,
