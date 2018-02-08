@@ -268,7 +268,6 @@
 	"VERIFY_LIST_ACCEPT_LABEL": "Akzeptieren?",
 	"VERIFY_YES_RADIO": " Ja",
 	"VERIFY_NO_RADIO": " Nein",
-	"VERIFY_VERIFY_BUTTON": "Überprüfen",
 
 	"MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Email ändern",
 	"MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Ihre Email-Adresse wurde erfolgreich geändert. Sie ist jetzt ",
@@ -283,7 +282,6 @@
 	"VERIFY_MAIL_SUCCESS_THX_LABEL": "Vielen Dank",
 	"VERIFY_MAIL_GO_TO_LINK_PREFIX": "Gehe zu",
 	"VERIFY_MAIL_GO_TO_LINK_SUFFIX": "Profilseite",
-	"VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "E-Mail-Validierung",
 	"VERIFY_MAIL_ERR_LABEL_1": "Leider konnten wir Ihr Konto nicht bestätigen.",
 	"VERIFY_MAIL_ERR_LABEL_2": "Bitte geh bitte zu deinem",
 	"VERIFY_MAIL_ERR_LABEL_3": "Profilseite",
@@ -310,7 +308,6 @@
 	"BACK_SIGNUP_PASS_STRENGTH_5": "Das Passwort muss mindestens eine Zahl enthalten.",
 	"BACK_SIGNUP_PASS_STRENGTH_6": "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
 	"BACK_SIGNUP_PASS_STRENGTH_EMAIL_EQUALS_PASSWORD": "You cannot use your email as password",
-	"BACK_SIGNUP_PASS_STRENGTH": "The password you provide didn't pass the following tests:",
 	"BACK_SIGNUP_INVALID_EMAIL": "Ungültige E-Mail",
 	"BACK_SIGNUP_INVALID_EMAIL_OR_PASSWORD": "Ungültige E-Mail oder Passwort",
 	"BACK_SIGNUP_EMAIL_VERIFY_USER_NOT_FOUND": "Benutzer nicht gefunden.",

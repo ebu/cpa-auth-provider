@@ -268,7 +268,6 @@
     "VERIFY_LIST_ACCEPT_LABEL": "Accept?",
     "VERIFY_YES_RADIO": " Yes",
     "VERIFY_NO_RADIO": " No",
-    "VERIFY_VERIFY_BUTTON": "Verify",
 
     "MOVE_MAIL_EMAIL_VALIDATION_LABEL":"Change email",
     "MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE":"Your email has been changed successfully to: ",
@@ -283,7 +282,6 @@
     "VERIFY_MAIL_SUCCESS_THX_LABEL": "Thank you",
     "VERIFY_MAIL_GO_TO_LINK_PREFIX": "Go to",
     "VERIFY_MAIL_GO_TO_LINK_SUFFIX": "profile page",
-    "VERIFY_MAIL_EMAIL_VALIDATION_LABEL": "Email validation",
     "VERIFY_MAIL_ERR_LABEL_1": "Unfortunately we could not validate your account.",
     "VERIFY_MAIL_ERR_LABEL_2": "Please go to your",
     "VERIFY_MAIL_ERR_LABEL_3": "profile page",
