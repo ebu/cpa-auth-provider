@@ -10,7 +10,7 @@ const monitor = require('../../lib/monitor');
 exports.createUser = createUser;
 
 function createUser(req, res) {
-    if (req.body.grant_type != 'create_user') {
+    if (req.body.grant_type !== 'create_user') {
         return res.status(400).json(
             {
                 error: oauth2Token.ERRORS.BAD_REQUEST.code,
@@ -37,7 +37,7 @@ function createUser(req, res) {
         );
     }
 
-    db.User.find({where: {email: req.body.username}})
+    db.User.findOne({include: {model: db.LocalLogin, where: {login: req.body.username}}})
         .then(function (user) {
             if (user) {
                 return res.status(400).json(
@@ -51,16 +51,29 @@ function createUser(req, res) {
                     {
                         email: req.body.username,
                         account_uid: generate.accountId()
-                    }).then(function (newUser) {
-                        newUser.setPassword(req.body.password).done(function (result) {
-                            return sendSuccess(user, req, res);
-                        });
-                    },
+                    }
+                ).then(
+                    function (user_) {
+                        user = user_;
+                        return db.LocalLogin.create({user_id: user.id, login: req.body.username});
+                    }
+                ).then(
+                    function(localLogin) {
+                        return localLogin.setPassword(req.body.password);
+                    }
+                ).then(
+                    function (result) {
+                        return sendSuccess(user, req, res);
+                    }
+                ).catch(
                     function (err) {
+                        console.log(err);
                         res.status(500).json({error: 'Internal Error', error_description: err.message});
-                    });
+                    }
+                );
             }
         }, function (error) {
+            console.log(error);
             res.status(500).json({error: 'Internal Error', error_description: error.message});
         });
 }
@@ -118,6 +131,7 @@ function sendSuccess(user, req, res) {
         }
     ).catch(
         function (e) {
+            console.log(e);
             return res.status(500).json({error: 'Internal Error', error_description: e.message});
         }
     );
