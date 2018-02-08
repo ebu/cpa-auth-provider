@@ -558,10 +558,6 @@ describe('POST /api/local/authenticate', function () {
             }, done);
         });
 
-        it('should return a success false', function () {
-            expect(this.res.body.msg).to.not.equal("msg:Something went wrong with the reCAPTCHA");
-        });
-
         before(function (done) {
             requestHelper.sendRequest(this, '/api/local/authenticate', {
                 method: 'post',
@@ -572,13 +568,6 @@ describe('POST /api/local/authenticate', function () {
                     password: STRONG_PASSWORD
                 }
             }, done);
-        });
-
-        it('should return a success ', function () {
-            // console.log('success:' + this.res.body.success);
-            // console.log('token:' + this.res.body.token);
-            expect(this.res.statusCode).to.equal(200);
-            expect(this.res.body.success).to.equal(true);
         });
 
         // Test get user info
@@ -593,6 +582,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         it('/api/local/info should return a success ', function () {
+            //TODO check access token
             expect(this.res.statusCode).to.equal(200);
             expect(this.res.body.success).to.equal(true);
             expect(this.res.body.user.email).to.equal('qsdf@qsdf.fr');

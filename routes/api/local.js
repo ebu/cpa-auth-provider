@@ -235,7 +235,6 @@ module.exports = function (app, options) {
             res.json({
                 success: true,
                 user: data,
-                token: 'JWT ' + token
             });
         }
     });
