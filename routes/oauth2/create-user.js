@@ -62,18 +62,16 @@ function createUser(req, res) {
                         return localLogin.setPassword(req.body.password);
                     }
                 ).then(
-                    function (result) {
+                    function () {
                         return sendSuccess(user, req, res);
                     }
                 ).catch(
                     function (err) {
-                        console.log(err);
                         res.status(500).json({error: 'Internal Error', error_description: err.message});
                     }
                 );
             }
         }, function (error) {
-            console.log(error);
             res.status(500).json({error: 'Internal Error', error_description: error.message});
         });
 }
@@ -131,7 +129,6 @@ function sendSuccess(user, req, res) {
         }
     ).catch(
         function (e) {
-            console.log(e);
             return res.status(500).json({error: 'Internal Error', error_description: e.message});
         }
     );
