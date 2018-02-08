@@ -57,5 +57,9 @@ module.exports = function (sequelize, DataTypes) {
         return this.updateAttributes({last_seen: Date.now()}, {transaction: transaction});
     };
 
+    User.prototype.isScheduledForDeletion = function() {
+        return !!this.scheduled_for_deletion_at;
+    };
+
     return User;
 };
