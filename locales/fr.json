@@ -108,7 +108,6 @@
 	"AUTH_MAIN_LOGIN_GITHUB_LINK": "Se connecter avec Github",
 	"AUTH_MAIN_LOGIN_EBU_LINK": "Se connecter avec EBU",
 	"AUTH_MAIN_LOGIN_USER_LINK": "Se connecter avec un login et un mot de passe",
-	"AUTH_OPENAM_LOGIN_USER_LINK": "Se connecter avec Open AM",
 
 	"OAUTH_DIALOG_TITLE_HI": "Bonjour",
 	"OAUTH_DIALOG_TITLE": "demande l'accès à votre compte.",

@@ -10,7 +10,6 @@ ADD package.json package-lock.json /src/
 
 # Install Node.js dependencies
 WORKDIR /src
-#ADD passport-openam /src/passport-openam
 RUN apk add --no-cache --virtual build python build-base && npm install && npm rebuild bcrypt --build-from-source && apk del build
 # rebuild bcrypt to fix segmentation fault - https://github.com/kelektiv/node.bcrypt.js/issues/528
 
