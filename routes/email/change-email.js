@@ -204,9 +204,14 @@ function routes(router) {
         '/email/moved/:token',
         cors(),
         function (req, res) {
-            var user, token;
+            var user, token, localLogin;
             var clientId, oldEmail, newUsername;
-            db.UserEmailToken.findOne({where: {key: req.params.token}, include: [db.User, db.OAuth2Client]}).then(
+            db.UserEmailToken.findOne(
+                {
+                    where: {key: req.params.token},
+                    include: [db.User, db.OAuth2Client]
+                }
+            ).then(
                 function (token_) {
                     token = token_;
                     clientId = req.query.client_id;
@@ -219,7 +224,12 @@ function routes(router) {
                     }
 
                     user = token.User;
-                    oldEmail = user.email;
+                    return db.LocalLogin.findOne({where: {user_id: user.id}});
+                }
+            ).then(
+                function (localLogin_) {
+                    localLogin = localLogin_;
+                    oldEmail = localLogin.login;
                     newUsername = token.type.split('$')[1];
 
                     if (!token.isAvailable()) {
@@ -229,15 +239,17 @@ function routes(router) {
                     }
 
 
-                    return db.User.findOne({where: {email: newUsername}});
+                    return db.LocalLogin.findOne({where: {login: newUsername}});
                 }
             ).then(
                 function (takenUser) {
+                    // TODO how to check for email claimed by social login?
                     if (takenUser) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
-                    return user.updateAttributes({
-                        email: newUsername
+                    return localLogin.updateAttributes({
+                        login: newUsername,
+                        verified: true,
                     });
                 }
             ).then(

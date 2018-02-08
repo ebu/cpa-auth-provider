@@ -386,7 +386,7 @@ describe('GET /email/moved/:token', function () {
         before(function (done) {
             requestHelper.sendRequest(
                 this,
-                URL.replace(/{token}/, 'ABC'),
+                URL.replace(/{token}/, 'ABC') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
                 {
                     method: 'get',
                     cookie: this.cookie,
@@ -398,6 +398,7 @@ describe('GET /email/moved/:token', function () {
 
         it('should send success status', function () {
             expect(this.res.statusCode).equal(200);
+            expect(this.res.body.success).equal(true);
         });
 
         it('should change the email', function (done) {
@@ -417,7 +418,7 @@ describe('GET /email/moved/:token', function () {
         before(function (done) {
             requestHelper.sendRequest(
                 this,
-                URL.replace(/{token}/, 'ABC'),
+                URL.replace(/{token}/, 'ABC') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
                 {
                     method: 'get',
                     cookie: this.cookie,
@@ -430,7 +431,7 @@ describe('GET /email/moved/:token', function () {
         before(function (done) {
             requestHelper.sendRequest(
                 this,
-                URL.replace(/{token}/, 'ABC'),
+                URL.replace(/{token}/, 'ABC') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
                 {
                     method: 'get',
                     cookie: this.cookie,
@@ -442,6 +443,7 @@ describe('GET /email/moved/:token', function () {
 
         it('should send success status', function () {
             expect(this.res.statusCode).equal(200);
+            expect(this.res.body.success).equal(true);
         });
 
         it('should have changed the email', function (done) {
@@ -478,7 +480,7 @@ describe('GET /email/moved/:token', function () {
         before(function (done) {
             requestHelper.sendRequest(
                 this,
-                URL.replace(/{token}/, 'f42'),
+                URL.replace(/{token}/, 'f42') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
                 {
                     method: 'get',
                     cookie: this.cookie,
@@ -489,8 +491,9 @@ describe('GET /email/moved/:token', function () {
         });
 
         it('should report a failure', function () {
-            expect(this.res.statusCode).equal(200);
-            expect(this.res.text.indexOf("Invalid token for authentication") > 0).equal(true);
+            expect(this.res.statusCode).equal(400);
+            expect(this.res.body.success).equal(false);
+            expect(this.res.body.reason).equal('INVALID_TOKEN');
         });
 
         it('should not have changed the email', function (done) {
