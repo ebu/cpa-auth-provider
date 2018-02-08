@@ -74,7 +74,7 @@
 
 	"API_ADMIN_CLIENT_NAME_IS_MISSING": "Le nom du client est manquant",
 	"API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID": "L'adresse de redirection est invalide",
-	"API_ADMIN_CLIENT_EMAIL_REDIRECT_URL_IS_INVALID": "'adresse de redirection est invalide",
+	"API_ADMIN_CLIENT_EMAIL_REDIRECT_URL_IS_INVALID": "L'adresse de redirection est invalide",
 	"ADMIN_CLIENT_EMAIL_REDIRECT_URI_TABLE_COL_TITLE": "Redirection email",
 	"ADMIN_CLIENT_ADD_CLIENT_MODALE_FORM_EMAIL_REDIRECT_URI": "Redirection email",
 
