@@ -24,7 +24,12 @@ function scheduleDeleteUser(req, res, next) {
         return res.status(400).json({msg: 'PASSWORD_REQUIRED', success: false});
     }
 
-    req.user.verifyPassword(req.body.password).then(
+    if (!req.user.LocalLogin) {
+        // TODO figure out a better way to handle users with no local login!
+        return res.status(400).json({msg: 'WRONG_PASSWORD', success: false});
+    }
+
+    req.user.LocalLogin.verifyPassword(req.body.password).then(
         function (correct) {
             if (correct) {
                 deleteHelper.scheduleForDeletion(req.user, req.authInfo.client).then(

@@ -54,7 +54,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('correctly requesting a delete', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER, CLIENT));
+        before(oauthHelper.getAccessToken(USER.email, USER, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -81,7 +81,7 @@ describe('DELETE /oauth2/me', function () {
         });
 
         it('should have properly set scheduled_for_deletion', function (done) {
-            db.User.findOne({where: {email: USER.email}}).then(
+            db.User.findOne({include: {model: db.LocalLogin, where: {login: USER.email}}}).then(
                 function (u) {
                     expect(u).not.undefined;
                     expect(u.scheduled_for_deletion_at).not.null;
@@ -94,7 +94,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('using a wrong password', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER, CLIENT));
+        before(oauthHelper.getAccessToken(USER.email, USER, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -116,7 +116,7 @@ describe('DELETE /oauth2/me', function () {
         });
 
         it('should not have set scheduled_for_deletion', function (done) {
-            db.User.findOne({where: {email: USER.email}}).then(
+            db.User.findOne({model: {model: db.LocalLogin, where: {login: USER.email}}}).then(
                 function (u) {
                     expect(u).not.undefined;
                     expect(u.scheduled_for_deletion_at).null;
@@ -129,7 +129,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('missing the password', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER, CLIENT));
+        before(oauthHelper.getAccessToken(USER.email, USER, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -149,7 +149,7 @@ describe('DELETE /oauth2/me', function () {
         });
 
         it('should not have set scheduled_for_deletion', function (done) {
-            db.User.findOne({where: {email: USER.email}}).then(
+            db.User.findOne({include: {model: db.LocalLogin, where: {login: USER.email}}}).then(
                 function (u) {
                     expect(u).not.undefined;
                     expect(u.scheduled_for_deletion_at).null;
@@ -162,7 +162,7 @@ describe('DELETE /oauth2/me', function () {
 
     context('correctly requesting a delete (for a 2nd user)', function () {
         before(resetDatabase);
-        before(oauthHelper.getAccessToken(USER2, CLIENT));
+        before(oauthHelper.getAccessToken(USER2.email, USER2, CLIENT));
 
         before(function (done) {
             let token = this.res.body.access_token;
@@ -189,7 +189,7 @@ describe('DELETE /oauth2/me', function () {
         });
 
         it('should have properly set scheduled_for_deletion for 2nd User', function (done) {
-            db.User.findOne({where: {email: USER2.email}}).then(
+            db.User.findOne({include: {model: db.LocalLogin, where: {login: USER2.email}}}).then(
                 function (u) {
                     expect(u).not.undefined;
                     expect(u.scheduled_for_deletion_at).not.null;
@@ -200,7 +200,7 @@ describe('DELETE /oauth2/me', function () {
         });
 
         it('should not have set scheduled_for_deletion for 1st User', function (done) {
-            db.User.findOne({where: {email: USER.email}}).then(
+            db.User.findOne({include: {model: db.LocalLogin, where: {login: USER.email}}}).then(
                 function (u) {
                     expect(u).not.undefined;
                     expect(u.scheduled_for_deletion_at).null;
