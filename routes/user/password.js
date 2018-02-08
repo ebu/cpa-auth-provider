@@ -87,7 +87,7 @@ function requestPasswordEmail(req, res, next) {
 			if (!client.mayEmailRedirect(redirectUri)) {
 				throw new Error(oauthHelper.ERRORS.BAD_REQUEST.message);
 			}
-			return email.sendForcePasswordEmail(user, req.host, client, redirectUri);
+			return email.sendForcePasswordEmail(user, req.hostname, client, redirectUri);
 		}
 	).then(
 		function() {

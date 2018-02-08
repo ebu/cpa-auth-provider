@@ -83,7 +83,7 @@ function sendSuccess(user, req, res) {
             if (!client.mayEmailRedirect(redirectUri)) {
                 redirectUri = undefined;
             }
-            emailUtil.sendVerifyEmail(user, req.host, client, redirectUri).then(
+            emailUtil.sendVerifyEmail(user, req.hostname, client, redirectUri).then(
                 function () {
                 },
                 function (e) {

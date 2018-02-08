@@ -81,7 +81,7 @@ function requestVerifyEmail(req, res, next) {
 			if (!client.mayEmailRedirect(redirectUri)) {
 				throw new Error(oauthHelper.ERRORS.BAD_REQUEST.message);
 			}
-			return email.sendVerifyEmail(user, req.host, client, redirectUri);
+			return email.sendVerifyEmail(user, req.hostname, client, redirectUri);
 		}
 	).then(
 		function() {
