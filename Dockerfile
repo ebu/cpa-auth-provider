@@ -57,5 +57,4 @@ RUN mkdir data
 # By default, the application listens for HTTP on port 3000
 EXPOSE 3000
 
-ADD startup.sh /src
 CMD sequelize db:migrate && bin/server
