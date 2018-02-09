@@ -203,8 +203,15 @@ function forcePassword(req, res) {
             if (!token.isAvailable()) {
                 throw new Error('TOKEN_ALREADY_USED');
             }
-
-			return token.User.setPassword(newPassword);
+			return db.LocalLogin.findOne({where: {user_id: token.User.id}});
+		}
+	).then(
+		function(localLogin) {
+			// TODO how to react if no local login present?
+			if (!localLogin) {
+				throw new Error(oauthHelper.ERRORS.USER_NOT_FOUND.message);
+			}
+			return localLogin.setPassword(newPassword);
 		}
 	).then(
 		function() {

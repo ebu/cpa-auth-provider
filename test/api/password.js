@@ -324,6 +324,17 @@ describe('POST /user/password', function () {
             it('should send success', function () {
                 expect(this.res.body.success).equal(true);
             });
+
+            it('should have created a token', function(done) {
+                db.UserEmailToken.findOne({where: {user_id: USER.id, oauth2_client_id: CLIENT.id}}).then(
+                    function(token) {
+                        expect(token).a('Object');
+                        expect(token.type).equal('PWD');
+                        done();
+                    },
+                    done
+                )
+            });
         });
 
         context('with proper username for 2nd user', function () {
@@ -376,6 +387,134 @@ describe('POST /user/password', function () {
             it('should send success true', function () {
                 expect(this.res.body.success).equal(true);
             });
+        });
+    });
+
+
+    // ---------------------------------------------------------------------
+    // -- FORCE-PASSWORD
+    // ---------------------------------------------------------------------
+    context('request_type \'force-password\'', function () {
+        context('with invalid token', function () {
+            before(resetDatabase);
+            before(createFakeUser);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, url, {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        client_id: CLIENT.client_id,
+                        token: 'JustGuessing!',
+                        request_type: 'force-password',
+                        new_password: 'FancyNewPasswordIsCreative!'
+                    }
+                }, done);
+            });
+
+            it('should reject the request', function () {
+                expect(this.res.statusCode).equal(400);
+            });
+
+            it('should give USER_NOT_FOUND message', function () {
+                expect(this.res.body.success).equal(false);
+                expect(this.res.body.reason).equal('INVALID_TOKEN');
+            });
+        });
+
+        context('with proper token for user', function () {
+            const RANDOM_KEY ='SuperRandomKeyForAToken';
+            before(resetDatabase);
+            before(createFakeUser);
+
+            before(function (done) {
+                db.UserEmailToken.create(
+                    {
+                        key: RANDOM_KEY,
+                        type: 'PWD',
+                        user_id: USER.id,
+                        redirect_uri: CLIENT.redirect_uri,
+                        oauth2_client_id: CLIENT.id
+                    }
+                ).then(
+                    function() {
+                        done();
+                    },
+                    done
+                )
+            });
+
+            before(function (done) {
+                requestHelper.sendRequest(this, url, {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        client_id: CLIENT.client_id,
+                        token: RANDOM_KEY,
+                        request_type: 'force-password',
+                        new_password: 'FancyNewPasswordIsCreative!'
+                    }
+                }, done);
+            });
+
+            it('should return status 200', function () {
+                expect(this.res.statusCode).equal(200);
+            });
+
+            it('should send success', function () {
+                expect(this.res.body.success).equal(true);
+            });
+
+            // TODO add check to confirm password was actually changed!
+        });
+
+        context('with proper token for second user', function () {
+            const RANDOM_KEY ='1234567890abcdef';
+            before(resetDatabase);
+            before(createFakeUser);
+
+            before(function (done) {
+                db.UserEmailToken.create(
+                    {
+                        key: RANDOM_KEY,
+                        type: 'PWD',
+                        user_id: USER2.id,
+                        redirect_uri: CLIENT.redirect_uri,
+                        oauth2_client_id: CLIENT.id
+                    }
+                ).then(
+                    function() {
+                        done();
+                    },
+                    done
+                )
+            });
+
+            before(function (done) {
+                requestHelper.sendRequest(this, url, {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        client_id: CLIENT.client_id,
+                        token: RANDOM_KEY,
+                        request_type: 'force-password',
+                        new_password: 'FancyNewPasswordIsCreative!'
+                    }
+                }, done);
+            });
+
+            it('should return status 200', function () {
+                expect(this.res.statusCode).equal(200);
+            });
+
+            it('should send success', function () {
+                expect(this.res.body.success).equal(true);
+            });
+
+            // TODO add check to confirm password was actually set!
         });
     });
 });
