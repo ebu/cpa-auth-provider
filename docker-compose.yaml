@@ -15,7 +15,7 @@ services:
     - identity-provider:identity-provider
   identity-provider:
     build: .
-    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
+#    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
     ports:
     - 3000:3000
     environment:
@@ -36,7 +36,7 @@ services:
     links:
       - postgres:postgres
     environment:
-      - DB_DATABASE=cpa
+      - DB_DATABASE=postgres
       - DB_TYPE=postgres
       - DB_HOST=postgres
       - DB_PORT=5432
