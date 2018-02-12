@@ -1,12 +1,9 @@
 "use strict";
 
-var generate = require('../../lib/generate');
 var db = require('../../models');
-
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
-var config = require('../../config');
 
 var CLIENT = {
     id: 1,
@@ -425,6 +422,7 @@ describe('POST /user/password', function () {
 
         context('with proper token for user', function () {
             const RANDOM_KEY ='SuperRandomKeyForAToken';
+            const NEW_PASSWORD = 'FancyNewPasswordIsCreative!';
             before(resetDatabase);
             before(createFakeUser);
 
@@ -454,7 +452,7 @@ describe('POST /user/password', function () {
                         client_id: CLIENT.client_id,
                         token: RANDOM_KEY,
                         request_type: 'force-password',
-                        new_password: 'FancyNewPasswordIsCreative!'
+                        new_password: NEW_PASSWORD
                     }
                 }, done);
             });
@@ -467,11 +465,38 @@ describe('POST /user/password', function () {
                 expect(this.res.body.success).equal(true);
             });
 
-            // TODO add check to confirm password was actually changed!
+            it('should have changed the password', function(done) {
+                db.LocalLogin.findOne({where: {user_id: USER.id}}).then(
+                    function(localLogin) {
+                        expect(localLogin).a('Object');
+                        return localLogin.verifyPassword(NEW_PASSWORD);
+                    }
+                ).then(
+                    function(success) {
+                        expect(success).equal(true);
+                        done();
+                    }
+                ).catch(done);
+            });
+
+            it('other users password should not have changed', function(done) {
+                db.LocalLogin.findOne({where: {user_id: USER2.id}}).then(
+                    function(localLogin) {
+                        expect(localLogin).a('Object');
+                        return localLogin.verifyPassword(USER2.password);
+                    }
+                ).then(
+                    function(success) {
+                        expect(success).equal(true);
+                        done();
+                    }
+                ).catch(done);
+            });
         });
 
         context('with proper token for second user', function () {
             const RANDOM_KEY ='1234567890abcdef';
+            const NEW_PASSWORD = 'SuperElegant-And*Totally*N0nGuessablePassword';
             before(resetDatabase);
             before(createFakeUser);
 
@@ -501,7 +526,7 @@ describe('POST /user/password', function () {
                         client_id: CLIENT.client_id,
                         token: RANDOM_KEY,
                         request_type: 'force-password',
-                        new_password: 'FancyNewPasswordIsCreative!'
+                        new_password: NEW_PASSWORD,
                     }
                 }, done);
             });
@@ -514,7 +539,33 @@ describe('POST /user/password', function () {
                 expect(this.res.body.success).equal(true);
             });
 
-            // TODO add check to confirm password was actually set!
+            it('should have changed the password', function(done) {
+                db.LocalLogin.findOne({where: {user_id: USER2.id}}).then(
+                    function(localLogin) {
+                        expect(localLogin).a('Object');
+                        return localLogin.verifyPassword(NEW_PASSWORD);
+                    }
+                ).then(
+                    function(success) {
+                        expect(success).equal(true);
+                        done();
+                    }
+                ).catch(done);
+            });
+
+            it('other users password should not have changed', function(done) {
+                db.LocalLogin.findOne({where: {user_id: USER.id}}).then(
+                    function(localLogin) {
+                        expect(localLogin).a('Object');
+                        return localLogin.verifyPassword(USER.password);
+                    }
+                ).then(
+                    function(success) {
+                        expect(success).equal(true);
+                        done();
+                    }
+                ).catch(done);
+            });
         });
     });
 });
