@@ -6,10 +6,8 @@ module.exports = {
         }).then(function () {
             if (process.env.DB_TYPE === "postgres") {
                 // rename sequence
-                return queryInterface.sequelize.query("ALTER SEQUENCE TODO RENAME TO LocalLogins_id_seq").then(function () {
-                    // max from table User:
-                    return queryInterface.sequelize.query("select max(id) from Users");
-                }).then(function (maxUserIdRes) {
+                // max from table User:
+                return queryInterface.sequelize.query("select max(id) from Users").then(function (maxUserIdRes) {
                     // udpate sequence:
                     console.log("maxUserIdRes", maxUserIdRes);
                     let max = maxUserIdRes[0][0];
