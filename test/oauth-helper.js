@@ -62,11 +62,24 @@ function createUsers(userList) {
                     def
                 ).then(
                     function (user) {
-                       return db.LocalLogin.create({login: def.email, user_id: user.id, verified: def.verified});
+                        if (def.email) {
+                            return db.LocalLogin.create({login: def.email, user_id: user.id, verified: def.verified});
+                        } else {
+                            return new Promise((resolve, reject) => {
+                                return resolve();
+                            });
+                        }
+
                     }
                 ).then(
                     function (localLogin) {
-                        return localLogin.setPassword(def.password);
+                        if (localLogin) {
+                            return localLogin.setPassword(def.password);
+                        } else {
+                            return new Promise((resolve, reject) => {
+                                return resolve();
+                            });
+                        }
                     }
                 ).then(
                     function () {
