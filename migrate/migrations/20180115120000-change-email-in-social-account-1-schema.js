@@ -56,8 +56,8 @@ module.exports = {
                 // Rename table oAuthProviders to SocialLogins
             }).then(function () {
                 return queryInterface.renameTable("OAuthProviders", "SocialLogins");
-                // Add new columns
             }).then(function () {
+                // Add new columns
                 return queryInterface.addColumn(
                     "SocialLogins",
                     "email",
@@ -146,7 +146,28 @@ module.exports = {
                         field: "id"
                     }
                 });
-            }).then(resolve).catch(reject);
+            }).then(function () {
+                if (process.env.DB_TYPE === "postgres") {
+                    // rename sequence
+                    return queryInterface.sequelize.query("ALTER SEQUENCE TODO RENAME TO LocalLogins_id_seq").then(function () {
+                        // max from table User:
+                        return queryInterface.sequelize.query("select max(id) from Users");
+                    }).then(function (maxUserIdRes) {
+                        // udpate sequence:
+                        return queryInterface.sequelize.query("Users_id_seq\" RESTART WITH " + (maxUserIdRes[0]) + 1);
+                    }).then(function () {
+                        // max from table LocalLogin:
+                        return queryInterface.sequelize.query("select max(id) from LocalLogins");
+                    }).then(function (maxLocalLoginIdRes) {
+                        // udpate sequence:
+                        return queryInterface.sequelize.query("ALTER SEQUENCE \"LocalLogins_id_seq\" RESTART WITH " + (maxLocalLoginIdRes[0]) + 1);
+                    }).then(function () {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            }).catch(reject);
         });
     },
 
