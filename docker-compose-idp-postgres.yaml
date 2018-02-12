@@ -23,7 +23,7 @@ services:
       - postgres
     links:
       - postgres:postgres
-#    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
+    #command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
   postgres:
     build: postgres
     ports:
