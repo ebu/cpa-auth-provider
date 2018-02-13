@@ -22,12 +22,10 @@ var authHelper = require('../../lib/auth-helper');
 var permissionName = require('../../lib/permission-name');
 var passwordHelper = require('../../lib/password-helper');
 var userHelper = require('../../lib/user-helper');
-if (config.recaptcha.enabled) {
-    // Google reCAPTCHA
-    recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
-}
 
 var codeHelper = require('../../lib/code-helper');
+var captchaHelper = require ('../../lib/captcha-helper');
+
 
 var i18n = require('i18n');
 
@@ -56,18 +54,8 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         });
 }));
 
-function captchaVerify(req, res, next) {
-	if (config.recaptcha.enabled) {
-		recaptcha.middleware.verify(req, res, next);
-	} else {
-		req.recaptcha = {};
-		next();
-	}
-}
-
-
 module.exports = function (app, options) {
-    app.post('/api/local/signup', cors, captchaVerify, function (req, res) {
+    app.post('/api/local/signup', cors, captchaHelper.recaptchaVerify, function (req, res) {
 
         if (req.recaptcha.error) {
             res.status(400).json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
@@ -134,7 +122,7 @@ module.exports = function (app, options) {
         }
     });
 
-    app.post('/api/local/password/recover', cors, recaptcha.middleware.verify, function (req, res) {
+    app.post('/api/local/password/recover', cors, captchaHelper.recaptchaVerify, function (req, res) {
 
         if (req.recaptcha.error) {
             res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});

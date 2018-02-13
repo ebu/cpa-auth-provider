@@ -327,6 +327,7 @@
                   action='<%= link('/user/profile/request_verification_email') %>'
                   method="post">
                 <div class="form-group">
+                    <% if(config.recaptcha.enabled) { %>
                     <div class="recaptcha-wrapper">
                         <%- captcha %>
                         <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
@@ -340,6 +341,7 @@
                                target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
                         </div>
                     </div>
+                    <%}%>
                 </div>
                 <button id="btn-send-verification-link" type="submit" class="btn btn-primary btn-large-submit"><span
                             class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
