@@ -252,7 +252,7 @@ function resetDatabase(done) {
             } else {
                 oauthHelper.createOAuth2Clients([CLIENT]).then(
                     () => {
-                        return oauthHelper.createUsers(USERS)
+                        return oauthHelper.createUsers(USERS);
                     }
                 ).then(
                     () => {
@@ -264,7 +264,7 @@ function resetDatabase(done) {
                     }
                 ).catch(
                     done
-                )
+                );
             }
         }
     );
