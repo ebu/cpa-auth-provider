@@ -18,7 +18,7 @@ module.exports = function (sequelize, DataTypes) {
     }, {
         underscored: true,
         associate: function (models) {
-            LocalLogin.belongsTo(models.User);
+            LocalLogin.belongsTo(models.User, {onDelete: 'cascade'});
         }
     });
 
