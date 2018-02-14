@@ -57,11 +57,11 @@ module.exports = function (sequelize, DataTypes) {
     };
 
     OAuth2Client.prototype.mayEmailRedirect = function (uri) {
-        if (this.email_redirect_uri === null) {
-            return true;
-        }
         if (!uri) {
             return true;
+        }
+        if (this.email_redirect_uri === null) {
+            return false;
         }
         return uri.startsWith(this.email_redirect_uri);
     };
