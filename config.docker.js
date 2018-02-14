@@ -87,6 +87,8 @@ module.exports = {
     },
 
     password: {
+        // one of [simple,owasp] - defaults to owasp
+        quality_check: 'simple',
         // in sec
         recovery_code_validity_duration: 1800,
         // a new recovery code will be generated only if the current one has less that TTL

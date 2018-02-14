@@ -318,6 +318,9 @@
     "BACK_SIGNUP_DATE_OF_BIRTH_FAIL": "Invalid date of birth",
     "BACK_SIGNUP_GENDER_FAIL": "Invalid gender",
     "BACK_SIGNUP_MISSING_FIELDS": "You did not supply all required information",
+    "BACK_SIGNUP_PASS_SIMPLE_TOO_SIMPLE": "Password too simple. Use numbers and upper and lower case letters.",
+    "BACK_SIGNUP_PASS_SIMPLE_TOO_SHORT": "Password too short. It must be at least {length} characters.",
+    "BACK_SIGNUP_PASS_SIMPLE_GENERIC_FAIL": "Password invalid",
 
     "BACK_PWD_UPDATE_USER_NOT_FOUND": "User not found.",
     "BACK_PWD_WRONG_RECOVERY_CODE": "Wrong recovery code.",
