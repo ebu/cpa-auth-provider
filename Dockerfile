@@ -42,7 +42,6 @@ ADD routes /src/routes
 ADD views /src/views
 ADD templates /src/templates
 ADD locales /src/locales
-ADD migrations /src/migrations
 ADD seeders /src/seeders
 ADD locales /src/locales
 
