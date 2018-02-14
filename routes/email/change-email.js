@@ -295,7 +295,7 @@ function triggerAccountChangeEmails(email, user, client, newUsername) {
                     if (redirectUri) {
                         confirmLink = redirectUri + APPEND_MOVED + '&username=' + encodeURIComponent(user.email) + '&token=' + encodeURIComponent(key);
                     }
-                    console.log('send email', confirmLink);
+                    logger.debug('send email', confirmLink);
                     return emailHelper.send(
                         config.mail.from,
                         newUsername,
