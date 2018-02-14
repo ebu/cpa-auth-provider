@@ -24,7 +24,7 @@ var passwordHelper = require('../../lib/password-helper');
 var userHelper = require('../../lib/user-helper');
 
 var codeHelper = require('../../lib/code-helper');
-var captchaHelper = require ('../../lib/captcha-helper');
+var limiterHelper = require ('../../lib/limiter-helper');
 
 
 var i18n = require('i18n');
@@ -55,7 +55,7 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
 }));
 
 module.exports = function (app, options) {
-    app.post('/api/local/signup', cors, captchaHelper.recaptchaVerify, function (req, res) {
+    app.post('/api/local/signup', cors, limiterHelper.verify, function (req, res) {
 
         if (req.recaptcha.error) {
             res.status(400).json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
@@ -122,7 +122,7 @@ module.exports = function (app, options) {
         }
     });
 
-    app.post('/api/local/password/recover', cors, captchaHelper.recaptchaVerify, function (req, res) {
+    app.post('/api/local/password/recover', cors, limiterHelper.verify, function (req, res) {
 
         if (req.recaptcha.error) {
             res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});

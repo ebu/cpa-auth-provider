@@ -10,7 +10,7 @@ var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var i18n = require('i18n');
 var db = require('../../models/index');
-var captchaHelper = require ('../../lib/captcha-helper');
+var limiterHelper = require ('../../lib/limiter-helper');
 
 
 var routes = function (router) {
@@ -66,7 +66,7 @@ var routes = function (router) {
         });
     });
 
-    router.post('/user/profile/request_verification_email', [authHelper.ensureAuthenticated, captchaHelper.recaptchaVerify], function (req, res) {
+    router.post('/user/profile/request_verification_email', [authHelper.ensureAuthenticated, limiterHelper.verify], function (req, res) {
         if (req.recaptcha.error)
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
 

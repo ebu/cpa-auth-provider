@@ -12,7 +12,7 @@ var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
 var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
-var captchaHelper = require ('../../lib/captcha-helper');
+var limiterHelper = require ('../../lib/limiter-helper');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
@@ -213,7 +213,7 @@ module.exports = function (app, options) {
         failureFlash: true
     }), redirectOnSuccess);
 
-    app.post('/signup', captchaHelper.recaptchaVerify, function (req, res, next) {
+    app.post('/signup', limiterHelper.verify, function (req, res, next) {
 
         passport.authenticate('local-signup', function (err, user, info) {
 
@@ -244,7 +244,7 @@ module.exports = function (app, options) {
         })(req, res, next);
     });
 
-    app.post('/password/code', captchaHelper.recaptchaVerify, function (req, res, next) {
+    app.post('/password/code', limiterHelper.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
             return res.status(400).json({msg: req.__('BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG')});

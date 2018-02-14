@@ -107,10 +107,19 @@ module.exports = {
         duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
     },
 
-    recaptcha: {
-        enabled: ('true' === process.env.IDP_RECAPTCHA_ENABLED),
-        site_key: process.env.IDP_RECAPTCHA_SITEKEY,
-        secret_key: process.env.IDP_RECAPTCHA_SECRETKEY
+    limiter: {
+        type: process.env.IDP_LIMITER_TYPE || 'no', // 'no' || 'rate' || 'recaptcha-optional' || 'recaptcha'
+        parameters: {
+            recaptcha: {
+                site_key: process.env.IDP_RECAPTCHA_SITEKEY,
+                secret_key: process.env.IDP_RECAPTCHA_SECRETKEY
+            },
+            rate: {
+                windowMs: process.env.IDP_LIMITER_WIND0W_MS || 10 * 60 * 1000,
+                delayAfter: process.env.IDP_LIMITER_DELAY_AFTER || 1,
+                delayMs: process.env.IDP_LIMITER_DELAY_MS || 1000
+            }
+        }
     },
 
     // When accessing the home page, if defined, users are automatically

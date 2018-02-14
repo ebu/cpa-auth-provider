@@ -327,7 +327,7 @@
                   action='<%= link('/user/profile/request_verification_email') %>'
                   method="post">
                 <div class="form-group">
-                    <% if(config.recaptcha.enabled) { %>
+                    <% if(config.limiter.type === 'recaptcha' || config.limit.type === 'recaptcha-optional') { %>
                     <div class="recaptcha-wrapper">
                         <%- captcha %>
                         <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>

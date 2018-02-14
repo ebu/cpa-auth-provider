@@ -17,8 +17,7 @@ var RefreshToken = require('./exchange/refresh-token').issueToken;
 var cors = require('cors');
 var CreateUser = require('./create-user').createUser;
 var logger = require('../../lib/logger');
-
-var RateLimit = require('express-rate-limit');
+var limiterHelper = require('../../lib/limiter-helper');
 
 module.exports = function (router) {
 
@@ -117,7 +116,7 @@ module.exports = function (router) {
                     logger.error('client', client.id, 'not allowed with redirection', redirectURI);
                 }
                 return done(new Error('bad redirection'));
-            }, function(err) {
+            }, function (err) {
                 return done(err);
             });
         }),
@@ -160,28 +159,19 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
-	var easyToken = [
-	    confirmOAuth2Client,
+    var easyToken = [
+        confirmOAuth2Client,
         cors_header,
         server.token(),
         server.errorHandler()
     ];
 
-    config.rateLimiting = config.rateLimiting || {};
-    let createAccountLimiter = new RateLimit({
-        windowMs: config.rateLimiting.windowMs || 10 * 60 * 1000,
-        delayAfter: config.rateLimiting.delayAfter || 1,
-        delayMs: config.rateLimiting.delayMs || 1000,
-        max: config.rateLimiting.max || 0,
-        message: "TOO_MANY_ATTEMPTS", // denied request message
-        skip: isRecaptchaRequest // allow google recaptcha enhanced things to bypass rate limiting
-    });
-
     var createUser = [
-        createAccountLimiter,
+        //createAccountLimiter,
         confirmOAuth2Client,
         cors_header,
-        optionalConfirmRecaptcha(createAccountLimiter),
+        limiterHelper.verify,
+        //optionalConfirmRecaptcha(createAccountLimiter),
         CreateUser
     ];
 
@@ -193,7 +183,7 @@ module.exports = function (router) {
     router.options('/oauth2/token', cors_header);
 
     router.options('/oauth2/login', cors_header);
-	router.post('/oauth2/login', easyToken);
+    router.post('/oauth2/login', easyToken);
 
     function corsOptionsDelegate(req, callback) {
         var options;
@@ -208,57 +198,26 @@ module.exports = function (router) {
         return callback(null, options);
     }
 
-	/**
+    /**
      * Most basic oauth2 confirmation of client_id. Merely confirm the client_id
      * is known to the service. client_secret is not required.
      */
-	function confirmOAuth2Client(req, res, next) {
-		var clientId = req.body.client_id;
+    function confirmOAuth2Client(req, res, next) {
+        var clientId = req.body.client_id;
 
-		db.OAuth2Client.find({where: {client_id: clientId}}).then(
-			function (client) {
-			    if (client) {
-			        req.user = client;
-			        return next();
+        db.OAuth2Client.find({where: {client_id: clientId}}).then(
+            function (client) {
+                if (client) {
+                    req.user = client;
+                    return next();
                 } else {
-			        return res.status(400).json({error: 'invalid_client', error_description: 'client not found'});
+                    return res.status(400).json({error: 'invalid_client', error_description: 'client not found'});
                 }
-			},
-			function (err) {
+            },
+            function (err) {
                 return next(err);
-			}
-		);
-	}
-
-	/** check if a request contains a recaptcha information */
-	function isRecaptchaRequest(req) {
-        return config.recaptcha.enabled && req.body.hasOwnProperty('g-recaptcha-response');
-    }
-
-    /** confirm recaptcha (if it is present) */
-	function optionalConfirmRecaptcha(rateLimiter) {
-        return function (req, res, next) {
-            if (!isRecaptchaRequest(req)) {
-                return next();
             }
-            let recaptcha = require('express-recaptcha');
-            recaptcha.verify(
-                req,
-                function (error, data) {
-                    // could also check data.hostname for validity
-                    if (error) {
-                        logger.warn('[Recaptcha][Optional Check][FAIL][error', error, ']');
-                        return res.status(400).json({error: 'bad_request', error_description: 'BAD_CAPTCHA'});
-                    } else {
-                        if (rateLimiter) {
-                            rateLimiter.resetKey(req.ip);
-                        }
-                        return next();
-                    }
-                }
-            );
-        };
+        );
     }
-
 
 };

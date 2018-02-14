@@ -9,7 +9,7 @@ module.exports = {
         layout: 'rts',
         // override the HTML default title value
         title: '',
-        oauth:{
+        oauth: {
             // override the oauth validation message
             customMessage: '{client} souhaite accéder à votre compte maRTS.'
         }
@@ -87,13 +87,19 @@ module.exports = {
         duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
     },
 
-    // google recaptcha keys
-    recaptcha: {
-        // test keys
-        // site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        // secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-        site_key: '6Lc6NCYUAAAAAPiyvFO2jig6jXGtYEhgZWtWFzml',
-        secret_key: '6Lc6NCYUAAAAALCXdWXUsZgDBl7fn9XA_ecVpu7m'
+    limiter: {
+        type: 'recaptcha', // 'no' || 'rate' || 'recaptcha-optional' || 'recaptcha'
+        parameters: {
+            recaptcha: {
+                site_key: '6Lc6NCYUAAAAAPiyvFO2jig6jXGtYEhgZWtWFzml',
+                secret_key: '6Lc6NCYUAAAAALCXdWXUsZgDBl7fn9XA_ecVpu7m'
+            },
+            rate: {
+                windowMs: 10 * 60 * 1000,
+                delayAfter: 1,
+                delayMs: 1000
+            }
+        }
     },
 
     // When accessing the home page, if defined, users are automatically
