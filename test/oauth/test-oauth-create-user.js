@@ -230,4 +230,33 @@ describe('POST /oauth2/create', function () {
             expect(this.res.body.error_description).equal('Missing fields. Please pass username and password.');
         });
     });
+
+    context('password too simple', function () {
+        before(resetDatabase);
+
+        before(function (done) {
+            requestHelper.sendRequest(
+                this,
+                url,
+                {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        "client_id": CLIENT.client_id,
+                        "grant_type": "create_user",
+                        "username": NEW_USER.email,
+                        "password": "a",
+                    }
+                },
+                done
+            );
+        });
+
+        it('should reject the request', function () {
+            expect(this.res.statusCode).equal(400);
+            expect(this.res.body.error).equal('invalid_request');
+            expect(this.res.body.error_description).equal('Required password quality not met.');
+        });
+    });
 });
