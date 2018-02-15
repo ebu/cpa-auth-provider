@@ -317,6 +317,9 @@
 	"BACK_SIGNUP_DATE_OF_BIRTH_FAIL": "Geburtsdatum nicht gültig",
 	"BACK_SIGNUP_GENDER_FAIL": "Geschlecht nicht gültig",
 	"BACK_SIGNUP_MISSING_FIELDS": "Angaben unvollständig",
+	"BACK_SIGNUP_PASS_SIMPLE_TOO_SIMPLE": "Passwort zu einfach. Verwende auch Zahlen oder Groß/Kleinschreibung.",
+	"BACK_SIGNUP_PASS_SIMPLE_TOO_SHORT": "Passwort zu kurz. Es muss mindestens {length} Zeichen lang sein.",
+	"BACK_SIGNUP_PASS_SIMPLE_GENERIC_FAIL": "Passwort ungültig.",
 
 	"BACK_PWD_UPDATE_USER_NOT_FOUND": "Benutzer nicht gefunden.",
 	"BACK_PWD_WRONG_RECOVERY_CODE": "Falscher Wiederherstellungscode.",

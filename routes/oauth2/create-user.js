@@ -6,6 +6,7 @@ var oauth2Token = require('../../lib/oauth2-token');
 var generate = require('../../lib/generate');
 var emailUtil = require('../../lib/email-util');
 const monitor = require('../../lib/monitor');
+const pwHelper = require('../../lib/password-helper');
 
 exports.createUser = createUser;
 
@@ -33,6 +34,15 @@ function createUser(req, res) {
             {
                 error: oauth2Token.ERRORS.BAD_REQUEST.code,
                 error_description: 'Missing fields. Please pass username and password.'
+            }
+        );
+    }
+
+    if (!pwHelper.isStrong(req.body.username, req.body.password)) {
+        return res.status(400).json(
+            {
+                error: oauth2Token.ERRORS.BAD_REQUEST.code,
+                error_description: 'Required password quality not met.'
             }
         );
     }
