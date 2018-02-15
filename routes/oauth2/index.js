@@ -168,9 +168,10 @@ module.exports = function (router) {
 
     var createUser = [
         //createAccountLimiter,
+        limiterHelper.verify,
         confirmOAuth2Client,
         cors_header,
-        limiterHelper.verify,
+        //limiterHelper.verify,
         //optionalConfirmRecaptcha(createAccountLimiter),
         CreateUser
     ];
