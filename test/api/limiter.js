@@ -19,11 +19,14 @@ describe('Limiter test', function () {
     context('When using rate limiter', function () {
 
         var savedLimiterType = config.limiter.type;
-        var savedMax = limiter.getCurrentRateLimitOptions('max');
+        config.limiter.parameters = config.limiter.parameters || {};
+        config.limiter.parameters.rate = config.limiter.parameters.rate || {};
+        var savedMax = config.limiter.parameters.rate.max;  //limiter.getCurrentRateLimitOptions('max');
 
         before(function (done) {
             config.limiter.type = "rate";
-            limiter.reconfigureRateLimit('max', 2);
+            config.limiter.parameters.rate.max = 2;
+            limiter.updateConfig();
             done();
         });
 
@@ -43,7 +46,8 @@ describe('Limiter test', function () {
 
         after(function (done) {
             config.limiter.type = savedLimiterType;
-            limiter.reconfigureRateLimit('max', savedMax);
+            config.limiter.parameters.rate.max = savedMax;
+            limiter.updateConfig();
             done();
         });
 
