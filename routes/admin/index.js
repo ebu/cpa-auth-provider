@@ -122,7 +122,7 @@ module.exports = function (router) {
                     } else {
                         var secret = generate.cryptoCode(30);
                         // Hash token
-                        return bcrypt.hashAsync(secret, 5).then(
+                        return bcrypt.hash(secret, 5).then(
                             function (hash) {
                                 return db.OAuth2Client.create({
                                     client_id: generate.clientId(),
@@ -165,7 +165,7 @@ module.exports = function (router) {
                         var secret = generate.cryptoCode(30);
 
                         // Hash token
-                        return bcrypt.hashAsync(secret,5).then(
+                        return bcrypt.hash(secret,5).then(
                             function (hash) {
                                 // Save token
                                 return client.updateAttributes(
