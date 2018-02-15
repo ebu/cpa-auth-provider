@@ -13,28 +13,17 @@ var resetDatabase = function (done) {
 };
 
 var STRONG_PASSWORD = "correct horse battery staple";
-var ERR_MSG = "Too Many Attempts";
-
 
 describe('Limiter test', function () {
 
     context('When using rate limiter', function () {
 
         var savedLimiterType = config.limiter.type;
-        var savedOptions = limiter.getCurrentRateLimitOptions();
+        var savedMax = limiter.getCurrentRateLimitOptions('max');
 
         before(function (done) {
             config.limiter.type = "rate";
-            limiter.reconfigureRateLimit({
-                windowMs: 10 * 60 * 1000,
-                delayAfter: 1,
-                delayMs: 1000,
-                max: 2, // test purpose
-                message: ERR_MSG,
-                skip: function () {
-                    return false;
-                }
-            });
+            limiter.reconfigureRateLimit('max', 2);
             done();
         });
 
@@ -54,13 +43,13 @@ describe('Limiter test', function () {
 
         after(function (done) {
             config.limiter.type = savedLimiterType;
-            limiter.reconfigureRateLimit(savedOptions);
+            limiter.reconfigureRateLimit('max', savedMax);
             done();
         });
 
         it('should return a success true', function () {
             expect(this.res.statusCode).to.equal(429);
-            expect(this.res.text).to.equal(ERR_MSG);
+            expect(this.res.text).to.equal("Too many requests, please try again later.");
         });
     });
 });
