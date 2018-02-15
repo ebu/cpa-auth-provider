@@ -4,9 +4,7 @@ var config = require('../../config');
 
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
-
-// Google reCAPTCHA
-var recaptcha = require('express-recaptcha');
+var limiter = require('../../lib/limiter-helper');
 
 var resetDatabase = function (done) {
     return dbHelper.clearDatabase(function (err) {
@@ -14,82 +12,56 @@ var resetDatabase = function (done) {
     });
 };
 
-var recaptchaResponse = 'a dummy recaptcha response';
-
-// The following recaptcha key should always return ok
-// See https://developers.google.com/recaptcha/docs/faq
-var OK_RECATCHA_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
-var OK_RECATCHA_SECRET = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
-
-var STRONG_PASSWORD = 'correct horse battery staple';
+var STRONG_PASSWORD = "correct horse battery staple";
+var ERR_MSG = "Too Many Attempts";
 
 
 describe('Limiter test', function () {
 
     context('When using rate limiter', function () {
 
-        var mail = 'email-for-limiter-test@socool.com';
-        var i = 0;
-
         var savedLimiterType = config.limiter.type;
+        var savedOptions = limiter.getCurrentRateLimitOptions();
 
         before(function (done) {
             config.limiter.type = "rate";
+            limiter.reconfigureRateLimit({
+                windowMs: 10 * 60 * 1000,
+                delayAfter: 1,
+                delayMs: 1000,
+                max: 2, // test purpose
+                message: ERR_MSG,
+                skip: function () {
+                    return false;
+                }
+            });
             done();
+        });
+
+
+        before(resetDatabase);
+
+        // 3 signup (limit is 2)
+        before(function (done) {
+            signup.call(this, "email-for-limiter-test-1@socool.com", done);
+        });
+        before(function (done) {
+            signup.call(this, "email-for-limiter-test-2@socool.com", done);
+        });
+        before(function (done) {
+            signup.call(this, "email-for-limiter-test-3@socool.com", done);
         });
 
         after(function (done) {
             config.limiter.type = savedLimiterType;
+            limiter.reconfigureRateLimit(savedOptions);
             done();
         });
-
-        before(function (done) {
-            recaptcha.init(OK_RECATCHA_KEY, OK_RECATCHA_SECRET);
-            done();
-        });
-
-        before(resetDatabase);
-
-
-        before(function (done) {
-            signup.call(this, (i++) + mail, done);
-        });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
-        // before(function (done) {
-        //     signup.call(this, (i++) + mail, done);
-        // });
 
         it('should return a success true', function () {
-            console.log(this.res.error);
-            expect(this.res.statusCode).to.equal(200);
+            expect(this.res.statusCode).to.equal(429);
+            expect(this.res.text).to.equal(ERR_MSG);
         });
-
     });
 });
 
@@ -100,8 +72,7 @@ function signup(mail, done) {
         type: 'form',
         data: {
             email: mail,
-            password: STRONG_PASSWORD,
-            'g-recaptcha-response': recaptchaResponse
+            password: STRONG_PASSWORD
         }
     }, done);
 }
