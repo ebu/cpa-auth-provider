@@ -11,6 +11,7 @@ services:
     - OAUTH2_CALLBACK=http://localhost:3001
     - OAUTH2_INTERNAL_SERVER=http://identity-provider:3000
     - EMAIL_FROM=no-reply@br.de
+    - PASSWORD_QUALITY_CHECK=no
     links:
     - identity-provider:identity-provider
   identity-provider:
