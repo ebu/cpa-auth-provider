@@ -51,12 +51,14 @@ module.exports = {
 
     // configuration for password using local identity provider
     password: {
-        // one of [simple,owasp] - defaults to owasp
+        // one of [no,simple,owasp] - defaults to owasp
         quality_check: '',
         // in sec
         recovery_code_validity_duration: 1800,
         // a new recovery code will be generated only if the current one has less that TTL
-        keep_recovery_code_until: 900
+        keep_recovery_code_until: 900,
+        // additional endpoint for password setting (/user/password)
+        additional_endpoint: true,
     },
 
     // define the name of the cookie used to store user locale

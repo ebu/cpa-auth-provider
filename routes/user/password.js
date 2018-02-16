@@ -6,6 +6,7 @@ var logger = require('../../lib/logger');
 var email = require('../../lib/email-util');
 var cors = require('cors');
 var passport = require('passport');
+const config = require('../../config');
 
 module.exports = setupRoutes;
 
@@ -13,6 +14,9 @@ var registeredRoutes = {};
 
 
 function setupRoutes(router) {
+	if (!config.password.additional_endpoint) {
+		return;
+	}
 
 	register('request-password-email', requestPasswordEmail);
 	register('set-password', setPassword);
