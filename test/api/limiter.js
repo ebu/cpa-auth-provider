@@ -53,7 +53,7 @@ describe('Limiter test', function () {
 
         it('should return a success true', function () {
             expect(this.res.statusCode).to.equal(429);
-            expect(this.res.text).to.equal("Too many requests, please try again later.");
+            expect(this.res.text).to.equal("TOO_MANY_ATTEMPTS");
         });
     });
 });
