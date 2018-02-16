@@ -236,11 +236,13 @@ module.exports = {
     max_poll_interval: 5,
 
     deletion: {
+        // allow DELETE /oauth2/me
+        endpoint_enabled: 'true' === process.env.DELETION_ENDPOINT_ENABLED,
         // how long before a deletion request is processed
         delay_in_days: process.env.DELETION_DELAY_IN_DAYS || 7,
         // check to delete in seconds
         delete_interval: process.env.DELETE_INTERVAL || 6 * 60 * 60, // 6 hours
-        // how long before a verification is considered failed, in seconds
+        // how long before a verification is considered failed, in seconds, set to 0- to disable
         verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
     },
 

@@ -3,10 +3,14 @@ var passport = require('passport');
 var cors = require('cors');
 var logger = require('../../lib/logger');
 var deleteHelper = require('../../lib/user-deletion');
+const config = require('../../config');
 
 module.exports = setup;
 
 function setup(router) {
+    if (!config.deletion || !config.deletion.endpoint_enabled) {
+        return;
+    }
     var cors_headers = cors({origin: true, methods: ['DELETE']});
 
     router.options('/oauth2/me', cors_headers);
