@@ -16,7 +16,7 @@ var user_info = [
             db.SocialLogin.findOne({where: {$and: [{user_id: req.user.id}, {email: {$ne: null}}, {email: {$ne: ''}}]}}).then(function (socialLogin) {
 
                 var mail = "";
-                if (localLogin && localLogin.verified) {
+                if (localLogin) {
                     mail = localLogin.login;
                 } else if (socialLogin && socialLogin.email) {
                     mail = socialLogin.email;
