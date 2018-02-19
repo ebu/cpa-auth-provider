@@ -6,20 +6,16 @@ RUN apk add --no-cache sqlite-libs
 RUN npm install -g sequelize-cli
 RUN npm install -g node-gyp
 
-ADD package.json package-lock.json /src/
+COPY package.json package-lock.json /src/
 
 # Install Node.js dependencies
 WORKDIR /src
 RUN apk add --no-cache --virtual build python build-base && npm install && npm rebuild bcrypt --build-from-source && apk del build
 # rebuild bcrypt to fix segmentation fault - https://github.com/kelektiv/node.bcrypt.js/issues/528
 
-ADD .sequelizerc /src/.sequelizerc
-ADD migrate /src/migrate
+COPY .sequelizerc /src/.sequelizerc
+COPY migrate /src/migrate
 RUN mkdir /src/seeders
-
-# Configure
-ADD config.docker.js /src/config.local.js
-ADD config.js /src/config.js
 
 ENV NODE_ENV development
 
@@ -32,22 +28,25 @@ ENV DEFAULT_LOCALE fr
 ENV DB_TYPE sqlite
 ENV DB_FILENAME "data/identity-provider.sqlite"
 
-ADD config.js /src/config.js
-ADD db_config.js /src/db_config.js
-ADD bin /src/bin
-ADD lib /src/lib
-ADD models /src/models
-ADD public /src/public
-ADD routes /src/routes
-ADD views /src/views
-ADD templates /src/templates
-ADD locales /src/locales
-ADD seeders /src/seeders
-ADD locales /src/locales
+COPY bin /src/bin
+COPY lib /src/lib
+COPY models /src/models
+COPY public /src/public
+COPY routes /src/routes
+COPY views /src/views
+COPY templates /src/templates
+COPY locales /src/locales
+COPY seeders /src/seeders
+COPY locales /src/locales
+
+# Configure
+COPY config.docker.js /src/config.local.js
+COPY config.js /src/config.js
+COPY db_config.js /src/db_config.js
 
 # TODO find better way to run tests without adding test file to the image
-ADD test /src/test
-ADD config.test.js /src/config.test.js
+COPY test /src/test
+COPY config.test.js /src/config.test.js
 
 # Create the sqlite database
 RUN mkdir data
