@@ -7,10 +7,10 @@ var requestHelper = require('../../lib/request-helper');
 var trackingCookie = require('../../lib/tracking-cookie');
 
 module.exports = function (router) {
-	router.get('/logout', fullRedirect, function (req, res) {
-		req.logout();
-		requestHelper.redirect(res, '/');
-	});
+    router.get('/logout', fullRedirect, function (req, res) {
+        req.logout();
+        requestHelper.redirect(res, '/');
+    });
 
     router.get('/protected', authHelper.authenticateFirst, function (req, res) {
         res.send('protected');
@@ -36,8 +36,8 @@ module.exports = function (router) {
 };
 
 function fullRedirect(req, res, next) {
-	if (config.full_redirect) {
-		return res.redirect(config.full_redirect);
-	}
-	return next();
+    if (config.full_redirect) {
+        return res.redirect(config.full_redirect);
+    }
+    return next();
 }
