@@ -122,7 +122,11 @@ module.exports = function (router) {
         }),
         authHelper.authenticateFirst,
         function (req, res) {
-            res.render('oauth2/dialog', {
+            var renderer = 'oauth2/dialog';
+            if (req.query.client_id === "db05acb0c6ed902e5a5b7f5ab79e7144") {
+                renderer = 'broadcaster/boutique-rts/oauth-dialog';
+            }
+            res.render(renderer, {
                 transactionID: req.oauth2.transactionID,
                 user: req.user,
                 email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
