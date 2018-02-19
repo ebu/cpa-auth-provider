@@ -146,7 +146,7 @@ module.exports = {
         filename: process.env.DB_FILENAME,
 
         // If true, SQL statements are logged to the console.
-        debug: true
+        debug: 'true' === process.env.DB_LOGGING
     },
 
     // Session cookie is signed with this secret to prevent tampering
