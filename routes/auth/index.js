@@ -50,7 +50,7 @@ module.exports = function (router) {
                     }
                 }
 
-                profileAttributes['auth_origin'] = req.session.auth_origin;
+                profileAttributes.auth_origin = req.session.auth_origin;
 
                 if (req.query && req.query.error) {
                     url += "?error=" + req.query.error;
