@@ -37,7 +37,6 @@ COPY views /src/views
 COPY templates /src/templates
 COPY locales /src/locales
 COPY seeders /src/seeders
-COPY locales /src/locales
 
 # Configure
 COPY config.docker.js /src/config.local.js
