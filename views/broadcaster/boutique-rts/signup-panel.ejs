@@ -1,0 +1,128 @@
+<div class="col-xs-12">
+
+    <div id="rts-signup-panel">
+        <h1 class="text-center"><%= __('SIGNUP_TITLE') %></h1>
+
+        <!-- SIGNUP FORM -->
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
+
+                <!-- show any messages that come back with signup process -->
+                <% if (message.length > 0) { %>
+                <div class="signup-error alert alert-danger" id="errorBox"><%- message %></div>
+                <% } %>
+
+                <form class="connect-forms" action="<%= link('/signup') %>" method="post">
+
+                    <div class="signup-fields">
+
+                        <div class="form-group">
+                            <input type="email" class="form-control" name="email"
+                                   placeholder="<%= __('SIGNUP_EMAIL_LABEL') %>"
+                                    <% if(email) { %>
+                                   value="<%= email %>"
+                                    <% } %>
+                                   required>
+                        </div>
+                        <% if(requiredFields.firstname) { %>
+                        <div class="form-group">
+                            <input id="firstname" name="firstname" class="form-control"
+                                   type="text" placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER') %>"
+                                    <% if(firstname) { %>
+                                   value="<%= firstname %>"
+                                    <% } %>
+                            >
+                        </div>
+                        <% } %>
+                        <% if(requiredFields.lastname) { %>
+                        <div class="form-group">
+                            <input id="lastname" name="lastname" class="form-control"
+                                   type="text" placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"
+                                    <% if(lastname) { %>
+                                   value="<%= lastname %>"
+                                    <% } %>
+                            >
+                        </div>
+                        <% } %>
+
+                        <% if(requiredFields.date_of_birth) {%>
+                        <div class="form-group">
+                            <div class="input-group date" data-provide="datepicker"
+                                 data-language="en">
+                                <input id="date_of_birth" name="date_of_birth" class="form-control"
+                                       type="text" placeholder="<%= __('SIGNUP_DATE_OF_BIRTH_LABEL') %>"
+                                        <% if(date_of_birth) {%> value="<%= date_of_birth %>" <% } %>
+                                >
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <% if(requiredFields.gender) {%>
+                        <div class="form-group">
+                            <select id="gender" name="gender" class="form-control personnal-data-input">
+                                <option class="input-gender"
+                                        <% if(!gender) {%>selected<% } %>
+                                        disabled>
+                                    <%= __('PROFILE_SEX_LABEL') %>
+                                </option>
+                                <option value="male" <% if(gender=='male') {%>selected<%}%> >
+                                    <%= __('PROFILE_MAN_SEX_FORM_OPTION') %>
+                                </option>
+                                <option value="female" <% if(gender=='female') {%>selected<%}%> >
+                                    <%= __('PROFILE_WOMAN_SEX_FORM_OPTION') %>
+                                </option>
+                                <option value="other" <% if(gender=='other') {%>selected<%}%> >
+                                    <%= __('PROFILE_OTHER_SEX_FORM_OPTION') %>
+                                </option>
+                            </select>
+                        </div>
+                        <% } %>
+
+                        <div class="form-group">
+                            <input id="password" type="password" class="form-control password-test" name="password"
+                                   placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
+                            <p id="password-error-label" class="password-error error-message text-danger"></p>
+                            <div id="password-bar"><div id="password-progress"></div></div>
+                        </div>
+
+                        <div class="form-group">
+                            <input id="confirm_password" type="password" class="form-control" name="confirm_password"
+                                   placeholder="<%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %>" required>
+                        </div>
+
+                    </div>
+
+                    <% if(config.limiter.type === 'recaptcha' || config.limit.type === 'recaptcha-optional') { %>
+                    <div class="form-group">
+                        <div class="recaptcha-wrapper">
+                            <%- captcha %>
+                            <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
+                            <div class="recaptcha-info"></div>
+                            <div class="rc-anchor-logo-text">reCAPTCHA</div>
+                            <div class="rc-anchor-pt">
+                                <a href="https://www.google.com/intl/en/policies/privacy/"
+                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
+                                <span aria-hidden="true" role="presentation"> - </span>
+                                <a href="https://www.google.com/intl/en/policies/terms/"
+                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <button type="submit"
+                            class="btn btn-primary btn-block btn-large-submit"><%= __('SIGNUP_SIGNUP_BUTTON') %></button>
+
+                </form>
+
+                <p class="link-login to-login-link"><%= __('SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL') %> <a
+                            class="btn-link" href="javascript:void(0);"><%= __('SIGNUP_LOGIN_BUTTON') %></a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>

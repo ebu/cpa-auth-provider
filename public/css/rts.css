@@ -14,8 +14,9 @@ body {
 }
 
 h1 {
-    font-size: 2.8rem;
+    font-size: 32px;
     font-weight: 500;
+    line-height: 36px;
     margin-top: 0;
     color: #333333;
 }
@@ -43,17 +44,65 @@ h4 {
 
 .btn-primary, .btn-danger {
     background-color: #af001e;
-    border: #af001e;
-    font-size: 1.8rem;
+    border: 0;
     margin-right: 10px;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: none;
+    max-width: 428px;
+    height: 45px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 18px;
+    font-weight: 300;
 }
 
 .btn-primary:hover, .btn-danger:hover {
-    background-color: #bf0020;
+    background-color: #af001e;
 }
 
 .btn-primary:active, .btn-primary:focus, .btn-danger:active, .btn-danger:focus, .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover {
-    background-color: #bf0020;
+    background-color: #af001e;
+}
+
+.btn.btn-large-submit.btn-primary, .btn.btn-large-submit.btn-danger {
+    font-size: 18px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+input.form-control, input.form-control, select.form-control {
+    display: inline-block;
+    max-width: 430px;
+    height: 45px;
+    font-size: 18px;
+    color: #666;
+    border: 1px solid #999999;
+    border-radius: 0;
+}
+
+select.form-control {
+    border: 0;
+    outline: 1px solid #999;
+    outline-offset: -1px;
+}
+
+.input-group .input-group-addon {
+    border-radius: 0;
+    border: 1px solid #999999;
+}
+
+.input-group .input-group-addon:last-child {
+    border-left: 0;
+}
+
+.form-group .input-group {
+    max-width: 430px;
+    margin: auto;
+}
+.form-group #password-bar {
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 footer.rts-footer {
@@ -76,6 +125,70 @@ footer.rts-footer {
 
 /*TODO remove this when user login btn will be in production on hummingbird*/
 .rts-hp-header .about {
+    display: none;
+}
+
+#rts-custom-login {
+    text-align: center;
+}
+
+#rts-custom-login form.connect-forms {
+    margin: 20px 0 5px 0;
+}
+
+#rts-custom-login .link-login {
+    font-size: 18px;
+}
+
+#rts-custom-login #rts-login-panel {
+    display: block;
+}
+
+#rts-custom-login #rts-login-panel #password-recovery {
+    display: block;
+    font-size: 17px;
+    margin-top: 2px;
+    text-align: right;
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#rts-custom-login #rts-login-panel .login-images {
+    width: 45px;
+    cursor: pointer;
+}
+
+#rts-custom-login #rts-login-panel .login-social-labels {
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+#rts-custom-login #rts-login-panel .identity_provider {
+    color: #666666;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+#rts-custom-login #rts-login-panel .identity_provider:first-child {
+    margin-left: 0;
+}
+
+#rts-custom-login #rts-login-panel .identity_provider:hover {
+    text-decoration: none;
+    color: #666666;
+}
+
+#rts-custom-login #rts-login-panel .social {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+#rts-custom-login #rts-login-panel .providers-links{
+    color: inherit;
+}
+
+#rts-custom-login #rts-signup-panel, #rts-custom-login #rts-password-panel {
     display: none;
 }
 
