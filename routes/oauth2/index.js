@@ -18,6 +18,7 @@ var cors = require('cors');
 var CreateUser = require('./create-user').createUser;
 var logger = require('../../lib/logger');
 var limiterHelper = require('../../lib/limiter-helper');
+var util = require('util');
 
 module.exports = function (router) {
 
@@ -127,7 +128,7 @@ module.exports = function (router) {
                 user: req.user,
                 email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
                 client: req.oauth2.client,
-                customMessage: config.broadcaster && config.broadcaster.oauth ? config.broadcaster.oauth.customMessage : undefined
+                customMessage: config.broadcaster && config.broadcaster.oauth ? util.format(config.broadcaster.oauth.customMessage, req.oauth2.client.name) : undefined
             });
         }
     ];
