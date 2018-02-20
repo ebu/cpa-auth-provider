@@ -1,6 +1,6 @@
 <!-- views/layout/default/alert.ejs -->
 
-<% if(user &&  user.language !== language) { %>
+<% if(user && user.language && user.language !== language) { %>
 <div class="container language-error">
     <div class="alert alert-warning alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
