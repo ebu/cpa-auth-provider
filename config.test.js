@@ -82,6 +82,9 @@ module.exports = {
 
     auto_idp_redirect: 'local',
 
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
+
     db: {
         // The database type, 'mysql', 'sqlite', etc.
         type: 'sqlite',

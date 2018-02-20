@@ -60,6 +60,9 @@ module.exports = {
 
     baseUrl: process.env.BASE_URL,
 
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
+
     displayUsersInfos: ('true' === process.env.DISPLAY_USER_INFOS),
 
     displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
