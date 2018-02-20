@@ -407,7 +407,7 @@ module.exports = function (router) {
             db.User.count().then(
                 c => {
                     result.accountsTotal = c;
-                    return db.User.count({where: {'verified': true}});
+                    return db.User.count({include: {model: db.LocalLogin, where: {'verified': true}}});
                 }
             ).then(
                 c => {
