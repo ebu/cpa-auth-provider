@@ -243,8 +243,14 @@ function routes(router) {
                 }
             ).then(
                 function (takenUser) {
-                    // TODO how to check for email claimed by social login?
                     if (takenUser) {
+                        throw new Error(STATES.EMAIL_ALREADY_TAKEN);
+                    }
+                    return db.SocialLogin.findOne({where: {email: newUsername}});
+                }
+            ).then(
+                function (socialLogin_) {
+                    if (socialLogin_) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
                     return localLogin.updateAttributes({
