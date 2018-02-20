@@ -41,7 +41,7 @@ function routes(router) {
         },
         function (req, res) {
             var oldUser = req.user;
-            var oldUserProfile;
+            var oldLocalLogin;
             var newUsername = req.body.new_email;
             var password = req.body.password;
 
@@ -62,7 +62,7 @@ function routes(router) {
                     }
                     // At last check password
                     return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
-                        oldUserProfile = localLogin;
+                        oldLocalLogin = localLogin;
                         return localLogin.verifyPassword(password);
                     });
                 }
@@ -79,8 +79,8 @@ function routes(router) {
                     if (tokenCount >= REQUEST_LIMIT) {
                         throw new Error(STATES.TOO_MANY_REQUESTS);
                     }
-                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from', oldUserProfile.login, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUserProfile.login, oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
+                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from', oldLocalLogin.login, '][to', newUsername, ']');
+                    triggerAccountChangeEmails(oldLocalLogin.login, oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
                         function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
@@ -243,8 +243,14 @@ function routes(router) {
                 }
             ).then(
                 function (takenUser) {
-                    // TODO how to check for email claimed by social login?
                     if (takenUser) {
+                        throw new Error(STATES.EMAIL_ALREADY_TAKEN);
+                    }
+                    return db.SocialLogin.findOne({where: {email: newUsername}});
+                }
+            ).then(
+                function (socialLogin_) {
+                    if (socialLogin_) {
                         throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                     }
                     return localLogin.updateAttributes({

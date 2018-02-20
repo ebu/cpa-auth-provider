@@ -51,8 +51,8 @@ var routes = function (router) {
                 return;
             }
             userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(
-                function (userProfile) {
-                    res.cookie(config.i18n.cookie_name, userProfile.language, {
+                function (user) {
+                    res.cookie(config.i18n.cookie_name, user.language, {
                         maxAge: config.i18n.cookie_duration,
                         httpOnly: true
                     });

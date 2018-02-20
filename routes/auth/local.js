@@ -273,7 +273,7 @@ module.exports = function (app, options) {
                                     mail: localLogin.login,
                                     code: code
                                 },
-                                (localLogin.User.UserProfile && localLogin.User.UserProfile.language) ? localLogin.User.UserProfile.language : i18n.getLocale()
+                                localLogin.User.language ? localLogin.User.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },

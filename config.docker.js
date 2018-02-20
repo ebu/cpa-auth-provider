@@ -60,6 +60,9 @@ module.exports = {
 
     baseUrl: process.env.BASE_URL,
 
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
+
     displayUsersInfos: ('true' === process.env.DISPLAY_USER_INFOS),
 
     displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
@@ -119,9 +122,14 @@ module.exports = {
                 secret_key: process.env.IDP_RECAPTCHA_SECRETKEY
             },
             rate: {
-                windowMs: process.env.IDP_LIMITER_WIND0W_MS || 10 * 60 * 1000,
-                delayAfter: process.env.IDP_LIMITER_DELAY_AFTER || 1,
-                delayMs: process.env.IDP_LIMITER_DELAY_MS || 1000
+                // how long to keep track of an ip on one instance
+                windowMs: process.env.RATE_LIMIT_WIND0W_MS || 10 * 60 * 1000,
+                // start delaying after which number of requests (0 to disable)
+                delayAfter: process.env.RATE_LIMIT_DELAY_AFTER === undefined ? 1 : process.env.RATE_LIMIT_DELAY_AFTER,
+                // delay per request
+                delayMs: process.env.RATE_LIMIT_DELAY_MS || 1000,
+                // max allowed requests (0 to disable)
+                max: 0,
             }
         }
     },
@@ -146,7 +154,7 @@ module.exports = {
         filename: process.env.DB_FILENAME,
 
         // If true, SQL statements are logged to the console.
-        debug: true
+        debug: 'true' === process.env.DB_LOGGING
     },
 
     // Session cookie is signed with this secret to prevent tampering
@@ -246,14 +254,7 @@ module.exports = {
         verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
     },
 
-    rateLimiting: {
-        // delay per request
-        delayMs: process.env.RATE_LIMIT_DELAY_MS || 1000,
-        // start delaying after which number of requests (0 to disable)
-        delayAfter: process.env.RATE_LIMIT_DELAY_AFTER === undefined ? 1 : process.env.RATE_LIMIT_DELAY_AFTER,
-        // max allowed requests (0 to disable)
-        max: 0,
-        // how long to keep track of an ip on one instance
-        windowMs: 10 * 60 * 1000
+    monitoring: {
+        enabled: true,
     },
 };

@@ -69,6 +69,8 @@ function createUser(req, res) {
                     }
                 ).then(
                     function(localLogin) {
+                        // user.LocalLogin needs to be set for access token generation
+                        user.LocalLogin = localLogin;
                         return localLogin.setPassword(req.body.password);
                     }
                 ).then(

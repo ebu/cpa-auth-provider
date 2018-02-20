@@ -111,6 +111,9 @@ module.exports = {
     auto_idp_redirect: '',
     use_landing_page: false,
 
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
+
     // if false the list of user is not accessible in the admin
     displayUsersInfos: true,
 
@@ -240,6 +243,10 @@ module.exports = {
 
     oauth2: {
         refresh_tokens_enabled: true
-    }
+    },
+
+    monitoring: {
+        enabled: true,
+    },
 
 };
