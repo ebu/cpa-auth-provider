@@ -19,6 +19,10 @@ module.exports = function (sequelize, DataTypes) {
                 notEmpty: true
             }
         },
+        jwt_code: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         name: {
             type: DataTypes.STRING,
             validate: {
@@ -26,6 +30,10 @@ module.exports = function (sequelize, DataTypes) {
             }
         },
         redirect_uri: { // TODO: Use its own table (RedirectURIWhiteList)
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        email_redirect_uri: {
             type: DataTypes.STRING,
             allowNull: true
         }
@@ -37,6 +45,26 @@ module.exports = function (sequelize, DataTypes) {
             OAuth2Client.belongsTo(models.User);
         }
     });
+
+    OAuth2Client.prototype.mayRedirect = function (uri) {
+        if (this.redirect_uri === null) {
+            return true;
+        }
+        if (!uri) {
+            return true;
+        }
+        return uri.startsWith(this.redirect_uri);
+    };
+
+    OAuth2Client.prototype.mayEmailRedirect = function (uri) {
+        if (!uri) {
+            return true;
+        }
+        if (this.email_redirect_uri === null) {
+            return false;
+        }
+        return uri.startsWith(this.email_redirect_uri);
+    };
 
     return OAuth2Client;
 };

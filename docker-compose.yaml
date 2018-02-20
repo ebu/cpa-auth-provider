@@ -10,11 +10,13 @@ services:
     - OAUTH2_SERVER=http://localhost:3000
     - OAUTH2_CALLBACK=http://localhost:3001
     - OAUTH2_INTERNAL_SERVER=http://identity-provider:3000
+    - EMAIL_FROM=no-reply@br.de
+    - PASSWORD_QUALITY_CHECK=no
     links:
     - identity-provider:identity-provider
   identity-provider:
     build: .
-    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
+#    command: bash -c "sequelize db:migrate && bin/prep-db && bin/server"
     ports:
     - 3000:3000
     environment:
@@ -27,3 +29,26 @@ services:
     - TRACKING_COOKIE=true
     - IDP_TITLE=Radio Télévision Suisse - Fournisseur d'identité
     - PROFILE_FIELDS_REQUIRED=gender,date_of_birth
+    - EMAIL_FROM=no-reply@rts.ch
+    - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+    - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    environment:
+      - DB_DATABASE=postgres
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=dockercpa
+      - DB_PASSWORD=SchiefesHausBautFalsch
+  postgres:
+    build: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
+      - DOCKER_USER=dockercpa
+      - DOCKER_PASSWORD=SchiefesHausBautFalsch

@@ -1,0 +1,12 @@
+<% include ../layout/head %>
+
+<div></div>
+
+<p>Hallo <%= user.display_name || user.email %>!</p>
+
+<p>Deine Email wurde erfolgreich verifiziert.</p>
+
+<p><a href="<%= link(forward_address) %>">Weiter zur Mediathek</a></p>
+
+
+<% include ../layout/foot %>

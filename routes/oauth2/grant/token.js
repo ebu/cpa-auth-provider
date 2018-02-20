@@ -1,8 +1,7 @@
 "use strict";
 
-var db = require('../../../models');
-var generate = require('../../../lib/generate');
-var jwtHelper = require('../../../lib/jwt-helper');
+var oauthToken = require('../../../lib/oauth2-token');
+var userDeletion = require('../../../lib/user-deletion');
 
 // Grant implicit authorization.  The callback takes the `client` requesting
 // authorization, the authenticated `user` granting access, and
@@ -11,15 +10,31 @@ var jwtHelper = require('../../../lib/jwt-helper');
 // values.
 
 exports.token = function (client, user, ares, done) {
-    var token = jwtHelper.generate(user.id, 10 * 60 * 60, {cli: client.id});
-    return done(null, token);
-
-    // var token = generate.accessToken();
-    //
-    // db.AccessToken.create({ token: token, user_id: user.id, oauth2_client_id: client.id })
-    //     .then(function() {
-    //         done(null, token);
-    //     }).catch(function(err) {
-    //         return done(err);
-    //     });
+    try {
+        var accessToken, extras;
+        oauthToken.generateAccessToken(client, user).then(
+            function (_accessToken) {
+                accessToken = _accessToken;
+                return oauthToken.generateTokenExtras(client, user);
+            }
+        ).then(
+            function (_extras) {
+                extras = _extras;
+                return userDeletion.cancelDeletion(user, client);
+            }
+        ).then(
+            function (deletionCancelled) {
+                if (deletionCancelled) {
+                    extras.deletion_cancelled = true;
+                }
+                return done(null, accessToken, extras);
+            }
+        ).catch(
+            function (e) {
+                return done(e);
+            }
+        );
+    } catch (e) {
+        return done(e);
+    }
 };

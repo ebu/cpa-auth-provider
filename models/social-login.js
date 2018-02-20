@@ -35,7 +35,7 @@ module.exports = function (sequelize, DataTypes) {
             // }
         },
         associate: function (models) {
-            SocialLogin.belongsTo(models.User);
+            SocialLogin.belongsTo(models.User, {onDelete: 'cascade'});
         }
     });
 

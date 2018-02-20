@@ -9,6 +9,7 @@ var config = require('../config');
 
 var sequelize = new Sequelize(config.db.database, config.db.user, config.db.password, {
     dialect: config.db.type,
+    dialectOptions: config.db.dialectOptions,
     host: config.db.host,
     port: config.db.port,
     storage: config.db.filename,

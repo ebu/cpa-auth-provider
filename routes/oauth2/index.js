@@ -15,8 +15,10 @@ var AuthorizationCodeExchange = require('./exchange/authorization-code').authori
 var ResourceOwnerPasswordCredentials = require('./exchange/resource-owner-password').token;
 var RefreshToken = require('./exchange/refresh-token').issueToken;
 var cors = require('cors');
+var CreateUser = require('./create-user').createUser;
 var logger = require('../../lib/logger');
-
+var limiterHelper = require('../../lib/limiter-helper');
+var util = require('util');
 
 module.exports = function (router) {
 
@@ -100,26 +102,24 @@ module.exports = function (router) {
 
     var authorization = [
         server.authorization(function (clientID, redirectURI, done) {
-            db.OAuth2Client.findOne({where: {client_id: clientID}}).then(
-                function (client) {
-                    if (!client) {
-                        return done(new Error('unknown client' + clientID));
-                    }
-                    // WARNING: For security purposes, it is highly advisable to check that
-                    //          redirectURI provided by the client matches one registered with
-                    //          the server.  For simplicity, this example does not.  You have
-                    //          been warned.
-                    if (!client.redirect_uri || (redirectURI && redirectURI.startsWith(client.redirect_uri))) {
-                        return done(null, client, redirectURI);
-                    }
-                    if (logger && typeof(logger.error) == 'function') {
-                        logger.error('client', client.id, 'not allowed with redirection', redirectURI);
-                    }
-                    return done(new Error('bad redirection'));
-                },
-                function (err) {
-                    return done(err);
-                });
+            db.OAuth2Client.findOne({where: {client_id: clientID}}).then(function (client) {
+                if (!client) {
+                    return done(new Error('unknown client' + clientID));
+                }
+                // WARNING: For security purposes, it is highly advisable to check that
+                //          redirectURI provided by the client matches one registered with
+                //          the server.  For simplicity, this example does not.  You have
+                //          been warned.
+                if (client.mayRedirect(redirectURI)) {
+                    return done(null, client, redirectURI);
+                }
+                if (logger && typeof(logger.error) == 'function') {
+                    logger.error('client', client.id, 'not allowed with redirection', redirectURI);
+                }
+                return done(new Error('bad redirection'));
+            }, function (err) {
+                return done(err);
+            });
         }),
         authHelper.authenticateFirst,
         function (req, res) {
@@ -128,7 +128,7 @@ module.exports = function (router) {
                 user: req.user,
                 email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
                 client: req.oauth2.client,
-                customMessage: config.broadcaster && config.broadcaster.oauth ? config.broadcaster.oauth.customMessage : undefined
+                customMessage: config.broadcaster && config.broadcaster.oauth ? util.format(config.broadcaster.oauth.customMessage, req.oauth2.client.name) : undefined
             });
         }
     ];
@@ -167,9 +167,18 @@ module.exports = function (router) {
         server.errorHandler()
     ];
 
+    var createUser = [
+        limiterHelper.verify,
+        confirmOAuth2Client,
+        cors_header,
+        CreateUser
+    ];
+
+
     router.get('/oauth2/dialog/authorize', authorization);
     router.post('/oauth2/dialog/authorize/decision', decision);
     router.post('/oauth2/token', token);
+    router.post('/oauth2/create', createUser);
     router.options('/oauth2/token', cors_header);
 
     router.options('/oauth2/login', cors_header);
@@ -209,4 +218,5 @@ module.exports = function (router) {
             }
         );
     }
+
 };

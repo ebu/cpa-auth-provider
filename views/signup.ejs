@@ -100,6 +100,7 @@
 
                         </div>
 
+                        <% if(config.limiter.type === 'recaptcha' || config.limiter.type === 'recaptcha-optional') { %>
                         <div class="form-group">
                             <div class="recaptcha-wrapper">
                                 <%- captcha %>
@@ -115,6 +116,7 @@
                                 </div>
                             </div>
                         </div>
+                        <% } %>
 
                         <button type="submit"
                                 class="btn btn-primary btn-block btn-large-submit"><%= __('SIGNUP_SIGNUP_BUTTON') %></button>

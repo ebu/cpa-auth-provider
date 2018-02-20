@@ -69,6 +69,9 @@ module.exports = function (router) {
         if (client.redirect_uri) {
             req.checkBody('redirect_uri', req.__('API_ADMIN_CLIENT_REDIRECT_URL_IS_INVALID')).isURL();
         }
+        if (client.email_redirect_uri) {
+            req.checkBody('email_redirect_uri', req.__('API_ADMIN_CLIENT_EMAIL_REDIRECT_URL_IS_INVALID')).isURL();
+        }
 
         return req.getValidationResult().then(function (result) {
             if (!result.isEmpty()) {
@@ -91,7 +94,9 @@ module.exports = function (router) {
                             if (oAuhtClient) {
                                 oAuhtClient.updateAttributes({
                                     name: xssFilters.inHTMLData(client.name),
-                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri)
+                                    jwt_code: xssFilters.inHTMLData(client.jwt_code),
+                                    redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                    email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri)
                                 }).then(function () {
                                     res.json({'id': client.id});
                                 });
@@ -122,7 +127,9 @@ module.exports = function (router) {
                                 return db.OAuth2Client.create({
                                     client_id: generate.clientId(),
                                     name: xssFilters.inHTMLData(client.name),
+                                    jwt_code: xssFilters.inHTMLData(client.jwt_code),
                                     redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
+                                    email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri),
                                     client_secret: hash
                                 }).then(function (createClient) {
                                     // return generated token and client id
@@ -132,7 +139,8 @@ module.exports = function (router) {
                                         'client_id': createClient.client_id
                                     });
                                 });
-                            },
+                            }
+                        ).catch(
                             function (err) {
                                 return res.status(500).send(err);
                             }
@@ -157,17 +165,18 @@ module.exports = function (router) {
                         var secret = generate.cryptoCode(30);
 
                         // Hash token
-                        return bcrypt.hash(secret, 5).then(
+                        return bcrypt.hash(secret,5).then(
                             function (hash) {
                                 // Save token
                                 return client.updateAttributes(
                                     {client_secret: hash}
                                 ).then(function () {
                                     // return generated token
-                                    res.json({'secret': secret, 'client_id': client.client_id});
+                                    res.json({'secret': secret, 'client_id' : client.client_id});
                                 });
-                            },
-                            function (err) {
+                            }
+                        ).catch(
+                            function(err) {
                                 return res.status(500).send(err);
                             }
                         );
@@ -352,8 +361,10 @@ module.exports = function (router) {
         return {
             id: client.id,
             client_id: client.client_id,
+            jwt_code: client.jwt_code,
             name: client.name,
             redirect_uri: client.redirect_uri,
+            email_redirect_uri: client.email_redirect_uri,
             created_at: client.created_at,
             updated_at: client.updated_at
 
@@ -370,6 +381,45 @@ module.exports = function (router) {
             }
         }
         return toReturn;
+    }
+
+
+    router.get(
+        '/admin/statistics',
+        [authHelper.ensureAuthenticated, permissionHelper.can(permissionName.ADMIN_PERMISSION)],
+        function (req, res) {
+            calculateValues().then(
+                values => {
+                    return res.status(200).json({summary: 'ok', values});
+                },
+                error => {
+                    return res.status(500).json({summary: 'error', message: error.message});
+                }
+            );
+        }
+    );
+
+
+    function calculateValues() {
+        let db = require('../../models');
+        return new Promise((resolve, reject) => {
+            let result = {accountsTotal: 0, accountsVerified: 0};
+            db.User.count().then(
+                c => {
+                    result.accountsTotal = c;
+                    return db.User.count({include: {model: db.LocalLogin, where: {'verified': true}}});
+                }
+            ).then(
+                c => {
+                    result.accountsVerified = c;
+                    return resolve(result);
+                }
+            ).catch(
+                e => {
+                    return reject(e);
+                }
+            );
+        });
     }
 
 };

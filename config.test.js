@@ -7,12 +7,20 @@ module.exports = {
         title: ''
     },
 
-    recaptcha: {
-        enabled: true,
-        site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+    limiter: {
+        type: 'recaptcha', // 'no' || 'rate' || 'recaptcha-optional' || 'recaptcha'
+        parameters: {
+            recaptcha: {
+                site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+                secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+            },
+            rate: {
+                windowMs: 10 * 60 * 1000,
+                delayAfter: 1,
+                delayMs: 1000
+            }
+        }
     },
-
 
     jwtSecret: 'bigsecret',
     jwt: {
@@ -56,6 +64,7 @@ module.exports = {
     },
 
     mail: {
+        test_mode: true,
         sending: {transport: 'test'},
         from: 'no-reply@rts.ch',
         locale: 'ch_fr',
@@ -66,10 +75,15 @@ module.exports = {
         // in sec
         recovery_code_validity_duration: 1800,
         // a new recovery code will be generated only if the current one has less that TTL
-        keep_recovery_code_until: 900
+        keep_recovery_code_until: 900,
+        // additional endpoint for password setting (/user/password)
+        additional_endpoint: true,
     },
 
     auto_idp_redirect: 'local',
+
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
 
     db: {
         // The database type, 'mysql', 'sqlite', etc.
@@ -84,6 +98,9 @@ module.exports = {
 
     // Session cookie is signed with this secret to prevent tampering
     session_secret: 'LKASDMjnr234n90lasndfsadf',
+    quality_check: {
+        enabled: true
+    },
 
     // Name of the session cookie. Must be something different than 'connect.sid'
     sid_cookie_name: 'identity.provider.sid',
@@ -153,9 +170,25 @@ module.exports = {
     // in seconds.
     max_poll_interval: 5,
 
+    deletion: {
+        // allow DELETE /oauth2/me
+        endpoint_enabled: true,
+        // how long before a deletion request is processed
+        delay_in_days: process.env.DELETION_DELAY_IN_DAYS || 7,
+        // check to delete in seconds
+        delete_interval: process.env.DELETE_INTERVAL || 6 * 60 * 60, // 6 hours
+        // how long before a verification is considered failed, in seconds
+        verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
+    },
+
     server_clients: [],
 
     oauth2: {
-        refresh_tokens_enabled: true
-    }
+        refresh_tokens_enabled: true,
+        access_token_duration: 10 * 60 * 60 * 1000,
+    },
+
+    monitoring: {
+        enabled: false,
+    },
 };

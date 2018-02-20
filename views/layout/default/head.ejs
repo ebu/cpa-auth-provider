@@ -46,7 +46,7 @@
 <script>
     var userLogged = <% if (user) { %>true<% } else { %>false<% } %>,
         urlPrefix = '<%= config.urlPrefix %>',
-        siteKey = '<%= config.recaptcha.site_key %>';
+        siteKey = '<%= config.limiter.parameters.recaptcha.site_key %>';
 </script>
 
 <script type="text/javascript" src="<%= config.urlPrefix %>/assets/js/lang.js"></script>

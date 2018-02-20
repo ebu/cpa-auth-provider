@@ -28,10 +28,6 @@ module.exports = {
             client_secret: process.env.IDP_GITHUB_CLIENT_SECRET,
             callback_url: '/auth/github/callback'
         },
-        openam: {
-            enabled: ('true' == process.env.OPEN_AM_ENABLED),
-            service_url: process.env.OPEN_AM_SERVICE_URL
-        },
         facebook: {
             enabled: ('true' == process.env.FACEBOOK_LOGIN_ENABLED),
             client_id: process.env.FACEBOOK_LOGIN_ID,
@@ -64,7 +60,10 @@ module.exports = {
 
     baseUrl: process.env.BASE_URL,
 
-    displayUsersInfos: true,
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
+
+    displayUsersInfos: ('true' === process.env.DISPLAY_USER_INFOS),
 
     displayMenuBar: '' || process.env.DISPLAY_MENU_BAR,
 
@@ -91,18 +90,22 @@ module.exports = {
     },
 
     password: {
+        // one of [simple,owasp,no] - defaults to owasp
+        quality_check: process.env.PASSWORD_QUALITY_CHECK || 'owasp',
         // in sec
         recovery_code_validity_duration: 1800,
         // a new recovery code will be generated only if the current one has less that TTL
-        keep_recovery_code_until: 900
+        keep_recovery_code_until: 900,
+        // additional endpoint for password setting (/user/password)
+        additional_endpoint: 'true' === process.env.PASSWORD_ADDITIONAL_ENDPOINT,
     },
 
     use_sequelize_sessions: true,
 
     jwtSecret: process.env.JWT_SECRET,
     jwt: {
-        audience: 'cpa',
-        issuer: 'cpa'
+        audience: process.env.JWT_AUDIENCE || 'cpa',
+        issuer: process.env.JWT_ISSUER || 'cpa'
     },
 
     trackingCookie: {
@@ -111,9 +114,24 @@ module.exports = {
         duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
     },
 
-    recaptcha: {
-        site_key: process.env.IDP_RECAPCHA_SITEKEY,
-        secret_key: process.env.IDP_RECAPCHA_SECRETKEY
+    limiter: {
+        type: process.env.IDP_LIMITER_TYPE || 'no', // 'no' || 'rate' || 'recaptcha-optional' || 'recaptcha'
+        parameters: {
+            recaptcha: {
+                site_key: process.env.IDP_RECAPTCHA_SITEKEY,
+                secret_key: process.env.IDP_RECAPTCHA_SECRETKEY
+            },
+            rate: {
+                // how long to keep track of an ip on one instance
+                windowMs: process.env.RATE_LIMIT_WIND0W_MS || 10 * 60 * 1000,
+                // start delaying after which number of requests (0 to disable)
+                delayAfter: process.env.RATE_LIMIT_DELAY_AFTER === undefined ? 1 : process.env.RATE_LIMIT_DELAY_AFTER,
+                // delay per request
+                delayMs: process.env.RATE_LIMIT_DELAY_MS || 1000,
+                // max allowed requests (0 to disable)
+                max: 0,
+            }
+        }
     },
 
     // When accessing the home page, if defined, users are automatically
@@ -123,6 +141,7 @@ module.exports = {
 
     db: {
         host: process.env.DB_HOST,
+        dialectOptions: process.env.DB_DIALECT_OPTIONS ? JSON.parse(process.env.DB_DIALECT_OPTIONS) : undefined,
         port: process.env.DB_PORT,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
@@ -135,11 +154,14 @@ module.exports = {
         filename: process.env.DB_FILENAME,
 
         // If true, SQL statements are logged to the console.
-        debug: true
+        debug: 'true' === process.env.DB_LOGGING
     },
 
     // Session cookie is signed with this secret to prevent tampering
     session_secret: 'LKASDMjnr234n90lasndfsadf',
+    quality_check: {
+        enabled: true
+    },
 
     // Name of the session cookie. Must be something different than 'connect.sid'
     sid_cookie_name: 'identity.provider.sid',
@@ -154,7 +176,12 @@ module.exports = {
     },
 
     // URL path prefix, e.g., '/myapp'
-    urlPrefix: process.env.URL_PREFIX || '',
+    urlPrefix: '',
+    oauth2: {
+        refresh_tokens_enabled: true,
+        access_token_duration: 10 * 60 * 60 * 1000,
+        refresh_token_duration: 365 * 24 * 60 * 60 * 1000,
+    },
 
     // The end-user verification URL on the authorization server. The URI should
     // be short and easy to remember as end-users will be asked to manually type
@@ -216,7 +243,18 @@ module.exports = {
     // in seconds.
     max_poll_interval: 5,
 
-    oauth2: {
-        refresh_tokens_enabled: true
-    }
+    deletion: {
+        // allow DELETE /oauth2/me
+        endpoint_enabled: 'true' === process.env.DELETION_ENDPOINT_ENABLED,
+        // how long before a deletion request is processed
+        delay_in_days: process.env.DELETION_DELAY_IN_DAYS || 7,
+        // check to delete in seconds
+        delete_interval: process.env.DELETE_INTERVAL || 6 * 60 * 60, // 6 hours
+        // how long before a verification is considered failed, in seconds, set to 0- to disable
+        verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
+    },
+
+    monitoring: {
+        enabled: true,
+    },
 };

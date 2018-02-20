@@ -6,49 +6,45 @@ var logger = require('../../../lib/logger');
 
 exports.issueToken = issueToken;
 
-function issueToken(client, token, scope, done) {
-    oauthTokenHelper.validateRefreshToken(token, client ? client.id : 0, scope)
+function issueToken(client, token, scope, reqBody, done) {
+    var access_duration;
+    var refresh_duration;
+    if (typeof reqBody === 'object') {
+        access_duration = (reqBody.access_duration || 0) * 1000;
+        refresh_duration = (reqBody.refresh_duration || 0) * 1000;
+    }
+
+    oauthTokenHelper.validateRefreshToken(token, client, scope)
         .then(
             function (user) {
                 if (user) {
-                    try {
-                        var accessToken, refreshToken;
+                    var accessToken, refreshToken;
 
-                        oauthTokenHelper.generateAccessToken(client, user).then(
-                            function (_accessToken) {
-                                accessToken = _accessToken;
-                                return oauthTokenHelper.generateRefreshToken(client, user, scope);
-                            }
-                        ).then(
-                            function (_refreshToken) {
-                                refreshToken = _refreshToken;
-                                return oauthTokenHelper.generateTokenExtras(client, user);
-                            }
-                        ).then(
-                            function (_extras) {
-                                return done(null, accessToken, refreshToken, _extras);
-                            }
-                        ).catch(
-                            function (err) {
-                                return done(err);
-                            }
-                        );
-                    } catch (e) {
-                        return done(e);
-                    }
-                } else {
-                    return done(new TokenError(oauthTokenHelper.ERRORS.USER_NOT_FOUND.message, oauthTokenHelper.ERRORS.USER_NOT_FOUND.code));
+                    oauthTokenHelper.generateAccessToken(client, user, access_duration).then(
+                        function (_accessToken) {
+                            accessToken = _accessToken;
+                            return oauthTokenHelper.generateRefreshToken(client, user, scope, refresh_duration);
+                        }
+                    ).then(
+                        function (_refreshToken) {
+                            refreshToken = _refreshToken;
+                            return oauthTokenHelper.generateTokenExtras(client, user, access_duration);
+                        }
+                    ).then(
+                        function (_extras) {
+                            return done(null, accessToken, refreshToken, _extras);
+                        }
+                    ).catch(
+                        done
+                    );
                 }
-            },
-            function (error) {
-                logger.error('[OAuth2][issueToken]', error);
-                // return done(new TokenError(oauthTokenHelper.ERRORS.BAD_REQUEST.message, oauthTokenHelper.ERRORS.BAD_REQUEST.code));
-                return done(error);
             }
         )
         .catch(
             function (error) {
-                logger.error('[OAuth2][issueToken][err', error, ']');
+                if (logger && typeof(logger.error) === 'function') {
+                    logger.error('[OAuth2][issueToken]', error);
+                }
                 return done(error);
             }
         );

@@ -26,7 +26,7 @@ npm_test:
 
 build:
   stage: build
-  image: docker:latest
+  image: docker:stable
   services:
     - docker:dind
   script:
@@ -40,7 +40,7 @@ build:
 
 deploy_review_environment:
   stage: docker-publish
-  image: docker:latest
+  image: docker:stable
   services:
     - docker:dind
   variables:

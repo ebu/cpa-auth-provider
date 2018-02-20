@@ -1,0 +1,54 @@
+<mjml>
+  <mj-body background-color='#edece8'>
+    <mj-container background-color='#edece8'>
+      <mj-section background-color='#ffffff'>
+        <mj-column>
+          <mj-image width="270" src="https://login.br.de/img/BR_Mediathek_Logo.png" alt="BR Mediathek" align="left"/>
+          <mj-text>
+            Servus,
+          </mj-text>
+          <mj-text>
+            vielen Dank für Deine Registrierung in der BR Mediathek.
+          </mj-text>
+          <mj-text>
+            Bevor Du loslegen kannst, bestätige bitte Deine Registrierung mit einem Klick oder Tap auf diesen Link:
+          </mj-text>
+          <mj-button href='<%-confirmLink %' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
+            Registrierung bestätigen
+          </mj-button>
+          <mj-text color='#a8a8a8'>
+            <a style='color: inherit; text-decoration: none;' href='<%-confirmLink%>'><%=confirmLink%></a>
+          </mj-text>
+          <mj-text>
+            Durch Deine Registrierung kannst Du jetzt folgende Vorteile nutzen:
+            Wenn Du Dich auf unterschiedlichen Geräten wie Smartphone, Tablet und
+            Computer mit derselben E-Mail-Adresse anmeldest, siehst Du
+            überall dieselben Empfehlungen und Abonnenments, sowie Deine Merkliste
+            und Deinen bisherigen Sendungsverlauf.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Viel Spaß beim Stöbern und Schauen!
+          </mj-text>
+          <mj-text color='#0082c5' padding-top='0px'>
+            Dein BR Mediatheks-Team
+          </mj-text>
+          <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
+          <mj-text padding-bottom='0px'>
+            Du hast Dich nicht registriert?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Bitte ignoriere diese E-Mail.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Du brauchst Hilfe?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Wende Dich bitte an den Support unter
+            <a style='color: inherit; text-decoration: none;' href='mailto:mediathek@br.de?subject=Registrierung'>mediathek@br.de</a>
+            und teile uns Dein Problem mit.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>

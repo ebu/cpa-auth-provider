@@ -2,7 +2,6 @@
 
 
 module.exports = function (sequelize, DataTypes) {
-
     var User = sequelize.define('User', {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         tracking_uid: DataTypes.STRING,
@@ -14,7 +13,8 @@ module.exports = function (sequelize, DataTypes) {
         gender: DataTypes.STRING,
         date_of_birth: DataTypes.BIGINT,
         language: DataTypes.STRING,
-        last_seen: DataTypes.BIGINT
+        last_seen: DataTypes.BIGINT,
+        scheduled_for_deletion_at: DataTypes.DATE,
     }, {
         underscored: true,
 
@@ -54,6 +54,10 @@ module.exports = function (sequelize, DataTypes) {
 
     User.prototype.logLastSeen = function (transaction) {
         return this.updateAttributes({last_seen: Date.now()}, {transaction: transaction});
+    };
+
+    User.prototype.isScheduledForDeletion = function() {
+        return !!this.scheduled_for_deletion_at;
     };
 
     return User;

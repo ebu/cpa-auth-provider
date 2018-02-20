@@ -1,0 +1,12 @@
+<% include ../layout/head %>
+
+<div></div>
+
+<p>Hallo <%= user.display_name || user.email %>!</p>
+
+<p>Dein Account wurde für die Löschung vorgemerkt. Er wird innerhalb der nächsten 24 Stunden endgültig gelöscht.</p>
+
+<p><a href="<%= link(forward_address) %>">Weiter zur Mediathek</a></p>
+
+
+<% include ../layout/foot %>

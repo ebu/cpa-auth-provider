@@ -68,7 +68,7 @@ module.exports = function (router, config) {
                         };
 
                         if (accessToken.User) {
-                            responseData.user_id = accessToken.User.id; //TODO Check that with Daniel
+                            responseData.user_id = accessToken.User.id;
                             responseData.display_name = accessToken.User.display_name;
                             responseData.photo_url = accessToken.User.photo_url;
                         }

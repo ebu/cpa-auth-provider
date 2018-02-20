@@ -1,0 +1,48 @@
+<mjml>
+  <mj-body background-color='#edece8'>
+    <mj-container background-color='#edece8'>
+      <mj-section background-color='#ffffff'>
+        <mj-column>
+          <mj-image width="270" src="https://login.br.de/img/BR_Mediathek_Logo.png" alt="BR Mediathek" align="left"/>
+          <mj-text>
+            Servus,
+          </mj-text>
+          <mj-text>
+            der Löschauftrag Deines Nutzerkontos in der BR Mediathek für die E-Mail-Adresse {{USEREMAIL}}
+            wurde aufgehoben.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Viel Spaß beim Stöbern und Schauen!
+          </mj-text>
+          <mj-text color='#0082c5' padding-top='0px'>
+            Dein BR Mediatheks-Team
+          </mj-text>
+          <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
+          <mj-text padding-bottom='0px'>
+            Wie ist das passiert?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Du hast Dich in der BR Mediathek angemeldet, nachdem Du beantragt hattest, Dein Nutzerkonto
+            zu löschen. Aus Sicherheitsgründen wartet der BR einige Zeit, bevor er Nutzerkonten tatsächlich
+            löscht.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Du möchtest Dein Nutzerkonto doch löschen?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Beantrage erneut das Löschen Deines Nutzerkontos in der
+            <a style='color: inherit; text-decoration: none;' href='https://www.br.de/mediathek'>BR Mediathek</a>.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Du brauchst Hilfe?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Wende Dich bitte an den Support unter
+            <a style='color: inherit; text-decoration: none;' href='mailto:mediathek@br.de?subject=Löschauftrag'>mediathek@br.de</a>
+            und teile uns Dein Problem mit.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>

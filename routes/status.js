@@ -11,4 +11,11 @@ module.exports = function (router) {
         res.write("Authentication Provider up and running\n");
         res.end();
     });
+
+    router.get(
+        '/_lbhealth',
+        function (req, res) {
+            return res.status(200).json({summary: "ok"});
+        }
+    );
 };

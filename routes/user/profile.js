@@ -10,6 +10,8 @@ var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var i18n = require('i18n');
 var db = require('../../models/index');
+var limiterHelper = require ('../../lib/limiter-helper');
+
 
 var routes = function (router) {
     router.put('/user/profile/', authHelper.ensureAuthenticated, function (req, res) {
@@ -49,8 +51,8 @@ var routes = function (router) {
                 return;
             }
             userHelper.updateProfile(authHelper.getAuthenticatedUser(req), req.body).then(
-                function (userProfile) {
-                    res.cookie(config.i18n.cookie_name, userProfile.language, {
+                function (user) {
+                    res.cookie(config.i18n.cookie_name, user.language, {
                         maxAge: config.i18n.cookie_duration,
                         httpOnly: true
                     });
@@ -64,7 +66,7 @@ var routes = function (router) {
         });
     });
 
-    router.post('/user/profile/request_verification_email', [authHelper.ensureAuthenticated, recaptcha.middleware.verify], function (req, res) {
+    router.post('/user/profile/request_verification_email', [authHelper.ensureAuthenticated, limiterHelper.verify], function (req, res) {
         if (req.recaptcha.error)
             return res.status(400).json({msg: 'reCaptcha is empty or wrong. '});
 

@@ -375,24 +375,155 @@ describe('GET /email/move/:token', function () {
             ).catch(done);
         });
     });
+});
 
+describe('GET /email/moved/:token', function () {
+    const URL = '/email/moved/{token}';
+    const NEW_EMAIL = 'number2@second.org';
+    context('with correct token', function () {
+        before(resetDatabase);
+        before(createToken('ABC', NEW_EMAIL, USER1, CLIENT));
+        before(function (done) {
+            requestHelper.sendRequest(
+                this,
+                URL.replace(/{token}/, 'ABC') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
+                {
+                    method: 'get',
+                    cookie: this.cookie,
+                    accessToken: this.accessToken,
+                },
+                done
+            );
+        });
 
-    function createToken(key, address, user, client) {
-        return function (done) {
+        it('should send success status', function () {
+            expect(this.res.statusCode).equal(200);
+            expect(this.res.body.success).equal(true);
+        });
+
+        it('should change the email', function (done) {
+            db.LocalLogin.findOne({where: {login: NEW_EMAIL}}).then(
+                function (localLogin) {
+                    expect(localLogin).a('object');
+                    expect(localLogin.user_id).equal(USER1.id);
+                    done();
+                }
+            ).catch(done);
+        });
+    });
+
+    context('using a correct token twice', function () {
+        before(resetDatabase);
+        before(createToken('ABC', NEW_EMAIL, USER1, CLIENT));
+        before(function (done) {
+            requestHelper.sendRequest(
+                this,
+                URL.replace(/{token}/, 'ABC') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
+                {
+                    method: 'get',
+                    cookie: this.cookie,
+                    accessToken: this.accessToken,
+                },
+                done
+            );
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(
+                this,
+                URL.replace(/{token}/, 'ABC') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
+                {
+                    method: 'get',
+                    cookie: this.cookie,
+                    accessToken: this.accessToken,
+                },
+                done
+            );
+        });
+
+        it('should send success status', function () {
+            expect(this.res.statusCode).equal(200);
+            expect(this.res.body.success).equal(true);
+        });
+
+        it('should have changed the email', function (done) {
+            db.LocalLogin.findOne({where: {login: NEW_EMAIL}}).then(
+                function (localLogin) {
+                    expect(localLogin).a('object');
+                    expect(localLogin.user_id).equal(USER1.id);
+                    expect(localLogin.verified).equal(true);
+                    done();
+                }
+            ).catch(done);
+        });
+    });
+
+    context('using the wrong kind of token', function () {
+        before(resetDatabase);
+        before(createToken('ABC', NEW_EMAIL, USER1, CLIENT));
+        before(function (done) {
             db.UserEmailToken.create(
                 {
-                    user_id: user.id,
-                    oauth2_client_id: client.id,
-                    key: key,
-                    type: 'MOV$' + address,
-                    redirect_uri: client.redirect_uri
+                    user_id: USER1.id,
+                    oauth2_client_id: CLIENT.id,
+                    key: 'f42',
+                    type: 'DEL',
+                    redirect_uri: CLIENT.redirect_uri
                 }
             ).then(
-                function (t) {
+                function () {
                     done();
                 },
                 done
             );
-        }
-    }
+        });
+        before(function (done) {
+            requestHelper.sendRequest(
+                this,
+                URL.replace(/{token}/, 'f42') + '?client_id=' + encodeURIComponent(CLIENT.client_id),
+                {
+                    method: 'get',
+                    cookie: this.cookie,
+                    accessToken: this.accessToken,
+                },
+                done
+            );
+        });
+
+        it('should report a failure', function () {
+            expect(this.res.statusCode).equal(400);
+            expect(this.res.body.success).equal(false);
+            expect(this.res.body.reason).equal('INVALID_TOKEN');
+        });
+
+        it('should not have changed the email', function (done) {
+            db.LocalLogin.findOne({where: {user_id: USER1.id}}).then(
+                function (localLogin) {
+                    expect(localLogin).a('object');
+                    expect(localLogin.login).equal(USER1.email);
+                    done();
+                }
+            ).catch(done);
+        });
+    });
 });
+
+
+function createToken(key, address, user, client) {
+    return function (done) {
+        db.UserEmailToken.create(
+            {
+                user_id: user.id,
+                oauth2_client_id: client.id,
+                key: key,
+                type: 'MOV$' + address,
+                redirect_uri: client.redirect_uri
+            }
+        ).then(
+            function (t) {
+                done();
+            },
+            done
+        );
+    }
+}

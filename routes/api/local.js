@@ -14,6 +14,8 @@ var jwt = require('jwt-simple');
 var JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 var cors = require('../../lib/cors');
+var generate = require('../../lib/generate');
+var emailUtil = require('../../lib/email-util');
 
 var emailHelper = require('../../lib/email-helper');
 var authHelper = require('../../lib/auth-helper');
@@ -22,11 +24,10 @@ var passwordHelper = require('../../lib/password-helper');
 var userHelper = require('../../lib/user-helper');
 
 var codeHelper = require('../../lib/code-helper');
+var limiterHelper = require ('../../lib/limiter-helper');
+
 
 var i18n = require('i18n');
-
-// Google reCAPTCHA
-recaptcha.init(config.recaptcha.site_key, config.recaptcha.secret_key);
 
 var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromExtractors(
@@ -53,9 +54,8 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         });
 }));
 
-
 module.exports = function (app, options) {
-    app.post('/api/local/signup', cors, recaptcha.middleware.verify, function (req, res) {
+    app.post('/api/local/signup', cors, limiterHelper.verify, function (req, res) {
 
         if (req.recaptcha.error) {
             res.status(400).json({success: false, msg: req.__('API_SIGNUP_SOMETHING_WRONG_RECAPTCHA')});
@@ -122,7 +122,7 @@ module.exports = function (app, options) {
         }
     });
 
-    app.post('/api/local/password/recover', cors, recaptcha.middleware.verify, function (req, res) {
+    app.post('/api/local/password/recover', cors, limiterHelper.verify, function (req, res) {
 
         if (req.recaptcha.error) {
             res.status(400).json({msg: req.__('API_PASSWORD_RECOVER_SOMETHING_WRONG_RECAPTCHA')});
@@ -209,36 +209,21 @@ module.exports = function (app, options) {
     app.options('/api/local/info', cors);
 
     app.get('/api/local/info', cors, passport.authenticate('jwt', {session: false}), function (req, res) {
-        var token = jwtHelpers.getToken(req.headers);
-        if (token) {
-            var decoded = jwt.decode(token, config.jwtSecret);
-            db.User.findOne({
-                where: {
-                    id: decoded.id
-                }, include: [
-                    db.LocalLogin
-                ]
-            }).then(function (user) {
-                if (!user) {
-                    return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
-                } else {
-                    var data = {
-                    };
-                    if (user.LocalLogin) {
-                        data.email = user.LocalLogin.login;
-                        data.display_name = user.getDisplayName(req.query.policy, user.LocalLogin.login);
-                    } else {
-                        data.display_name = user.getDisplayName(req.query.policy, '');
-                    }
-                    res.json({
-                        success: true,
-                        user: data,
-                        token: 'JWT ' + token
-                    });
-                }
-            });
+        var user = req.user;
+        if (!user) {
+            return res.status(403).send({success: false, msg: req.__('API_INCORRECT_LOGIN_OR_PASS')});
         } else {
-            return res.status(403).send({success: false, msg: req.__('API_INFO_NO_TOKEN')});
+            var data = {};
+            if (user.LocalLogin) {
+                data.email = user.LocalLogin.login;
+                data.display_name = user.getDisplayName(req.query.policy, user.LocalLogin.login);
+            } else {
+                data.display_name = user.getDisplayName(req.query.policy, '');
+            }
+            res.json({
+                success: true,
+                user: data,
+            });
         }
     });
 
@@ -262,7 +247,7 @@ module.exports = function (app, options) {
                         mail: encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : ''),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                    user.language ? user.language : config.mail.local
                 ).then(
                     function () {
                     },

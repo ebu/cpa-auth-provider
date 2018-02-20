@@ -90,5 +90,18 @@ module.exports = {
                 context.cookie = res.headers['set-cookie'];
                 done(err);
             });
+    },
+
+    loginUser: function (context, username, password, done) {
+        var loginUrl = this.urlPrefix + '/login';
+
+        request
+            .post(loginUrl)
+            .type('form')
+            .send({email: username, username: username, password: password})
+            .end(function (err, res) {
+                context.cookie = res.headers['set-cookie'];
+                done(err);
+            });
     }
 };

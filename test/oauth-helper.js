@@ -58,14 +58,28 @@ function createUsers(userList) {
             userList.forEach(createFakeUser);
 
             function createFakeUser(def) {
-                return db.User.create(def).then(
+                return db.User.create(
+                    def
+                ).then(
                     function (user) {
-                       return db.LocalLogin.create({login: def.email, user_id: user.id}).then(
-                            function (localLogin) {
-                                return localLogin.setPassword(def.password);
+                        if (def.email) {
+                            return db.LocalLogin.create({login: def.email, user_id: user.id, verified: def.verified});
+                        } else {
+                            return new Promise((resolve, reject) => {
+                                return resolve();
+                            });
+                        }
 
-                            }
-                        );
+                    }
+                ).then(
+                    function (localLogin) {
+                        if (localLogin) {
+                            return localLogin.setPassword(def.password);
+                        } else {
+                            return new Promise((resolve, reject) => {
+                                return resolve();
+                            });
+                        }
                     }
                 ).then(
                     function () {

@@ -12,6 +12,7 @@ var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
 var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
+var limiterHelper = require ('../../lib/limiter-helper');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
@@ -212,7 +213,7 @@ module.exports = function (app, options) {
         failureFlash: true
     }), redirectOnSuccess);
 
-    app.post('/signup', recaptcha.middleware.verify, function (req, res, next) {
+    app.post('/signup', limiterHelper.verify, function (req, res, next) {
 
         passport.authenticate('local-signup', function (err, user, info) {
 
@@ -243,7 +244,7 @@ module.exports = function (app, options) {
         })(req, res, next);
     });
 
-    app.post('/password/code', recaptcha.middleware.verify, function (req, res, next) {
+    app.post('/password/code', limiterHelper.verify, function (req, res, next) {
 
         if (req.recaptcha.error) {
             return res.status(400).json({msg: req.__('BACK_SIGNUP_PWD_CODE_RECAPTCHA_EMPTY_OR_WRONG')});
@@ -272,7 +273,7 @@ module.exports = function (app, options) {
                                     mail: localLogin.login,
                                     code: code
                                 },
-                                (localLogin.User.UserProfile && localLogin.User.UserProfile.language) ? localLogin.User.UserProfile.language : i18n.getLocale()
+                                localLogin.User.language ? localLogin.User.language : i18n.getLocale()
                             ).then(
                                 function () {
                                 },

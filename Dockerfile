@@ -1,51 +1,51 @@
-FROM node:8.4
+FROM node:9.1.0-alpine
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-  libsqlite3-dev apt-transport-https
+RUN apk add --no-cache sqlite-libs
 
+RUN npm install -g sequelize-cli
 RUN npm install -g node-gyp
-RUN yarn global add sequelize-cli
 
-WORKDIR /src
+COPY package.json package-lock.json /src/
 
 # Install Node.js dependencies
-ADD package.json /src/package.json
-ADD passport-openam /src/passport-openam
-RUN yarn install
+WORKDIR /src
+RUN apk add --no-cache --virtual build python build-base && npm install && npm rebuild bcrypt --build-from-source && apk del build
+# rebuild bcrypt to fix segmentation fault - https://github.com/kelektiv/node.bcrypt.js/issues/528
 
-
-ADD .sequelizerc /src/.sequelizerc
-ADD migrate /src/migrate
+COPY .sequelizerc /src/.sequelizerc
+COPY migrate /src/migrate
 RUN mkdir /src/seeders
-
-# Add other application files
-ADD bin /src/bin
-# TODO find better way to run tests without adding test file to the image
-ADD test /src/test
-ADD config.test.js /src/config.test.js
-ADD locales /src/locales
-ADD models /src/models
-ADD public /src/public
-ADD routes /src/routes
-ADD views /src/views
-ADD templates /src/templates
-ADD lib /src/lib
-
-# Configure
-ADD config.docker.js /src/config.local.js
-ADD config.js /src/config.js
 
 ENV NODE_ENV development
 
-ENV IDP_RECAPCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-ENV IDP_RECAPCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+ENV IDP_RECAPTCHA_SITEKEY 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+ENV IDP_RECAPTCHA_SECRETKEY 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ENV JWT_SECRET AlteredCarbonFly
 ENV DEFAULT_LOCALE fr
 
 # default settings for database
 ENV DB_TYPE sqlite
 ENV DB_FILENAME "data/identity-provider.sqlite"
+
+COPY bin /src/bin
+COPY lib /src/lib
+COPY models /src/models
+COPY public /src/public
+COPY routes /src/routes
+COPY views /src/views
+COPY templates /src/templates
+COPY locales /src/locales
+COPY seeders /src/seeders
+
+# Configure
+COPY config.docker.js /src/config.local.js
+COPY config.js /src/config.js
+COPY db_config.js /src/db_config.js
+
+# TODO find better way to run tests without adding test file to the image
+COPY test /src/test
+COPY config.test.js /src/config.test.js
 
 # Create the sqlite database
 RUN mkdir data

@@ -9,7 +9,7 @@ module.exports = {
         layout: 'rts',
         // override the HTML default title value
         title: '',
-        oauth:{
+        oauth: {
             // override the oauth validation message
             customMessage: '{client} souhaite accéder à votre compte maRTS.'
         }
@@ -51,10 +51,14 @@ module.exports = {
 
     // configuration for password using local identity provider
     password: {
+        // one of [no,simple,owasp] - defaults to owasp
+        quality_check: '',
         // in sec
         recovery_code_validity_duration: 1800,
         // a new recovery code will be generated only if the current one has less that TTL
-        keep_recovery_code_until: 900
+        keep_recovery_code_until: 900,
+        // additional endpoint for password setting (/user/password)
+        additional_endpoint: true,
     },
 
     // define the name of the cookie used to store user locale
@@ -87,19 +91,28 @@ module.exports = {
         duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
     },
 
-    // google recaptcha keys
-    recaptcha: {
-        // test keys
-        // site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-        // secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-        site_key: '6Lc6NCYUAAAAAPiyvFO2jig6jXGtYEhgZWtWFzml',
-        secret_key: '6Lc6NCYUAAAAALCXdWXUsZgDBl7fn9XA_ecVpu7m'
+    limiter: {
+        type: 'recaptcha', // 'no' || 'rate' || 'recaptcha-optional' || 'recaptcha'
+        parameters: {
+            recaptcha: {
+                site_key: '6Lc6NCYUAAAAAPiyvFO2jig6jXGtYEhgZWtWFzml',
+                secret_key: '6Lc6NCYUAAAAALCXdWXUsZgDBl7fn9XA_ecVpu7m'
+            },
+            rate: {
+                windowMs: 10 * 60 * 1000,
+                delayAfter: 1,
+                delayMs: 1000
+            }
+        }
     },
 
     // When accessing the home page, if defined, users are automatically
     // redirected to the specified identity_providers (ie: 'github')
     auto_idp_redirect: '',
     use_landing_page: false,
+
+    // enable trusting of X-Forwarded-For headers
+    trust_proxy: true,
 
     // if false the list of user is not accessible in the admin
     displayUsersInfos: true,
@@ -230,6 +243,10 @@ module.exports = {
 
     oauth2: {
         refresh_tokens_enabled: true
-    }
+    },
+
+    monitoring: {
+        enabled: true,
+    },
 
 };

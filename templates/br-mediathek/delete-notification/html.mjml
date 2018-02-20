@@ -1,0 +1,45 @@
+<mjml>
+  <mj-body background-color='#edece8'>
+    <mj-container background-color='#edece8'>
+      <mj-section background-color='#ffffff'>
+        <mj-column>
+          <mj-image width="270" src="https://login.br.de/img/BR_Mediathek_Logo.png" alt="BR Mediathek" align="left"/>
+          <mj-text>
+            Servus,
+          </mj-text>
+          <mj-text>
+            in Deinem Nutzerkonto der BR Mediathek wurde beantragt, Dein Nutzerkonto unter der E-Mail-Adresse
+            <%=mail%> zu löschen.
+          </mj-text>
+          <mj-text>
+            Wir hoffen, dass Du trotzdem noch viel Spaß in der BR Mediathek hast. Auch ohne Nutzerkonto stehen
+            Dir weiterhin alle Inhalte zur Verfügung. Allerdings können wir Dir nicht alle Features bieten.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Viel Spaß beim Stöbern und Schauen!
+          </mj-text>
+          <mj-text color='#0082c5' padding-top='0px'>
+            Dein BR Mediatheks-Team
+          </mj-text>
+          <mj-divider border-color='#dddddd' border-width='1px' padding-bottom='0px'></mj-divider>
+          <mj-text padding-bottom='0px'>
+            Du wolltest Dein Nutzerkonto nicht löschen?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Melde Dich wie gewohnt unter
+            <a style='color: inherit; text-decoration: none;' href='<%-link%>'>BR Mediathek</a>
+            an. Damit wird der Löschvorgang aufgehoben.
+          </mj-text>
+          <mj-text padding-bottom='0px'>
+            Du brauchst Hilfe?
+          </mj-text>
+          <mj-text color='#a8a8a8' padding-top='0px'>
+            Wende Dich bitte an den Support unter
+            <a style='color: inherit; text-decoration: none;' href='mailto:mediathek@br.de?subject=Löschauftrag'>mediathek@br.de</a>
+            und teile uns Dein Problem mit.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>

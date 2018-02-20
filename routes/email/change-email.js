@@ -3,6 +3,7 @@
 var db = require('../../models/index');
 var logger = require('../../lib/logger');
 var cors = require('cors');
+var authHelper = require('../../lib/auth-helper');
 var passport = require('passport');
 var emailHelper = require('../../lib/email-helper');
 var config = require('../../config');
@@ -40,7 +41,7 @@ function routes(router) {
         },
         function (req, res) {
             var oldUser = req.user;
-            var oldUserProfile;
+            var oldLocalLogin;
             var newUsername = req.body.new_email;
             var password = req.body.password;
 
@@ -61,7 +62,7 @@ function routes(router) {
                     }
                     // At last check password
                     return db.LocalLogin.findOne({where: {user_id: oldUser.id}}).then(function (localLogin) {
-                        oldUserProfile = localLogin;
+                        oldLocalLogin = localLogin;
                         return localLogin.verifyPassword(password);
                     });
                 }
@@ -78,8 +79,8 @@ function routes(router) {
                     if (tokenCount >= REQUEST_LIMIT) {
                         throw new Error(STATES.TOO_MANY_REQUESTS);
                     }
-                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from', oldUserProfile.login, '][to', newUsername, ']');
-                    triggerAccountChangeEmails(oldUserProfile.login, oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
+                    logger.debug('[POST /email/change][SUCCESS][user_id', oldUser.id, '][from', oldLocalLogin.login, '][to', newUsername, ']');
+                    triggerAccountChangeEmails(oldLocalLogin.login, oldUser, req.authInfo ? req.authInfo.client : null, newUsername).then(
                         function () {
                             logger.debug('[POST /email/change][EMAILS][SENT]');
                         },
@@ -198,6 +199,85 @@ function routes(router) {
         }
     );
 
+    router.options('/email/moved/:token', cors());
+    router.get(
+        '/email/moved/:token',
+        cors(),
+        function (req, res) {
+            var user, token, localLogin;
+            var clientId, oldEmail, newUsername;
+            db.UserEmailToken.findOne(
+                {
+                    where: {key: req.params.token},
+                    include: [db.User, db.OAuth2Client]
+                }
+            ).then(
+                function (token_) {
+                    token = token_;
+                    clientId = req.query.client_id;
+                    if (!token || !token.type.startsWith('MOV')) {
+                        throw new Error(STATES.INVALID_TOKEN);
+                    }
+
+                    if (token.OAuth2Client.client_id !== clientId) {
+                        throw new Error(STATES.MISMATCHED_CLIENT_ID);
+                    }
+
+                    user = token.User;
+                    return db.LocalLogin.findOne({where: {user_id: user.id}});
+                }
+            ).then(
+                function (localLogin_) {
+                    localLogin = localLogin_;
+                    oldEmail = localLogin.login;
+                    newUsername = token.type.split('$')[1];
+
+                    if (!token.isAvailable()) {
+                        var err = new Error(STATES.ALREADY_USED);
+                        err.data = {success: oldEmail === newUsername};
+                        throw err;
+                    }
+
+
+                    return db.LocalLogin.findOne({where: {login: newUsername}});
+                }
+            ).then(
+                function (takenUser) {
+                    if (takenUser) {
+                        throw new Error(STATES.EMAIL_ALREADY_TAKEN);
+                    }
+                    return db.SocialLogin.findOne({where: {email: newUsername}});
+                }
+            ).then(
+                function (socialLogin_) {
+                    if (socialLogin_) {
+                        throw new Error(STATES.EMAIL_ALREADY_TAKEN);
+                    }
+                    return localLogin.updateAttributes({
+                        login: newUsername,
+                        verified: true,
+                    });
+                }
+            ).then(
+                function () {
+                    return token.consume();
+                }
+            ).then(
+                function () {
+                    return res.status(200).json({success: true});
+                }
+            ).catch(
+                function (err) {
+                    logger.error('[GET /email/moved/:token][FAIL][old', oldEmail, '][new', newUsername, '][user.id', user ? user.id : null, '][err', err, ']');
+                    if (err.data && err.data.success) {
+                        return res.status(200).json({success: true, reason: err.message});
+                    } else {
+                        return res.status(400).json({success: false, reason: err.message});
+                    }
+                }
+            );
+        }
+    );
 }
 
 function triggerAccountChangeEmails(email, user, client, newUsername) {
@@ -218,6 +298,9 @@ function triggerAccountChangeEmails(email, user, client, newUsername) {
                 function (verifyToken) {
                     let host = config.mail.host || '';
                     let confirmLink = host + '/email/move/' + encodeURIComponent(key);
+                    if (redirectUri) {
+                        confirmLink = redirectUri + APPEND_MOVED + '&username=' + encodeURIComponent(user.email) + '&token=' + encodeURIComponent(key);
+                    }
                     logger.debug('send email', confirmLink);
                     return emailHelper.send(
                         config.mail.from,

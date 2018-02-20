@@ -1,8 +1,9 @@
 node_modules/*
 .nodemonignore
-.idea
+.idea/*
 
 npm-debug.log
+yarn.lock
 
 config.local.js
 

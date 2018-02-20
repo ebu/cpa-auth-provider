@@ -36,7 +36,7 @@ var URL_PREFIX = config.urlPrefix;
 
 function createOAuth2Client(done) {
     db.OAuth2Client.create(CLIENT).then(
-        function(client) {
+        function (client) {
             return client.updateAttributes({client_secret: bcrypt.hashSync(CLIENT.client_secret, 5)});
         }
     ).then(
@@ -55,7 +55,7 @@ function createUser(userTemplate) {
         function (resolve, reject) {
             db.User.create(userTemplate).then(
                 function (user) {
-                    db.LocalLogin.create({user_id:user.id, login:userTemplate.email}).then(function(localLogin){
+                    db.LocalLogin.create({user_id: user.id, login: userTemplate.email}).then(function (localLogin) {
                         localLogin.setPassword(userTemplate.password).then(resolve, reject);
                     });
                 },
@@ -90,7 +90,7 @@ var resetDatabase = function (done) {
 };
 
 // test refresh token
-describe('POST /oauth2/token', function () {
+describe('POST /oauth2/token (REFRESH)', function () {
     var url = '/oauth2/token';
 
     context('using grant_type: \'refresh_token\'', function () {
@@ -146,7 +146,7 @@ describe('POST /oauth2/token', function () {
         });
 
         it('should have proper access token', function () {
-            var decoded = jwtHelper.decode(this.res.body.access_token);
+            var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
             expect(decoded.iss).equal('cpa');
             expect(decoded.aud).equal('cpa');
             expect(decoded.cli).equal(CLIENT.id);
@@ -211,7 +211,7 @@ describe('POST /oauth2/token', function () {
         });
 
         it('should have proper access token', function () {
-            var decoded = jwtHelper.decode(this.res.body.access_token);
+            var decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
             expect(decoded.iss).equal('cpa');
             expect(decoded.aud).equal('cpa');
             expect(decoded.cli).equal(CLIENT.id);
@@ -257,6 +257,100 @@ describe('POST /oauth2/token', function () {
 
             it('should deliver error invalid refresh token', function () {
                 expect(this.res.body.error_description).equal('INVALID_REFRESH_TOKEN');
+            });
+        }
+    );
+
+    context(
+        'using grant_type \'refresh_token\' with invalid client id',
+        function () {
+            before(resetDatabase);
+            before(createFakeUser);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, url, {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        grant_type: 'password',
+                        username: USER2.email,
+                        password: USER2.password,
+                        client_id: CLIENT.client_id,
+                        client_secret: CLIENT.client_secret
+                    }
+                }, done);
+            });
+
+            before(function (done) {
+                var token = this.res.body.refresh_token;
+                this.refresh_token = token;
+                requestHelper.sendRequest(
+                    this,
+                    url,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            grant_type: 'refresh_token',
+                            refresh_token: token,
+                            client_id: CLIENT.client_id + 'MakesThisInvalid',
+                            client_secret: CLIENT.client_secret
+                        }
+                    },
+                    done);
+            });
+
+            it('should reject with unauthorized', function () {
+                expect(this.res.statusCode).equal(401);
+            });
+        }
+    );
+
+    context(
+        'using grant_type \'refresh_token\' with bad client secret',
+        function () {
+            before(resetDatabase);
+            before(createFakeUser);
+
+            before(function (done) {
+                requestHelper.sendRequest(this, url, {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        grant_type: 'password',
+                        username: USER2.email,
+                        password: USER2.password,
+                        client_id: CLIENT.client_id,
+                        client_secret: CLIENT.client_secret
+                    }
+                }, done);
+            });
+
+            before(function (done) {
+                var token = this.res.body.refresh_token;
+                this.refresh_token = token;
+                requestHelper.sendRequest(
+                    this,
+                    url,
+                    {
+                        method: 'post',
+                        cookie: this.cookie,
+                        type: 'form',
+                        data: {
+                            grant_type: 'refresh_token',
+                            refresh_token: token,
+                            client_id: CLIENT.client_id,
+                            client_secret: CLIENT.client_secret + 'MakesThisInvalid'
+                        }
+                    },
+                    done);
+            });
+
+            it('should reject with unauthorized', function () {
+                expect(this.res.statusCode).equal(401);
             });
         }
     );
