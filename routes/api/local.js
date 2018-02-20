@@ -247,7 +247,7 @@ module.exports = function (app, options) {
                         mail: encodeURIComponent(user.LocalLogin ? user.LocalLogin.login : ''),
                         code: encodeURIComponent(user.verificationCode)
                     },
-                    (user.UserProfile && user.UserProfile.language) ? user.UserProfile.language : i18n.getLocale()
+                    user.language ? user.language : config.mail.local
                 ).then(
                     function () {
                     },
