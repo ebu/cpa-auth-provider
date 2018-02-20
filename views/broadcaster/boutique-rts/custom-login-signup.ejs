@@ -30,12 +30,18 @@
             var $birthdayField = $('.date');
             var $genderField = $('#gender');
 
+            var $passwordForm = $('#rts-password-form');
+
             var $loginPanel = $('#rts-login-panel');
             var $signupPanel = $('#rts-signup-panel');
             var $passwordPanel = $('#rts-password-panel');
+
             var $linkToSignupPage = $('.to-signup-link');
             var $linkToLoginPage = $('.to-login-link');
             var $linkToPasswordPage = $('.to-password-link');
+
+            var $alertsSuccess = $('.alert-message-success');
+            var $alertsError = $('.alert-message-error');
 
             if($birthdayField.length) {
                 $birthdayField.datepicker({
@@ -53,6 +59,7 @@
 
             if($linkToSignupPage) {
                 $linkToSignupPage.on('click', function () {
+                    initAlertMessages();
                     $loginPanel.hide();
                     $signupPanel.show();
                 });
@@ -60,6 +67,7 @@
 
             if($linkToLoginPage) {
                 $linkToLoginPage.on('click', function () {
+                    initAlertMessages();
                     $signupPanel.hide();
                     $passwordPanel.hide();
                     $loginPanel.show();
@@ -68,9 +76,47 @@
 
             if($linkToPasswordPage) {
                 $linkToPasswordPage.on('click', function () {
+                    initAlertMessages();
                     $loginPanel.hide();
                     $passwordPanel.show();
                 });
+            }
+
+            if($passwordForm) {
+                $passwordForm.submit(function (e) {
+                    e.preventDefault();
+
+                    initAlertMessages();
+
+                    $(this).ajaxSubmit({
+                        error: function (result) {
+
+                            if (result.responseJSON.errors) {
+                                $.each(result.responseJSON.errors, function (index, error) {
+                                    $alertsError.append($('<p>').text(error.msg));
+                                });
+                            } else if (!result.responseJSON.msg) {
+                                $alertsError.append($('<p>').text("<%= __('PASSWORD_RECOVERY_JS_ERROR_MSG') %>"));
+                            } else {
+                                $alertsError.append($('<p>').text(result.responseJSON.msg));
+                            }
+                            $alertsError.show();
+                        },
+                        success: function () {
+                            $passwordPanel.hide();
+                            $loginPanel.show();
+                            $alertsSuccess.text("<%= __('PASSWORD_RECOVERY_JS_SUCCESS_MSG') %>");
+                            $alertsSuccess.show();
+                        }
+                    });
+                });
+            }
+
+            function initAlertMessages() {
+                $alertsSuccess.hide();
+                $alertsSuccess.empty();
+                $alertsError.hide();
+                $alertsError.empty();
             }
 
         })();

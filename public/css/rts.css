@@ -192,6 +192,15 @@ footer.rts-footer {
     display: none;
 }
 
+#rts-custom-login .alert-message-error, #rts-custom-login .alert-message-success {
+    display: none;
+    max-width: 430px;
+    padding: 15px 10px;
+    text-align: left;
+    font-size: 15px;
+    margin: 30px auto 15px auto;
+}
+
 #profile hr, #devices hr {
     border-color: #333;
 }
