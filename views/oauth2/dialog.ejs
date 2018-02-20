@@ -5,7 +5,7 @@
 <p><%= __('OAUTH_DIALOG_TITLE_HI') %> <%= user.display_name || email %></p>
 <p>
     <% if(customMessage){ %>
-    <%= __mf(customMessage, { client: client.name} ) %>
+    <%= client.name %><%= customMessage %>
     <% } else { %>
     <b><%= client.name %></b>
     <%= __('OAUTH_DIALOG_TITLE') %>
