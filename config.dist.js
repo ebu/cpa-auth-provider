@@ -243,6 +243,10 @@ module.exports = {
 
     oauth2: {
         refresh_tokens_enabled: true
-    }
+    },
+
+    monitoring: {
+        enabled: true,
+    },
 
 };

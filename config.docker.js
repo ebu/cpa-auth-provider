@@ -253,4 +253,8 @@ module.exports = {
         // how long before a verification is considered failed, in seconds, set to 0- to disable
         verification_time: process.env.VERIFICATION_TIME || 7 * 24 * 60 * 60 // 7 days
     },
+
+    monitoring: {
+        enabled: true,
+    },
 };

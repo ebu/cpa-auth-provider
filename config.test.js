@@ -186,5 +186,9 @@ module.exports = {
     oauth2: {
         refresh_tokens_enabled: true,
         access_token_duration: 10 * 60 * 60 * 1000,
-    }
+    },
+
+    monitoring: {
+        enabled: false,
+    },
 };
