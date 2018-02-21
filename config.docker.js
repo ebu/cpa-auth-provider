@@ -176,7 +176,7 @@ module.exports = {
     },
 
     // URL path prefix, e.g., '/myapp'
-    urlPrefix: '',
+    urlPrefix: process.env.URL_PREFIX || '',
     oauth2: {
         refresh_tokens_enabled: true,
         access_token_duration: 10 * 60 * 60 * 1000,
