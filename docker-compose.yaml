@@ -41,8 +41,8 @@ services:
       - DB_TYPE=postgres
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USER=dockercpa
-      - DB_PASSWORD=SchiefesHausBautFalsch
+      - DB_USER=postgres
+      - DB_PASSWORD=BlinkenderWaldRegnetFrohlich
   postgres:
     build: postgres
     ports:
@@ -50,5 +50,3 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
-      - DOCKER_USER=dockercpa
-      - DOCKER_PASSWORD=SchiefesHausBautFalsch
