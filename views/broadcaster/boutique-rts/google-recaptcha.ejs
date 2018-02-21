@@ -1,0 +1,17 @@
+<% if(config.limiter.type === 'recaptcha' || config.limit.type === 'recaptcha-optional') { %>
+<div id="recaptcha-block" class="form-group">
+    <div class="recaptcha-wrapper">
+        <%- captcha %>
+        <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
+        <div class="recaptcha-info"></div>
+        <div class="rc-anchor-logo-text">reCAPTCHA</div>
+        <div class="rc-anchor-pt">
+            <a href="https://www.google.com/intl/en/policies/privacy/"
+               target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
+            <span aria-hidden="true" role="presentation"> - </span>
+            <a href="https://www.google.com/intl/en/policies/terms/"
+               target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
+        </div>
+    </div>
+</div>
+<% } %>

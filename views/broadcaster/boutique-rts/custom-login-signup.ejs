@@ -32,6 +32,7 @@
 
             var $passwordForm = $('#rts-password-form');
             var $loginForm = $('#rts-login-form');
+            var $signupForm = $('#rts-signup-form');
 
             var $loginPanel = $('#rts-login-panel');
             var $signupPanel = $('#rts-signup-panel');
@@ -43,6 +44,8 @@
 
             var $alertsSuccess = $('.alert-message-success');
             var $alertsError = $('.alert-message-error');
+
+            var $recaptchaBlock = $('#recaptcha-block')
 
             if($birthdayField.length) {
                 $birthdayField.datepicker({
@@ -61,6 +64,7 @@
             if($linkToSignupPage) {
                 $linkToSignupPage.on('click', function () {
                     initAlertMessages();
+                    $('#signup-block').after($recaptchaBlock);
                     $loginPanel.hide();
                     $signupPanel.show();
                 });
@@ -78,6 +82,7 @@
             if($linkToPasswordPage) {
                 $linkToPasswordPage.on('click', function () {
                     initAlertMessages();
+                    $('#password-block').after($recaptchaBlock);
                     $loginPanel.hide();
                     $passwordPanel.show();
                 });
@@ -122,6 +127,33 @@
                     $(this).ajaxSubmit({
                         error: function (error) {
                             if(error.responseJSON.msg) {
+                                $alertsError.append($('<p>').text(error.responseJSON.msg));
+                            }
+                            $alertsError.show();
+                        },
+                        success: function (result) {
+                            //TODO redirect to oAuth screen
+                            console.log("SUCCESS", result);
+                        }
+                    });
+                })
+            }
+
+            if($signupForm) {
+                $signupForm.submit(function (e) {
+                    e.preventDefault();
+
+                    initAlertMessages();
+
+                    $(this).ajaxSubmit({
+                        error: function (error) {
+                            if (error.responseJSON.errors) {
+                                $.each(error.responseJSON.errors, function (index, error) {
+                                    $alertsError.append($('<p>').text(error.msg));
+                                });
+                            } else if (!error.responseJSON.msg) {
+                                $alertsError.append($('<p>').text("<%= __('PASSWORD_RECOVERY_JS_ERROR_MSG') %>"));
+                            } else {
                                 $alertsError.append($('<p>').text(error.responseJSON.msg));
                             }
                             $alertsError.show();

@@ -8,6 +8,9 @@ var trackingCookie = require('../../lib/tracking-cookie');
 var userHelper = require('../../lib/user-helper');
 const {URL} = require('url');
 
+// Google reCAPTCHA
+var recaptcha = require('express-recaptcha');
+
 module.exports = function (router) {
     router.get('/logout', function (req, res) {
         req.logout();
@@ -18,7 +21,7 @@ module.exports = function (router) {
         res.send('protected');
     });
 
-    router.get('/auth', trackingCookie.middleware, function (req, res) {
+    router.get('/auth', recaptcha.middleware.render, trackingCookie.middleware, function (req, res) {
         var autoIdpRedirect = config.auto_idp_redirect;
 
         if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
@@ -36,7 +39,7 @@ module.exports = function (router) {
                 if (req.query && req.query.error) {
                     url += "?error=" + req.query.error;
                 }
-
+                
                 var required = userHelper.getRequiredFields();
                 var profileAttributes = {
                     email: req.query.email ? decodeURIComponent(req.query.email) : '',

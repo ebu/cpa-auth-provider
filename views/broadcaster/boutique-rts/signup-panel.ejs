@@ -10,14 +10,9 @@
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
 
-                <!-- show any messages that come back with signup process -->
-                <% if (message.length > 0) { %>
-                <div class="signup-error alert alert-danger" id="errorBox"><%- message %></div>
-                <% } %>
+                <form id="rts-signup-form" class="connect-forms" action="<%= link('/api/local/signup') %>" method="post">
 
-                <form class="connect-forms" action="<%= link('/signup') %>" method="post">
-
-                    <div class="signup-fields">
+                    <div id="signup-block" class="signup-fields">
 
                         <div class="form-group">
                             <input type="email" class="form-control" name="email"
@@ -98,23 +93,7 @@
 
                     </div>
 
-                    <% if(config.limiter.type === 'recaptcha' || config.limit.type === 'recaptcha-optional') { %>
-                    <div class="form-group">
-                        <div class="recaptcha-wrapper">
-                            <%- captcha %>
-                            <div class="rc-anchor-checkbox-label"><%= __('SIGNUP_RECAPTCHA_NOT_A_ROBOT') %></div>
-                            <div class="recaptcha-info"></div>
-                            <div class="rc-anchor-logo-text">reCAPTCHA</div>
-                            <div class="rc-anchor-pt">
-                                <a href="https://www.google.com/intl/en/policies/privacy/"
-                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_PRIVACY') %></a>
-                                <span aria-hidden="true" role="presentation"> - </span>
-                                <a href="https://www.google.com/intl/en/policies/terms/"
-                                   target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
+                    <%- include ./google-recaptcha %>
 
                     <button type="submit"
                             class="btn btn-primary btn-block btn-large-submit"><%= __('SIGNUP_SIGNUP_BUTTON') %></button>
