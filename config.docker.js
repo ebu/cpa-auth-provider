@@ -257,4 +257,7 @@ module.exports = {
     monitoring: {
         enabled: true,
     },
+
+    access_log_format: process.env.ACCESS_LOG_FORMAT || '[ACCESS-LOG] url=":url" method=":method" statusCode=":statusCode" delta=":delta"'
+
 };
