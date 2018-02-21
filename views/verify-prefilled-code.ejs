@@ -31,8 +31,8 @@
             $.ajax({
                 url: "<%= link('/verify/allow') %>",
                 data: {
-                    user_code:         '<%= user_code %>',
-                    redirect_uri:      '<%= redirect_uri %>'
+                    user_code: '<%= user_code %>',
+                    redirect_uri: '<%= redirect_uri %>'
                 },
                 type: 'POST'
             });
@@ -44,8 +44,8 @@
             $.ajax({
                 url: "<%= link('/verify/deny') %>",
                 data: {
-                    user_code:         '<%= user_code %>',
-                    redirect_uri:      '<%= redirect_uri %>'
+                    user_code: '<%= user_code %>',
+                    redirect_uri: '<%= redirect_uri %>'
                 },
                 type: 'POST'
             });

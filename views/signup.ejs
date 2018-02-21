@@ -50,13 +50,15 @@
                             </div>
                             <% } %>
 
-                            <% if(requiredFields.date_of_birth) {%>
+                            <% if(requiredFields.date_of_birth) { %>
                             <div class="form-group">
                                 <div class="input-group date" data-provide="datepicker"
                                      data-language="en">
                                     <input id="date_of_birth" name="date_of_birth" class="form-control"
                                            type="text" placeholder="<%= __('SIGNUP_DATE_OF_BIRTH_LABEL') %>"
-                                           <% if(date_of_birth) {%> value="<%= date_of_birth %>" <% } %>
+                                            <% if(date_of_birth) { %>
+                                           value="<%= date_of_birth %>"
+                                            <% } %>
                                     >
                                     <div class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
@@ -65,21 +67,28 @@
                             </div>
                             <% } %>
 
-                            <% if(requiredFields.gender) {%>
+                            <% if(requiredFields.gender) { %>
                             <div class="form-group">
                                 <select id="gender" name="gender" class="form-control personnal-data-input">
                                     <option class="input-gender"
-                                            <% if(!gender) {%>selected<% } %>
+                                            <% if(!gender) { %>selected
+                                            <% } %>
                                             disabled>
                                         <%= __('PROFILE_SEX_LABEL') %>
                                     </option>
-                                    <option value="male" <% if(gender=='male') {%>selected<%}%> >
+                                    <option value="male" <% if(gender == 'male') { %>selected
+                                            <% } %>
+                                    >
                                         <%= __('PROFILE_MAN_SEX_FORM_OPTION') %>
                                     </option>
-                                    <option value="female" <% if(gender=='female') {%>selected<%}%> >
+                                    <option value="female" <% if(gender == 'female') { %>selected
+                                            <% } %>
+                                    >
                                         <%= __('PROFILE_WOMAN_SEX_FORM_OPTION') %>
                                     </option>
-                                    <option value="other" <% if(gender=='other') {%>selected<%}%> >
+                                    <option value="other" <% if(gender == 'other') { %>selected
+                                            <% } %>
+                                    >
                                         <%= __('PROFILE_OTHER_SEX_FORM_OPTION') %>
                                     </option>
                                 </select>
@@ -90,11 +99,14 @@
                                 <input id="password" type="password" class="form-control password-test" name="password"
                                        placeholder="<%= __('SIGNUP_PASSWORD_LABEL') %>" required>
                                 <p id="password-error-label" class="password-error error-message text-danger"></p>
-                                <div id="password-bar"><div id="password-progress"></div></div>
+                                <div id="password-bar">
+                                    <div id="password-progress"></div>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <input id="confirm_password" type="password" class="form-control" name="confirm_password"
+                                <input id="confirm_password" type="password" class="form-control"
+                                       name="confirm_password"
                                        placeholder="<%= __('SIGNUP_CONFIRM_PASSWORD_LABEL') %>" required>
                             </div>
 
@@ -124,7 +136,8 @@
                     </form>
 
                     <p class="last-link"><%= __('SIGNUP_ALREADY_HAVE_AN_ACCOUNT_LABEL') %> <a
-                                class="btn-link" href="<%= link('/auth/local') %>"><%= __('SIGNUP_LOGIN_BUTTON') %></a></p>
+                                class="btn-link" href="<%= link('/auth/local') %>"><%= __('SIGNUP_LOGIN_BUTTON') %></a>
+                    </p>
                 </div>
             </div>
 
@@ -134,12 +147,12 @@
 
 </div>
 <script>
-    (function(){
+    (function () {
         var locale = '<%= language %>';
         var $birthdayField = $('.date');
         var $genderField = $('#gender');
 
-        if($birthdayField.length) {
+        if ($birthdayField.length) {
             $birthdayField.datepicker({
                 format: 'dd/mm/yyyy',
                 language: locale,
@@ -147,13 +160,12 @@
             });
         }
 
-        if($genderField) {
-            $genderField.on("change", function() {
+        if ($genderField) {
+            $genderField.on("change", function () {
                 $genderField.css("color", "#555");
             });
         }
     })();
 </script>
 <% include util/password-support %>
-
 <% include layout/foot %>

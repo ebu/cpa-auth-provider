@@ -14,7 +14,8 @@
 
             <form class="connect-forms" method="POST" action="<%= link('/verify') %>">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="inputUserCode" placeholder="<%= __('VERIFY_USER_CODE_LABEL') %>"
+                    <input type="text" class="form-control" id="inputUserCode"
+                           placeholder="<%= __('VERIFY_USER_CODE_LABEL') %>"
                            name="user_code"
                             <% if (user_code) { %>
                            value="<%= user_code %>"

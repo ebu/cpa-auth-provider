@@ -23,15 +23,15 @@ require('./routes/implicit-flow')(app);
 require('./routes/resource-owner-password-flow')(app);
 
 app.get(
-	'/',
-	function (req, res) {
-		res.render('selection');
-	}
+    '/',
+    function (req, res) {
+        res.render('selection');
+    }
 );
 
 app.listen(
-	httpPort,
-	function () {
-		console.log('Example app listening on port ' + httpPort + '!');
-	}
+    httpPort,
+    function () {
+        console.log('Example app listening on port ' + httpPort + '!');
+    }
 );

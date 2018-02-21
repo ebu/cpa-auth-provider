@@ -24,9 +24,9 @@ module.exports = {
         return new Promise(
             function (resolve, reject) {
                 queryInterface.renameColumn(
-                            'OAuth2Clients',
-                            'client_secret',
-                            'jwt_code'
+                    'OAuth2Clients',
+                    'client_secret',
+                    'jwt_code'
                 ).then(
                     function () {
                         return queryInterface.addColumn(
@@ -55,8 +55,8 @@ module.exports = {
         return new Promise(
             function (resolve, reject) {
                 queryInterface.removeColumn(
-                        'OAuth2Clients',
-                        'client_secret'
+                    'OAuth2Clients',
+                    'client_secret'
                 ).then(
                     function () {
                         return queryInterface.renameColumn(

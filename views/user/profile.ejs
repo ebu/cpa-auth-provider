@@ -341,7 +341,7 @@
                                target="_blank"><%= __('SIGNUP_RECAPTCHA_TERMS') %></a>
                         </div>
                     </div>
-                    <%}%>
+                    <% } %>
                 </div>
                 <button id="btn-send-verification-link" type="submit" class="btn btn-primary btn-large-submit"><span
                             class="button-label"><%= __('PROFILE_RESEND_VALIDATION_EMAIL_LINK') %></span>
@@ -364,484 +364,484 @@
                     <span class="text"></span>
                 </span>
 
-                <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
-                <button class="btn btn-primary btn-large-submit" data-toggle="modal" data-target="#deleteUserModal">
-                    <span class="button-label"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></span>
-                </button>
+            <p><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LABEL') %></p>
+            <button class="btn btn-primary btn-large-submit" data-toggle="modal" data-target="#deleteUserModal">
+                <span class="button-label"><%= __('PROFILE_DELETE_YOUR_ACCOUNT_LINK') %></span>
+            </button>
         </div>
 
-</div>
+    </div>
 
-<!-- Add client Modal -->
-<% include ./modales/email-change.ejs %>
-<% include ./modales/user-delete.ejs %>
-<% include ../util/password-support %>
+    <!-- Add client Modal -->
+    <% include ./modales/email-change.ejs %>
+    <% include ./modales/user-delete.ejs %>
+    <% include ../util/password-support %>
 
-<script type="text/javascript">
-    (function () {
+    <script type="text/javascript">
+        (function () {
 
-        // VARIABLES AND INITIALIZATION
-        var $modifyDataBtn = $('#modify-data');
-        var $saveDataBtn = $('#btn-save-data');
-        var $cancelBtn = $('#btn-cancel-save');
-        var $savePasswordBtn = $('#btn-save-password');
-        var $cancelPasswordBtn = $('#btn-cancel-password');
-        var $modifyPassBtn = $('#btn-modify-password');
-        var $fakePasswordDisplay = $('#fake-password-display');
-        var $formModifyPass = $('#form-modify-pass');
-        var $btnContainer = $('#btn-container');
-        var $btnVerificationLink = $('#btn-send-verification-link');
-        var $btnDeleteAccount = $('#delete-user');
-        var $deleteUserModal = $('#deleteUserModal');
+            // VARIABLES AND INITIALIZATION
+            var $modifyDataBtn = $('#modify-data');
+            var $saveDataBtn = $('#btn-save-data');
+            var $cancelBtn = $('#btn-cancel-save');
+            var $savePasswordBtn = $('#btn-save-password');
+            var $cancelPasswordBtn = $('#btn-cancel-password');
+            var $modifyPassBtn = $('#btn-modify-password');
+            var $fakePasswordDisplay = $('#fake-password-display');
+            var $formModifyPass = $('#form-modify-pass');
+            var $btnContainer = $('#btn-container');
+            var $btnVerificationLink = $('#btn-send-verification-link');
+            var $btnDeleteAccount = $('#delete-user');
+            var $deleteUserModal = $('#deleteUserModal');
 
-        var $firstname = $("#firstname");
-        var $lastname = $("#lastname");
-        var $gender = $("#gender");
-        var $language = $("#language");
-        var $previousPassword = $("#previous-password");
-        var $newEmail = $("#new-email");
-        var $password = $("#password");
-        var $newPassword = $('#new-password');
-        var $confirmPassword = $("#confirm-password");
-        var $newConfirmPassword = $("#confirm-new-password");
-        var $birthday = $("#birthday");
-        var $inputs = $('.personnal-data-input');
-        var $datepicker = $(".input-group.date");
-        var $deleteDiv = $("#delete-div")
+            var $firstname = $("#firstname");
+            var $lastname = $("#lastname");
+            var $gender = $("#gender");
+            var $language = $("#language");
+            var $previousPassword = $("#previous-password");
+            var $newEmail = $("#new-email");
+            var $password = $("#password");
+            var $newPassword = $('#new-password');
+            var $confirmPassword = $("#confirm-password");
+            var $newConfirmPassword = $("#confirm-new-password");
+            var $birthday = $("#birthday");
+            var $inputs = $('.personnal-data-input');
+            var $datepicker = $(".input-group.date");
+            var $deleteDiv = $("#delete-div")
 
-        var $elementsWithPassword = $(".hasPassword");
-        var $elementsWithoutPassword = $(".hasNoPassword");
-        var $elementsAccountVerified = $(".accountVerified");
-        var $elementsAccountNotVerified = $(".accountNotVerified");
+            var $elementsWithPassword = $(".hasPassword");
+            var $elementsWithoutPassword = $(".hasNoPassword");
+            var $elementsAccountVerified = $(".accountVerified");
+            var $elementsAccountNotVerified = $(".accountNotVerified");
 
-        var $passwordStrengthProgress = $("#password-progress");
-        var hasPassword = '<%= profile.hasPassword %>';
-        var date = "";
-        var verified = '<%= profile.verified %>';
+            var $passwordStrengthProgress = $("#password-progress");
+            var hasPassword = '<%= profile.hasPassword %>';
+            var date = "";
+            var verified = '<%= profile.verified %>';
 
-        if (hasPassword !== "true") {
-            $elementsWithPassword.hide();
-            $elementsWithoutPassword.show();
-        } else {
-            $elementsWithPassword.show();
-            $elementsWithoutPassword.hide();
-        }
-
-        if (verified != 'true') {
-            $elementsAccountNotVerified.show();
-            $elementsAccountVerified.hide();
-            $deleteDiv.addClass('col-sm-offset-3');
-        } else {
-            $elementsAccountNotVerified.hide();
-            $elementsAccountVerified.show();
-        }
-
-        //Little css trick so that date input render correctly but does not appear quickly at loading
-        $inputs.hide();
-        $inputs.css('visibility', 'visible');
-
-        //Initialize all tootips
-        $('[data-toggle="tooltip"]').tooltip();
-
-        // LOCAL FUNCTIONS
-        var closeEditMode = function () {
-            $("#personnal-data .panel").each(function (index, element) {
-                var $element = $(element);
-                var $dataField = $element.find(".data-value").first();
-                var $inputField = $element.find('.personnal-data-input').first();
-                var $asterisks = $element.find('.required-asterisk').first();
-
-                if (!$dataField.text()) {
-                    $element.addClass('hidden');
-                }
-
-                //Show labels and hide fields
-                $asterisks.hide();
-                $inputField.hide();
-                $btnContainer.hide();
-                $dataField.show();
-                $modifyDataBtn.show();
-            });
-        };
-
-        var formatDate = function (date) {
-            var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-            var year = date.getFullYear();
-            return day + "/" + month + "/" + year;
-        };
-
-        var createDate = function (sDate) {
-            var date = sDate.substr(6, 4) + "/" + sDate.substr(3, 2) + "/" + sDate.substr(0, 2);
-            return new Date(date);
-        };
-
-        var resetMessages = function (formClass, errorsClass) {
-            $("#" + formClass).hide("fast");
-            $("#" + errorsClass).empty();
-        };
-
-        //Init date field and datepicker
-        if ("<%= profile.date_of_birth %>" && "<%= profile.date_of_birth %>" != "null" && "<%= profile.date_of_birth %>" !== null && "<%= profile.date_of_birth %>" != "undefined") {
-            date = new Date(parseInt("<%= profile.date_of_birth %>"));
-            $datepicker.prev(".data-value").text(formatDate(date));
-        }
-
-        var locale = '<%= language %>';
-
-        $datepicker.datepicker({
-            format: 'dd/mm/yyyy',
-            language: locale,
-            endDate: "0d"
-        });
-
-        // EVENTS
-        $modifyDataBtn.on('click', function (e) {
-            e.preventDefault();
-
-            var $this = $(this);
-            //Hide Modify button
-            $this.hide();
-
-            $("#personnal-data .panel").each(function (index, element) {
-                var $element = $(element);
-                var $dataField = $element.find(".data-value").first();
-                var value = String($dataField.text());
-                var $inputField = $element.find('.personnal-data-input').first();
-                var $asterisks = $element.find('.required-asterisk').first();
-
-                $element.removeClass('hidden');
-
-                //If it is date field, update it correctly
-                if ($inputField.hasClass("date")) {
-                    $inputField.find("input").first().val(value);
-                } else if ($inputField.is("select")) {
-                    $inputField.val($dataField.attr("data-selected"));
-                } else {
-                    $inputField.val(value);
-                }
-
-                //Show fields and hide labels with data values
-                $dataField.hide();
-                $asterisks.css('display', 'inline-block');
-                $inputField.show();
-            });
-
-            $btnContainer.show();
-        });
-
-        $('#verification-link-form').submit(function (e) {
-            e.preventDefault();
-            var $label = $btnVerificationLink.find(".button-label").first();
-            var $spinner = $btnVerificationLink.find(".spinner").first();
-            var $verifSuccess = $("#verification-success");
-            var $verifError = $("#verification-error");
-
-            $verifError.hide();
-            $label.hide();
-            $spinner.show();
-
-            $(this).ajaxSubmit({
-                error: function (result) {
-                    $spinner.hide();
-                    $label.show();
-                    if (!result.responseJSON.msg)
-                        $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION') %>");
-                    else
-                        $verifError.find(".text").first().text(result.responseJSON.msg);
-
-                    $verifError.show();
-                },
-                success: function (response) {
-                    $btnVerificationLink.remove();
-                    $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION') %>");
-                    $verifSuccess.show();
-                }
-            });
-        });
-
-        $('#changeEmailModal').on('show.bs.modal', function () {
-            this.classList.remove('fade');
-            $("#change-email-password").val('');
-        });
-
-        $deleteUserModal.on('show.bs.modal', function () {
-            $deleteUserModal.removeClass('fade');
-        })
-
-        $('#user-pass').keypress(function (event) {
-            //On pressing enter key
-            if (event.which === 13) {
-                //Do not close the popup
-                event.preventDefault();
-                //But call delete account function
-                $('#delete-user').click();
-                return false;
-            }
-        });
-
-        $('button#change-email').on('click', function (e) {
-            e.preventDefault();
-            var $btn = $(e.target);
-            var label = $btn.find('.button-label').first();
-            var spinner = $btn.find(".spinner").first();
-            var $changeEmailError = $("#change-email-error");
-            var $changeEmailNew = $("#change-email-new");
-            var $changeEmailPassword = $("#change-email-password");
-            var $changeEmailForm = $("#changeEmailForm");
-            var $formChangeEmailSuccess = $('#form-change-email-success');
-            $formChangeEmailSuccess.hide();
-
-            spinner.show();
-            label.hide();
-
-            $changeEmailError.hide();
-            $changeEmailError.html("");
-            $changeEmailForm.first('div.form-group').removeClass('has-error');
-
-            if (!$changeEmailNew.val()) {
-                $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_NO_EMAIL') %>");
-                $changeEmailForm.first('div.form-group').addClass('has-error');
-                $changeEmailError.show();
-                spinner.hide();
-                label.show();
-                return;
+            if (hasPassword !== "true") {
+                $elementsWithPassword.hide();
+                $elementsWithoutPassword.show();
+            } else {
+                $elementsWithPassword.show();
+                $elementsWithoutPassword.hide();
             }
 
-            $.ajax(
-                {
-                    url: '<%= link('/email/change') %>',
-                    type: 'POST',
-                    data: {
-                        new_email: $changeEmailNew.val(),
-                        password: $changeEmailPassword.val(),
-                    },
-                    success: function (result) {
-                        $("#changeEmailModal").modal('toggle');
-                        $changeEmailPassword.val('');
-                        spinner.hide();
-                        label.show();
-                        $formChangeEmailSuccess.show();
-                    },
-                    error: function (error) {
-                        $changeEmailPassword.val('');
-                        if (error.responseJSON && error.responseJSON.msg) {
-                            $changeEmailError.html(error.responseJSON.msg);
-                            $changeEmailForm.first('div.form-group').addClass('has-error');
-                            $changeEmailError.show();
-                            spinner.hide()
-                            label.show();
-                        } else {
-                            try {
-                                console.log("Error: ", error);
-                            }
-                            catch (err) {
-                            }
-                            $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_ERROR') %>");
-                            $changeEmailForm.first('div.form-group').addClass('has-error');
-                            $changeEmailError.show();
-                            spinner.hide();
-                            label.show();
-                        }
+            if (verified != 'true') {
+                $elementsAccountNotVerified.show();
+                $elementsAccountVerified.hide();
+                $deleteDiv.addClass('col-sm-offset-3');
+            } else {
+                $elementsAccountNotVerified.hide();
+                $elementsAccountVerified.show();
+            }
+
+            //Little css trick so that date input render correctly but does not appear quickly at loading
+            $inputs.hide();
+            $inputs.css('visibility', 'visible');
+
+            //Initialize all tootips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // LOCAL FUNCTIONS
+            var closeEditMode = function () {
+                $("#personnal-data .panel").each(function (index, element) {
+                    var $element = $(element);
+                    var $dataField = $element.find(".data-value").first();
+                    var $inputField = $element.find('.personnal-data-input').first();
+                    var $asterisks = $element.find('.required-asterisk').first();
+
+                    if (!$dataField.text()) {
+                        $element.addClass('hidden');
                     }
-                }
-            )
-        });
 
-        $btnDeleteAccount.on('click', function (e) {
-            e.preventDefault();
-            var $label = $btnDeleteAccount.find(".button-label").first();
-            var $spinner = $btnDeleteAccount.find(".spinner").first();
-            var $deleteError = $("#delete-error");
-            var $password = $('#user-pass');
-            var $deleteUserForm = $("#deleteUserForm");
-            var isFacebookAccount = '<%= profile.facebook %>';
-            var isGoogleAccount = '<%= profile.google %>';
-            var $passwordError = $('#password-error');
+                    //Show labels and hide fields
+                    $asterisks.hide();
+                    $inputField.hide();
+                    $btnContainer.hide();
+                    $dataField.show();
+                    $modifyDataBtn.show();
+                });
+            };
 
-            $deleteError.hide();
-            $label.hide();
-            $spinner.show();
-            $deleteUserForm.first('div.form-group').removeClass('has-error');
-            $passwordError.hide();
-            $passwordError.html("");
+            var formatDate = function (date) {
+                var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var year = date.getFullYear();
+                return day + "/" + month + "/" + year;
+            };
 
-            if (!$password.val() && isFacebookAccount !== "true" && isGoogleAccount !== "true") {
-                $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
-                $deleteUserForm.first('div.form-group').addClass('has-error');
-                $spinner.hide()
-                $label.show();
-                $passwordError.show();
-                return;
+            var createDate = function (sDate) {
+                var date = sDate.substr(6, 4) + "/" + sDate.substr(3, 2) + "/" + sDate.substr(0, 2);
+                return new Date(date);
+            };
+
+            var resetMessages = function (formClass, errorsClass) {
+                $("#" + formClass).hide("fast");
+                $("#" + errorsClass).empty();
+            };
+
+            //Init date field and datepicker
+            if ("<%= profile.date_of_birth %>" && "<%= profile.date_of_birth %>" != "null" && "<%= profile.date_of_birth %>" !== null && "<%= profile.date_of_birth %>" != "undefined") {
+                date = new Date(parseInt("<%= profile.date_of_birth %>"));
+                $datepicker.prev(".data-value").text(formatDate(date));
             }
 
-            $.ajax({
-                url: "<%= link('/user') %>",
-                type: 'POST',
-                data: {
-                    password: $password.val()
-                },
-                success: function (result) {
-                    //set success message in storage to get it back on login page and LOGOUT
-                    if (typeof localStorage !== 'undefined') {
-                        localStorage.setItem('loginMessage', "<%= __('PROFILE_JS_SUCCESS_DELETE_ACCOUNT') %>");
-                    }
-                    window.location = "<%= link('/logout') %>";
-                },
-                error: function (error) {
-                    if (error.responseJSON.msg) {
-                        $passwordError.html(error.responseJSON.msg);
-                        $deleteUserForm.first('div.form-group').addClass('has-error');
-                        $spinner.hide()
-                        $label.show();
-                        $passwordError.show();
+            var locale = '<%= language %>';
+
+            $datepicker.datepicker({
+                format: 'dd/mm/yyyy',
+                language: locale,
+                endDate: "0d"
+            });
+
+            // EVENTS
+            $modifyDataBtn.on('click', function (e) {
+                e.preventDefault();
+
+                var $this = $(this);
+                //Hide Modify button
+                $this.hide();
+
+                $("#personnal-data .panel").each(function (index, element) {
+                    var $element = $(element);
+                    var $dataField = $element.find(".data-value").first();
+                    var value = String($dataField.text());
+                    var $inputField = $element.find('.personnal-data-input').first();
+                    var $asterisks = $element.find('.required-asterisk').first();
+
+                    $element.removeClass('hidden');
+
+                    //If it is date field, update it correctly
+                    if ($inputField.hasClass("date")) {
+                        $inputField.find("input").first().val(value);
+                    } else if ($inputField.is("select")) {
+                        $inputField.val($dataField.attr("data-selected"));
                     } else {
-                        $deleteUserModal.modal('toggle');
-                        $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
+                        $inputField.val(value);
+                    }
+
+                    //Show fields and hide labels with data values
+                    $dataField.hide();
+                    $asterisks.css('display', 'inline-block');
+                    $inputField.show();
+                });
+
+                $btnContainer.show();
+            });
+
+            $('#verification-link-form').submit(function (e) {
+                e.preventDefault();
+                var $label = $btnVerificationLink.find(".button-label").first();
+                var $spinner = $btnVerificationLink.find(".spinner").first();
+                var $verifSuccess = $("#verification-success");
+                var $verifError = $("#verification-error");
+
+                $verifError.hide();
+                $label.hide();
+                $spinner.show();
+
+                $(this).ajaxSubmit({
+                    error: function (result) {
                         $spinner.hide();
                         $label.show();
-                        $deleteError.show();
+                        if (!result.responseJSON.msg)
+                            $verifError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_RESEND_VALIDATION') %>");
+                        else
+                            $verifError.find(".text").first().text(result.responseJSON.msg);
+
+                        $verifError.show();
+                    },
+                    success: function (response) {
+                        $btnVerificationLink.remove();
+                        $verifSuccess.find(".text").first().text("<%= __('PROFILE_JS_SUCCESS_RESEND_VALIDATION') %>");
+                        $verifSuccess.show();
                     }
-                }
+                });
             });
-        });
 
-        $saveDataBtn.on('click', function (e) {
-            e.preventDefault();
-            resetMessages("form-personnal-data-errors", "personnal-data-errors");
+            $('#changeEmailModal').on('show.bs.modal', function () {
+                this.classList.remove('fade');
+                $("#change-email-password").val('');
+            });
 
-            var userId = "<%= user.id %>";
-            var date_of_birth = $birthday.val();
-            var date = date_of_birth ? createDate(date_of_birth).getTime() : '';
+            $deleteUserModal.on('show.bs.modal', function () {
+                $deleteUserModal.removeClass('fade');
+            })
 
-            $.ajax({
-                url: "<%= link('/user/profile/') %>",
-                data: {
-                    firstname: $firstname.val(),
-                    lastname: $lastname.val(),
-                    gender: $gender.val(),
-                    language: $language.val(),
-                    date_of_birth: date
-                },
-                type: 'PUT',
-                success: function (result) {
-                    $firstname.prev(".data-value").text($firstname.val());
-                    $lastname.prev(".data-value").text($lastname.val());
-                    $datepicker.prev(".data-value").text($birthday.val());
-
-                    $gender.prev(".data-value").text($gender.find("option:selected").text());
-                    $gender.prev(".data-value").attr("data-selected", $gender.val());
-
-                    $language.prev(".data-value").text($language.find("option:selected").text());
-                    $language.prev(".data-value").attr("data-selected", $language.val());
-
-                    closeEditMode();
-                    // Reload in case the user has changed the local
-                    location.reload();
-                },
-                error: function (result) {
-                    $.each(result.responseJSON.errors, function (index, error) {
-                        $("#personnal-data-errors").append($('<p>').text(error.msg));
-                    });
-                    $("#form-personnal-data-errors").show("fast");
-                    $('html, body').animate({
-                        scrollTop: $("#personnal-data-errors").offset().top
-                    }, 500);
+            $('#user-pass').keypress(function (event) {
+                //On pressing enter key
+                if (event.which === 13) {
+                    //Do not close the popup
+                    event.preventDefault();
+                    //But call delete account function
+                    $('#delete-user').click();
+                    return false;
                 }
             });
 
-        });
+            $('button#change-email').on('click', function (e) {
+                e.preventDefault();
+                var $btn = $(e.target);
+                var label = $btn.find('.button-label').first();
+                var spinner = $btn.find(".spinner").first();
+                var $changeEmailError = $("#change-email-error");
+                var $changeEmailNew = $("#change-email-new");
+                var $changeEmailPassword = $("#change-email-password");
+                var $changeEmailForm = $("#changeEmailForm");
+                var $formChangeEmailSuccess = $('#form-change-email-success');
+                $formChangeEmailSuccess.hide();
 
-        $cancelBtn.on('click', function (e) {
-            e.preventDefault();
-            resetMessages("form-personnal-data-errors", "personnal-data-errors");
-            closeEditMode();
-        });
+                spinner.show();
+                label.hide();
 
-        $modifyPassBtn.on('click', function (e) {
-            e.preventDefault();
-            $formModifyPass.show();
-            $fakePasswordDisplay.hide();
-            $modifyPassBtn.hide();
-        });
+                $changeEmailError.hide();
+                $changeEmailError.html("");
+                $changeEmailForm.first('div.form-group').removeClass('has-error');
 
-        $savePasswordBtn.on('click', function (e) {
-            e.preventDefault();
+                if (!$changeEmailNew.val()) {
+                    $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_NO_EMAIL') %>");
+                    $changeEmailForm.first('div.form-group').addClass('has-error');
+                    $changeEmailError.show();
+                    spinner.hide();
+                    label.show();
+                    return;
+                }
 
-            resetMessages("form-security-errors", "security-errors");
-            $("#form-security-success").hide();
-            $("#form-new-email-success").hide();
-
-            var userId = "<%= user.id %>";
-            var url = "<%= link('/user/') %>" + userId + "/password";
-            var data = {}
-            if (hasPassword !== "true") {
-                url = "<%= link('/user/') %>" + userId + "/password/create";
-                data["email"] = $newEmail.val();
-                data["password"] = $newPassword.val();
-                data["confirm_password"] = $newConfirmPassword.val();
-            } else {
-                password: $password.val();
-                data["password"] = $password.val();
-                data["previous_password"] = $previousPassword.val();
-                data["confirm_password"] = $newConfirmPassword.val();
-            }
-
-            $.ajax({
-                url: url,
-                data: data,
-                type: 'POST',
-                success: function (result) {
-                    // Password stuff
-                    if (hasPassword !== "true") {
-                        $("#form-new-email-success").show('fast');
-                    } else {
-                        $("#form-security-success").show('fast');
+                $.ajax(
+                    {
+                        url: '<%= link('/email/change') %>',
+                        type: 'POST',
+                        data: {
+                            new_email: $changeEmailNew.val(),
+                            password: $changeEmailPassword.val(),
+                        },
+                        success: function (result) {
+                            $("#changeEmailModal").modal('toggle');
+                            $changeEmailPassword.val('');
+                            spinner.hide();
+                            label.show();
+                            $formChangeEmailSuccess.show();
+                        },
+                        error: function (error) {
+                            $changeEmailPassword.val('');
+                            if (error.responseJSON && error.responseJSON.msg) {
+                                $changeEmailError.html(error.responseJSON.msg);
+                                $changeEmailForm.first('div.form-group').addClass('has-error');
+                                $changeEmailError.show();
+                                spinner.hide()
+                                label.show();
+                            } else {
+                                try {
+                                    console.log("Error: ", error);
+                                }
+                                catch (err) {
+                                }
+                                $changeEmailError.html("<%= __('PROFILE_CHANGE_EMAIL_ERROR') %>");
+                                $changeEmailForm.first('div.form-group').addClass('has-error');
+                                $changeEmailError.show();
+                                spinner.hide();
+                                label.show();
+                            }
+                        }
                     }
-                    $('#display-email-span').append($newEmail.val());
-                    hasPassword = "true";
-                    $elementsWithPassword.show();
-                    $elementsWithoutPassword.hide();
-
-                    // Verified stuff
-                    $elementsAccountNotVerified.show();
-                    $elementsAccountVerified.hide();
-                    $deleteDiv.addClass('col-sm-offset-3');
-
-                    $previousPassword.val("");
-                    $passwordStrengthProgress.width(0);
-                    $password.val("");
-                    $confirmPassword.val("");
-
-                    // password change form close
-                    $formModifyPass.hide();
-                    $fakePasswordDisplay.show();
-                    $modifyPassBtn.show();
-                    $('html, body').animate({
-                        scrollTop: $("#security-success").offset().top
-                    }, 500);
-                },
-                error: function (result) {
-                    $.each(result.responseJSON.errors, function (index, error) {
-                        $("#security-errors").append($('<p>').html(error.msg));
-                    });
-                    $("#form-security-errors").show("fast");
-                    $('html, body').animate({
-                        scrollTop: $("#security-errors").offset().top
-                    }, 500);
-                }
+                )
             });
-        });
 
-        $cancelPasswordBtn.on('click', function (e) {
-            e.preventDefault();
-            resetMessages("form-security-errors", "security-errors");
-            // password change form close
-            $formModifyPass.hide();
-            $fakePasswordDisplay.show();
-            $modifyPassBtn.show();
-        });
-    })();
-</script>
+            $btnDeleteAccount.on('click', function (e) {
+                e.preventDefault();
+                var $label = $btnDeleteAccount.find(".button-label").first();
+                var $spinner = $btnDeleteAccount.find(".spinner").first();
+                var $deleteError = $("#delete-error");
+                var $password = $('#user-pass');
+                var $deleteUserForm = $("#deleteUserForm");
+                var isFacebookAccount = '<%= profile.facebook %>';
+                var isGoogleAccount = '<%= profile.google %>';
+                var $passwordError = $('#password-error');
 
-<%- include ../layout/foot %>
+                $deleteError.hide();
+                $label.hide();
+                $spinner.show();
+                $deleteUserForm.first('div.form-group').removeClass('has-error');
+                $passwordError.hide();
+                $passwordError.html("");
+
+                if (!$password.val() && isFacebookAccount !== "true" && isGoogleAccount !== "true") {
+                    $passwordError.html("<%= __('PROFILE_API_DELETE_YOUR_ACCOUNT_MISSING_PASSWORD') %>");
+                    $deleteUserForm.first('div.form-group').addClass('has-error');
+                    $spinner.hide()
+                    $label.show();
+                    $passwordError.show();
+                    return;
+                }
+
+                $.ajax({
+                    url: "<%= link('/user') %>",
+                    type: 'POST',
+                    data: {
+                        password: $password.val()
+                    },
+                    success: function (result) {
+                        //set success message in storage to get it back on login page and LOGOUT
+                        if (typeof localStorage !== 'undefined') {
+                            localStorage.setItem('loginMessage', "<%= __('PROFILE_JS_SUCCESS_DELETE_ACCOUNT') %>");
+                        }
+                        window.location = "<%= link('/logout') %>";
+                    },
+                    error: function (error) {
+                        if (error.responseJSON.msg) {
+                            $passwordError.html(error.responseJSON.msg);
+                            $deleteUserForm.first('div.form-group').addClass('has-error');
+                            $spinner.hide()
+                            $label.show();
+                            $passwordError.show();
+                        } else {
+                            $deleteUserModal.modal('toggle');
+                            $deleteError.find(".text").first().text("<%= __('PROFILE_JS_ERROR_DELETE_ACCOUNT') %>");
+                            $spinner.hide();
+                            $label.show();
+                            $deleteError.show();
+                        }
+                    }
+                });
+            });
+
+            $saveDataBtn.on('click', function (e) {
+                e.preventDefault();
+                resetMessages("form-personnal-data-errors", "personnal-data-errors");
+
+                var userId = "<%= user.id %>";
+                var date_of_birth = $birthday.val();
+                var date = date_of_birth ? createDate(date_of_birth).getTime() : '';
+
+                $.ajax({
+                    url: "<%= link('/user/profile/') %>",
+                    data: {
+                        firstname: $firstname.val(),
+                        lastname: $lastname.val(),
+                        gender: $gender.val(),
+                        language: $language.val(),
+                        date_of_birth: date
+                    },
+                    type: 'PUT',
+                    success: function (result) {
+                        $firstname.prev(".data-value").text($firstname.val());
+                        $lastname.prev(".data-value").text($lastname.val());
+                        $datepicker.prev(".data-value").text($birthday.val());
+
+                        $gender.prev(".data-value").text($gender.find("option:selected").text());
+                        $gender.prev(".data-value").attr("data-selected", $gender.val());
+
+                        $language.prev(".data-value").text($language.find("option:selected").text());
+                        $language.prev(".data-value").attr("data-selected", $language.val());
+
+                        closeEditMode();
+                        // Reload in case the user has changed the local
+                        location.reload();
+                    },
+                    error: function (result) {
+                        $.each(result.responseJSON.errors, function (index, error) {
+                            $("#personnal-data-errors").append($('<p>').text(error.msg));
+                        });
+                        $("#form-personnal-data-errors").show("fast");
+                        $('html, body').animate({
+                            scrollTop: $("#personnal-data-errors").offset().top
+                        }, 500);
+                    }
+                });
+
+            });
+
+            $cancelBtn.on('click', function (e) {
+                e.preventDefault();
+                resetMessages("form-personnal-data-errors", "personnal-data-errors");
+                closeEditMode();
+            });
+
+            $modifyPassBtn.on('click', function (e) {
+                e.preventDefault();
+                $formModifyPass.show();
+                $fakePasswordDisplay.hide();
+                $modifyPassBtn.hide();
+            });
+
+            $savePasswordBtn.on('click', function (e) {
+                e.preventDefault();
+
+                resetMessages("form-security-errors", "security-errors");
+                $("#form-security-success").hide();
+                $("#form-new-email-success").hide();
+
+                var userId = "<%= user.id %>";
+                var url = "<%= link('/user/') %>" + userId + "/password";
+                var data = {}
+                if (hasPassword !== "true") {
+                    url = "<%= link('/user/') %>" + userId + "/password/create";
+                    data["email"] = $newEmail.val();
+                    data["password"] = $newPassword.val();
+                    data["confirm_password"] = $newConfirmPassword.val();
+                } else {
+                    password: $password.val();
+                    data["password"] = $password.val();
+                    data["previous_password"] = $previousPassword.val();
+                    data["confirm_password"] = $newConfirmPassword.val();
+                }
+
+                $.ajax({
+                    url: url,
+                    data: data,
+                    type: 'POST',
+                    success: function (result) {
+                        // Password stuff
+                        if (hasPassword !== "true") {
+                            $("#form-new-email-success").show('fast');
+                        } else {
+                            $("#form-security-success").show('fast');
+                        }
+                        $('#display-email-span').append($newEmail.val());
+                        hasPassword = "true";
+                        $elementsWithPassword.show();
+                        $elementsWithoutPassword.hide();
+
+                        // Verified stuff
+                        $elementsAccountNotVerified.show();
+                        $elementsAccountVerified.hide();
+                        $deleteDiv.addClass('col-sm-offset-3');
+
+                        $previousPassword.val("");
+                        $passwordStrengthProgress.width(0);
+                        $password.val("");
+                        $confirmPassword.val("");
+
+                        // password change form close
+                        $formModifyPass.hide();
+                        $fakePasswordDisplay.show();
+                        $modifyPassBtn.show();
+                        $('html, body').animate({
+                            scrollTop: $("#security-success").offset().top
+                        }, 500);
+                    },
+                    error: function (result) {
+                        $.each(result.responseJSON.errors, function (index, error) {
+                            $("#security-errors").append($('<p>').html(error.msg));
+                        });
+                        $("#form-security-errors").show("fast");
+                        $('html, body').animate({
+                            scrollTop: $("#security-errors").offset().top
+                        }, 500);
+                    }
+                });
+            });
+
+            $cancelPasswordBtn.on('click', function (e) {
+                e.preventDefault();
+                resetMessages("form-security-errors", "security-errors");
+                // password change form close
+                $formModifyPass.hide();
+                $fakePasswordDisplay.show();
+                $modifyPassBtn.show();
+            });
+        })();
+    </script>
+
+    <%- include ../layout/foot %>

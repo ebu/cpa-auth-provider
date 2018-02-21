@@ -96,11 +96,11 @@ describe('user-deletion', () => {
                 done);
         });
 
-        it('should have deleted the correct amount', function() {
+        it('should have deleted the correct amount', function () {
             expect(this.delete_count).equal(1);
         });
 
-        it('should have deleted non-verified, old user', function(done) {
+        it('should have deleted non-verified, old user', function (done) {
             db.User.findOne({where: {id: USER1.id}}).then(
                 user => {
                     expect(user).equal(null);
@@ -110,7 +110,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should not have deleted non-verified, recent user', function(done) {
+        it('should not have deleted non-verified, recent user', function (done) {
             db.User.findOne({where: {id: USER2.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -120,7 +120,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should not have deleted social account, old user', function(done) {
+        it('should not have deleted social account, old user', function (done) {
             db.User.findOne({where: {id: USER3.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -130,7 +130,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should not have deleted verified user', function(done) {
+        it('should not have deleted verified user', function (done) {
             db.User.findOne({where: {id: USER4.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -139,7 +139,7 @@ describe('user-deletion', () => {
                 done
             );
         });
-        it('should not have deleted verified user scheduled for deletion', function(done) {
+        it('should not have deleted verified user scheduled for deletion', function (done) {
             db.User.findOne({where: {id: USER5.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -148,7 +148,7 @@ describe('user-deletion', () => {
                 done
             );
         });
-        it('should not have deleted verified user scheduled for deletion in the future', function(done) {
+        it('should not have deleted verified user scheduled for deletion in the future', function (done) {
             db.User.findOne({where: {id: USER6.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -178,11 +178,11 @@ describe('user-deletion', () => {
                 done);
         });
 
-        it('should have deleted the correct amount', function() {
+        it('should have deleted the correct amount', function () {
             expect(this.delete_count).equal(1);
         });
 
-        it('should not have deleted non-verified, old user', function(done) {
+        it('should not have deleted non-verified, old user', function (done) {
             db.User.findOne({where: {id: USER1.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -192,7 +192,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should not have deleted non-verified, recent user', function(done) {
+        it('should not have deleted non-verified, recent user', function (done) {
             db.User.findOne({where: {id: USER2.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -202,7 +202,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should not have deleted social account, old user', function(done) {
+        it('should not have deleted social account, old user', function (done) {
             db.User.findOne({where: {id: USER3.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -212,7 +212,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should not have deleted verified user', function(done) {
+        it('should not have deleted verified user', function (done) {
             db.User.findOne({where: {id: USER4.id}}).then(
                 user => {
                     expect(user).a('Object');
@@ -222,7 +222,7 @@ describe('user-deletion', () => {
             );
         });
 
-        it('should have deleted verified user scheduled for deletion', function(done) {
+        it('should have deleted verified user scheduled for deletion', function (done) {
             db.User.findOne({where: {id: USER5.id}}).then(
                 user => {
                     expect(user).equal(null);
@@ -231,7 +231,7 @@ describe('user-deletion', () => {
                 done
             );
         });
-        it('should not have deleted verified user scheduled for deletion in the future', function(done) {
+        it('should not have deleted verified user scheduled for deletion in the future', function (done) {
             db.User.findOne({where: {id: USER6.id}}).then(
                 user => {
                     expect(user).a('Object');

@@ -71,7 +71,7 @@ module.exports = {
                 ).then(
                     function () {
                         return new Promise(
-                            function(resolve, reject) {
+                            function (resolve, reject) {
                                 queryInterface.sequelize.query(
                                     'ALTER TABLE "Users" DROP CONSTRAINT "email_unique_idx";'
                                 ).then(
@@ -85,7 +85,7 @@ module.exports = {
                 ).then(
                     function () {
                         return new Promise(
-                            function(resolve,reject) {
+                            function (resolve, reject) {
                                 queryInterface.removeIndex('Users', 'email_unique_idx').then(
                                     resolve, resolve
                                 );

@@ -79,7 +79,7 @@ describe('GET /auth - for ignore parameter', function () {
                 nbUsers = users;
                 done();
             },
-        done);
+            done);
     });
 
     it('should not add a new user', function () {

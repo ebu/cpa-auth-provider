@@ -232,7 +232,10 @@ describe('Test password update code', function () {
                 display_name: 'Test User'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: 'testuser@testuser.com'}).then(function (localLogin) {
+                return db.LocalLogin.create({
+                    user_id: user.id,
+                    login: 'testuser@testuser.com'
+                }).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
@@ -293,7 +296,10 @@ describe('Test password update code', function () {
                 display_name: 'Test User'
             }).then(function (user) {
                 self.user = user;
-                return db.LocalLogin.create({user_id: user.id, login: 'testuser@testuser.com'}).then(function (localLogin) {
+                return db.LocalLogin.create({
+                    user_id: user.id,
+                    login: 'testuser@testuser.com'
+                }).then(function (localLogin) {
                     return localLogin.setPassword('mdp').then(function () {
                         return codeHelper.generatePasswordRecoveryCode(user.id).then(function (recoverCode) {
                             self.recoverCode = recoverCode;
