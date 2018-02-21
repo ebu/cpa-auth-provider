@@ -156,7 +156,10 @@ function routes(router) {
                         if (takenLogin) {
                             throw new Error(STATES.EMAIL_ALREADY_TAKEN);
                         }
-                        return db.LocalLogin.findOne({where: {user_id: token.user_id}, include:[db.User]}).then(function (localLogin) {
+                        return db.LocalLogin.findOne({
+                            where: {user_id: token.user_id},
+                            include: [db.User]
+                        }).then(function (localLogin) {
                             return db.sequelize.transaction(function (transaction) {
                                 return localLogin.updateAttributes({
                                     login: newUsername,

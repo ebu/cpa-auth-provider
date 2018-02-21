@@ -10,7 +10,7 @@ var userHelper = require('../../lib/user-helper');
 var logger = require('../../lib/logger');
 var i18n = require('i18n');
 var db = require('../../models/index');
-var limiterHelper = require ('../../lib/limiter-helper');
+var limiterHelper = require('../../lib/limiter-helper');
 
 
 var routes = function (router) {

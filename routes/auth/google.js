@@ -31,7 +31,12 @@ passport.use(new GoogleStrategy({
         return socialLoginHelper.findOrCreateSocialLoginUser(socialLoginHelper.GOOGLE, email, providerUid, profile.displayName, profile.name.givenName, profile.name.familyName, profile.gender, null).then(
             function (user) {
                 if (user) {
-                    db.SocialLogin.findOne({where: {user_id: user.id, name: socialLoginHelper.GOOGLE}}).then(function (socialLogin) {
+                    db.SocialLogin.findOne({
+                        where: {
+                            user_id: user.id,
+                            name: socialLoginHelper.GOOGLE
+                        }
+                    }).then(function (socialLogin) {
                         socialLogin.logLogin(user);
                     });
                 }

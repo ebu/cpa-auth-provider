@@ -16,15 +16,17 @@
                         <%= __('MOVE_MAIL_EMAIL_VALIDATION_LABEL') %>
                     </h1>
 
-                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE') %><%= newMail%>
+                    <%= __('MOVE_MAIL_EMAIL_VALIDATION_SUCCESS_MESSAGE') %><%= newMail %>
 
                     <% if (redirect) { %>
-                        <span class="link">
-                            <a href="<%= redirect %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
+                    <span class="link">
+                            <a href="<%= redirect %>"
+                               class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
                         </span>
                     <% } else { %>
-                        <span class="link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX') %>
-                                <a href="<%= link('/user/profile') %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX') %></a>
+                    <span class="link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_PREFIX') %>
+                        <a href="<%= link('/user/profile') %>"
+                           class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX') %></a>
                         </span>
                     <% } %>
                 </div>
@@ -42,24 +44,25 @@
 
                     <%= __('MOVE_MAIL_EMAIL_VALIDATION_ERROR_MESSAGE') %>
                     <% if (message) { %>
-                        <% if (message === 'INVALID_TOKEN') { %>
-                            <%= __('CHANGE_EMAIL_API_INVALID_TOKEN') %>
-                        <% } else if (message === 'MISMATCHED_CLIENT_ID') { %>
-                            <%= __('CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID') %>
-                        <% } else if (message === 'ALREADY_USED') { %>
-                            <%= __('CHANGE_EMAIL_API_ALREADY_USED') %>
-                        <% } else if (message === 'EMAIL_ALREADY_TAKEN') { %>
-                            <%= __('CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN') %>
-                        <% } else if (message === 'TOO_MANY_REQUESTS') { %>
-                            <%= __('CHANGE_EMAIL_API_TOO_MANY_REQUESTS') %>
-                        <% } else  { %>
-                            <%= message %>
-                        <% } %>
+                    <% if (message === 'INVALID_TOKEN') { %>
+                    <%= __('CHANGE_EMAIL_API_INVALID_TOKEN') %>
+                    <% } else if (message === 'MISMATCHED_CLIENT_ID') { %>
+                    <%= __('CHANGE_EMAIL_API_MISMATCHED_CLIENT_ID') %>
+                    <% } else if (message === 'ALREADY_USED') { %>
+                    <%= __('CHANGE_EMAIL_API_ALREADY_USED') %>
+                    <% } else if (message === 'EMAIL_ALREADY_TAKEN') { %>
+                    <%= __('CHANGE_EMAIL_API_EMAIL_ALREADY_TAKEN') %>
+                    <% } else if (message === 'TOO_MANY_REQUESTS') { %>
+                    <%= __('CHANGE_EMAIL_API_TOO_MANY_REQUESTS') %>
+                    <% } else  { %>
+                    <%= message %>
+                    <% } %>
                     <% } %>
 
                     <% if (redirect) { %>
                     <span class="link">
-                            <a href="<%= redirect %>" class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
+                            <a href="<%= redirect %>"
+                               class="btn-link"><%= __('MOVE_VERIFY_MAIL_GO_TO_LINK_SUFFIX_REDIRECT') %></a>
                         </span>
                     <% } %>
 

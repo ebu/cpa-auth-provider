@@ -96,7 +96,7 @@ describe('POST /oauth2/create', function () {
             expect(this.res.body.expires_in).equal(36000);
         });
 
-        it('should have proper access token', function() {
+        it('should have proper access token', function () {
             let decoded = jwtHelper.decode(this.res.body.access_token, CLIENT.jwt_code);
             expect(decoded.iss).equal('cpa');
             expect(decoded.aud).equal('cpa');
@@ -105,7 +105,7 @@ describe('POST /oauth2/create', function () {
             expect(decoded.vfy).equal('0');
         });
 
-        it('should have created the user', function(done) {
+        it('should have created the user', function (done) {
             db.User.findOne({include: {model: db.LocalLogin, where: {login: NEW_USER.email}}}).then(
                 user => {
                     expect(user).a('Object');

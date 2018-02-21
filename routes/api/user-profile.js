@@ -25,7 +25,7 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
         } else {
-            db.LocalLogin.findOne({where:{user_id: user.id}}).then(function(localLogin){
+            db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
                 var email = localLogin.login;
                 res.json({
                     success: true,

@@ -110,21 +110,21 @@ module.exports = function (app, options) {
             }
             var email = "";
             if (user && user.LocalLogin && user.LocalLogin.login) {
-                email =     user.LocalLogin.login;
+                email = user.LocalLogin.login;
             }
             var data = {
                 display_name: user.getDisplayName("FIRSTNAME_LASTNAME", email),
                 required_fields: userHelper.getRequiredFields(),
                 menu: getMenu(req, language)
             };
-            if (!data.display_name){
+            if (!data.display_name) {
                 // User just have a social login
                 db.SocialLogin.findOne({
                     where: {
                         user_id: user.id
                     }
                 }).then(function (socialLogin) {
-                    if (socialLogin){
+                    if (socialLogin) {
                         data.display_name = socialLogin.email;
                     }
                     res.json(data);
@@ -139,7 +139,7 @@ module.exports = function (app, options) {
         db.User.findOne({
             where: {
                 id: req.user.id
-            }, include:[db.LocalLogin]
+            }, include: [db.LocalLogin]
         }).then(function (user) {
             returnMenuInfos(user, req, res);
         }, function (err) {

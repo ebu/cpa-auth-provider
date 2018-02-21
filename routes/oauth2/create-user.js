@@ -68,7 +68,7 @@ function createUser(req, res) {
                         return db.LocalLogin.create({user_id: user.id, login: req.body.username});
                     }
                 ).then(
-                    function(localLogin) {
+                    function (localLogin) {
                         // user.LocalLogin needs to be set for access token generation
                         user.LocalLogin = localLogin;
                         return localLogin.setPassword(req.body.password);

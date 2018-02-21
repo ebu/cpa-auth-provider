@@ -3,26 +3,30 @@
 <h1>Add an OAuth 2 Client</h1>
 
 <form method="POST" action="<%= link('/oauth2/client_update') %>">
-  <div class="panel-body">
-    <div class="form-group">
-      <input type="hidden" name="id" value="<%= client.id %>">
-      <label class="control-label" for="inputName">Name</label>
-      <input type="text" class="form-control" id="inputName" name="name" value="<%= client.name %>" required>
+    <div class="panel-body">
+        <div class="form-group">
+            <input type="hidden" name="id" value="<%= client.id %>">
+            <label class="control-label" for="inputName">Name</label>
+            <input type="text" class="form-control" id="inputName" name="name" value="<%= client.name %>" required>
 
-      <label class="control-label" for="inputID">Client ID</label>
-      <input type="text" class="form-control" id="inputID" name="client_id" value="<%= client.client_id %>" required>
+            <label class="control-label" for="inputID">Client ID</label>
+            <input type="text" class="form-control" id="inputID" name="client_id" value="<%= client.client_id %>"
+                   required>
 
-      <label class="control-label" for="inputSecret">Client Secret</label>
-      <input type="text" class="form-control" id="inputSecret" name="client_secret" value="<%= client.client_secret %>" required>
+            <label class="control-label" for="inputSecret">Client Secret</label>
+            <input type="text" class="form-control" id="inputSecret" name="client_secret"
+                   value="<%= client.client_secret %>" required>
 
-      <label class="control-label" for="inputRedirectUri">Redirect URI (for implicit flow)</label>
-      <input type="text" class="form-control" id="inputRedirectUri" name="redirect_uri" value="<%= client.redirect_uri %>">
+            <label class="control-label" for="inputRedirectUri">Redirect URI (for implicit flow)</label>
+            <input type="text" class="form-control" id="inputRedirectUri" name="redirect_uri"
+                   value="<%= client.redirect_uri %>">
 
-      <label class="control-label" for="inputEmailRedirectUri">Email Redirect URI</label>
-      <input type="text" class="form-control" id="inputEmailRedirectUri" name="email_redirect_uri" value="<%= client.email_redirect_uri %>">
+            <label class="control-label" for="inputEmailRedirectUri">Email Redirect URI</label>
+            <input type="text" class="form-control" id="inputEmailRedirectUri" name="email_redirect_uri"
+                   value="<%= client.email_redirect_uri %>">
+        </div>
+        <input type="submit" class="btn btn-default" name="submit" value="Update">
     </div>
-    <input type="submit" class="btn btn-default" name="submit" value="Update">
-  </div>
 </form>
 
 <p><a href="<%= link('/oauth2/clients') %>">Back</a></p>

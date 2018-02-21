@@ -90,11 +90,11 @@ function createFakeUser(done) {
             return createUser(USER2);
         }
     ).then(
-        function() {
+        function () {
             return createUser(UNVERIFIED_USER);
         }
     ).then(
-        function() {
+        function () {
             return createUser(UNVERIFIED_USER2);
         }
     ).then(
@@ -104,7 +104,7 @@ function createFakeUser(done) {
     ).catch(done);
 }
 
-function resetDatabase (done) {
+function resetDatabase(done) {
     dbHelper.clearDatabase(function (err) {
         if (err) {
             return done(err);
@@ -143,7 +143,7 @@ describe('POST /user/verify', function () {
             expect(this.res.statusCode).equal(400);
         });
 
-        it('should give correct reason', function() {
+        it('should give correct reason', function () {
             expect(this.res.body.reason).equal('MISSING_REQUEST_FIELDS');
         });
     });
@@ -169,7 +169,7 @@ describe('POST /user/verify', function () {
             expect(this.res.statusCode).equal(400);
         });
 
-        it('should give correct reason', function() {
+        it('should give correct reason', function () {
             expect(this.res.body.reason).equal('CLIENT_ID_MISMATCH');
         });
     });
@@ -196,7 +196,7 @@ describe('POST /user/verify', function () {
                 expect(this.res.statusCode).equal(400);
             });
 
-            it('should give correct reason', function() {
+            it('should give correct reason', function () {
                 expect(this.res.body.reason).equal('ALREADY_CONFIRMED');
             });
         });
@@ -222,7 +222,7 @@ describe('POST /user/verify', function () {
                 expect(this.res.statusCode).equal(400);
             });
 
-            it('should give correct reason', function() {
+            it('should give correct reason', function () {
                 expect(this.res.body.reason).equal('USER_NOT_FOUND');
             });
         });

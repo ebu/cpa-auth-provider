@@ -9,7 +9,8 @@
     </div>
 
     <div id="alert-success" class="alert alert-success alert-dismissible error-message" role="alert">
-        <button type="button" class="close" data-hide="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-hide="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
         <span class="message"></span>
     </div>
 
@@ -35,7 +36,8 @@
     </div>
 
     <p>
-        <button class="btn-link" data-toggle="modal" data-target="#addClientModal"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></button>
+        <button class="btn-link" data-toggle="modal"
+                data-target="#addClientModal"><%= __('ADMIN_CLIENT_ADD_A_CLIENT_LINK') %></button>
     </p>
 
 </div>
@@ -56,10 +58,10 @@
         var $addClientModal = $('#addClientModal');
         var $updateClientModal = $('#updateClientModal');
 
-        $( document ).ready(function() {
+        $(document).ready(function () {
             displayList();
 
-            $("[data-hide]").on("click", function(){
+            $("[data-hide]").on("click", function () {
                 $(this).closest("." + $(this).attr("data-hide")).hide();
             });
         });
@@ -88,7 +90,7 @@
                 var realId = getRealId(this);
                 $.ajax('/api/admin/clients/' + encodeURIComponent(realId) + '/secret').then(
                     function (data, status, jqXHR) {
-                        $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_PREFIX') %>", data.client_id,  "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_SUFFIX') %>", data.secret);
+                        $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_PREFIX') %>", data.client_id, "<%= __('ADMIN_CLIENT_MESSAGE_REFRESH_SECRET_SUCCESS_SUFFIX') %>", data.secret);
                         $alertSuccess.show();
                     },
                     function (jqXHR, status, error) {
@@ -132,10 +134,16 @@
             $.ajax({
                 url: '/api/admin/clients',
                 method: 'POST',
-                data: {name: name, client_id: clientId, redirect_uri: redirectUri, email_redirect_uri: emailRedirectUri, jwt_code: jwtCode}
+                data: {
+                    name: name,
+                    client_id: clientId,
+                    redirect_uri: redirectUri,
+                    email_redirect_uri: emailRedirectUri,
+                    jwt_code: jwtCode
+                }
             }).then(
                 function (data, status, jqXHR) {
-                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_1') %>", data.client_id, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_2') %>" ,data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_3') %>");
+                    $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_1') %>", data.client_id, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_2') %>", data.secret, "<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_SUCCESS_3') %>");
                     $alertSuccess.show();
                     $addClientModal.modal('toggle');
                     displayList();
@@ -143,9 +151,9 @@
                 function (errors) {
                     var modalMessage = $addClientModal.find('.alert .message').first();
                     modalMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_ADD_CLIENT_FAIL') %>");
-                    if(typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
+                    if (typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
                         modalMessage.append('<ul>');
-                        errors.responseJSON.errors.forEach(function(error) {
+                        errors.responseJSON.errors.forEach(function (error) {
                             modalMessage.append('<li>' + error.msg + '</li>');
                         });
                         modalMessage.append('</ul>');
@@ -166,7 +174,14 @@
             $.ajax({
                 url: '/api/admin/clients/',
                 method: 'POST',
-                data: {id: encodeURIComponent(id), name: name, client_id: clientId, redirect_uri: redirectUri, email_redirect_uri: emailRedirectUri, jwt_code: jwtCode}
+                data: {
+                    id: encodeURIComponent(id),
+                    name: name,
+                    client_id: clientId,
+                    redirect_uri: redirectUri,
+                    email_redirect_uri: emailRedirectUri,
+                    jwt_code: jwtCode
+                }
             }).then(
                 function (data, status, jqXHR) {
                     $successMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_SUCCESS') %>");
@@ -177,9 +192,9 @@
                 function (errors) {
                     var modalMessage = $updateClientModal.find('.alert .message').first();
                     modalMessage.append("<%= __('ADMIN_CLIENT_MESSAGE_EDIT_CLIENT_FAIL') %>");
-                    if(typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
+                    if (typeof errors.responseJSON.errors !== 'undefined' && errors.responseJSON.errors.length !== 0) {
                         modalMessage.append('<ul>');
-                        errors.responseJSON.errors.forEach(function(error) {
+                        errors.responseJSON.errors.forEach(function (error) {
                             modalMessage.append('<li>' + error.msg + '</li>');
                         });
                         modalMessage.append('</ul>');
@@ -198,15 +213,16 @@
             $('.alert .message').html('');
         }
         //Clear fields on modal shown
-        $addClientModal.on('shown.bs.modal', function() {
+        $addClientModal.on('shown.bs.modal', function () {
             $(this).find('#name').first().val('');
             $(this).find('#clientID').first().val('');
             $(this).find('#redirectURI').first().val('');
             $(this).find('#emailRedirectURI').first().val('');
             $(this).find('#jwtCode').first().val('');
         })
+
         //Get all clients and rebuild the view
-        function displayList () {
+        function displayList() {
             $.ajax({
                 url: '/api/admin/clients/',
                 method: 'GET'
@@ -225,8 +241,9 @@
                 }
             );
         }
+
         //build the html for each row which is added to client table
-        function buildRow (id, name, client_id, client_jwt_code, redirect_uri, email_redirect_uri) {
+        function buildRow(id, name, client_id, client_jwt_code, redirect_uri, email_redirect_uri) {
             redirect_uri = redirect_uri !== null ? redirect_uri : '';
             email_redirect_uri = email_redirect_uri !== null ? email_redirect_uri : '';
             client_jwt_code = client_jwt_code !== null ? client_jwt_code : '';
@@ -262,6 +279,7 @@
 
             return row;
         }
+
         //Get the DB id corresponding to a single row
         function getRealId(target) {
             var row = $(target).closest('tr');

@@ -165,18 +165,18 @@ module.exports = function (router) {
                         var secret = generate.cryptoCode(30);
 
                         // Hash token
-                        return bcrypt.hash(secret,5).then(
+                        return bcrypt.hash(secret, 5).then(
                             function (hash) {
                                 // Save token
                                 return client.updateAttributes(
                                     {client_secret: hash}
                                 ).then(function () {
                                     // return generated token
-                                    res.json({'secret': secret, 'client_id' : client.client_id});
+                                    res.json({'secret': secret, 'client_id': client.client_id});
                                 });
                             }
                         ).catch(
-                            function(err) {
+                            function (err) {
                                 return res.status(500).send(err);
                             }
                         );

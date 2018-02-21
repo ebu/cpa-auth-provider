@@ -14,7 +14,8 @@
     <div class="col-sm-9">
 
         <div id="form-personnal-data-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             <span class="title">Please verify that the fields below are filled in and valid before submitting the form</span>
             <span id="personnal-data-errors" class="content"></span>
         </div>
@@ -28,7 +29,8 @@
                     <% } else { %>
                     <span class="data-value"></span>
                     <% } %>
-                    <input id="firstname" name="firstname" class="form-control personnal-data-input" placeholder="Firstname"/>
+                    <input id="firstname" name="firstname" class="form-control personnal-data-input"
+                           placeholder="Firstname"/>
                 </div>
                 <div class="panel">
                     <h4>Lastname</h4>
@@ -37,7 +39,8 @@
                     <% } else { %>
                     <span class="data-value"></span>
                     <% } %>
-                    <input id="lastname" name="lastname" class="form-control personnal-data-input" placeholder="Lastname"/>
+                    <input id="lastname" name="lastname" class="form-control personnal-data-input"
+                           placeholder="Lastname"/>
                 </div>
                 <div class="panel">
                     <h4>Birthdate</h4>
@@ -92,7 +95,8 @@
     <div class="col-sm-9">
 
         <div id="form-security-errors" class="alert alert-danger alert-dismissible error-block" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             <span id="security-errors" class="content"></span>
         </div>
 
@@ -163,8 +167,8 @@
         $inputs.css('visibility', 'visible');
 
         // LOCAL FUNCTIONS
-        var closeEditMode = function() {
-            $("#personnal-data .panel").each(function(index, element) {
+        var closeEditMode = function () {
+            $("#personnal-data .panel").each(function (index, element) {
                 var $element = $(element);
                 var $dataField = $element.find(".data-value").first();
                 var $inputField = $element.find('.personnal-data-input').first();
@@ -177,25 +181,25 @@
             });
         };
 
-        var formatDate = function(date) {
-            var day = date.getDate() < 10 ? "0"+date.getDate() : date.getDate();
-            var month = date.getMonth()+1 < 10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+        var formatDate = function (date) {
+            var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
             var year = date.getFullYear();
-            return day+"/"+month+"/"+year;
+            return day + "/" + month + "/" + year;
         };
 
-        var createDate = function(sDate) {
-            var date = sDate.substr(6, 4)+"/"+sDate.substr(3, 2)+"/"+sDate.substr(0, 2);
+        var createDate = function (sDate) {
+            var date = sDate.substr(6, 4) + "/" + sDate.substr(3, 2) + "/" + sDate.substr(0, 2);
             return new Date(date);
         };
 
         var resetErrors = function (formClass, errorsClass) {
-            $("#"+formClass).hide("fast");
-            $("#"+errorsClass).empty();
+            $("#" + formClass).hide("fast");
+            $("#" + errorsClass).empty();
         };
 
         //Init date field and datepicker
-        if("<%= profile.birthdate %>" && "<%= profile.birthdate %>" != "null" && "<%= profile.birthdate %>" !== null && "<%= profile.birthdate %>" != "undefined") {
+        if ("<%= profile.birthdate %>" && "<%= profile.birthdate %>" != "null" && "<%= profile.birthdate %>" !== null && "<%= profile.birthdate %>" != "undefined") {
             date = new Date(parseInt("<%= profile.birthdate %>"));
             $datepicker.prev(".data-value").text(formatDate(date));
         }
@@ -212,16 +216,16 @@
             //Hide Modify button
             $this.hide();
 
-            $("#personnal-data .panel").each(function(index, element) {
+            $("#personnal-data .panel").each(function (index, element) {
                 var $element = $(element);
                 var $dataField = $element.find(".data-value").first();
                 var value = String($dataField.text());
                 var $inputField = $element.find('.personnal-data-input').first();
 
                 //If it is date field, update it correctly
-                if($inputField.hasClass("date")) {
+                if ($inputField.hasClass("date")) {
                     $inputField.find("input").first().val(value);
-                } else if($inputField.is("select")) {
+                } else if ($inputField.is("select")) {
                     $inputField.val($dataField.attr("data-selected"));
                 } else {
                     $inputField.val(value);
@@ -251,7 +255,7 @@
                     birthdate: date
                 },
                 type: 'PUT',
-                success: function(result) {
+                success: function (result) {
                     $firstname.prev(".data-value").text($firstname.val());
                     $lastname.prev(".data-value").text($lastname.val());
                     $datepicker.prev(".data-value").text($birthday.val());
@@ -261,8 +265,8 @@
 
                     closeEditMode();
                 },
-                error: function(result) {
-                    $.each(result.responseJSON.errors, function(index, error){
+                error: function (result) {
+                    $.each(result.responseJSON.errors, function (index, error) {
                         $("#personnal-data-errors").append($('<p>').text(error.msg));
                     });
                     $("#form-personnal-data-errors").show("fast");
@@ -301,7 +305,7 @@
                     confirm_password: $confirmPassword.val()
                 },
                 type: 'POST',
-                success: function(result) {
+                success: function (result) {
                     console.log("success", result);
                     $previousPassword.val("");
                     $password.val("");
@@ -309,8 +313,8 @@
                     $formModifyPass.hide();
                     $modifyPassBtn.show();
                 },
-                error: function(result) {
-                    $.each(result.responseJSON.errors, function(index, error){
+                error: function (result) {
+                    $.each(result.responseJSON.errors, function (index, error) {
                         $("#security-errors").append($('<p>').text(error.msg));
                     });
                     $("#form-security-errors").show("fast");

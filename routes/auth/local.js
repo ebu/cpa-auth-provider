@@ -12,7 +12,7 @@ var codeHelper = require('../../lib/code-helper');
 var passwordHelper = require('../../lib/password-helper');
 var socialLoginHelper = require('../../lib/social-login-helper');
 var userHelper = require('../../lib/user-helper');
-var limiterHelper = require ('../../lib/limiter-helper');
+var limiterHelper = require('../../lib/limiter-helper');
 
 // Google reCAPTCHA
 var recaptcha = require('express-recaptcha');
@@ -194,7 +194,10 @@ module.exports = function (app, options) {
                 if (localLogin) {
                     codeHelper.verifyEmail(localLogin, req.query.code).then(function (success) {
                             if (success) {
-                                res.render('./verify-mail.ejs', {verified: localLogin.verified, userId: localLogin.user_id});
+                                res.render('./verify-mail.ejs', {
+                                    verified: localLogin.verified,
+                                    userId: localLogin.user_id
+                                });
                             } else {
                                 res.render('./verify-mail.ejs', {verified: false});
                             }
@@ -258,7 +261,7 @@ module.exports = function (app, options) {
                 return;
             }
 
-            db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+            db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
                 .then(function (localLogin) {
                     if (localLogin) {
                         codeHelper.generatePasswordRecoveryCode(localLogin.user_id).then(function (code) {
@@ -310,7 +313,7 @@ module.exports = function (app, options) {
                 });
                 return;
             } else {
-                db.LocalLogin.findOne({where: {login: req.body.email}, include:[db.User]})
+                db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
                     .then(function (localLogin) {
                         var user = localLogin.User;
                         if (user) {

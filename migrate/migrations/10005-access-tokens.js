@@ -60,7 +60,8 @@ module.exports = {
                         "key": "id"
                     },
                     "allowNull": true
-                }            }
+                }
+            }
         );
     },
 

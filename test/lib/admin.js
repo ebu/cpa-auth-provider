@@ -19,7 +19,7 @@ var USER = {
     firstname: 'Scott',
     lastname: 'Tiger'
 };
-var USER_EMAIL ='user@user.ch';
+var USER_EMAIL = 'user@user.ch';
 var ADMIN = {
     provider_uid: 'testuser',
     permission_id: 1,

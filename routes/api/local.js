@@ -24,7 +24,7 @@ var passwordHelper = require('../../lib/password-helper');
 var userHelper = require('../../lib/user-helper');
 
 var codeHelper = require('../../lib/code-helper');
-var limiterHelper = require ('../../lib/limiter-helper');
+var limiterHelper = require('../../lib/limiter-helper');
 
 
 var i18n = require('i18n');
