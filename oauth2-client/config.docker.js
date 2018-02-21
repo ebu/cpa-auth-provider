@@ -29,6 +29,6 @@ module.exports = {
     },
 
     // Session cookie is signed with this secret to prevent tampering
-    session_secret: 'LKASDMjnr234n90lasndfsadf'
+    session_secret: 'thisIsNotABigSecretThisIsJustDemoClient'
 
 };

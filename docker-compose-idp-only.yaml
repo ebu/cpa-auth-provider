@@ -12,4 +12,5 @@ services:
     - DEFAULT_LOCALE=fr
     - MAIL_TRANSPORT_TYPE=test
     - TRACKING_COOKIE=true
+    - SESSION_SECRET=LKASDMjnr234n90lasndfsadf
 
