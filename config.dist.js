@@ -249,4 +249,6 @@ module.exports = {
         enabled: true,
     },
 
+    access_log_format: '[ACCESS-LOG] url=":url" method=":method" statusCode=":statusCode" delta=":delta"'
+
 };
