@@ -57,7 +57,7 @@
 
             if($genderField) {
                 $genderField.on("change", function() {
-                    $genderField.css("color", "#555");
+                    $genderField.css("color", "#666");
                 });
             }
 
@@ -96,7 +96,6 @@
 
                     $(this).ajaxSubmit({
                         error: function (result) {
-
                             if (result.responseJSON.errors) {
                                 $.each(result.responseJSON.errors, function (index, error) {
                                     $alertsError.append($('<p>').text(error.msg));
@@ -106,6 +105,7 @@
                             } else {
                                 $alertsError.append($('<p>').text(result.responseJSON.msg));
                             }
+                            grecaptcha.reset();
                             $alertsError.show();
                         },
                         success: function () {
@@ -149,13 +149,15 @@
                         error: function (error) {
                             if (error.responseJSON.errors) {
                                 $.each(error.responseJSON.errors, function (index, error) {
-                                    $alertsError.append($('<p>').text(error.msg));
+                                    $alertsError.append($('<p>').html(error.msg));
                                 });
                             } else if (!error.responseJSON.msg) {
-                                $alertsError.append($('<p>').text("<%= __('PASSWORD_RECOVERY_JS_ERROR_MSG') %>"));
+                                $alertsError.append($('<p>').html("<%= __('PASSWORD_RECOVERY_JS_ERROR_MSG') %>"));
                             } else {
                                 $alertsError.append($('<p>').text(error.responseJSON.msg));
                             }
+                            grecaptcha.reset();
+                            $("html, body").animate({ scrollTop: 0 });
                             $alertsError.show();
                         },
                         success: function (result) {

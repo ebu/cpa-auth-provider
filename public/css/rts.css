@@ -192,6 +192,10 @@ footer.rts-footer {
     display: none;
 }
 
+#rts-custom-login #rts-signup-panel select {
+    color: #999;
+}
+
 #rts-custom-login .alert-message-error, #rts-custom-login .alert-message-success {
     display: none;
     max-width: 430px;
