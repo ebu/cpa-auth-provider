@@ -2,6 +2,29 @@
 <html>
 <head>
     <%- include ../../layout/default/head %>
+
+    <!-- google authentication API -->
+    <script src="https://apis.google.com/js/api:client.js"></script>
+
+    <script>
+        // Load Facebook SDK asynchronously
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/fr_CH/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        window.fbAsyncInit = function() {
+            FB.init({
+//                appId : '199799350126485',
+                appId : <%= config.identity_providers.facebook.client_id %>,
+                version: 'v2.5',
+                xfbml: true
+            });
+        };
+    </script>
 </head>
 <body>
 
@@ -45,6 +68,9 @@
             var $alertsSuccess = $('.alert-message-success');
             var $alertsError = $('.alert-message-error');
 
+            var $facebookLink = $('.facebook');
+            var $googleLink = $('.googleplus');
+
             var $recaptchaBlock = $('#recaptcha-block')
 
             if($birthdayField.length) {
@@ -86,6 +112,22 @@
                     $loginPanel.hide();
                     $passwordPanel.show();
                 });
+            }
+
+            if($facebookLink) {
+                $facebookLink.on('click', function() {
+                    FB.login(function (response) {
+                        if (response.authResponse) {
+                            facebookSignup(response);
+                        } else {
+                            console.log('Erreur de connexion à Facebook', response);
+                        }
+                    }, {scope: 'public_profile,email'});
+                })
+            }
+
+            if($googleLink) {
+
             }
 
             if($passwordForm) {
@@ -174,6 +216,75 @@
                 $alertsError.hide();
                 $alertsError.empty();
             }
+
+            function facebookSignup(facebookResponse) {
+                $.ajax({
+                    url: "<%= link('/oauth/facebook/signup') %>",
+                    data: {
+                        fbToken: facebookResponse.authResponse.accessToken,
+                        client_id: "<%= config.oauth2_clients[0].client_id %>"
+                    },
+                    type: 'POST',
+                    success: function (result) {
+                        console.log("FACEBOOK SIGNUP SUCCESS", result);
+                    },
+                    error: function (error) {
+                        console.log("FACEBOOK SIGNUP ERROR", error);
+                    }
+                });
+            }
+
+            var initGoogle = function() {
+                gapi.load('auth2', function(){
+                    // Retrieve the singleton for the GoogleAuth library and set up the client.
+                    auth2 = gapi.auth2.init({
+                        client_id: '<%= config.identity_providers.google.client_id %>',
+                        cookiepolicy: 'single_host_origin'
+                        // Request scopes in addition to 'profile' and 'email'
+                        //scope: 'additional_scope'
+                    });
+                    attachSignin(document.getElementById('google-btn'));
+                });
+            }
+
+            function attachSignin(element) {
+                auth2.attachClickHandler(element, {},
+                    function(googleUser) {
+                        if(googleUser) {
+                            googleSignup(googleUser);
+                        } else {
+                            console.log('Erreur de connexion à Google', data);
+                        }
+                    }, function(error) {
+                        console.log("Google signup error", JSON.stringify(error, undefined, 2));
+                    });
+            }
+
+            function googleSignup(googleUser) {
+                var id_token = googleUser.getAuthResponse().id_token;
+
+                $.ajax({
+                    url: "<%= link('/oauth/google/signup') %>",
+                    data: {
+                        idToken: id_token,
+                        client_id: "<%= config.oauth2_clients[0].client_id %>"
+                    },
+                    type: 'POST',
+                    success: function (result) {
+                        console.log("GOOGLE SIGNUP SUCCESS", result);
+                    },
+                    error: function (error) {
+                        if (error.responseJSON.error) {
+                            $alertsError.append($('<p>').text(error.responseJSON.error));
+                            $alertsError.show();
+                        } else {
+                            console.log("GOOGLE SIGNUP ERROR", error);
+                        }
+                    }
+                });
+            }
+
+            initGoogle();
 
         })();
     </script>

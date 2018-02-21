@@ -40,7 +40,7 @@
                 <div class="row social">
                     <div class="col-xs-12">
                         <% if(config.identity_providers.facebook.enabled) { %>
-                        <a href="<%= link('/auth/facebook') %>"
+                        <a href="javascript:void(0);"
                            class="identity_provider facebook">
                             <img class="login-images" src="<%= link('/assets/img/logoroundfacebook.svg') %>"/>
                             <p class="login-social-labels">
@@ -49,7 +49,7 @@
                         </a>
                         <% } %>
                         <% if(config.identity_providers.google.enabled) { %>
-                            <a href="<%= link('/auth/google') %>"
+                            <a href="javascript:void(0);" id="google-btn"
                                class="identity_provider googleplus">
                                 <img class="login-images" src="<%= link('/assets/img/logo_google.svg')%>"/>
                                 <p class="login-social-labels">
