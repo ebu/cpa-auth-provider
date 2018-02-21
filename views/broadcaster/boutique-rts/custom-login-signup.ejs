@@ -31,6 +31,7 @@
             var $genderField = $('#gender');
 
             var $passwordForm = $('#rts-password-form');
+            var $loginForm = $('#rts-login-form');
 
             var $loginPanel = $('#rts-login-panel');
             var $signupPanel = $('#rts-signup-panel');
@@ -110,6 +111,27 @@
                         }
                     });
                 });
+            }
+
+            if($loginForm) {
+                $loginForm.submit(function (e) {
+                    e.preventDefault();
+
+                    initAlertMessages();
+
+                    $(this).ajaxSubmit({
+                        error: function (error) {
+                            if(error.responseJSON.msg) {
+                                $alertsError.append($('<p>').text(error.responseJSON.msg));
+                            }
+                            $alertsError.show();
+                        },
+                        success: function (result) {
+                            //TODO redirect to oAuth screen
+                            console.log("SUCCESS", result);
+                        }
+                    });
+                })
             }
 
             function initAlertMessages() {
