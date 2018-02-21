@@ -31,8 +31,8 @@
                             class="btn btn-primary btn-block btn-large-submit"><%= __('LOGIN_LOGIN_BUTTON') %></button>
                 </form>
 
-                <p class="link-login to-signup-link"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %> <a
-                            class="btn-link" href="javascript:void(0);"><%= __('LOGIN_SIGNUP_LINK') %></a>
+                <p class="link-login"><%= __('LOGIN_NEED_AN_ACCOUNT_LINK') %>
+                    <a class="btn-link to-signup-link" href="javascript:void(0);"><%= __('LOGIN_SIGNUP_LINK') %></a>
                 </p>
 
                 <% if(config.identity_providers.facebook.enabled || config.identity_providers.google.enabled || config.identity_providers.twitter.enabled) { %>

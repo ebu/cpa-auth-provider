@@ -39,7 +39,7 @@ module.exports = function (router) {
                 if (req.query && req.query.error) {
                     url += "?error=" + req.query.error;
                 }
-                
+
                 var required = userHelper.getRequiredFields();
                 var profileAttributes = {
                     email: req.query.email ? decodeURIComponent(req.query.email) : '',
