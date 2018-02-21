@@ -3,6 +3,9 @@
 module.exports = {
     up: function (queryInterface, Sequelize) {
         return new Promise((resolve, reject) => {
+            if (process.env.DB_TYPE === 'sqlite') {
+                return resolve();
+            }
             return queryInterface.getForeignKeyReferencesForTable('LocalLogins').then(
                 details => {
                     let constraint = getRowForColumn('user_id', details);
