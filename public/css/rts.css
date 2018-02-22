@@ -4,7 +4,7 @@
 ************
 */
 html {
-    font-size: 10px;
+    font-size: 17px;
 }
 
 body {
@@ -36,6 +36,11 @@ h4 {
 
 .btn-link {
     color: #af001e;
+    font-size: 17px !important;
+}
+
+.last-link {
+    font-size: 17px !important;
 }
 
 .btn-link:hover, .btn-link:active, .btn-link:focus {
@@ -154,12 +159,12 @@ footer.rts-footer {
     margin-right: auto;
 }
 
-#rts-custom-login #rts-login-panel .login-images {
+#rts-custom-login #rts-login-panel .login-images, #login .login-images {
     width: 45px;
     cursor: pointer;
 }
 
-#rts-custom-login #rts-login-panel .login-social-labels {
+#rts-custom-login #rts-login-panel .login-social-labels, #login .login-social-labels {
     font-size: 15px;
     margin-top: 5px;
 }
