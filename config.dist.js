@@ -232,14 +232,16 @@ module.exports = {
     //     permission_id:1
     //   },
 
-    oauth2_clients: [
-        {
-            id: 1,
-            client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-            client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
-            name: "OAuth 2.0 Client"
-        }
-    ],
+    // Init dev environment purpose (RTS sample)
+    // oauth2_clients: [
+    //     {
+    //         id: 1,
+    //         client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
+    //         client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
+    //         user_template: "boutique-rts",
+    //         name: "La boutique RTS"
+    //     }
+    // ],
 
     oauth2: {
         refresh_tokens_enabled: true

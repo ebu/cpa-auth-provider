@@ -207,21 +207,6 @@ module.exports = {
             label: "other"
         }
     ],
-    // admin: {
-    // 		id:           1,
-    // 		login:        "admin@admin.com",
-    // 		display_name: "Admin",
-    // 		verified:     true,
-    // 		permission_id:      1
-    // 	},
-    oauth2_clients: [
-        {
-            id: 1,
-            client_id: "db05acb0c6ed902e5a5b7f5ab79e7144",
-            client_secret: "49b7448061fed2319168eb2449ef3b58226a9c554b3ff0b138abe8ffad98",
-            name: "OAuth 2.0 Client"
-        }
-    ],
     // This option controls how the authorization server responds to requests to
     // associate an existing client with a new domain:
     // - false: The user must authenticate and confirm access to the new domain

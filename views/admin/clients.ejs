@@ -25,6 +25,7 @@
                 <th><%= __('ADMIN_CLIENT_JWT_CODE_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_REDIRECT_URI_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_EMAIL_REDIRECT_URI_TABLE_COL_TITLE') %></th>
+                <th><%= __('ADMIN_CLIENT_TEMPLATE_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_SECRET_TABLE_COL_TITLE') %></th>
                 <th><%= __('ADMIN_CLIENT_ACTIONS_TABLE_COL_TITLE') %></th>
             </tr>
@@ -108,12 +109,14 @@
                 var clientId = row.find('.client-id').text() !== "null" ? row.find('.client-id').text() : '';
                 var clientRedirect = row.find('.client-redirect').text() !== "null" ? row.find('.client-redirect').text() : '';
                 var clientEmailRedirect = row.find('.client-emailRedirect').text() !== "null" ? row.find('.client-emailRedirect').text() : '';
+                var clientTemplate = row.find('.client-template').text() !== "null" ? row.find('.client-template').text() : '';
                 var clientJwtCode = row.find('.client-jwtCode').text() !== "null" ? row.find('.client-jwtCode').text() : '';
 
                 $dialog.find('#update-name').first().val(clientName);
                 $dialog.find('#update-clientID').first().val(clientId);
                 $dialog.find('#update-redirectURI').first().val(clientRedirect);
                 $dialog.find('#update-emailRedirectURI').first().val(clientEmailRedirect);
+                $dialog.find('#update-template').first().val(clientTemplate);
                 $dialog.find('#update-id').first().val(id);
                 $dialog.find('#update-jwtCode').first().val(clientJwtCode);
                 $updateClientModal.modal('toggle');
@@ -128,6 +131,7 @@
             var name = $addClientModal.find('#name').val();
             var clientId = $addClientModal.find('#clientID').val();
             var redirectUri = $addClientModal.find('#redirectURI').val();
+            var template = $addClientModal.find('#template').val();
             var emailRedirectUri = $addClientModal.find('#emailRedirectURI').val();
             var jwtCode = $addClientModal.find('#jwtCode').val();
 
@@ -139,6 +143,7 @@
                     client_id: clientId,
                     redirect_uri: redirectUri,
                     email_redirect_uri: emailRedirectUri,
+                    use_template: template,
                     jwt_code: jwtCode
                 }
             }).then(
@@ -169,6 +174,7 @@
             var clientId = $updateClientModal.find('#update-clientID').val();
             var redirectUri = $updateClientModal.find('#update-redirectURI').val();
             var emailRedirectUri = $updateClientModal.find('#update-emailRedirectURI').val();
+            var template = $updateClientModal.find('#update-template').val();
             var jwtCode = $updateClientModal.find('#update-jwtCode').val();
 
             $.ajax({
@@ -180,6 +186,7 @@
                     client_id: clientId,
                     redirect_uri: redirectUri,
                     email_redirect_uri: emailRedirectUri,
+                    use_template: template,
                     jwt_code: jwtCode
                 }
             }).then(
@@ -218,6 +225,7 @@
             $(this).find('#clientID').first().val('');
             $(this).find('#redirectURI').first().val('');
             $(this).find('#emailRedirectURI').first().val('');
+            $(this).find('#template').first().val('');
             $(this).find('#jwtCode').first().val('');
         })
 
@@ -230,8 +238,9 @@
                 function (data, status, jqXHR) {
                     //$("#clientsTable > tbody").html("");
                     $("#clientsTable").find("tr:gt(0)").remove();
+
                     for (var i = 0; i < data.length; i++) {
-                        $('#clientsTable tr:last').after(buildRow(data[i].id, data[i].name, data[i].client_id, data[i].jwt_code, data[i].redirect_uri, data[i].email_redirect_uri));
+                        $('#clientsTable tr:last').after(buildRow(data[i].id, data[i].name, data[i].client_id, data[i].jwt_code, data[i].redirect_uri, data[i].email_redirect_uri, data[i].use_template));
                     }
                     eventListeners();
                 },
@@ -243,7 +252,7 @@
         }
 
         //build the html for each row which is added to client table
-        function buildRow(id, name, client_id, client_jwt_code, redirect_uri, email_redirect_uri) {
+        function buildRow(id, name, client_id, client_jwt_code, redirect_uri, email_redirect_uri, template) {
             redirect_uri = redirect_uri !== null ? redirect_uri : '';
             email_redirect_uri = email_redirect_uri !== null ? email_redirect_uri : '';
             client_jwt_code = client_jwt_code !== null ? client_jwt_code : '';
@@ -258,6 +267,7 @@
             row += '                <td class="client-jwtCode">' + client_jwt_code + '</td>\n';
             row += '                <td class="client-redirect">' + redirect_uri + '</td>\n';
             row += '                <td class="client-emailRedirect">' + email_redirect_uri + '</td>\n';
+            row += '                <td class="client-template">' + template + '</td>\n';
             row += '                <td class="client-secret">****************</td>\n';
             row += '                <td>\n';
             row += '                    <span class="hidden real-id">' + id + '</span>\n';

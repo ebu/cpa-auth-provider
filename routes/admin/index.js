@@ -25,7 +25,6 @@ module.exports = function (router) {
         return db.OAuth2Client.findAll()
             .then(
                 function (oAuth2Clients) {
-
                     return res.render('./admin/clients.ejs', {oAuth2Clients: oAuth2Clients});
                 },
                 function (err) {
@@ -96,7 +95,8 @@ module.exports = function (router) {
                                     name: xssFilters.inHTMLData(client.name),
                                     jwt_code: xssFilters.inHTMLData(client.jwt_code),
                                     redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
-                                    email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri)
+                                    email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri),
+                                    use_template: xssFilters.inHTMLData(client.use_template)
                                 }).then(function () {
                                     res.json({'id': client.id});
                                 });
@@ -130,6 +130,7 @@ module.exports = function (router) {
                                     jwt_code: xssFilters.inHTMLData(client.jwt_code),
                                     redirect_uri: xssFilters.inHTMLData(client.redirect_uri),
                                     email_redirect_uri: xssFilters.inHTMLData(client.email_redirect_uri),
+                                    use_template: xssFilters.inHTMLData(client.use_template),
                                     client_secret: hash
                                 }).then(function (createClient) {
                                     // return generated token and client id
@@ -365,6 +366,7 @@ module.exports = function (router) {
             name: client.name,
             redirect_uri: client.redirect_uri,
             email_redirect_uri: client.email_redirect_uri,
+            use_template: client.use_template,
             created_at: client.created_at,
             updated_at: client.updated_at
 

@@ -33,6 +33,10 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true
         },
+        use_template: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         email_redirect_uri: {
             type: DataTypes.STRING,
             allowNull: true
