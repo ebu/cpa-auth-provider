@@ -139,7 +139,7 @@ module.exports = {
     },
 
     // Session cookie is signed with this secret to prevent tampering
-    session_secret: 'LKASDMjnr234n90lasndfsadf',
+    session_secret: 'putYourSessionSecretHere',
 
     // Name of the session cookie. Must be something different than 'connect.sid'
     sid_cookie_name: 'identity.provider.sid',
@@ -248,5 +248,7 @@ module.exports = {
     monitoring: {
         enabled: true,
     },
+
+    access_log_format: '[ACCESS-LOG] url=":url" method=":method" statusCode=":statusCode" delta=":delta"'
 
 };

@@ -32,6 +32,7 @@ services:
     - EMAIL_FROM=no-reply@rts.ch
     - CPA_RECAPCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
     - CPA_RECAPCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+    - SESSION_SECRET=LKASDMjnr234n90lasndfsadf
     depends_on:
       - postgres
     links:
@@ -41,8 +42,8 @@ services:
       - DB_TYPE=postgres
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USER=dockercpa
-      - DB_PASSWORD=SchiefesHausBautFalsch
+      - DB_USER=postgres
+      - DB_PASSWORD=BlinkenderWaldRegnetFrohlich
   postgres:
     build: postgres
     ports:
@@ -50,5 +51,3 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=BlinkenderWaldRegnetFrohlich
-      - DOCKER_USER=dockercpa
-      - DOCKER_PASSWORD=SchiefesHausBautFalsch

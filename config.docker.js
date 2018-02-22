@@ -158,7 +158,7 @@ module.exports = {
     },
 
     // Session cookie is signed with this secret to prevent tampering
-    session_secret: 'LKASDMjnr234n90lasndfsadf',
+    session_secret: process.env.SESSION_SECRET,
     quality_check: {
         enabled: true
     },
@@ -176,7 +176,7 @@ module.exports = {
     },
 
     // URL path prefix, e.g., '/myapp'
-    urlPrefix: '',
+    urlPrefix: process.env.URL_PREFIX || '',
     oauth2: {
         refresh_tokens_enabled: true,
         access_token_duration: 10 * 60 * 60 * 1000,
@@ -257,4 +257,7 @@ module.exports = {
     monitoring: {
         enabled: true,
     },
+
+    access_log_format: process.env.ACCESS_LOG_FORMAT || '[ACCESS-LOG] url=":url" method=":method" statusCode=":statusCode" delta=":delta"'
+
 };
