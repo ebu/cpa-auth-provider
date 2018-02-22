@@ -36,6 +36,12 @@ module.exports = function (router) {
                 if (clientId === "db05acb0c6ed902e5a5b7f5ab79e7144") {
                     url = 'broadcaster/boutique-rts/custom-login-signup';
                 }
+
+                if (!clientId) {
+                    requestHelper.redirect(res, url);
+                    return;
+                }
+
                 if (req.query && req.query.error) {
                     url += "?error=" + req.query.error;
                 }
