@@ -1,27 +1,41 @@
-<% include ../../layout/header %>
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include ../../layout/default/head %>
+</head>
+<body>
 
-<p><%= __('OAUTH_DIALOG_TITLE_HI') %> <%= user.display_name || email %></p>
-<p>
+<main>
 
-    THIS IS THE CUSTOM "LA BOUTIQUE" ACCEPT WINDOW
+    <div class="container">
 
-    <% if(customMessage){ %>
-    <%= customMessage %>
-    <% } else { %>
-    <b><%= client.name %></b>
-    <%= __('OAUTH_DIALOG_TITLE') %>
-    <% } %>
-</p>
-<p>
-    <%= __('OAUTH_DIALOG_APPROVAL') %>
-</p>
+        <div id="rts-oauth-dialog">
+            <h1><%= __('OAUTH_DIALOG_TITLE_HI') %> <%= user.display_name || email %></h1>
+            <p>
+                <% if(customMessage){ %>
+                <%= customMessage %>
+                <% } else { %>
+                <b><%= client.name %></b>
+                <%= __('OAUTH_DIALOG_TITLE') %>
+                <% } %>
+            </p>
 
-<form action="<%= link('/oauth2/dialog/authorize/decision') %>" method="post">
-    <input name="transaction_id" type="hidden" value="<%= transactionID %>">
-    <div>
-        <input type="submit" value="<%= __('OAUTH_DIALOG_ALLOW') %>" id="allow">
-        <input type="submit" value="<%= __('OAUTH_DIALOG_DENY') %>" name="cancel" id="deny">
+            <form action="<%= link('/oauth2/dialog/authorize/decision') %>" method="post">
+                <input name="transaction_id" type="hidden" value="<%= transactionID %>">
+                <div>
+                    <input id="allow" class="btn btn-primary" type="submit" value="<%= __('OAUTH_DIALOG_ALLOW') %>">
+                    <div class="block-link">
+                        <a id="deny" href="javascript:void(0);" class="link link-cancel" name="cancel"
+                           type="submit"><%= __('OAUTH_DIALOG_DENY') %></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
     </div>
-</form>
 
-<% include ../../layout/foot %>
+</main>
+
+</body>
+
+</html>

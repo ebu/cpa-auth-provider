@@ -205,6 +205,43 @@ footer.rts-footer {
     margin: 30px auto 15px auto;
 }
 
+#rts-oauth-dialog {
+    display: block;
+    font-size: 17px;
+    margin-top: 2px;
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: #666666;
+    font-family: "Gotham SSm A", "Gotham SSm B", "Helvetica", "Arial", "Verdana", sans-serif;
+}
+
+#rts-oauth-dialog h1 {
+    font-size: 20px;
+    overflow: auto;
+}
+
+#rts-oauth-dialog p {
+    margin: 20px 0 40px 0;
+}
+
+#rts-oauth-dialog #allow {
+    width: 100%;
+    display: block;
+}
+
+#rts-oauth-dialog .block-link {
+    display: block;
+    margin-top: 20px;
+}
+
+#rts-oauth-dialog .block-link .link-cancel{
+    display: block;
+    color: #af001e;
+    cursor: pointer;
+}
+
 #profile hr, #devices hr {
     border-color: #333;
 }

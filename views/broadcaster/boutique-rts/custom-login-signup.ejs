@@ -159,49 +159,14 @@
             if($loginForm) {
                 $loginForm.submit(function (e) {
                     e.preventDefault();
-
                     initAlertMessages();
-
-                    var formData = {
-                        grant_type: 'password',
-                        username: $('input[name=login-email]').val(),
-                        password: $('input[name=login-password]').val(),
-                        client_id: "<%= client_id %>"
-                    };
-
-                    $.ajax({
-                        type        : 'POST',
-                        url         : '<%= link('/oauth2/login') %>',
-                        data        : formData,
-                        dataType    : 'json',
-                        encode          : true,
-                        success: function (result) {
-                            requestSession(result.access_token);
-                        },
-                        error: function (error) {
-                            if(error.responseJSON.msg) {
-                                $alertsError.append($('<p>').text(error.responseJSON.msg));
-                            } else if(error.responseJSON.error_description) {
-                                if(error.responseJSON.error_description === "Missing required parameter: username") {
-                                    $alertsError.append($('<p>').html("Un email valide doit être renseigné"));
-                                }
-                                if(error.responseJSON.error_description === "Missing required parameter: password") {
-                                    $alertsError.append($('<p>').html("Un mot de passe valide doit être renseigné"));
-                                }
-                                if(error.responseJSON.error_description === "INCORRECT_LOGIN_OR_PASS") {
-                                    $alertsError.append($('<p>').html("Nom d'utilisateur ou mot de passe inconnu"));
-                                }
-                            }
-                            $alertsError.show();
-                        }
-                    })
+                    authenticate($('input[name=login-email]').val(), $('input[name=login-password]').val())
                 })
             }
 
             if($signupForm) {
                 $signupForm.submit(function (e) {
                     e.preventDefault();
-
                     initAlertMessages();
 
                     $(this).ajaxSubmit({
@@ -220,8 +185,7 @@
                             $alertsError.show();
                         },
                         success: function (result) {
-                            //TODO redirect to oAuth screen
-                            console.log("SUCCESS", result);
+                            authenticate($('#signup-email').val(), $('#confirm_password').val())
                         }
                     });
                 })
@@ -251,6 +215,42 @@
                 });
             }
 
+            function authenticate(email, password) {
+                var formData = {
+                    grant_type: 'password',
+                    username: email,
+                    password: password,
+                    client_id: "<%= client_id %>"
+                };
+
+                $.ajax({
+                    type        : 'POST',
+                    url         : '<%= link('/oauth2/login') %>',
+                    data        : formData,
+                    dataType    : 'json',
+                    encode          : true,
+                    success: function (result) {
+                        requestSession(result.access_token);
+                    },
+                    error: function (error) {
+                        if(error.responseJSON.msg) {
+                            $alertsError.append($('<p>').text(error.responseJSON.msg));
+                        } else if(error.responseJSON.error_description) {
+                            if(error.responseJSON.error_description === "Missing required parameter: username") {
+                                $alertsError.append($('<p>').html("Un email valide doit être renseigné"));
+                            }
+                            if(error.responseJSON.error_description === "Missing required parameter: password") {
+                                $alertsError.append($('<p>').html("Un mot de passe valide doit être renseigné"));
+                            }
+                            if(error.responseJSON.error_description === "INCORRECT_LOGIN_OR_PASS") {
+                                $alertsError.append($('<p>').html("Nom d'utilisateur ou mot de passe inconnu"));
+                            }
+                        }
+                        $alertsError.show();
+                    }
+                })
+            }
+
             function requestSession(token) {
                 $.ajax({
                     url: "<%= link('/oauth2/session/cookie/request') %>",
@@ -260,7 +260,7 @@
                     type: 'POST',
                     success: function () {
                         //redirect to oAuth screen
-                        window.location.replace("http://localhost:3000/oauth2/dialog/authorize?state=335fee0752ced7d71f0da1f78de0e095&response_type=code&approval_prompt=auto&redirect_uri=https://boutique.rts.ch/rts-oauth2-redirect&client_id=db05acb0c6ed902e5a5b7f5ab79e7144");
+                        window.location.replace("<%= auth_origin%>");
                     },
                     error: function (error) {
                     }

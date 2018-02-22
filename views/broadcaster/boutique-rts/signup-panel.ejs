@@ -15,7 +15,7 @@
                     <div id="signup-block" class="signup-fields">
 
                         <div class="form-group">
-                            <input type="email" class="form-control" name="email"
+                            <input id="signup-email" type="email" class="form-control" name="email"
                                    placeholder="<%= __('SIGNUP_EMAIL_LABEL') %>"
                                    required>
                         </div>
@@ -51,18 +51,16 @@
                         <% if(requiredFields.gender) {%>
                         <div class="form-group">
                             <select id="gender" name="gender" class="form-control personnal-data-input">
-                                <option class="input-gender"
-                                        <% if(!gender) {%>selected<% } %>
-                                        disabled>
+                                <option class="input-gender" selected disabled>
                                     <%= __('PROFILE_SEX_LABEL') %>
                                 </option>
-                                <option value="male" <% if(gender=='male') {%>selected<%}%> >
+                                <option value="male">
                                     <%= __('PROFILE_MAN_SEX_FORM_OPTION') %>
                                 </option>
-                                <option value="female" <% if(gender=='female') {%>selected<%}%> >
+                                <option value="female">
                                     <%= __('PROFILE_WOMAN_SEX_FORM_OPTION') %>
                                 </option>
-                                <option value="other" <% if(gender=='other') {%>selected<%}%> >
+                                <option value="other">
                                     <%= __('PROFILE_OTHER_SEX_FORM_OPTION') %>
                                 </option>
                             </select>
