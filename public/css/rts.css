@@ -4,7 +4,7 @@
 ************
 */
 html {
-    font-size: 10px;
+    font-size: 17px;
 }
 
 body {
@@ -36,6 +36,11 @@ h4 {
 
 .btn-link {
     color: #af001e;
+    font-size: 17px !important;
+}
+
+.last-link {
+    font-size: 17px !important;
 }
 
 .btn-link:hover, .btn-link:active, .btn-link:focus {
@@ -154,12 +159,12 @@ footer.rts-footer {
     margin-right: auto;
 }
 
-#rts-custom-login #rts-login-panel .login-images {
+#rts-custom-login #rts-login-panel .login-images, #login .login-images {
     width: 45px;
     cursor: pointer;
 }
 
-#rts-custom-login #rts-login-panel .login-social-labels {
+#rts-custom-login #rts-login-panel .login-social-labels, #login .login-social-labels {
     font-size: 15px;
     margin-top: 5px;
 }
@@ -203,6 +208,47 @@ footer.rts-footer {
     text-align: left;
     font-size: 15px;
     margin: 30px auto 15px auto;
+}
+
+#rts-oauth-dialog {
+    display: block;
+    font-size: 17px;
+    margin-top: 2px;
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: #666666;
+    font-family: "Gotham SSm A", "Gotham SSm B", "Helvetica", "Arial", "Verdana", sans-serif;
+}
+
+#rts-oauth-dialog h1 {
+    font-size: 20px;
+    overflow: auto;
+}
+
+#rts-oauth-dialog p {
+    margin: 20px 0 40px 0;
+}
+
+#rts-oauth-dialog #allow {
+    width: 100%;
+    display: block;
+}
+
+#rts-oauth-dialog .block-link {
+    display: block;
+    margin-top: 20px;
+}
+
+#rts-oauth-dialog .block-link .link-cancel{
+    display: block;
+    color: #af001e;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    outline: none;
+    margin: auto;
 }
 
 #profile hr, #devices hr {
