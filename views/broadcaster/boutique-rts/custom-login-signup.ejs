@@ -19,7 +19,7 @@
         window.fbAsyncInit = function() {
             FB.init({
 //                appId : '199799350126485',
-                appId : <%= config.identity_providers.facebook.client_id %>,
+                appId : <%- config.identity_providers.facebook.client_id %>,
                 version: 'v2.5',
                 xfbml: true
             });
@@ -41,10 +41,6 @@
             <%- include ./password-panel %>
 
         </div>
-
-        <!--THIS IS A CUSTOM "LA BOUTIQUE" SIGNUP PAGE !!!!-->
-
-        <!--<p>And after send me there : <%= auth_origin%></p>-->
 
     </div>
     <script>
@@ -260,7 +256,7 @@
                     type: 'POST',
                     success: function () {
                         //redirect to oAuth screen
-                        window.location.replace("<%= auth_origin%>");
+                        window.location.replace("<%- auth_origin%>");
                     },
                     error: function (error) {
                     }
