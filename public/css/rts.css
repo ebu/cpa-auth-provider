@@ -240,6 +240,10 @@ footer.rts-footer {
     display: block;
     color: #af001e;
     cursor: pointer;
+    background: none;
+    border: 0;
+    outline: none;
+    margin: auto;
 }
 
 #profile hr, #devices hr {
