@@ -29,17 +29,20 @@ module.exports = function (router) {
             var myURL = new URL('http://example.org' + req.session.auth_origin);
             var clientId = myURL.searchParams.get('client_id');
             if (clientId) {
-                url = '/auth/custom?client_id='+clientId;
-            } else if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
-                url = '/auth/' + autoIdpRedirect;
-            } else {
-                res.render('./auth/provider_list.ejs');
-                return;
+                url = '/auth/custom?client_id=' + clientId;
             }
         }
-        if (req.query && req.query.error) {
-            url += "?error=" + req.query.error;
+        if (!url && authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
+            url = '/auth/' + autoIdpRedirect;
+            if (req.query && req.query.error) {
+                url += "?error=" + req.query.error;
+            }
         }
+        if (!url) {
+            res.render('./auth/provider_list.ejs');
+            return;
+        }
+
         requestHelper.redirect(res, url);
     });
 
