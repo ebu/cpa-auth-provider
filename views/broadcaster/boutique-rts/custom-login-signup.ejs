@@ -222,7 +222,7 @@
                     url: "<%= link('/oauth/facebook/signup') %>",
                     data: {
                         fbToken: facebookResponse.authResponse.accessToken,
-                        client_id: "<%= config.oauth2_clients[0].client_id %>"
+                        client_id: "<%= client_id %>"
                     },
                     type: 'POST',
                     success: function (result) {
@@ -267,7 +267,7 @@
                     url: "<%= link('/oauth/google/signup') %>",
                     data: {
                         idToken: id_token,
-                        client_id: "<%= config.oauth2_clients[0].client_id %>"
+                        client_id: "<%= client_id %>"
                     },
                     type: 'POST',
                     success: function (result) {

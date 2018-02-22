@@ -158,6 +158,23 @@ module.exports = function (app, options) {
         }
         res.render('login.ejs', {message: message});
     });
+    app.get('/auth/custom', function (req, res) {
+        var required = userHelper.getRequiredFields();
+        var profileAttributes = {
+            captcha: req.recaptcha,
+            requiredFields: required,
+            message: req.flash('signupMessage'),
+            auth_origin: req.session.auth_origin,
+            client_id: req.query.client_id
+        };
+        for (var key in required) {
+            if (required.hasOwnProperty(key) && required[key]) {
+                profileAttributes[key] = req.query[key] ? decodeURIComponent(req.query[key]) : '';
+            }
+        }
+        // if no client id, redirect to signup
+        res.render('broadcaster/boutique-rts/custom-login-signup.ejs', profileAttributes);
+    });
 
     app.get('/signup', recaptcha.middleware.render, function (req, res) {
         var required = userHelper.getRequiredFields();

@@ -22,58 +22,25 @@ module.exports = function (router) {
     });
 
     router.get('/auth', recaptcha.middleware.render, trackingCookie.middleware, function (req, res) {
+        var url;
         var autoIdpRedirect = config.auto_idp_redirect;
 
-        if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
-            var url = '/auth/' + autoIdpRedirect;
-            if (req.query && req.query.error) {
-                url += "?error=" + req.query.error;
-            }
-            if (req.session && req.session.auth_origin) {
-                var myURL = new URL('http://example.org' + req.session.auth_origin);
-                var clientId = myURL.searchParams.get('client_id');
-
-                if (clientId === "db05acb0c6ed902e5a5b7f5ab79e7144") {
-                    url = 'broadcaster/boutique-rts/custom-login-signup';
-                }
-
-                if (!clientId) {
-                    requestHelper.redirect(res, url);
-                    return;
-                }
-
-                if (req.query && req.query.error) {
-                    url += "?error=" + req.query.error;
-                }
-
-                var required = userHelper.getRequiredFields();
-                var profileAttributes = {
-                    email: req.query.email ? decodeURIComponent(req.query.email) : '',
-                    captcha: req.recaptcha,
-                    requiredFields: required,
-                    message: req.flash('signupMessage')
-                };
-                for (var key in required) {
-                    if (required.hasOwnProperty(key) && required[key]) {
-                        profileAttributes[key] = req.query[key] ? decodeURIComponent(req.query[key]) : '';
-                    }
-                }
-
-                profileAttributes.auth_origin = req.session.auth_origin;
-
-                if (req.query && req.query.error) {
-                    url += "?error=" + req.query.error;
-                }
-
-                res.render(url, profileAttributes);
+        if (req.session && req.session.auth_origin) {
+            var myURL = new URL('http://example.org' + req.session.auth_origin);
+            var clientId = myURL.searchParams.get('client_id');
+            if (clientId === "db05acb0c6ed902e5a5b7f5ab79e7144") { //FIME
+                url = '/auth/custom?client_id='+clientId;
+            } else if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
+                url = '/auth/' + autoIdpRedirect;
+            } else {
+                res.render('./auth/provider_list.ejs');
                 return;
             }
-
-            requestHelper.redirect(res, url);
-            return;
         }
-
-        res.render('./auth/provider_list.ejs');
+        if (req.query && req.query.error) {
+            url += "?error=" + req.query.error;
+        }
+        requestHelper.redirect(res, url);
     });
 
     authHelper.loadIdentityProviders(router, config.identity_providers);

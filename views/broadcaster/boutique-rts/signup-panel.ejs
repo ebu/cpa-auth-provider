@@ -17,18 +17,12 @@
                         <div class="form-group">
                             <input type="email" class="form-control" name="email"
                                    placeholder="<%= __('SIGNUP_EMAIL_LABEL') %>"
-                                    <% if(email) { %>
-                                   value="<%= email %>"
-                                    <% } %>
                                    required>
                         </div>
                         <% if(requiredFields.firstname) { %>
                         <div class="form-group">
                             <input id="firstname" name="firstname" class="form-control"
                                    type="text" placeholder="<%= __('PROFILE_PLACE_FIRSTNAME_HOLDER') %>"
-                                    <% if(firstname) { %>
-                                   value="<%= firstname %>"
-                                    <% } %>
                             >
                         </div>
                         <% } %>
@@ -36,9 +30,6 @@
                         <div class="form-group">
                             <input id="lastname" name="lastname" class="form-control"
                                    type="text" placeholder="<%= __('PROFILE_PLACE_LASTNAME_HOLDER') %>"
-                                    <% if(lastname) { %>
-                                   value="<%= lastname %>"
-                                    <% } %>
                             >
                         </div>
                         <% } %>
@@ -49,7 +40,6 @@
                                  data-language="en">
                                 <input id="date_of_birth" name="date_of_birth" class="form-control"
                                        type="text" placeholder="<%= __('SIGNUP_DATE_OF_BIRTH_LABEL') %>"
-                                        <% if(date_of_birth) {%> value="<%= date_of_birth %>" <% } %>
                                 >
                                 <div class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
