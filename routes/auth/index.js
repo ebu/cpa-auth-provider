@@ -21,14 +21,14 @@ module.exports = function (router) {
         res.send('protected');
     });
 
-    router.get('/auth', recaptcha.middleware.render, trackingCookie.middleware, function (req, res) {
+    router.get('/auth', trackingCookie.middleware, function (req, res) {
         var url;
         var autoIdpRedirect = config.auto_idp_redirect;
 
         if (req.session && req.session.auth_origin) {
             var myURL = new URL('http://example.org' + req.session.auth_origin);
             var clientId = myURL.searchParams.get('client_id');
-            if (clientId === "db05acb0c6ed902e5a5b7f5ab79e7144") { //FIME
+            if (clientId) {
                 url = '/auth/custom?client_id='+clientId;
             } else if (authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
                 url = '/auth/' + autoIdpRedirect;

@@ -158,7 +158,7 @@ module.exports = function (app, options) {
         }
         res.render('login.ejs', {message: message});
     });
-    app.get('/auth/custom', function (req, res) {
+    app.get('/auth/custom', recaptcha.middleware.render, function (req, res) {
         var required = userHelper.getRequiredFields();
         var profileAttributes = {
             captcha: req.recaptcha,
@@ -167,13 +167,16 @@ module.exports = function (app, options) {
             auth_origin: req.session.auth_origin,
             client_id: req.query.client_id
         };
-        for (var key in required) {
-            if (required.hasOwnProperty(key) && required[key]) {
-                profileAttributes[key] = req.query[key] ? decodeURIComponent(req.query[key]) : '';
+
+        db.OAuth2Client.findOne({where:{client_id:req.query.client_id }}).then(function(client){
+            if (client){
+                res.render('broadcaster/boutique-rts/custom-login-signup.ejs', profileAttributes);
+            } else {
+                // No client found or no dedicated login window => redirect to login '/auth/local'
+                res.render('login.ejs', {message: ''});
             }
-        }
-        // if no client id, redirect to signup
-        res.render('broadcaster/boutique-rts/custom-login-signup.ejs', profileAttributes);
+        });
+
     });
 
     app.get('/signup', recaptcha.middleware.render, function (req, res) {
