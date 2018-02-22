@@ -6,7 +6,7 @@
     THIS IS THE CUSTOM "LA BOUTIQUE" ACCEPT WINDOW
 
     <% if(customMessage){ %>
-    <%= __mf(customMessage, { client: client.name} ) %>
+    <%= customMessage %>
     <% } else { %>
     <b><%= client.name %></b>
     <%= __('OAUTH_DIALOG_TITLE') %>
