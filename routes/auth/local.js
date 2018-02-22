@@ -170,7 +170,7 @@ module.exports = function (app, options) {
 
         db.OAuth2Client.findOne({where:{client_id:req.query.client_id }}).then(function(client){
             if (client){
-                var template = 'broadcaster/boutique-rts/custom-login-signup.ejs';
+                var template = 'broadcaster/boutique-rts/custom-login-signup.ejs'; //FIXME : should be taken from the client entity
                 res.render(template, profileAttributes);
             } else {
                 // No client found or no dedicated login window => redirect to login '/auth/local'
