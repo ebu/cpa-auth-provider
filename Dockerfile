@@ -19,6 +19,7 @@ RUN mkdir /src/seeders
 
 ENV NODE_ENV development
 
+ENV JWT_SECRET AlteredCarbonFly
 ENV DEFAULT_LOCALE fr
 
 # default settings for database
