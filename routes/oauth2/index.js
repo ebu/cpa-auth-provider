@@ -124,15 +124,18 @@ module.exports = function (router) {
         authHelper.authenticateFirst,
         function (req, res) {
             var renderer = 'oauth2/dialog';
-            if (req.query.client_id === "db05acb0c6ed902e5a5b7f5ab79e7144") {
-                renderer = 'broadcaster/boutique-rts/oauth-dialog';
-            }
-            res.render(renderer, {
-                transactionID: req.oauth2.transactionID,
-                user: req.user,
-                email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
-                client: req.oauth2.client,
-                customMessage: config.broadcaster && config.broadcaster.oauth ? util.format(config.broadcaster.oauth.customMessage, req.oauth2.client.name) : undefined
+
+            db.OAuth2Client.findOne({where: {client_id: req.query.client_id}}).then(function (client) {
+                if (client && client.use_template) {
+                    renderer = 'broadcaster/' + client.use_template + '/oauth-dialog';
+                }
+                res.render(renderer, {
+                    transactionID: req.oauth2.transactionID,
+                    user: req.user,
+                    email: req.user.LocalLogin ? req.user.LocalLogin.login : "",
+                    client: req.oauth2.client,
+                    customMessage: config.broadcaster && config.broadcaster.oauth ? util.format(config.broadcaster.oauth.customMessage, req.oauth2.client.name) : undefined
+                });
             });
         }
     ];
