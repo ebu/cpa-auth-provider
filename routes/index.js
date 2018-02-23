@@ -11,7 +11,6 @@ module.exports = function (router) {
     /*
      * GET home page.
      */
-
     router.get('/', authHelper.authenticateFirst, function (req, res) {
         // Required by mobile flow
         var query = "";
