@@ -202,7 +202,7 @@
                     },
                     type: 'POST',
                     success: function (result) {
-                        console.log("FACEBOOK SIGNUP SUCCESS", result);
+                        requestSession(result.token);
                     },
                     error: function (error) {
                         console.log("FACEBOOK SIGNUP ERROR", error);
@@ -299,7 +299,7 @@
                     },
                     type: 'POST',
                     success: function (result) {
-                        console.log("GOOGLE SIGNUP SUCCESS", result);
+                        requestSession(result.token);
                     },
                     error: function (error) {
                         if (error.responseJSON.error) {
