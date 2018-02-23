@@ -167,6 +167,7 @@ footer.rts-footer {
 }
 
 #rts-custom-login #rts-login-panel .login-images, #login .login-images {
+    height: 45px;
     width: 45px;
     cursor: pointer;
 }
@@ -390,4 +391,13 @@ footer.rts-footer {
     height: 45px;
     font-size: 15px;
     font-weight: 300;
+}
+
+/*FIXES for IE popup*/
+main.boutique {
+    margin-top: 10px;
+}
+
+main.boutique h1{
+    margin-bottom: 5px;
 }
