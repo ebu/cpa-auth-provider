@@ -25,12 +25,8 @@ module.exports = function (router) {
         var url;
         var autoIdpRedirect = config.auto_idp_redirect;
 
-        if (req.session && req.session.auth_origin) {
-            var myURL = new URL('http://example.org' + req.session.auth_origin);
-            var clientId = myURL.searchParams.get('client_id');
-            if (clientId) {
-                url = '/auth/custom?client_id=' + clientId;
-            }
+        if (req.session && req.session.auth_origin && req.session.client_id) {
+            url = '/auth/custom?client_id=' + req.session.client_id;
         }
         if (!url && authHelper.validRedirect(autoIdpRedirect, config.identity_providers)) {
             url = '/auth/' + autoIdpRedirect;
