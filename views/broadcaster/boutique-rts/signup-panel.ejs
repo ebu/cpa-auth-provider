@@ -38,13 +38,14 @@
                         <div class="form-group">
                             <div class="input-group date" data-provide="datepicker"
                                  data-language="en">
-                                <input id="date_of_birth" name="date_of_birth" class="form-control"
+                                <input id="date_of_birth" name="date_of_birth_bad_format" class="form-control"
                                        type="text" placeholder="<%= __('SIGNUP_DATE_OF_BIRTH_LABEL') %>"
                                 >
                                 <div class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
                                 </div>
                             </div>
+                            <input id="date_of_birth_hidden" type="hidden" name="date_of_birth" value=""/>
                         </div>
                         <% } %>
 

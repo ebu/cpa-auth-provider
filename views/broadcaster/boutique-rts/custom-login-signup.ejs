@@ -164,6 +164,17 @@
                     e.preventDefault();
                     initAlertMessages();
 
+                    var dateInput = $('#date_of_birth');
+                    if(dateInput) {
+                        var dateSplitted = dateInput.val().split("/");
+                        var date = "";
+                        var d = new Date(Date.UTC(dateSplitted[2], dateSplitted[1] - 1, dateSplitted[0]));
+                        if (!isNaN(d.getTime())) {
+                            date = d.getTime();
+                        }
+                        $('#date_of_birth_hidden').val(date);
+                    }
+
                     $(this).ajaxSubmit({
                         error: function (error) {
                             if (error.responseJSON.errors) {
