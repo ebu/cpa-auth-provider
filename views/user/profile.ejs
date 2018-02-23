@@ -157,7 +157,7 @@
                                 aria-hidden="true">&times;</span></button>
                     <span id="change-email-success" class="content"><%= __('PROFILE_CHANGE_EMAIL_SUCCESS') %></span>
                 </div>
-                <span class="data-value" id="display-email-span"><%= profile.email %></span>
+                <div class="data-value" id="display-email-span"><%= profile.email %></div>
                 <span class="data-value">
                         <button class="btn btn-link" type="button" data-toggle="modal" data-target="#changeEmailModal">
                             <i class='glyphicon glyphicon-pencil'></i>
@@ -186,7 +186,7 @@
             </div>
 
             <h4><%= __('PROFILE_PASSWORD_TITLE') %></h4>
-            <span id="fake-password-display" class="hasPassword">******</span>
+            <div id="fake-password-display" class="hasPassword">******</div>
             <button id="btn-modify-password" type="button" class="btn btn-link">
                 <span id="hasPasswordButtonLabel" class="hasPassword">
                     <i class='glyphicon glyphicon-pencil'></i>
@@ -838,6 +838,7 @@
                 resetMessages("form-security-errors", "security-errors");
                 // password change form close
                 $formModifyPass.hide();
+                //TODO check if there is a password else do not show the fake password display
                 $fakePasswordDisplay.show();
                 $modifyPassBtn.show();
             });

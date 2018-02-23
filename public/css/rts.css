@@ -22,25 +22,25 @@ h1 {
 }
 
 h2 {
-    font-size: 1.6rem;
-    line-height: 2.8rem;
+    font-size: 19px;
+    line-height: 20px;
     color: #333333;
     font-weight: normal;
 }
 
 h4 {
     color: #666666;
-    font-size: 1.6rem;
+    font-size: 18px;
     font-weight: normal;
 }
 
 .btn-link {
     color: #af001e;
-    font-size: 17px !important;
+    font-size: 16px !important;
 }
 
 .last-link {
-    font-size: 17px !important;
+    font-size: 16px !important;
 }
 
 .btn-link:hover, .btn-link:active, .btn-link:focus {
@@ -104,11 +104,6 @@ select.form-control {
     max-width: 430px;
     margin: auto;
 }
-.form-group #password-bar {
-    max-width: 430px;
-    margin-left: auto;
-    margin-right: auto;
-}
 
 footer.rts-footer {
     margin-top: 50px;
@@ -154,6 +149,12 @@ footer.rts-footer {
     font-size: 17px;
     margin-top: 2px;
     text-align: right;
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#rts-custom-login .form-group #password-bar {
     max-width: 430px;
     margin-left: auto;
     margin-right: auto;
@@ -261,18 +262,80 @@ footer.rts-footer {
 }
 
 #profile #form-personnal-data h4 {
-    font-size: 1.6rem;
-    margin-top: 1.5rem;
+    font-size: 18px;
+    margin-top: 10px;
     color: #666666;
     text-transform: uppercase;
 }
 
+#profile .accountNotVerified p, #profile .accountVerified p{
+    font-size: 17px;
+}
+
+#profile .form-group #password-bar {
+    max-width: 430px;
+}
+
 #profile #form-personnal-data span {
-    font-size: 1.4rem;
+    font-size: 16px !important;
+}
+
+#profile #form-personnal-data #btn-container span.pull-right {
+    margin-top: 10px;
 }
 
 #profile #form-personnal-data .panel {
     border: 0;
+}
+
+#profile .status-info {
+    font-size: 16px !important;
+}
+
+#profile .providers-container .facebook-text {
+    font-size: 20px !important;
+}
+
+#profile #delete-div {
+    font-size: 16px;
+}
+
+#profile #btn-container {
+    max-width: 430px;
+}
+
+#profile .hasNoPassword {
+    margin-top: 20px;
+}
+
+#profile label, #profile form label, #profile .form-group label{
+    display: block;
+    font-size: 17px;
+    font-weight: 300;
+}
+
+#profile .hasPassword {
+    margin-bottom: 15px;
+}
+
+#profile .hasPassword button.btn-link, #profile #btn-modify-password {
+    margin-top: 5px;
+}
+
+#profile .hasPassword button.btn-link i, #profile #btn-modify-password i {
+    display: none;
+}
+
+#profile .btn.btn-large-submit.btn-primary,#profile .btn.btn-large-submit.btn-danger {
+    font-size: 15px;
+}
+
+#profile .col-sm-9 .first.providers-container {
+    font-size: 16px;
+}
+
+#profile .input-group.date {
+    max-width: 430px;
 }
 
 #home .home-panel .panel-body h3 {
@@ -281,4 +344,44 @@ footer.rts-footer {
 
 #home .home-panel .panel-body span.glyphicon {
     color: #af001e;
+}
+
+.modal .modal-dialog {
+    font-size: 16px;
+    text-align: justify;
+}
+
+.modal .modal-dialog .modal-content .form-group label{
+    display: block;
+    font-weight: 500;
+}
+
+.modal .modal-dialog .modal-content .form-group input{
+    margin-bottom: 10px;
+}
+
+.modal .modal-dialog .modal-content .form-group input:last-child{
+    margin-bottom: 0;
+}
+
+.modal .modal-dialog .modal-content p:first-child{
+    margin: 10px 0px 20px 0;
+}
+
+.modal .modal-dialog .btn.btn-large-submit, .modal .modal-dialog .btn.btn-normal-submit {
+    font-size: 15px;
+}
+
+#profile .btn-default, .modal .modal-dialog .btn-default{
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    margin-right: 10px;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: none;
+    max-width: 428px;
+    height: 45px;
+    font-size: 15px;
+    font-weight: 300;
 }

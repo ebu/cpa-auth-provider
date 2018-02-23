@@ -291,11 +291,12 @@ nav .peach-title {
 ************
 */
 #verify-mail h1 {
+    font-size: 25px;
     margin-bottom: 30px;
 }
 
 #verify-mail p {
-    font-size: 20px;
+    font-size: 17px;
 }
 
 #verify-mail .link {
@@ -315,7 +316,7 @@ nav .peach-title {
 }
 
 #verify-mail h1 span.glyphicon {
-    vertical-align: -5px;
+    vertical-align: -3px;
 }
 
 @media screen and (max-height: 575px) {
