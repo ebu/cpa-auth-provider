@@ -37,13 +37,12 @@ function routes(router) {
                         }
                     }
 
-                    if (user.verified) {
+                    if (user.LocalLogin.verified) {
                         res.status(200).json({success: true, reason: 'NO_CHANGE'});
                         return deleteToken(verifyToken);
                     }
 
-                    user.verified = true;
-                    return user.save().then(
+                    return user.LocalLogin.updateAttributes({verified: true}).then(
                         function () {
                             monitor.counter.inc(monitor.METRICS.ACCOUNT_VERIFIED, 1);
                             res.status(200).json({success: true, reason: 'CONFIRMED'});
@@ -73,14 +72,13 @@ function routes(router) {
                     var client = data.OAuth2Client;
                     var user = data.User;
 
-                    var wasVerified = user.verified;
+                    var wasVerified = user.LocalLogin.verified;
                     if (!verifyToken.isAvailable()) {
                         return res.status(400).json('ALREADY USED');
                     }
 
                     var redirect_url = getEmailRedirectUrl(verifyToken, client);
-                    user.verified = true;
-                    return user.save().then(
+                    return user.LocalLogin.updateAttributes({verified: true}).then(
                         function () {
                             if (redirect_url) {
                                 logger.debug('[email verify][REDIRECT][url', redirect_url, ']');
@@ -152,15 +150,21 @@ function getEmailRedirectUrl(verifyToken, client) {
 function getTokenAndClient(key) {
     return new Promise(
         function (resolve, reject) {
+            let verifyToken;
             db.UserEmailToken.find({where: {key: key}, include: [db.User, db.OAuth2Client]}).then(
-                function (verifyToken) {
+                function (verifyToken_) {
+                    verifyToken = verifyToken_;
                     if (!verifyToken || verifyToken.type !== 'REG') {
                         return reject(new Error('INVALID_TOKEN'));
                     }
+                    return db.LocalLogin.find({where: {user_id: verifyToken.User.id}});
+                }
+            ).then(
+                ll => {
+                    verifyToken.User.LocalLogin = ll;
                     resolve(verifyToken);
-                },
-                reject
-            );
+                }
+            ).catch(reject);
         }
     );
 }
