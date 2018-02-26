@@ -31,6 +31,7 @@ exports.bearer = new BearerStrategy(function (accessToken, done) {
                         }
                         // TODO: Define scope
                         const info = {scope: '*', client: client};
+                        console.log("done", done);
                         return done(null, user, info);
                     }
                 ).catch(function (err) {
