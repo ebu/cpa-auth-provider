@@ -38,22 +38,39 @@ var user_profile = [
     passport.authenticate('bearer', {session: false}),
     function (req, res) {
         logger.debug('[OAuth2][Profile][user_id', req.user.id, ']');
-        res.json({
-            user: {
-                id: req.user.id,
-                email: req.user.LocalLogin ? req.user.LocalLogin.login : null,
-                email_verified: req.user.LocalLogin ? req.user.LocalLogin.verified : null,
-                display_name: req.user.display_name,
-                name: req.user.display_name || (req.user.LocalLogin ? req.user.LocalLogin.login : ''),
-                firstname: req.user.firstname,
-                lastname: req.user.lastname,
-                gender: req.user.gender,
-                date_of_birth: req.user.date_of_birth,
-            },
-            scope: req.authInfo.scope
-        });
-
-
+        if (req.user.LocalLogin) {
+            res.json({
+                user: {
+                    id: req.user.id,
+                    email: req.user.LocalLogin ? req.user.LocalLogin.login : null,
+                    email_verified: req.user.LocalLogin ? req.user.LocalLogin.verified : null,
+                    display_name: req.user.display_name,
+                    name: req.user.display_name || (req.user.LocalLogin ? req.user.LocalLogin.login : ''),
+                    firstname: req.user.firstname,
+                    lastname: req.user.lastname,
+                    gender: req.user.gender,
+                    date_of_birth: req.user.date_of_birth,
+                },
+                scope: req.authInfo.scope
+            });
+        } else {
+            db.SocialLogin.findOne({where: {user_id: req.user.id}}).then(function (socialLogin) {
+                res.json({
+                    user: {
+                        id: req.user.id,
+                        email: socialLogin.email,
+                        email_verified: true,
+                        display_name: socialLogin.display_name ? socialLogin.display_name : socialLogin.email,
+                        name: socialLogin.display_name ? socialLogin.display_name : socialLogin.email,
+                        firstname: socialLogin.firstname,
+                        lastname: socialLogin.lastname,
+                        gender: socialLogin.gender,
+                        date_of_birth: socialLogin.date_of_birth,
+                    },
+                    scope: req.authInfo.scope
+                });
+            });
+        }
     }];
 
 
