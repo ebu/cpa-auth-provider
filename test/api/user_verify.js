@@ -116,7 +116,7 @@ function resetDatabase(done) {
             );
         }
     });
-};
+}
 
 
 // test request verify email
@@ -277,6 +277,107 @@ describe('POST /user/verify', function () {
             it('should send success', function () {
                 expect(this.res.body.success).equal(true);
             });
+        });
+    });
+});
+
+describe('GET /email/confirm/:key', function() {
+    const URL = '/email/confirm/{key}?client_id={client_id}';
+
+    context('with correct data', function () {
+        const KEY = 'TrivialKey';
+        before(resetDatabase);
+        before(createFakeUser);
+
+        before(function (done) {
+            db.UserEmailToken.create({
+                key: KEY,
+                type: 'REG',
+                user_id: UNVERIFIED_USER.id,
+                redirect_uri: '',
+                oauth2_client_id: CLIENT.id
+            }).then(
+                () => {
+                    done();
+                },
+                done
+            );
+        });
+
+        before(function(done) {
+            requestHelper.sendRequest(
+                this,
+                URL.replace('{key}', KEY).replace('{client_id}', CLIENT.client_id),
+                {method: 'get'},
+                done
+            );
+        });
+
+        it('should return 200', function() {
+            expect(this.res.statusCode).equal(200);
+        });
+        it('should send a success', function() {
+            expect(this.res.body.success).equal(true);
+        });
+        it('should have set the user to verified', function(done) {
+            db.LocalLogin.findOne({where: {login: UNVERIFIED_USER.email}}).then(
+                ll => {
+                    expect(ll).a('object');
+                    expect(ll.user_id).equal(UNVERIFIED_USER.id);
+                    expect(ll.verified).equal(true);
+                    done();
+                },
+                done
+            );
+        });
+    });
+});
+
+describe('GET /email/verify/:key', function() {
+    const URL = '/email/verify/{key}?client_id={client_id}';
+
+    context('with correct data', function () {
+        const KEY = 'TrivialKey';
+        before(resetDatabase);
+        before(createFakeUser);
+
+        before(function (done) {
+            db.UserEmailToken.create({
+                key: KEY,
+                type: 'REG',
+                user_id: UNVERIFIED_USER.id,
+                redirect_uri: '',
+                oauth2_client_id: CLIENT.id
+            }).then(
+                () => {
+                    done();
+                },
+                done
+            );
+        });
+
+        before(function(done) {
+            requestHelper.sendRequest(
+                this,
+                URL.replace('{key}', KEY).replace('{client_id}', CLIENT.client_id),
+                {method: 'get'},
+                done
+            );
+        });
+
+        it('should display an information page', function() {
+            expect(this.res.statusCode).equal(200);
+        });
+        it('should have set the user to verified', function(done) {
+            db.LocalLogin.findOne({where: {login: UNVERIFIED_USER.email}}).then(
+                ll => {
+                    expect(ll).a('object');
+                    expect(ll.user_id).equal(UNVERIFIED_USER.id);
+                    expect(ll.verified).equal(true);
+                    done();
+                },
+                done
+            );
         });
     });
 });
