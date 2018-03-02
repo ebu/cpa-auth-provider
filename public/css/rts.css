@@ -259,6 +259,20 @@ footer.rts-footer {
     margin: auto;
 }
 
+#rts-oauth-dialog .disconnect-block {
+    display: block;
+    text-align: justify;
+    margin-top: 25px;
+}
+
+#rts-oauth-dialog a#disconnect {
+    color: #af001e;
+    cursor: pointer;
+}
+#rts-oauth-dialog a#disconnect:hover {
+    text-decoration: none;
+}
+
 #profile hr, #devices hr {
     border-color: #333;
 }

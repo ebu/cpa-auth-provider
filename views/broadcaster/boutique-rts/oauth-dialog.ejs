@@ -26,15 +26,47 @@
                     <input id="allow" class="btn btn-primary" type="submit" value="<%= __('OAUTH_DIALOG_ALLOW') %>">
                     <div class="block-link">
                         <input id="deny" class="link link-cancel" name="cancel"
-                           value="<%= __('OAUTH_DIALOG_DENY') %>" type="submit"/>
+                               value="<%= __('OAUTH_DIALOG_DENY') %>" type="submit"/>
                     </div>
                 </div>
             </form>
+
+            <span class="disconnect-block">
+                <span>
+                    <%= __('OAUTH_DIALOG_TEXT_LOGOUT') %>
+                </span>
+                <a id="disconnect" href="javascript:void(0);">
+                    <%= __('OAUTH_DIALOG_LOGOUT') %>
+                </a>
+            </span>
+
         </div>
 
     </div>
 
 </main>
+
+<script type="text/javascript">
+    (function() {
+        var $disconnectLink = $('#disconnect');
+
+        if($disconnectLink) {
+            $disconnectLink.on('click', function() {
+                $.ajax({
+                    type        : 'GET',
+                    url         : '<%= link('/logout') %>',
+                    success: function () {
+                        location.reload(true);
+                    },
+                    error: function () {
+                        $alertsError.append($('<p>').text("Un problème c'est produit lors de votre déconnexion"));
+                        $alertsError.show();
+                    }
+                })
+            });
+        }
+    })();
+</script>
 
 </body>
 
