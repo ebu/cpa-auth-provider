@@ -114,6 +114,8 @@
     "OAUTH_DIALOG_APPROVAL": "Do you approve?",
     "OAUTH_DIALOG_ALLOW": "Allow",
     "OAUTH_DIALOG_DENY": "Deny",
+    "OAUTH_DIALOG_LOGOUT": "Logout",
+    "OAUTH_DIALOG_TEXT_LOGOUT": "Do you want to switch account?",
 
     "USER_DEVICES_TITLE": "My devices",
     "USER_DEVICES_CLIENT_ID_TABLE_COL_TITLE": "Client Id",

@@ -213,7 +213,7 @@ footer.rts-footer {
     color: #999;
 }
 
-#rts-custom-login .alert-message-error, #rts-custom-login .alert-message-success {
+#rts-custom-login .alert-message-error, #rts-custom-login .alert-message-success,  #rts-oauth-dialog .alert-message-error{
     display: none;
     max-width: 430px;
     padding: 15px 10px;
@@ -243,6 +243,10 @@ footer.rts-footer {
     margin: 20px 0 40px 0;
 }
 
+#rts-oauth-dialog .alert-message-error p {
+    margin: 0;
+}
+
 #rts-oauth-dialog #allow {
     width: 100%;
     display: block;
@@ -261,6 +265,20 @@ footer.rts-footer {
     border: 0;
     outline: none;
     margin: auto;
+}
+
+#rts-oauth-dialog .disconnect-block {
+    display: block;
+    text-align: justify;
+    margin-top: 25px;
+}
+
+#rts-oauth-dialog a#disconnect {
+    color: #af001e;
+    cursor: pointer;
+}
+#rts-oauth-dialog a#disconnect:hover {
+    text-decoration: none;
 }
 
 #profile hr, #devices hr {
