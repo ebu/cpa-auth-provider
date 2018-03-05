@@ -10,6 +10,9 @@
     <div class="container">
 
         <div id="rts-oauth-dialog">
+
+            <div class="alert alert-danger alert-message-error" role="alert"></div>
+
             <h1><%= __('OAUTH_DIALOG_TITLE_HI') %> <%= user.display_name || email %></h1>
             <p>
                 <% if(customMessage){ %>
@@ -49,6 +52,7 @@
 <script type="text/javascript">
     (function() {
         var $disconnectLink = $('#disconnect');
+        var $alertsError = $('.alert-message-error');
 
         if($disconnectLink) {
             $disconnectLink.on('click', function() {
