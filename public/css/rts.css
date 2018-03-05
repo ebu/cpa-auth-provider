@@ -239,6 +239,10 @@ footer.rts-footer {
     margin: 20px 0 40px 0;
 }
 
+#rts-oauth-dialog .alert-message-error p {
+    margin: 0;
+}
+
 #rts-oauth-dialog #allow {
     width: 100%;
     display: block;
