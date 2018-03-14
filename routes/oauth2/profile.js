@@ -20,7 +20,6 @@ var user_info = [
                     mail = localLogin.login;
                 } else if (socialLogin && socialLogin.email) {
                     mail = socialLogin.email;
-
                 }
                 res.json({
                     user: {
@@ -30,6 +29,16 @@ var user_info = [
                     scope: req.authInfo.scope
                 });
             });
+        });
+    }];
+
+var user_id = [
+    passport.authenticate('bearer', {session: false}),
+    function (req, res) {
+        logger.debug('[OAuth2][Info][user_id', req.user.id, ']');
+        res.json({
+            id: req.user.id,
+            scope: req.authInfo.scope
         });
     }];
 
@@ -80,8 +89,10 @@ module.exports = function (router) {
     // TODO configure the restriction of origins on the CORS preflight call
     var cors_headers = cors({origin: true, methods: ['GET']});
     router.options('/oauth2/user_info', cors_headers);
+    router.options('/oauth2/user_id', cors_headers);
     router.options('/oauth2/user_profile', cors_headers);
 
     router.get('/oauth2/user_info', cors_headers, user_info);
+    router.get('/oauth2/user_id', cors_headers, user_id);
     router.get('/oauth2/user_profile', cors_headers, user_profile);
 };
