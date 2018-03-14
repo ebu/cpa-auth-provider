@@ -6,24 +6,27 @@
     <!-- google authentication API -->
     <script src="https://apis.google.com/js/api:client.js"></script>
 
+    <% if (config.identity_providers.facebook.enabled) { %>
     <script>
         // Load Facebook SDK asynchronously
-        (function(d, s, id){
+        (function (d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
+            js = d.createElement(s);
+            js.id = id;
             js.src = "//connect.facebook.net/fr_CH/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
-        window.fbAsyncInit = function() {
+        window.fbAsyncInit = function () {
             FB.init({
-                appId : <%- config.identity_providers.facebook.client_id %>,
+                appId: <%- config.identity_providers.facebook.client_id %>,
                 version: 'v2.5',
                 xfbml: true
             });
         };
     </script>
+    <% } %>
 </head>
 <body>
 
@@ -43,7 +46,7 @@
 
     </div>
     <script>
-        (function(){
+        (function () {
             var locale = '<%= language %>';
             var $birthdayField = $('.date');
             var $genderField = $('#gender');
@@ -67,7 +70,7 @@
 
             var $recaptchaBlock = $('#recaptcha-block')
 
-            if($birthdayField.length) {
+            if ($birthdayField.length) {
                 $birthdayField.datepicker({
                     format: 'dd/mm/yyyy',
                     language: locale,
@@ -75,13 +78,13 @@
                 });
             }
 
-            if($genderField) {
-                $genderField.on("change", function() {
+            if ($genderField) {
+                $genderField.on("change", function () {
                     $genderField.css("color", "#666");
                 });
             }
 
-            if($linkToSignupPage) {
+            if ($linkToSignupPage) {
                 $linkToSignupPage.on('click', function () {
                     initAlertMessages();
                     $('#signup-block').after($recaptchaBlock);
@@ -90,7 +93,7 @@
                 });
             }
 
-            if($linkToLoginPage) {
+            if ($linkToLoginPage) {
                 $linkToLoginPage.on('click', function () {
                     initAlertMessages();
                     $signupPanel.hide();
@@ -99,7 +102,7 @@
                 });
             }
 
-            if($linkToPasswordPage) {
+            if ($linkToPasswordPage) {
                 $linkToPasswordPage.on('click', function () {
                     initAlertMessages();
                     $('#password-block').after($recaptchaBlock);
@@ -108,19 +111,21 @@
                 });
             }
 
-            if($facebookLink) {
-                $facebookLink.on('click', function() {
-                    FB.login(function (response) {
-                        if (response.authResponse) {
-                            facebookSignup(response);
-                        } else {
-                            console.log('Erreur de connexion à Facebook', response);
-                        }
-                    }, {scope: 'public_profile,email'});
+            if ($facebookLink) {
+                $facebookLink.on('click', function () {
+                    if (FB) {
+                        FB.login(function (response) {
+                            if (response.authResponse) {
+                                facebookSignup(response);
+                            } else {
+                                console.log('Erreur de connexion à Facebook', response);
+                            }
+                        }, {scope: 'public_profile,email'});
+                    }
                 })
             }
 
-            if($passwordForm) {
+            if ($passwordForm) {
                 $passwordForm.submit(function (e) {
                     e.preventDefault();
 
@@ -150,7 +155,7 @@
                 });
             }
 
-            if($loginForm) {
+            if ($loginForm) {
                 $loginForm.submit(function (e) {
                     e.preventDefault();
                     initAlertMessages();
@@ -158,13 +163,14 @@
                 })
             }
 
-            if($signupForm) {
+            if ($signupForm) {
                 $signupForm.submit(function (e) {
                     e.preventDefault();
                     initAlertMessages();
 
+                    <% if (config.userProfiles.requiredFields && config.userProfiles.requiredFields.indexOf('date_of_birth') !== -1) { %>
                     var dateInput = $('#date_of_birth');
-                    if(dateInput) {
+                    if (dateInput) {
                         var dateSplitted = dateInput.val().split("/");
                         var date = "";
                         var d = new Date(Date.UTC(dateSplitted[2], dateSplitted[1] - 1, dateSplitted[0]));
@@ -173,6 +179,7 @@
                         }
                         $('#date_of_birth_hidden').val(date);
                     }
+                    <% } %>
 
                     $(this).ajaxSubmit({
                         error: function (error) {
@@ -186,7 +193,7 @@
                                 $alertsError.append($('<p>').text(error.responseJSON.msg));
                             }
                             grecaptcha.reset();
-                            $("html, body").animate({ scrollTop: 0 });
+                            $("html, body").animate({scrollTop: 0});
                             $alertsError.show();
                         },
                         success: function (result) {
@@ -229,25 +236,25 @@
                 };
 
                 $.ajax({
-                    type        : 'POST',
-                    url         : '<%= link('/oauth2/login') %>',
-                    data        : formData,
-                    dataType    : 'json',
-                    encode          : true,
+                    type: 'POST',
+                    url: '<%= link('/oauth2/login') %>',
+                    data: formData,
+                    dataType: 'json',
+                    encode: true,
                     success: function (result) {
                         requestSession(result.access_token);
                     },
                     error: function (error) {
-                        if(error.responseJSON.msg) {
+                        if (error.responseJSON.msg) {
                             $alertsError.append($('<p>').text(error.responseJSON.msg));
-                        } else if(error.responseJSON.error_description) {
-                            if(error.responseJSON.error_description === "Missing required parameter: username") {
+                        } else if (error.responseJSON.error_description) {
+                            if (error.responseJSON.error_description === "Missing required parameter: username") {
                                 $alertsError.append($('<p>').html("Un email valide doit être renseigné"));
                             }
-                            if(error.responseJSON.error_description === "Missing required parameter: password") {
+                            if (error.responseJSON.error_description === "Missing required parameter: password") {
                                 $alertsError.append($('<p>').html("Un mot de passe valide doit être renseigné"));
                             }
-                            if(error.responseJSON.error_description === "INCORRECT_LOGIN_OR_PASS") {
+                            if (error.responseJSON.error_description === "INCORRECT_LOGIN_OR_PASS") {
                                 $alertsError.append($('<p>').html("Nom d'utilisateur ou mot de passe inconnu"));
                             }
                         }
@@ -265,15 +272,15 @@
                     type: 'POST',
                     success: function () {
                         //redirect to oAuth screen
-                        window.location.replace("<%- auth_origin%>");
+                        window.location.replace("<%- auth_origin %>");
                     },
                     error: function (error) {
                     }
                 });
             }
 
-            var initGoogle = function() {
-                gapi.load('auth2', function(){
+            var initGoogle = function () {
+                gapi.load('auth2', function () {
                     // Retrieve the singleton for the GoogleAuth library and set up the client.
                     auth2 = gapi.auth2.init({
                         client_id: '<%= config.identity_providers.google.client_id %>',
@@ -287,13 +294,13 @@
 
             function attachSignin(element) {
                 auth2.attachClickHandler(element, {},
-                    function(googleUser) {
-                        if(googleUser) {
+                    function (googleUser) {
+                        if (googleUser) {
                             googleSignup(googleUser);
                         } else {
                             console.log('Erreur de connexion à Google', data);
                         }
-                    }, function(error) {
+                    }, function (error) {
                         console.log("Google signup error", JSON.stringify(error, undefined, 2));
                     });
             }

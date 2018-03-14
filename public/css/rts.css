@@ -150,6 +150,10 @@ footer.rts-footer {
     display: block;
 }
 
+#rts-custom-login .link-login .btn-link {
+    font-size: 18px !important;
+}
+
 #rts-custom-login #rts-login-panel .password-recovery-block {
     display: block;
     font-size: 17px;
