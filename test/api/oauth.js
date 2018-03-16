@@ -580,6 +580,7 @@ describe('OAuth2 requests from cross domain with access token', function () {
         expect(this.res.statusCode).equal(200);
         expect(this.res.body.display_name).to.equal('test@test.com');
         expect(this.res.body.menu.length).to.equal(2);
+        expect(this.res.body.user_id).to.equal(USER.id);
     });
 
 });
