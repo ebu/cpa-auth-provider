@@ -113,6 +113,7 @@ module.exports = function (app, options) {
                 email = user.LocalLogin.login;
             }
             var data = {
+                user_id: user.id,
                 display_name: user.getDisplayName("FIRSTNAME_LASTNAME", email),
                 required_fields: userHelper.getRequiredFields(),
                 menu: getMenu(req, language)
