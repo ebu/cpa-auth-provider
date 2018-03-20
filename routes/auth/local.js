@@ -360,6 +360,11 @@ module.exports = function (app, options) {
         var redirectUri = req.session.auth_origin;
         delete req.session.auth_origin;
 
+        if (req.session.callback_url){
+            redirectUri = req.session.callback_url;
+            delete req.session.callback_url;
+        }
+
         req.session.save(
             function () {
                 if (redirectUri) {
