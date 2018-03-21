@@ -176,7 +176,7 @@ describe('User id API:', function () {
             requestHelper.sendRequest(this, '/user/id', {cookie: 'really wrong session cookie', parseDOM: true}, done);
         });
 
-        it('should return a status 200', function () {
+        it('should return a status 401', function () {
             expect(this.res.statusCode).to.equal(401);
         });
 

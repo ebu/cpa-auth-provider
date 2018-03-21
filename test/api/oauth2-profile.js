@@ -209,7 +209,7 @@ describe('GET profile', function () {
                 );
             });
 
-            it('should return a 401', function () {
+            it('should return a 400', function () {
                 expect(this.res.statusCode).equal(400);
             });
         });
