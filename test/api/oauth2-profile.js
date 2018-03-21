@@ -159,6 +159,63 @@ describe('GET profile', function () {
     });
 
 
+    context('GET : /oauth2/user_id', function () {
+        before(resetDatabase);
+        before(createFakeUser);
+
+        context('with good access token', function () {
+
+            before(function (done) {
+                requestHelper.sendRequest(this, '/oauth2/token', {
+                    method: 'post',
+                    cookie: this.cookie,
+                    type: 'form',
+                    data: {
+                        grant_type: 'password',
+                        username: USER.email,
+                        password: USER.password,
+                        client_id: CLIENT.client_id,
+                        client_secret: CLIENT.client_secret
+                    }
+                }, done);
+            });
+
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    "/oauth2/user_id",
+                    {
+                        accessToken: this.res.body.access_token
+                    },
+                    done
+                );
+            });
+
+            it('should return a success', function () {
+                expect(this.res.statusCode).equal(200);
+                expect(this.res.body.id).equal(123);
+            });
+        });
+        context('with bad access token', function () {
+
+            before(function (done) {
+                requestHelper.sendRequest(
+                    this,
+                    "/oauth2/user_id",
+                    {
+                        accessToken: 'realy bad and wrong access token'
+                    },
+                    done
+                );
+            });
+
+            it('should return a 400', function () {
+                expect(this.res.statusCode).equal(400);
+            });
+        });
+    });
+
+
 });
 
 

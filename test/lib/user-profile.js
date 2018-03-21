@@ -148,3 +148,38 @@ describe('User profile page:', function () {
     });
 
 });
+
+describe('User id API:', function () {
+
+    before(resetDatabase);
+
+    context('with good session cookie', function () {
+
+        before(function (done) {
+            requestHelper.login(this, done);
+        });
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/user/id', {cookie: this.cookie, parseDOM: true}, done);
+        });
+
+        it('should return a status 200', function () {
+            expect(this.res.statusCode).to.equal(200);
+            expect(this.res.body.id).to.be.above(0);
+        });
+
+    });
+
+    context('with wrong session cookie', function () {
+
+        before(function (done) {
+            requestHelper.sendRequest(this, '/user/id', {cookie: 'really wrong session cookie', parseDOM: true}, done);
+        });
+
+        it('should return a status 401', function () {
+            expect(this.res.statusCode).to.equal(401);
+        });
+
+    });
+
+});

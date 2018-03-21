@@ -153,6 +153,11 @@ var routes = function (router) {
             res.status(401).send({success: false, msg: e.message});
         });
     });
+
+    router.get('/user/id', authHelper.ensureAuthenticated, function (req, res) {
+        return res.json({id: authHelper.getAuthenticatedUser(req).id});
+    });
+
 };
 
 module.exports = routes;

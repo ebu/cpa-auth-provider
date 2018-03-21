@@ -18,6 +18,10 @@ module.exports = function (router) {
             query = '?' + querystring.stringify(req.query);
         }
 
+        if (req.query.originalUrl) {
+            requestHelper.redirect(res, req.query.originalUrl);
+        }
+
         requestHelper.redirect(res, config.use_landing_page ? '/home' : '/user/profile' + query);
     });
 
