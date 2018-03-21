@@ -247,6 +247,19 @@ module.exports = {
         refresh_tokens_enabled: true
     },
 
+    deletion: {
+        // enable automatic deletion
+        automatic_deletion_activated: false,
+        // allow DELETE /oauth2/me
+        endpoint_enabled: false,
+        // how long before a deletion request is processed
+        delay_in_days: 7,
+        // check to delete in seconds
+        delete_interval: 6 * 60 * 60, // 6 hours
+        // how long before a verification is considered failed, in seconds, set to 0- to disable
+        verification_time: 7 * 24 * 60 * 60 // 7 days
+    },
+
     monitoring: {
         enabled: true,
     },

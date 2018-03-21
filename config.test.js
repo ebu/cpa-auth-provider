@@ -171,6 +171,8 @@ module.exports = {
     max_poll_interval: 5,
 
     deletion: {
+        // enable automatic deletion
+        automatic_deletion_activated: true,
         // allow DELETE /oauth2/me
         endpoint_enabled: true,
         // how long before a deletion request is processed
