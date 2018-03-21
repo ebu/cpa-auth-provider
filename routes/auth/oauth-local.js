@@ -152,12 +152,12 @@ module.exports = function (app, options) {
         var menu = [
             {
                 label: req.__({phrase: 'BACK_API_MENU_LABEL_DEVICES', locale: lang}),
-                url: req.protocol + '://' + req.get('host') + "/user/devices",
+                url: req.protocol + '://' + req.get('host') + "/user/devices?defaultLanguage=" + lang,
                 directLink: true
             },
             {
                 label: req.__({phrase: 'BACK_API_MENU_LABEL_SETTINGS', locale: lang}),
-                url: req.protocol + '://' + req.get('host') + "/user/profile",
+                url: req.protocol + '://' + req.get('host') + "/user/profile?defaultLanguage=" + lang,
                 directLink: true
             }
         ];
