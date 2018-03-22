@@ -32,6 +32,7 @@ services:
     - GOOGLE_LOGIN_ID=621117323323-j048lcbv5khh6lhr1lok4vv17mekijvm.apps.googleusercontent.com
     - GOOGLE_LOGIN_SECRET=rw1KMzemV5Mhtjq1iOAI4H8A
     - SESSION_SECRET=LKASDMjnr234n90lasndfsadf
+    - AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS=true
   nginx:
     image: nginx
     restart: always

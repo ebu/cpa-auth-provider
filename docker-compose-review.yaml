@@ -22,6 +22,7 @@ services:
       - MAIL_USER_NAME=ebuidp@gmail.com
       - MAIL_PASSWORD=${IDP_TEST_GMAIL_ACCOUNT_PASSWORD}
       - SESSION_SECRET=LKASDMjnr234n90lasndfsadf
+      - AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS=true
     networks:
       - default
       - traefik-net
