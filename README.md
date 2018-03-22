@@ -40,6 +40,7 @@ Edit `config.local.js` to set the necessary configuration options:
 * Database connection settings
 * Verification URL at the Authorization Provider, to be displayed to the user
 * Service provider domain names and access tokens
+* Note that `accessible_over_non_https` requires an ssl terminating proxy if set to `false`
 
 ## Initialise the database
 
@@ -48,7 +49,7 @@ If you use a docker, this will all happen automatically.
 
     $ npm install -g sequelize-cli
     $ sequelize db:migrate
-    
+
 If you want some default values, also run `bin/prep-db`.
 
 ## Start the server
@@ -84,7 +85,7 @@ To run the unit tests:
 To generate a test coverage report (in the `coverage` directory);
 
     $ make coverage
-    
+
 Empty migrations can be created (once sequelize-cli is installed):
 
     $ sequelize migration:create
@@ -92,7 +93,7 @@ Empty migrations can be created (once sequelize-cli is installed):
 New models can be added (once sequelize-cli is installed):
 
     $ sequelize model:create --name User --attributes 'name:string, email:string'
-    
+
 It's possible to test with scaling of instances:
 
     $ docker-compose -f docker-compose-nginx.yaml build
