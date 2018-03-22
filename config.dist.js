@@ -148,7 +148,7 @@ module.exports = {
         // set js_accessible to true to turn off http only for session cookie
         js_accessible: false,
         // set accessible_over_non_https to true to send cookie via HTTP (not S) too
-        //TODO accessible_over_non_https: true, // Use true for local test if you don't have https stuff
+        accessible_over_non_https: true, // Use true for local test if you don't have https stuff
         //domain: .rts.ch
     },
 

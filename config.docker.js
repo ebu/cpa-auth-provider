@@ -171,7 +171,7 @@ module.exports = {
         // set js_accessible to true to turn off http only for session cookie
         js_accessible: process.env.AUTH_SESSION_COOKIE_JS_ACCESSIBLE || false,
         // set accessible_over_non_https to true to send cookie via HTTP (not S) too
-        //TODO accessible_over_non_https: process.env.AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS || false,
+        accessible_over_non_https: process.env.AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS || false,
     },
 
     // Cross-origin resource sharing
