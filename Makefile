@@ -11,7 +11,7 @@ endif
 
 export NODE_ENV = test
 
-all: lint test
+all: lint coverage
 
 test:
 	@$(MOCHA) --bail --timeout 10000 --reporter $(REPORTER) --require test/test-helper test/lib test/api
@@ -25,7 +25,7 @@ lint-test:
 	@$(JSHINT) --config .jshintrc-test test/*.js test/lib/*.js
 
 coverage:
-	@$(COVERAGE) cover $(MOCHA) -- --reporter $(REPORTER) --require test/test-helper test/lib
+	@$(COVERAGE) cover $(MOCHA) -- --reporter $(REPORTER) --require test/test-helper test/lib test/api
 
 doc:
 	@$(JSDOC) --private --destination ./docs/ lib models routes routes/auth routes/token routes/user

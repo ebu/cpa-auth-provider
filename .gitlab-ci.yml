@@ -21,7 +21,6 @@ npm_test:
     - npm install --silent -g jshint istanbul
     - npm --silent install
     - make all
-    - make coverage
 #  coverage: /Lines\s+: \d+(\.\d*)?%.*/
 
 build:
