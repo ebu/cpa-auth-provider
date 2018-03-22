@@ -1,5 +1,3 @@
-image: node:8.4
-
 variables:
   GIT_SUBMODULE_STRATEGY: normal
   DOCKER_DRIVER: overlay
@@ -16,6 +14,7 @@ stages:
   - deploy-test-env
 
 npm_test:
+  image: node:9.1.0-alpine
   stage: test
   script: 
     - npm install --silent -g jshint istanbul
