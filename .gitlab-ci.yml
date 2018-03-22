@@ -14,7 +14,7 @@ stages:
   - deploy-test-env
 
 npm_test:
-  image: node:9.1.0-alpine
+  image: node:9.1
   stage: test
   script: 
     - npm install --silent -g jshint istanbul
