@@ -21,6 +21,7 @@ services:
       - TRACKING_COOKIE=true
       - CUSTOM_OAUTH_MSG={client} souhaite accéder à votre compte maRTS.
       - SESSION_SECRET=LKASDMjnr234n90lasndfsadf
+      - AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS=true
     depends_on:
       - postgres
     links:

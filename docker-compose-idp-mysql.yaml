@@ -19,6 +19,7 @@ services:
       - MAIL_TRANSPORT_TYPE=test
       - TRACKING_COOKIE=true
       - SESSION_SECRET=LKASDMjnr234n90lasndfsadf
+      - AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS=true
     depends_on:
     - mysql
   mysql:

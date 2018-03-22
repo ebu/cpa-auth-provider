@@ -163,8 +163,16 @@ module.exports = {
         enabled: true
     },
 
-    // Name of the session cookie. Must be something different than 'connect.sid'
-    sid_cookie_name: 'identity.provider.sid',
+    auth_session_cookie: {
+        // Name of the session cookie. Must be something different than 'connect.sid'
+        name: process.env.AUTH_SESSION_COOKIE_NAME || 'identity.provider.sid',
+        duration: process.env.AUTH_SESSION_COOKIE_DURATION ||365 * 24 * 60 * 60 * 1000,
+        domain: process.env.AUTH_SESSION_COOKIE_DOMAIN,
+        // set js_accessible to true to turn off http only for session cookie
+        js_accessible: process.env.AUTH_SESSION_COOKIE_JS_ACCESSIBLE || false,
+        // set accessible_over_non_https to true to send cookie via HTTP (not S) too
+        //TODO accessible_over_non_https: process.env.AUTH_SESSION_COOKIE_ACCESSIBLE_OVER_NON_HTTPS || false,
+    },
 
     // Cross-origin resource sharing
     cors: {
