@@ -141,8 +141,16 @@ module.exports = {
     // Session cookie is signed with this secret to prevent tampering
     session_secret: 'putYourSessionSecretHere',
 
-    // Name of the session cookie. Must be something different than 'connect.sid'
-    sid_cookie_name: 'identity.provider.sid',
+    auth_session_cookie: {
+        // Name of the session cookie. Must be something different than 'connect.sid'
+        name: 'identity.provider.sid',
+        duration: 365 * 24 * 60 * 60 * 1000,
+        // set js_accessible to true to turn off http only for session cookie
+        js_accessible: false,
+        // set accessible_over_non_https to true to send cookie via HTTP (not S) too
+        accessible_over_non_https: false,
+        //domain: .rts.ch
+    },
 
     // Cross-origin resource sharing
     cors: {
