@@ -170,6 +170,14 @@ module.exports = function (app, options) {
         });
     });
 
+    app.post('/api/local/auth_for_cookie', cors,
+      passport.authenticate('local', { session: true }),
+      function(req,res) {
+        // returned value is not relevant
+        res.json(req.sessionID);
+      }
+    );
+
     app.post('/api/local/authenticate', cors, function (req, res) {
         db.LocalLogin.findOne({where: {login: req.body.email}, include: [db.User]})
             .then(function (localLogin) {
@@ -259,4 +267,3 @@ module.exports = function (app, options) {
         }
     });
 };
-
