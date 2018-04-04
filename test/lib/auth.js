@@ -32,20 +32,20 @@ var resetDatabase = function (done) {
     return dbHelper.resetDatabase(initDatabase, done);
 };
 
-describe('POST /auth_for_cookie', function () {
+describe('POST /authenticate/cookie', function () {
     before(resetDatabase);
     context('When logging in for a session cookie', function () {
         context('with valid credentials', function () {
             before(function (done) {
-                requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {
+                requestHelper.sendRequest(this, '/api/local/authenticate/cookie', {
                     method: 'post',
                     type: 'json',
                     data: {"email": TEST_USER_LOGIN, "password": TEST_USER_PASSWORD}
                 }, done);
             });
             context('when calling auth endpoint', function () {
-                it('should answer 200 and a session cookie', function () {
-                    expect(this.res.statusCode).to.equal(200);
+                it('should answer 204 and a session cookie', function () {
+                    expect(this.res.statusCode).to.equal(204);
                 });
             });
             context('when accessing the profile with the cookie', function () {
@@ -62,7 +62,7 @@ describe('POST /auth_for_cookie', function () {
         });
         context('with invalid credentials', function () {
             before(function (done) {
-                requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {
+                requestHelper.sendRequest(this, '/api/local/authenticate/cookie', {
                     method: 'post',
                     type: 'json',
                     data: {"email": "foo", "password": "bar"}

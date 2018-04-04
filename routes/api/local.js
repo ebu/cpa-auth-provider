@@ -174,7 +174,7 @@ module.exports = function (app, options) {
       passport.authenticate('local', { session: true }),
       function(req,res) {
         // returned value is not relevant
-        res.json(req.sessionID);
+        res.sendStatus(204);
       }
     );
 
