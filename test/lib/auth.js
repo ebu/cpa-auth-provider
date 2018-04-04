@@ -39,9 +39,22 @@ describe('POST /auth_for_cookie', function () {
                     data: {"email": "testuser", "password": "testpassword"}
                 }, done);
             });
-            it('should answer 200 and a session cookie', function () {
-                expect(this.res.statusCode).to.equal(200);
-                expect(this.res.headers).to.not.have.key('set-cookie');
+            context('when calling auth endpoint', function () {
+                it('should answer 200 and a session cookie', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                    expect(this.res.headers).to.not.have.key('set-cookie');
+                });
+            });
+            context('when accessing the profile with the cookie', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/user/profile', {
+                        method: 'get',
+                        cookie: this.cookie
+                    }, done);
+                });
+                it('should answer 200', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                });
             });
         });
         context('with invalid credentials', function () {
