@@ -37,7 +37,7 @@ describe('POST /auth_for_cookie', function() {
       });
       it('should answer 200 and a session cookie', function() {
         expect(this.res.statusCode).to.equal(200);
-        expect(this.res.headers['set-cookie']).to.not.be.empty;
+        expect(this.res.headers).to.not.have.key('set-cookie');
       });
     });
     context('with invalid credentials', function() {
@@ -46,7 +46,7 @@ describe('POST /auth_for_cookie', function() {
       });
       it('should answer 401 and a session cookie', function() {
         expect(this.res.statusCode).to.equal(401);
-        expect(this.res.headers['set-cookie']).to.not.be.empty;
+        expect(this.res.headers).to.not.have.key('set-cookie');
       });
     });
   });
