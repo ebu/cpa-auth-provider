@@ -7,13 +7,17 @@ var authHelper = require('../../lib/auth-helper');
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
+var TEST_USER_LOGIN = "testuser";
+var TEST_USER_PASSWORD = "testpassword";
+
+
 var initDatabase = function (done) {
     db.User.create({
         provider_uid: 'testuser'
     })
         .then(function (user) {
-            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
-                return localLogin.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: TEST_USER_LOGIN}).then(function (localLogin) {
+                return localLogin.setPassword(TEST_USER_PASSWORD);
             });
         })
         .then(function () {
@@ -27,6 +31,49 @@ var initDatabase = function (done) {
 var resetDatabase = function (done) {
     return dbHelper.resetDatabase(initDatabase, done);
 };
+
+describe('POST /authenticate/cookie', function () {
+    before(resetDatabase);
+    context('When logging in for a session cookie', function () {
+        context('with valid credentials', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/authenticate/cookie', {
+                    method: 'post',
+                    type: 'json',
+                    data: {"email": TEST_USER_LOGIN, "password": TEST_USER_PASSWORD}
+                }, done);
+            });
+            context('when calling auth endpoint', function () {
+                it('should answer 204 and a session cookie', function () {
+                    expect(this.res.statusCode).to.equal(204);
+                });
+            });
+            context('when accessing the profile with the cookie', function () {
+                before(function (done) {
+                    requestHelper.sendRequest(this, '/user/profile', {
+                        method: 'get',
+                        cookie: this.cookie
+                    }, done);
+                });
+                it('should answer 200', function () {
+                    expect(this.res.statusCode).to.equal(200);
+                });
+            });
+        });
+        context('with invalid credentials', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/authenticate/cookie', {
+                    method: 'post',
+                    type: 'json',
+                    data: {"email": "foo", "password": "bar"}
+                }, done);
+            });
+            it('should answer 401 and a session cookie', function () {
+                expect(this.res.statusCode).to.equal(401);
+            });
+        });
+    });
+});
 
 describe('GET /auth', function () {
     before(function () {

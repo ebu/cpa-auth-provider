@@ -539,7 +539,7 @@ describe('POST /api/local/password/recover', function () {
 
 // Test authenticate
 
-describe('POST /api/local/authenticate', function () {
+describe('POST /api/local/authenticate/jwt', function () {
 
     context('When unauthenticated user signup with correct credential', function () {
 
@@ -559,7 +559,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/authenticate', {
+            requestHelper.sendRequest(this, '/api/local/authenticate/jwt', {
                 method: 'post',
                 cookie: this.cookie,
                 type: 'form',
@@ -615,7 +615,7 @@ describe('POST /api/local/authenticate', function () {
         });
 
         before(function (done) {
-            requestHelper.sendRequest(this, '/api/local/authenticate', {
+            requestHelper.sendRequest(this, '/api/local/authenticate/jwt', {
                 method: 'post',
                 cookie: this.cookie,
                 type: 'form',
