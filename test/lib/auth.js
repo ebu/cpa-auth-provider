@@ -7,13 +7,17 @@ var authHelper = require('../../lib/auth-helper');
 var requestHelper = require('../request-helper');
 var dbHelper = require('../db-helper');
 
+var TEST_USER_LOGIN = "testuser";
+var TEST_USER_PASSWORD = "testpassword";
+
+
 var initDatabase = function (done) {
     db.User.create({
         provider_uid: 'testuser'
     })
         .then(function (user) {
-            return db.LocalLogin.create({user_id: user.id, login: 'testuser'}).then(function (localLogin) {
-                return localLogin.setPassword('testpassword');
+            return db.LocalLogin.create({user_id: user.id, login: TEST_USER_LOGIN}).then(function (localLogin) {
+                return localLogin.setPassword(TEST_USER_PASSWORD);
             });
         })
         .then(function () {
@@ -36,7 +40,7 @@ describe('POST /auth_for_cookie', function () {
                 requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {
                     method: 'post',
                     type: 'json',
-                    data: {"email": "testuser", "password": "testpassword"}
+                    data: {"email": TEST_USER_LOGIN, "password": TEST_USER_PASSWORD}
                 }, done);
             });
             context('when calling auth endpoint', function () {
