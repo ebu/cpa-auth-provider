@@ -28,28 +28,36 @@ var resetDatabase = function (done) {
     return dbHelper.resetDatabase(initDatabase, done);
 };
 
-describe('POST /auth_for_cookie', function() {
-  before(resetDatabase);
-  context('When logging in for a session cookie', function() {
-    context('with valid credentials', function() {
-      before(function(done) {
-        requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {method:'post', type: 'json', data: { "email": "testuser", "password": "testpassword" } }, done);
-      });
-      it('should answer 200 and a session cookie', function() {
-        expect(this.res.statusCode).to.equal(200);
-        expect(this.res.headers).to.not.have.key('set-cookie');
-      });
+describe('POST /auth_for_cookie', function () {
+    before(resetDatabase);
+    context('When logging in for a session cookie', function () {
+        context('with valid credentials', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {
+                    method: 'post',
+                    type: 'json',
+                    data: {"email": "testuser", "password": "testpassword"}
+                }, done);
+            });
+            it('should answer 200 and a session cookie', function () {
+                expect(this.res.statusCode).to.equal(200);
+                expect(this.res.headers).to.not.have.key('set-cookie');
+            });
+        });
+        context('with invalid credentials', function () {
+            before(function (done) {
+                requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {
+                    method: 'post',
+                    type: 'json',
+                    data: {"email": "foo", "password": "bar"}
+                }, done);
+            });
+            it('should answer 401 and a session cookie', function () {
+                expect(this.res.statusCode).to.equal(401);
+                expect(this.res.headers).to.not.have.key('set-cookie');
+            });
+        });
     });
-    context('with invalid credentials', function() {
-      before(function(done) {
-        requestHelper.sendRequest(this, '/api/local/auth_for_cookie', {method:'post', type: 'json', data: { "email": "foo", "password": "bar" } },done);
-      });
-      it('should answer 401 and a session cookie', function() {
-        expect(this.res.statusCode).to.equal(401);
-        expect(this.res.headers).to.not.have.key('set-cookie');
-      });
-    });
-  });
 });
 
 describe('GET /auth', function () {
