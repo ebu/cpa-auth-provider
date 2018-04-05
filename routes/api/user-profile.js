@@ -5,10 +5,7 @@ var config = require('../../config');
 var passport = require('passport');
 var cors = require('../../lib/cors');
 var authHelper = require('../../lib/auth-helper');
-var util = require('util');
 var userHelper = require('../../lib/user-helper');
-
-var i18n = require('i18n');
 
 module.exports = function (app, options) {
 
@@ -25,21 +22,24 @@ module.exports = function (app, options) {
         if (!user) {
             return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
         } else {
-            db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
-                var email = localLogin.login;
-                res.json({
-                    success: true,
-                    user_profile: {
-                        firstname: user.firstname,
-                        lastname: user.lastname,
-                        gender: user.gender,
-                        date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
-                        language: user.language,
-                        email: email,
-                        display_name: user.getDisplayName(req.query.policy, email)
-                    }
-                });
-            });
+            returnProfileAsJson(user, res, req);
+        }
+    });
+
+    // This is needed because when configuring a custom header JQuery automaticaly send options request to the server.
+    // That following line avoid cross domain error like
+    // XMLHttpRequest cannot load http://localhost.rts.ch:3000/api/local/info.
+    // Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    // Origin 'http://localhost.rts.ch:8090' is therefore not allowed access.
+    app.options('/api/session/profile', cors);
+
+    app.get('/api/session/profile', cors, authHelper.authenticateFirst, function (req, res) {
+        var user = authHelper.getAuthenticatedUser(req);
+
+        if (!user) {
+            return res.status(401).send({success: false, msg: req.__('API_PROFILE_AUTH_FAIL')});
+        } else {
+            returnProfileAsJson(user, res, req);
         }
     });
 
@@ -128,3 +128,21 @@ module.exports = function (app, options) {
         }
     );
 };
+
+function returnProfileAsJson(user, res, req) {
+    db.LocalLogin.findOne({where: {user_id: user.id}}).then(function (localLogin) {
+        var email = localLogin.login;
+        res.json({
+            success: true,
+            user_profile: {
+                firstname: user.firstname,
+                lastname: user.lastname,
+                gender: user.gender,
+                date_of_birth: user.date_of_birth ? parseInt(user.date_of_birth) : user.date_of_birth,
+                language: user.language,
+                email: email,
+                display_name: user.getDisplayName(req.query.policy, email)
+            }
+        });
+    });
+}
