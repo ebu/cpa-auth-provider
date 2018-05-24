@@ -24,7 +24,9 @@ var user_info = [
                 res.json({
                     user: {
                         id: req.user.id,
-                        name: req.user.getDisplayName("FIRSTNAME_LASTNAME", mail)
+                        name: req.user.getDisplayName("FIRSTNAME_LASTNAME", mail),
+			email: mail,
+			email_verified: req.user.LocalLogin ? req.user.LocalLogin.verified : null
                     },
                     scope: req.authInfo.scope
                 });
