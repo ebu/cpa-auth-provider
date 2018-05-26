@@ -7,7 +7,7 @@
           <mj-text>Servus,</mj-text>
           <mj-text>vielen Dank für Deine Registrierung in der BR Mediathek.</mj-text>
           <mj-text>Bevor Du loslegen kannst, bestätige bitte Deine Registrierung mit einem Klick oder Tap auf diesen Link.</mj-text>
-          <mj-text>Durch die Bestätigung willigst Du ein, dass der BR Deine Daten für die Bereitstellung eines personalisierten Angebots einschließlich persönlicher Empfehlungen nutzt. Diese Einwilligung ist freiwillig und kann jederzeit mit Wirkung für die Zukunft widerrufen werden, indem Du Dein Benutzerkonto und damit Deine Daten löschst (Link zu Mein Bereich/Einstellungen/Benutzerkonto löschen). Bitte beachte vor dem Anklicken des Bestätigungslinks auch die nachstehenden Informationen gemäß Art. 13 DS-GVO sowie die Informationen in der Datenschutzerklärung.</mj-text>
+          <mj-text>Durch die Bestätigung willigst Du ein, dass der BR Deine Daten für die Bereitstellung eines personalisierten Angebots einschließlich persönlicher Empfehlungen nutzt. Diese Einwilligung ist freiwillig und kann jederzeit mit Wirkung für die Zukunft widerrufen werden, indem Du Dein Benutzerkonto und damit Deine Daten <a href="https://www.br.de/mediathek/meins/einstellungen">löschst</a>. Bitte beachte vor dem Anklicken des Bestätigungslinks auch die nachstehenden Informationen gemäß Art. 13 DS-GVO sowie die Informationen in der Datenschutzerklärung.</mj-text>
           <mj-button href='<%-confirmLink %' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
             Für den Abschluss der Registrierung und die Einwilligung bitte hier klicken
           </mj-button>
@@ -28,7 +28,7 @@
           <mj-text font-weight="700">datenschutz@br.de</mj-text>
           <mj-text font-weight="700">Zweck der Verarbeitung</mj-text>
           <mj-text>Deine E-Mail-Adresse wird ausschließlich zur Bereitstellung Deines Nutzerkontos innerhalb der BR Mediathek gespeichert. Die Angabe dient allein dem Zweck, Dir erweiterte Funktionen innerhalb der BR Mediathek zur Verfügung zu stellen und wird niemals für Werbezwecke an Dritte weitergegeben.</mj-text>
-          <mj-text>Damit Du vor der Registrierung angelegte Merklisten, Deinen Verlauf und Empfehlungen weiter nutzen kannst, werden Deine anonymen Video-Nutzungsdaten beim ersten Anmelden in der Mediathek in Dein Nutzerkonto übernommen. Du kannst dies verhindern, indem Du vor dem Klick auf den Bestätigungslink Deine bisherigen Daten in den Einstellungen (verlinkt) löschst.</mj-text>
+          <mj-text>Damit Du vor der Registrierung angelegte Merklisten, Deinen Verlauf und Empfehlungen weiter nutzen kannst, werden Deine anonymen Video-Nutzungsdaten beim ersten Anmelden in der Mediathek in Dein Nutzerkonto übernommen. Du kannst dies verhindern, indem Du vor dem Klick auf den Bestätigungslink Deine bisherigen Daten in den <a href="https://www.br.de/mediathek/meins/einstellungen">Einstellungen</a> löschst.</mj-text>
           <mj-text>Durch Deine Registrierung kannst Du folgende Vorteile nutzen: Wenn Du Dich auf unterschiedlichen Geräten wie Smartphone, Tablet und Computer mit derselben E-Mail-Adresse anmeldest, siehst Du überall dieselben Empfehlungen und Abonnements sowie Deine Merkliste und Deine zuletzt gesehenen Videos.
 Selbstverständlich hast Du jederzeit die Möglichkeit Dein Nutzerkonto zu löschen.</mj-text>
           <mj-text font-weight="700">Rechtsgrundlage</mj-text>
