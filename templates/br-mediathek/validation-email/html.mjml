@@ -42,7 +42,7 @@ Selbstverständlich hast Du jederzeit die Möglichkeit Dein Nutzerkonto zu lösc
           </mj-button>
           <mj-text>in der BR Mediathek löschst. Dies ist jederzeit mit einem Besuch in der Mediathek (Web oder App) möglich. Inaktive Nutzerkonten werden nach zwei Jahren automatisch gelöscht. Kurz vor der automatischen Löschung informieren wir Dich darüber in einer E-Mail.</mj-text>
           <mj-text font-weight="700">Betroffenenrechte</mj-text>
-          <mj-text>Soweit die jeweiligen Tatbestandsvoraussetzungen vorliegen, steht Dir ein Recht auf Auskunft (Art. 15 DS-GVO), Berichtigung (Art. 16 DS-GVO), Löschung (Art. 17 DS-GVO), Einschränkung der Verarbeitung (Art. 18 DS-GVO), Datenübertragbarkeit (Art. 20 DS-GVO), Widerspruch (Art. 21 DS-GVO) und auf Beschwerde bei einer Auf-sichtsbehörde (Art. 21 BayRG) zu. Wenn Du eines der vorgenannten Rechte geltend machen möchtest, teile bitte mit, dass Deine Daten im Rahmen der Mediathek an den BR übermittelt bzw. vom BR erhoben wurden.</mj-text>
+          <mj-text>Soweit die jeweiligen Tatbestandsvoraussetzungen vorliegen, steht Dir ein Recht auf Auskunft (Art. 15 DS-GVO), Berichtigung (Art. 16 DS-GVO), Löschung (Art. 17 DS-GVO), Einschränkung der Verarbeitung (Art. 18 DS-GVO), Datenübertragbarkeit (Art. 20 DS-GVO), Widerspruch (Art. 21 DS-GVO) und auf Beschwerde bei einer Aufsichtsbehörde (Art. 21 BayRG) zu. Wenn Du eines der vorgenannten Rechte geltend machen möchtest, teile bitte mit, dass Deine Daten im Rahmen der Mediathek an den BR übermittelt bzw. vom BR erhoben wurden.</mj-text>
         </mj-column>
       </mj-section>
     </mj-container>
