@@ -7,8 +7,8 @@
           <mj-text>Servus,</mj-text>
           <mj-text>vielen Dank für Deine Registrierung in der BR Mediathek.</mj-text>
           <mj-text>Bevor Du loslegen kannst, bestätige bitte Deine Registrierung mit einem Klick oder Tap auf diesen Link.</mj-text>
-          <mj-text>Durch die Bestätigung willigst Du ein, dass der BR Deine Daten für die Bereitstellung eines personalisierten Angebots einschließlich persönlicher Empfehlungen nutzt. Diese Einwilligung ist freiwillig und kann jederzeit mit Wirkung für die Zukunft widerrufen werden, indem Du Dein Benutzerkonto und damit Deine Daten <a href="https://www.br.de/mediathek/meins/einstellungen">löschst</a>. Bitte beachte vor dem Anklicken des Bestätigungslinks auch die nachstehenden Informationen gemäß Art. 13 DS-GVO sowie die Informationen in der Datenschutzerklärung.</mj-text>
-          <mj-button href='<%-confirmLink %' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
+          <mj-text>Durch die Bestätigung willigst Du ein, dass der BR Deine Daten für die Bereitstellung eines personalisierten Angebots einschließlich persönlicher Empfehlungen nutzt. Diese Einwilligung ist freiwillig und kann jederzeit mit Wirkung für die Zukunft widerrufen werden, indem Du Dein Benutzerkonto und damit Deine Daten <a href="https://www.br.de/mediathek/meins/einstellungen">löschst</a>. Bitte beachte vor dem Anklicken des Bestätigungslinks auch die nachstehenden Informationen gemäß Art. 13 DS-GVO sowie die Informationen in der <a href="https://www.br.de/mediathek/datenschutz">Datenschutzerklärung</a>.</mj-text>
+          <mj-button href='<%-confirmLink %>' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
             Für den Abschluss der Registrierung und die Einwilligung bitte hier klicken
           </mj-button>
           <mj-text>Falls Du diese E-Mail versehentlich erhalten hast, lösche sie einfach.</mj-text>
@@ -37,7 +37,7 @@ Selbstverständlich hast Du jederzeit die Möglichkeit Dein Nutzerkonto zu lösc
           <mj-text>Deine Daten werden nicht an Dritte weitergegeben. Der BR speichert Daten auf Servern von Cloud-Computing-Anbietern in Deutschland und anderen Ländern der Europäischen Union. Zwischen Anbieter und dem BR besteht ein Vertrag zur Auftragsdatenverarbeitung nach den neuen Regelungen der Datenschutz-Grundverordnung (DS-GVO).</mj-text>
           <mj-text font-weight="700">Dauer der Datenverarbeitung</mj-text>
           <mj-text>Deine Daten werden so lange gespeichert, bis Du Dein</mj-text>
-          <mj-button href='https://www.br.de/mediathek/meins/' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
+          <mj-button href='https://www.br.de/mediathek/meins/einstellungen' background-color='#0082c5' border-bottom='solid rgba(0,0,0,0.3) 2px' border-left='solid rgba(0,0,0,0.3) 1px' border-right='solid rgba(0,0,0,0.3) 1px' align='left'>
             Nutzerkonto
           </mj-button>
           <mj-text>in der BR Mediathek löschst. Dies ist jederzeit mit einem Besuch in der Mediathek (Web oder App) möglich. Inaktive Nutzerkonten werden nach zwei Jahren automatisch gelöscht. Kurz vor der automatischen Löschung informieren wir Dich darüber in einer E-Mail.</mj-text>
